@@ -49,7 +49,8 @@ Rows 27-28 (`processthread.cpp`, `rectangle.cpp`) and their close-out notes are 
 line was sha256-matched against `tmp/_tmp_s29_preslice_sessionlog.md` before the rewrite.
 
 | 29 | `resource.cpp` | 2 | **1 real defect - the folder's only U11 pair: both definitions were free functions, so the two `static` members at `user32.h:443`-`:444` had no definition anywhere (U4 x2) while the two free functions were never published** (built DLL 439 exports / import library 854 member symbols, neither name present). Fixed in-session by qualifying both with `User32::`; proven three ways - before/after `dumpbin /symbols` (`YA` free -> `SA` static member), the wrong-stem scan's folder rows 3 -> 1, and a consumer-side link probe (`tmp/_tmp_res_ref_s29.cpp`) with **0** unresolved for either member. Bindings, signatures and return policy already correct: 0 P1/P2/P6, 0 divergence x2, both `_T`-suffix shapes right. Also 2 whitespace nits (`int , UINT`, and the folder's **last** `>( pFunc` site -> census 421 tight / 0 spaced) and a 10-line contract block - this was the last reviewed TU without one. **U11 CLOSED**; U4's `static`-declaration direction now **0** folder-wide. Narrative `archive/tu/resource.md` |
-| 30..38 | not started (TU index; 8 left, see "Queue" in `status.md`) | | | |
+| 30 | `scrollbar.cpp` | 12 tokens + 1 contract block (102 -> 156 lines) | **0 defects.** All 12 stems are bare single exports, so P1/P2/P6 cannot arise; signatures clean 12/12 (`_tmp_sigcmp.ps1`, its one `CALL TYPE MISMATCH` being the new `const ::RECT *p` vs `const ::RECT*` **pointer-spacing** artifact); 0 header-vs-definition name divergence, 4 def-vs-SDK name divergences over 3 members (U18, published names); every `Call<>` tight. **One defect class fixed:** all 12 bindings spelled the binding macro's module token `User32` - the folder's last such site (12 of 428 bindings; G4's cited co-offender `combobox.cpp` no longer spells it, so G4's population was stale). Proved behaviour-neutral three ways: `/EP` pre/post differ on **exactly 12 lines**, each only that literal; an x64+x86 probe where `user32`/`User32`/`USER32`/`user32.dll` resolve to one `HMODULE`, a bogus name to NULL, and **0 of 12** entry points differ by module spelling; code-only `/EP` output **SHA-256 identical** across the contract-block insertion. Folder census after the fix: **428 bindings, 428 `user32` tokens, 0 non-lowercase sites.** U16: 12/12 DESKTOP-partition, only 2 version-guarded - `GetScrollInfo`/`SetScrollInfo` under `#if(WINVER >= 0x0400)` (`winuser.h:12026`), the item's **first 0x0400 gate** and its first `NOSCROLL`/`NOWINABLE` guard names. U21: 13 "Scroll" exports, 12 wrapped; the 13th `ScrollChildren` is exported but **undeclared in the SDK**, so not wrappable. U19: 8 LAYER / 8 "INDIRECT" / 0 BYPASS / 0 MEMBER, all 8 INDIRECT being the caller's own same-named member definitions, and nothing in-tree constructs `ScrollBar` - a latent façade chain. U26: the caller mirror `ScrollInfo` is **layout-identical to `SCROLLINFO` on both arches** (28 bytes, all 7 offsets), but `nPos`/`nTrackPos` alone lack a default initializer, so a default-constructed struct carries an indeterminate `int` through `GetScrollInfo`/`SetScrollInfo`. U2: 0 checks, 0 `_Check_return_`, and all 4 `int`-returning members have 0 as a legal value. T7 **35 -> 36** (`scrollbar.cpp:11`). Gate: 38/38, exit 0, `scrollbar.obj` newer than the source. Narrative `archive/tu/scrollbar.md` |
+| 31..38 | not started (TU index; 7 left, see "Queue" in `status.md`) | | | |
 
 **Session 17 (`hook.cpp`, 31 Oct 2026) - closed.** Row 17 above plus new items **P6** and **U27** carry the record, and the TU
 narrative is the 64-line comment block now at `hook.cpp:16-79`, so this session has no separate write-up (the session-16
@@ -310,3 +311,31 @@ problem in `gotchas.md`. (2) **A clean 38-TU gate log cannot be dated by its has
 Pre-flags for the next TU (`scrollbar.cpp`, 102 lines, `//ScrollBar functions` at `user32.h:573`, 12 wrappers) are in
 `tmp/_tmp_scroll_pre_s30.txt` - all 12 stems are bare single exports, so that TU is expected to be P1/P2/P6-free; its one
 U16 candidate is `GetScrollBarInfo` (`winuser.h:14763`, `#if(WINVER >= 0x0500)`).
+
+## Session 30 (`scrollbar.cpp`, 3 Nov 2026)
+
+12 wrappers, `user32.h:573`-`:585`, 102 -> **156 lines** (contract block only). **One defect class, fixed:** all 12
+bindings spelled the binding macro's module token `User32` - `qor_pp_useswinapi(User32, ...)`, the only such site left in
+the folder (12 of 428 bindings; `combobox.cpp`, the co-offender named in G4, no longer spells it that way, so G4's
+population was stale too). `kernel32.h:50` stringizes the token, so `/EP` emitted `GetModuleHandleW(L"User32")` against
+the folder's `L"user32"`. Normalized, and proved behaviour-neutral: `/EP` line count unchanged with **12 differing lines,
+all of them the module literal**; a **x64 + x86** probe showing `user32`/`User32`/`USER32`/`user32.dll` resolve to one
+`HMODULE`, a bogus name to NULL, and **0 of 12 entry points** differing by module spelling; and code-only `/EP` output
+**SHA-256 identical** across the comment-block insertion (154,346 code lines both sides). Folder census after the fix:
+**428 bindings, 428 `user32` tokens, 0 non-lowercase sites.** Signatures clean 12/12 (`_tmp_sigcmp.ps1`), its one
+`CALL TYPE MISMATCH` being the new `const ::RECT *p` vs `const ::RECT*` **pointer-spacing** artifact (gotchas); 0
+header-vs-definition name divergence, 4 def-vs-SDK name divergences over 3 members (U18, published names). U16: 12/12 in
+a DESKTOP partition block, only 2 version-guarded - `GetScrollInfo`/`SetScrollInfo` under `#if(WINVER >= 0x0400)`
+(`winuser.h:12026`), the item's **first 0x0400 gate**, plus its first `NOSCROLL` and `NOWINABLE` guard names. U21: 13
+"Scroll" exports, 12 wrapped; the 13th `ScrollChildren` is exported but **undeclared in the SDK**, so not wrappable.
+U19: 8 LAYER callers (all one class, `ScrollBarController`, in `winqor_gui`), 0 BYPASS, 0 MEMBER, and its 8 "INDIRECT"
+rows are the controller's own same-named member definitions - session 28's false-positive class again; nothing in-tree
+constructs `ScrollBar`, so the chain is latent. U26: the caller mirror `ScrollInfo` is **layout-identical to
+`SCROLLINFO` on both arches** (28 bytes, all 7 offsets), but **`nPos`/`nTrackPos` alone lack a default initializer**, so a
+default-constructed struct carries an indeterminate `int` through `GetScrollInfo`/`SetScrollInfo` - the second one reads
+both. U2: 0 checks, 0 `_Check_return_` on the prototypes, and all 4 `int`-returning members have 0 as a legal value. T7
+**35 -> 36** (`scrollbar.cpp:11`). Gate: 38/38 TUs, exit 0, `scrollbar.obj` newer than the source (a clean 38-TU log
+cannot be dated by its hash). Narrative `archive/tu/scrollbar.md`.
+**Pre-flags for the next TU (`systemshutdown.cpp`, 51 lines / 1,734 B, `user32.h:601`-`:606`, 5 members
+`ExitWindowsEx`, `LockWorkStation`, `ShutdownBlockReasonCreate/Destroy/Query`): the section label itself is misspelled -
+`//System Shutdwown functions` at `user32.h:601`.**

@@ -140,3 +140,10 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   change, gate = the folder compile **38/38 at `/W4`, exit 0, no diagnostics** plus a re-run of
   `tmp/_tmp_rcinclude_scan.ps1` (expect `includes ../returncheck.h: 2`, `include-without-use: 0`).
 
+- **T7 count moved 35 -> 36 (3 Nov 2026, session 30, `scrollbar.cpp`).** `scrollbar.cpp:11` includes
+  `../returncheck.h` and uses none of it - the TU has 0 `CheckReturn` sites, so the include is dead like the 35 already
+  listed. Measured with `tmp/_tmp_s30_closeprep.ps1` (prints every `#include` of the TU) against
+  `tmp/_tmp_s30_measure2.txt` (0 `CheckReturn`, 0 `Win32ErrorHandler`). The include is **not** removed: with G6 the
+  header is the only thing that would make a future check compile, and removing includes is a folder-wide decision
+  (same stance as the other 35 sites). Remaining dead includes after this TU: 36 of the 37 that include it; the one real
+  consumer is `processthread.cpp` (3 sites) plus `errorhandling.cpp` (1).

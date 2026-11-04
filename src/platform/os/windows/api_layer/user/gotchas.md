@@ -288,3 +288,34 @@ run - both confirmed for the session-11 run.
   instrument's output to a `tmp/` file and read that file (`read_files`), never trust the echoed terminal; keep
   multi-step work in a `.bat`/`.ps1` **file** rather than in a `-Command` string, and re-run rather than re-read.
 
+## Session 30 (`scrollbar.cpp`, 3 Nov 2026)
+
+- **`_tmp_sigcmp.ps1`'s `CALL TYPE MISMATCH` has a second false-positive source: `*` adjacency, not just `CONST::`.** For
+  `ScrollDC` it printed `sdk 'const ::RECT *lprcScroll' vs call 'const ::RECT*'` twice (args 3 and 4) - the declaration
+  puts a space before `*`, the `Library::Call<>` list does not. Same type, same generated symbols, and this TU's **only**
+  two flags were these. Rule: read every `CALL TYPE MISMATCH` against the source lines before acting (the session-23
+  rule), and normalize whitespace/`*`-adjacency **in the instrument**, never in the source. U25's normalization list now
+  carries five shapes for the same type.
+- **The three-way name-compare family compared names case-INsensibly until this session.** `_tmp_paint_pre_s26.ps1` and
+  `_tmp_pt_pre_s27.ps1` use PowerShell `-ne`, so a case-only divergence (`wSBFlags` vs `wSBflags`) compares equal and the
+  row prints `def-vs-sdk[]` - the same defect the session-12 instrument had and fixed. `_tmp_scroll_names_s30.ps1` uses
+  `-cne`; on this TU it found 4 divergences the older family's shape would have printed as 0. The folder-wide
+  `_tmp_name_divergence_scan.ps1` is separately case-sensitive by construction (it reported 0 for this TU - it only
+  compares header-vs-definition, and those genuinely agree). Any "0 name divergences" from a `_pre_s2x.ps1` clone means
+  "0 case-insensitive ones".
+- **A citation-range check flags legitimate external citations.** The block-citation scan reported 6 "out-of-range" cites
+  in `scrollbar.cpp`'s contract block; all 6 are real and correct - `user32.h:573`-`:585`, and
+  `tmp/_tmp_scroll_pre_s30.txt:167-:185` - they are simply not in the TU's 156-line space. Use the session-26 approach
+  (`_tmp_s26_closecheck.ps1`'s explicit `-ExternalZones` line ranges) or the run will end at 6 flags instead of 0.
+- **A U19 "INDIRECT" row is usually a *definition*, and here all 8 were.** `bool ScrollBarController::EnableScrollBar(...)`
+  and its 7 siblings matched the stem-and-paren pattern. Confirmed a second time (session 28 found 2 of 2 in
+  `rectangle.cpp`); the shared `tmp/_tmp_bypass_scan.ps1` still counts them, so INDIRECT stays an upper bound until
+  opened by hand.
+- **`wprintf(L"%s", char*)` is a `/W4` diagnostic waiting to happen.** In the G4 probe, printing an ASCII name table
+  through `wprintf` is a vararg type mismatch; and `%p` on a wide string prints garbage. Keep parallel `const char*`
+  tables for the names and print with `printf`, using `wprintf` only for the `wchar_t` literals - the mirror probe
+  (`_tmp_scroll_mirror_s30.cpp`) builds clean at `/W4` with that split.
+- **A digest that indexes `tmp/` indexes itself mid-write.** `_tmp_s30_digest.ps1` lists every `_tmp*s30*` file, so its
+  first entry was `_tmp_s30_digest.txt lines=2 bytes=0` - the half-written file being written into while it is being
+  read. Same family as "a record file must not state its own size": exclude the output file from any scan that lists its
+  own directory.

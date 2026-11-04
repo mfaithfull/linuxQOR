@@ -40,4 +40,15 @@
   return. Adopting `CheckReturn` in a TU therefore changes run-time behaviour (a `continuable(...)` issue is
   raised), and the `#if` itself relies on undefined-macro semantics. See item U2.
 
-
+- **G4 re-measured 3 Nov 2026 (session 30, `scrollbar.cpp`): the population is now zero, and the wording above names a
+  file that no longer belongs to it.** The rule was written when the folder had two spelling sites; `tmp/_tmp_s30_token_direct.ps1`
+  found exactly one left - **all 12 bindings of `scrollbar.cpp`** spelled `qor_pp_useswinapi(User32, ...)`, i.e. 12 of the
+  folder's 428 bindings - and `combobox.cpp` (named above) no longer spells it that way. `kernel32.h:50` stringizes the
+  token, so `/EP` emitted `GetModuleHandleW(( L"User32" ))` in those 12 wrappers while the other 416 emit
+  `L"user32"`. The claim "the lookup is case-insensitive" was **re-measured for this section's 12 entry points on x64 and
+  x86** (`tmp/_tmp_scroll_g4probe_s30.cpp` + `.bat`, output `_x64.txt`/`_x86.txt`): `user32`, `User32`, `USER32` and
+  `user32.dll` all resolve to one and the same `HMODULE`, a deliberately bogus module name resolves to `NULL` (the probe
+  discriminates), and `GetProcAddress` returns **the identical address under every spelling for 12 of 12 entry points -
+  0 of 12 differ on either arch**. The 12 tokens were normalized to `user32`; folder census after the fix (`tmp/_tmp_s30_gatecheck.txt`):
+  **428 bindings, 428 `user32` tokens, 0 files with a non-lowercase token.** G4 stays open as a *style* rule (it is what
+  made the 12 invisible to every earlier check), but its population is now 0 and the rule is measured, not assumed.

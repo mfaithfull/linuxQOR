@@ -59,3 +59,25 @@ the instrument caveats moved out of this file into `tooling.md` / `gotchas.md`; 
 - `tooling.md` - the `tmp/` instrument index: what each scan prints, when it was added, which TU it was built for.
 - `gotchas.md` - referenced from `tooling.md`: instrument caveats and the traps in editing these records from PowerShell.
 - `status.md` - the per-session boot brief; it owns the record's file index, the register locator and the gate definition.
+## Session start-up cost (rules adopted 3 Nov 2026, session 30)
+
+The record tree is read at every session start, so its reading cost **is** the review's cost, and a session that reads
+large artefacts loses its own context before it measures anything. Rules in force:
+
+- **Never open a `/EP` capture or any `tmp/_tmp_*_pp_*.txt`** - each is ~453k lines / 7 MB. Every capture gets a digest
+  produced by the same script that made it; the digest is what is read. Compare captures with a script that prints only the
+  difference count.
+- **One pre-scan script per TU, one short output** covering steps 1-5 (header section, bindings + export/A/W existence, SDK
+  prototypes, hygiene, U19 spellings, T7 include) - `tmp/_tmp_s31_preflags.ps1` is the current shape, ~110 output lines.
+  Do not run five instruments and read five outputs.
+- **Appending to an accumulating register**: read that file's entry head plus its last ~25 lines, never the whole tally,
+  and never a closed register (D14/D15).
+- **Write the record from fragment files with one assembler** (`tmp/_s30_*.txt` + `tmp/_tmp_s30_asm*.ps1`), so the write
+  pass never re-reads the record it is editing.
+- **`status.md` stays under 220 lines / 22 KB**: at close, compress the outgoing session bullet instead of adding one, and
+  keep the pre-flags section under 40 lines.
+- **Commit at session close** - an uncommitted tree makes every later `git status` check noise.
+- Close every session with three audits, not one: the **compile gate** (38/38 dated by `.obj` freshness), the **cite audit**
+  (`tmp/_tmp_s29_cite_audit.ps1` - every `tmp/` artefact the records cite must exist; 0 of 198 missing at session 30) and
+  the **locator verify** (`tmp/_tmp_u15_locator_verify.ps1`).
+

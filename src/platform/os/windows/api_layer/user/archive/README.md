@@ -15,8 +15,9 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/session-log-25-26.md` | 10 | - |
 | `archive/session-log-27-28.md` | 103 | - |
 | `archive/session-log-9-16.md` | 17 | - |
-| `archive/session-log.md` | 307 | 1217-1333 |
+| `archive/session-log.md` | 340 | 1217-1333 |
 | `archive/tooling-13-20.md` | 66 | - |
+| `archive/tooling-21-26.md` | 116 | - |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
 | `archive/tu/accessibility-timer.md` | 46 | 6-49 |
 | `archive/tu/brush.md` | 53 | 79-129 |
@@ -41,3 +42,4 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/processthread.md` | 52 | - |
 | `archive/tu/rectangle.md` | 99 | - |
 | `archive/tu/resource.md` | 101 | - |
+| `archive/tu/scrollbar.md` | 97 | - |
