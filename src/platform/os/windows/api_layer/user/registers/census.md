@@ -283,3 +283,55 @@ must account for them. The file has only **3 comment lines**, i.e. no closure bl
 totals: every per-TU wrapper count for the remaining five TUs (`window.cpp`, `windowclass.cpp`, `windowprocedure.cpp`,
 `windowproperties.cpp`, `winqor_api_user.cpp`) must be re-measured with the same three counters before the census is
 closed, and the binding-site census (428 at session 30) is a **floor**, not a total, until `window.cpp`'s 85 are added.
+
+## Session 33 census update (4 Nov 2026, `window.cpp`)
+
+`window.cpp` reviewed - the folder's largest TU (**615 -> 692 lines**, contract block at `:16`-`:82`) and the **last TU
+with defects**. 85 wrappers, **6 code fixes + 1 contract block**:
+
+1. **P1, and the folder's last unresolvable binding**: `CreateWindowT` bound
+   `qor_pp_useswinapiAW(user32, CreateWindow)` -> `CreateWindowW`, **not an export and never can be** - the SDK's
+   `CreateWindow`/`CreateWindowW` are function-like macros to `CreateWindowExA/W` (`winuser.h:4464`, `:4468`) and the
+   binding macro stringizes before any macro expands (G1). Now `qor_pp_useswinapiAW(user32, CreateWindowEx)` with the
+   `dwExStyle = 0` literal passed at the call (`:189`-`:200`). **Run-breaking: every `CreateWindowT` call failed
+   `GetProcAddress` and became a U5 cached null.**
+2. **U18 founding pair**: `LogicalToPhysicalPoint` / `PhysicalToLogicalPoint` returned `void` through `voidCall`; now
+   `BOOL` / `Call<BOOL, HWND, ::LPPOINT>` (`:505`, `:528`) matching `winuser.h:9526`, `:9533`. Header `:188`, `:191`
+   changed with it - a **published-signature change**.
+3-4. **Two dropped `const`s** restored: `SetWindowPlacement` (`:593`/`:597`, SDK `_In_ const WINDOWPLACEMENT *`
+   `winuser.h:4775`) and `TileWindows` (`:649`/`:653`, `_In_opt_ CONST RECT *` `:12240`); header `:200`, `:208`.
+5. **U14(b)'s last three deducing `Call<>` sites** made explicit (`:186`, `:327`, `:390`).
+6. Nothing else in the TU needed a change.
+
+**Folder totals now closed:** 428 bindings, **0 unresolvable (P1 CLOSED)**, 428 lowercase `user32` module tokens,
+0 `WINAPI`-qualified definition heads, **428 explicit / 0 deducing `Call<>` (U14(b) clean)**, call-parens 421 tight /
+0 spaced (D15 freeze intact), wrong-stem scan **2** rows (`cursor.cpp:64`, and this TU's deliberate
+`CreateWindowT -> CreateWindowEx` alias) with **0 live P5 instances**. Evidence: `tmp/_tmp_p1census_final2_s33.txt`,
+`tmp/_tmp_u14_final2_s33.txt`, `tmp/_tmp_wrongstem_final_s33.txt`,
+`/EP` classification `tmp/_tmp_win_ppclass_s33_final.txt` (85 binding lines, 84 distinct names, 0 missing, 0 `…WW`,
+0 `…T`).
+
+**Per-TU counts for the five TUs the session-32 note demanded:** `window.cpp` 85 wrappers / 85 `qor_pp_fcontext` /
+85 definition heads / 85 bindings (10 `AW` + 75 direct) / **84 `Library::Call<` + 1 `Library::voidCall<`** - the one
+`voidCall` is `SwitchToThisWindow` (`:642`), whose SDK prototype really returns `void` (`winuser.h:8528`). **That corrects the
+session-32 note above**: its "`Library::Call<` = 82, so **3** wrapper bodies have no `Call<` line" was a regex artifact
+(that scan did not match `voidCall`), and the "3 missing bodies" hand-off in `status.md` is thereby **discharged, not
+acted on**. The other four were then measured with the same counter (4 Nov 2026, code lines only): `windowclass.cpp` **14**,
+`windowproperties.cpp` **5**, `windowprocedure.cpp` **2**, glue `winqor_api_user.cpp` **0** - and
+**14 + 5 + 2 + 0 + 85 + the 322 in the other 33 TUs = 428**, i.e. **428 is the closed folder total over all 38 sources,
+not a floor.** That refutes the session-32 framing two entries above ("the binding-site census is a **floor**, not a
+total, until `window.cpp`'s 85 are added"): both the wrong-stem scan (`files: 38 ... bindings scanned: 428`) and the P1
+census (`bindings: 428`) always walked **all 38 files**, so `window.cpp`'s 85 were inside 428 all along - the
+session-28/30/31 rows reading "428 bindings" were already folder-complete. **The census needs no further addition.**
+
+**Contract-block census:** **5 of 38 sources still without one** after this session (`windowclass` 114 lines,
+`windowproperties` 51, `windowprocedure` 30, the glue `winqor_api_user.cpp` 14, and `timer.cpp` 33, whose session-8 review
+left only a 2-line note) - measured by comment-line count (`< 8`), instrument
+`tmp/_tmp_s33_rec4.ps1` -> `tmp/_tmp_s33_blocks.txt`; the `//=== api_layer conventions` marker text is only in the two
+newest blocks, so a marker scan under-counts. **T7 unchanged at 35 dead
+`returncheck.h` includes** (re-measured 4 Nov: 37 includes, 2 TUs with a code hit, 35 dead -
+`window.cpp` among them). Gate: `tmp/_tmp_cl_all_final3_s33.log` **38 echoes / 0 diagnostics**, run 22:25:10 with **0 stale
+`.obj`** against the 20:11:31 `window.cpp` (`tmp/_tmp_s33_gatecheck.ps1`); the `final2` capture (19:43:37) pre-dates that
+edit and is not citable - the source was last touched by a **comment-only** correction, which is exactly how a stale gate
+hides.
+

@@ -10,8 +10,8 @@ index:
     File: "gotchas/record-editing.md"
   - Trigger: "Reviewing rectangle.cpp, resource.cpp or scrollbar.cpp, or reusing an instrument that sessions 28-30 built"
     File: "gotchas/sessions-28-30.md"
-  - Trigger: "Reviewing systemshutdown.cpp, text.cpp or window.cpp, or touching calling conventions, CONST LPINT, gate-log dating, /EP diffs"
-    File: "gotchas/sessions-31-32.md"
+  - Trigger: "Reviewing systemshutdown.cpp, text.cpp or window.cpp/windowclass.cpp, or touching calling conventions, CONST LPINT, gate-log dating, /EP diffs"
+    File: "gotchas/sessions-31-33.md"
 ---
 
 # winqor_api_user - instrument and record-editing caveats

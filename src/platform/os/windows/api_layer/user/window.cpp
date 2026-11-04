@@ -13,6 +13,74 @@
 
 namespace qor { namespace win { namespace api {
 
+    //=== api_layer conventions ========================================= Reviewed 4 Nov 2026
+    //   (session 33: correctness / consistency / safety / UB / conventions; 85 wrappers)
+    //
+    //The folder's largest TU: the whole "user32.h:129-212 //Window functions" section - 84 declarations, all static,
+    //all defined here through the class scope qualifier and in header order - plus GetDpiForWindow (:685), the only
+    //definition in the folder whose declaration sits in another header section (user32.h:639, System Information).
+    //84/84 in-section declarations pair with a definition here and 85/85 definitions are qualified: 0 U4 (declared,
+    //never defined), 0 U11 (unqualified definition), 0 U13 (defined, declared non-static), 0 U17 (A/W family without
+    //the folder's T suffix). Full narrative: archive/tu/window.md.
+    //
+    //Binding (D13): 75 qor_pp_useswinapi + 10 qor_pp_useswinapiAW, and at /EP all 85 binding literals are real exports
+    //("CreateWindowExW" x2, "FindWindowW", ... ; 85 binding lines, 84 distinct names, 0 missing, 0 ...WW, 0 ...T,
+    //module literal L"user32" 85/85 - tmp/_tmp_win_pp_s33.bat + _tmp_win_ppclass_s33.ps1). One defect was fixed here:
+    //CreateWindowT used to bind "CreateWindowW", which is not an export at all - winuser.h:4468 (and :4464 for A)
+    //defines CreateWindowW/A as function-like macros forwarding to CreateWindowExW/A with dwExStyle 0, and
+    //qor_pp_useswinapiAW stringizes the pasted name before a macro can expand (G1), so the DefProc was always null and
+    //Library::Call threw "Missing library function." on every call. It now binds CreateWindowEx and passes the same
+    //zero extended style. Folder-wide P1 after this: 428 bindings, 0 unresolvable (P1 CLOSED - this was the last one).
+    //The other nine AW sites each paste a real "*W" export (10/10 literal-exported at /EP); none of those nine stems
+    //has a bare export, so AW is the only spelling that resolves at all - 0 P2 here (SDK stem macros at :8991, :4456).
+    //Signature fixes (3 more): LogicalToPhysicalPoint (:505) and PhysicalToLogicalPoint (:528) returned void through
+    //Library::voidCall while the SDK returns BOOL (winuser.h:9526, :9533 - FALSE is the "point is not in a
+    //physical/logical display area" case a DPI-aware caller must handle), so the result was discarded; now BOOL +
+    //Library::Call<BOOL, HWND, ::LPPOINT> - this closes U18, which was opened over exactly these two members.
+    //SetWindowPlacement (:593) and TileWindows (:649) dropped a const the SDK promises (_In_ const WINDOWPLACEMENT *
+    //winuser.h:4775; _In_opt_ CONST RECT * :12240) - now const in definition and header. CloseWindow (:182),
+    //GetLastActivePopup (:323) and GetWindowModuleFileNameT (:386) were the folder's last three argument-deducing
+    //Call<RETURN>(pFunc, ...) sites; explicit now (U14(b): 428 explicit / 0 bare), and U14's frozen spaced/tight
+    //tally (163/265, D15) is untouched.
+    //
+    //SDK pairing (winuser.h 10.0.26100, tmp/_tmp_s33_pre.ps1 section D): 1 type divergence - GetGUIThreadInfo p1 is
+    //PGUITHREADINFO in the SDK and LPGUITHREADINFO here, the same typedef, so recorded, not churned; 2 members with no
+    //SDK prototype - CascadeChildWindows (:147), an undocumented user32 export the layer wraps (compare
+    //InternalGetWindowText (:428), undocumented but declared), and CreateWindow itself (the macro above); parameter
+    //names diverge on 6 members (ChildWindowFromPointEx, GetGUIThreadInfo, GetWindowModuleFileNameT,
+    //InternalGetWindowText, RealGetWindowClassT, SwitchToThisWindow) - published names, left alone.
+    //
+    //Version floors (U16): 34 of 85 members sit under one - 11x WINVER >= 0x0500, 7x WINVER >= 0x0400,
+    //5x _WIN32_WINNT >= 0x0500, 4x WINVER >= 0x0600, 2x _WIN32_WINNT >= 0x0600 + WINVER >= 0x0500, one each
+    //WINVER >= 0x0605 (AdjustWindowRectExForDpi), WINVER >= 0x0605 + 0x0500 (GetDpiForWindow), _WIN32_WINNT >= 0x0501,
+    //_WIN32_WINNT >= 0x0600, _WIN32_WINNT >= 0x0501 + 0x0500. Guard names new to the review: NOWINABLE (11 members),
+    //NODEFERWINDOWPOS (3), NOMDI (3 - ArrangeIconicWindows, CascadeWindows, TileWindows). 83/85 are
+    //WINAPI_PARTITION_DESKTOP, 9 of those also GAMES, and SoundSentry (:635) is the only member also in PC_APP.
+    //
+    //Safety: 8 caller-side structs reach this TU through reinterpret_cast in ui/gui/controllers/windowcontroller.cpp
+    //(Point, Rect, Size, BlendFunction, WindowPlacement, WindowInfo, UpdateLayeredWindowInfo, AltTabInfo); probe
+    //tmp/_tmp_win_mirror_s33.cpp gives equal sizeof and equal field offsets on x64 AND x86 (WINDOWPLACEMENT 44,
+    //WINDOWINFO 60, UPDATELAYEREDWINDOWINFO 80/40, ALTTABINFO 40), so the casts are layout-sound. The contract the
+    //layer cannot state: the SDK requires lpwndpl->length == sizeof(WINDOWPLACEMENT) before Get/SetWindowPlacement, and
+    //WindowPlacement::length (windowcontroller.h:86) has no initializer - latent, GetPlacement has 0 in-tree callers,
+    //and the fix belongs to the published winqor_gui header, not here.
+    //
+    //U19 over 340 stem variants: 71 through-layer (the class scope), 49 intermediate-qualified, 49 "SDK bypass", 74
+    //member-call. Only two groups are genuine SDK calls that skip this layer: ui/gl/helperwindow.cpp:59,:75
+    //(::CreateWindowExW, ::ShowWindow) and ui/gl/windowimpl.cpp (AdjustWindowRectEx x5, AdjustWindowRectExForDpi x5);
+    //the rest are same-named non-SDK members or the raw-SDK examples/experimental/.../retropad. U1/U2: 0
+    //Win32ErrorHandler, 0 CheckReturn (the returncheck.h include is unused here - T7). U25: 1 `CONST` token on a code
+    //line in this TU - CascadeWindows' call list at :158 spells it `CONST ::RECT*` while that member's own definition
+    //(:154) spells it `const ::RECT*`, one member holding both spellings of the same type; the file's 11 other const
+    //tokens are all lowercase, over 8 code lines (:154, :158, :593, :597, :649, :653, :664, :668). No new shape ->
+    //U25 stays as recorded. P5 call-paren: 85 tight / 0 spaced (the census reads the character just after Call<);
+    //:206 and :264 differ only before the closing >.
+    //U26: this TU mirrors no SDK struct - RECT, POINT, SIZE,
+    //WINDOWPLACEMENT, WINDOWINFO, TITLEBARINFO, ALTTABINFO, BLENDFUNCTION and UPDATELAYEREDWINDOWINFO are all used as
+    //:: types, and the
+    //`TagRECT` lead handed to this session names nothing in the folder (no TagRECT/tagRECT declaration exists in src),
+    //so that lead is discharged here.
+
     BOOL User32::AdjustWindowRect(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu)
     {
         qor_pp_fcontext;
@@ -115,15 +183,20 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CloseWindow);
-        return Library::Call<BOOL>(pFunc, hWnd);
+        return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
 
     HWND User32::CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapiAW(user32, CreateWindow);
-        return Library::Call<HWND, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HMENU, HINSTANCE, LPVOID>(
-            pFunc, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+        //CreateWindow is not a user32.dll export at all: winuser.h:4468 defines CreateWindowW (and :4464 CreateWindowA)
+        //as function-like macros that forward to CreateWindowExW/A with a zero extended style, and qor_pp_useswinapiAW
+        //stringizes the pasted name before any macro can expand, so binding "CreateWindowW" could only ever give a null
+        //DefProc and Library::Call would throw "Missing library function." on every call. Bind the export the SDK macro
+        //itself calls and pass the same zero dwExStyle.
+        qor_pp_useswinapiAW(user32, CreateWindowEx);
+        return Library::Call<HWND, DWORD, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HMENU, HINSTANCE, LPVOID>(
+            pFunc, 0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
     }
 
     HWND User32::CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
@@ -251,7 +324,7 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetLastActivePopup);
-        return Library::Call<HWND>(pFunc, hWnd);
+        return Library::Call<HWND, HWND>(pFunc, hWnd);
     }
 
     BOOL User32::GetLayeredWindowAttributes(HWND hwnd, COLORREF* pcrKey, BYTE* pbAlpha, DWORD* pdwFlags)
@@ -314,7 +387,7 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetWindowModuleFileName);
-        return Library::Call<UINT>(pFunc, hwnd, lpszFileName, cchFileNameMax);
+        return Library::Call<UINT, HWND, LPTSTR, UINT>(pFunc, hwnd, lpszFileName, cchFileNameMax);
     }
 
     BOOL User32::GetWindowPlacement(HWND hWnd, ::WINDOWPLACEMENT* lpwndpl)
@@ -429,11 +502,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, UINT>(pFunc, uLockCode);
     }
 
-    void User32::LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint)
+    BOOL User32::LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, LogicalToPhysicalPoint);
-        return Library::voidCall<HWND, ::LPPOINT>(pFunc, hWnd, lpPoint);
+        //The SDK returns BOOL (winuser.h:9526) - FALSE when the point is not inside a physical display area of
+        //this window's monitor - so the old void + Library::voidCall discarded a result the caller needs.
+        return Library::Call<BOOL, HWND, ::LPPOINT>(pFunc, hWnd, lpPoint);
     }
 
     BOOL User32::MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint)
@@ -450,11 +525,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
 
-    void User32::PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint)
+    BOOL User32::PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, PhysicalToLogicalPoint);
-        return Library::voidCall<HWND, ::LPPOINT>(pFunc, hWnd, lpPoint);
+        //The SDK returns BOOL (winuser.h:9533) - FALSE when the point is not inside the logical window area -
+        //so the old void + Library::voidCall discarded a result the caller needs.
+        return Library::Call<BOOL, HWND, ::LPPOINT>(pFunc, hWnd, lpPoint);
     }
 
     HWND User32::RealChildWindowFromPoint(HWND hwndParent, ::POINT ptParentClientCoords)
@@ -513,11 +590,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL>(pFunc);
     }
 
-    BOOL User32::SetWindowPlacement(HWND hWnd, ::WINDOWPLACEMENT* lpwndpl)
+    BOOL User32::SetWindowPlacement(HWND hWnd, const ::WINDOWPLACEMENT* lpwndpl)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, SetWindowPlacement);
-        return Library::Call<BOOL, HWND, ::WINDOWPLACEMENT*>(pFunc, hWnd, lpwndpl);
+        return Library::Call<BOOL, HWND, const ::WINDOWPLACEMENT*>(pFunc, hWnd, lpwndpl);
     }
 
     BOOL User32::SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags)
@@ -569,11 +646,11 @@ namespace qor { namespace win { namespace api {
         return Library::voidCall<HWND, BOOL>(pFunc, hWnd, fAltTab);
     }
 
-    WORD User32::TileWindows(HWND hwndParent, UINT wHow, ::RECT* lpRect, UINT cKids, const HWND* lpKids)
+    WORD User32::TileWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, TileWindows);
-        return Library::Call<WORD, HWND, UINT, ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
+        return Library::Call<WORD, HWND, UINT, const ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
     }
 
     BOOL User32::UpdateLayeredWindow(HWND hwnd, HDC hdcDst, ::POINT* pptDst, ::SIZE* psize, HDC hdcSrc, ::POINT* pptSrc, COLORREF crKey, ::BLENDFUNCTION* pblend, DWORD dwFlags)

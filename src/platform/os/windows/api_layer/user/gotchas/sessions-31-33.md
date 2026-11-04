@@ -1,6 +1,6 @@
 ---
 Type: Context
-Description: "Caveats measured in sessions 31-32 (systemshutdown, text)"
+Description: "Caveats measured in sessions 31-33 (systemshutdown, text, window)"
 ---
 
 Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1` - snapshot `tmp/_tmp_gotchas_presplit.md`, verbatim rejoin proven by `tmp/_tmp_gotchas_verify.ps1`.
@@ -77,3 +77,57 @@ them). Always pass absolute paths.
 rewrite of `text.cpp`'s closure block removed ~40 lines of it while reporting success. After any multi-line comment
 rewrite: **grep for the block's markers** (`//=== api_layer conventions ===`, `//closure:`) and **count the file's lines**
 before believing the edit, then re-prove neutrality.
+
+## Session 33 (`window.cpp`, 4 Nov 2026)
+
+- **A per-member U16 walk that prints nothing is a silent zero.** `tmp/_tmp_s33_floors.ps1` ran clean and left
+  `tmp/_tmp_s33_floors.txt` with **no fact rows**. The version-floor figures for this TU therefore come from the
+  per-member table `tmp/_tmp_s33_pre.ps1` sections C-D (`tmp/_tmp_s33_final.txt`, 85 `bind:` rows, 34 with
+  `floor[if ...]`), not from the floors script. Re-use the table, or check the output for rows before quoting a count.
+- **`floor[PARSER MISS]` in that table means "no SDK declaration", not "the walk failed"** - here exactly 2 rows
+  (`CascadeChildWindows`, an undocumented export, and `CreateWindowT`, whose SDK spelling is a macro).
+- **Filter the `/EP` capture to the binding lines before classifying it.** The capture carries SDK header text that
+  mentions `GetProcAddress`; `tmp/_tmp_win_ppclass_s33.ps1` only became correct once it kept lines matching
+  `DefProc pFunc`. Its literal pairing is a plain `"`-scan too - an earlier `(?<![Ll])` lookbehind skipped the opening
+  quote of `L"user32"` and captured the text **between** the two literals.
+- **PowerShell `-match` is case-insensitive.** An export-table membership test written with `-match` reads a wrong-case
+  name as exported; the script now uses `-cnotmatch`. The same trap inflates the U25 count: a case-insensitive
+  `\bCONST\b` scan over `window.cpp` code lines reports **8 lines / 12 tokens** where the case-sensitive truth is
+  **1 line / 1 token**.
+- **A space before the closing `>` is not U14's spaced class.** A P5-shaped regex
+  `(Call|voidCall)\s*<[^<>]*\s>\s*\(` flags `window.cpp:206` and `:264`; U14's census reads the character after `Call<`,
+  so those sites are tight and must be left alone (D15).
+- **Write narratives from final measurements.** `archive/tu/window.md` was drafted mid-session and had to be corrected at
+  close-out on four points: `NOMDI` membership, the comment-line count, the U25 `CONST` count, and the call-paren split.
+- **A late comment-only edit silently invalidates a gate that already ran clean.** `tmp/_tmp_cl_all_final2_s33.log`
+  (19:43:37) was 38 echoes / 0 diagnostics, but `window.cpp`'s contract-block line-number corrections touched the file at
+  **20:11:31**, so the citable gate became `tmp/_tmp_cl_all_final3_s33.log` (22:25:10). The rule: run the gate **after** the
+  last source touch, and when in doubt run `tmp/_tmp_s33_gatecheck.ps1` - it prints every `tmp/obj/<tu>.obj` older than its
+  `.cpp`, which is how the stale run was caught rather than argued about. Re-run the consumer probe in the same breath
+  (`tmp/_tmp_win_consumer_s33.bat > tmp/_tmp_win_consumer_s33c.log 2>&1`; the bat writes `CL_EXIT=` to stdout, it takes no
+  output-file argument, so the capture name is the redirect).
+- **Instrument names in records must come from a directory listing, never from memory.** The close-out cite audit
+  (`tmp/_tmp_s33_closeaudit.ps1`, output `tmp/_tmp_s33_closeaudit.txt`) found two citations with no matching file:
+  `tmp/_tmp_s33_gatecheck.ps1` (cited in `status.md`, `census.md`, `tooling.md` and the session notes **before the script
+  existed** - it was written and run at close-out, and is now true) and `tmp/_tmp_win_consumer_s33b.bat` (never existed; the
+  probe is `tmp/_tmp_win_consumer_s33.bat`, which produced `_s33.log`, `_s33b.log`, `_s33c.log`). Run the audit **before**
+  the close-out is called done.
+- **`Select-String`'s `\bCONST\b` is case-insensitive by default, so it also counts lowercase `const`.** Counting this TU's
+  `CONST` typedef spellings without `-CaseSensitive` printed "8 lines / 12 tokens"; with `-CaseSensitive` the file has
+  **1 `CONST` token on 1 line** (`window.cpp:158`) and 11 lowercase `const` tokens on 8 lines. `tmp/_tmp_s33_verify.ps1`
+  carries the unqualified pattern, so its `CONST typedef spellings in CODE lines` number is an **upper bound**.
+- **Contract blocks are not marked uniformly, so a marker scan under-counts them.** Scanning the 38 sources for the text
+  `=== api_layer conventions` finds **2** files (only `text.cpp` and `window.cpp` use that header); the real population is
+  measured by comment-line count instead (`tmp/_tmp_s33_rec4.ps1` -> `tmp/_tmp_s33_blocks.txt`: 5 sources with `< 8`
+  comment lines). Use the comment-count measure for the "who still has no block" census.
+- **A resumed session must re-read the record before appending to it.** This session was resumed after a context
+  compaction and appended a **second** "Session 33 census update" block to `registers/census.md` (the first had already
+  been written before the compaction). Detection instrument: `tmp/_tmp_s33_rec8.ps1` greps every record file for
+  `session 33|Session 33|s33` and prints the hit line numbers per file - run it **before** writing, and again after.
+- **Inline `pwsh -Command "..."` loses `$`-variables to the outer quoting level, and a reused terminal replays old
+  scrollback into the result.** Two `run_commands` calls this session failed with `Missing expression after unary
+  operator '++'` because `$i` arrived empty, and one returned 40 KB of earlier commands' output instead of its own. Rule
+  unchanged but now doubly confirmed: every scan with a loop or `$_` goes in a `.ps1`, its output goes to a `tmp/` file,
+  and the file is read with the file reader rather than the terminal.
+
+

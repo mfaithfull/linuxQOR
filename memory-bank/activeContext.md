@@ -1,36 +1,41 @@
 # Active Context
 
-Last updated: 4 Nov 2026 (session 32 `text.cpp` CLOSED - **33 of 38 TUs reviewed**.
-class fixed**: the folder's only two `WINAPI`-qualified `User32::` definition heads (`ShutdownBlockReasonDestroy`/`Query`)
-disagreed with the unmarked header declarations, which makes the TU **ill-formed for x86** (`C2373` x2) and a **no-op for
-x64** - proved by a caller probe with one identical `__cdecl` decoration on both sides, `dumpbin /disasm` byte-identical
-and a `/EP` diff whose only code change is those two heads. The folder-wide measure that came out of it is in
-`registers/u6.md`: **x86 is unbuildable - 93 of the 106 api_layer TUs fail at `kernel32.h:92` (`PUNWIND_HISTORY_TABLE`)**,
-the 13 survivors being exactly the `winqor_api_*.cpp` glue TUs; that same blind spot is why 30 sessions of x64 gates never
-saw the `C2373` pair. HEAD carries sessions 1-30; **session 31 is committed at this close**. **Next: session 32
-`text.cpp`** (44 lines, 4 `*T` text wrappers, all `qor_pp_useswinapiAW` over A/W-only stems) - pre-flags are the last block
-of `status.md`, full hand-off at the end of `archive/session-log.md`. Record state after this close: `status.md` 214 lines
-/ 21.5 KB, `archive/session-log.md` **41.1 KB - now over the 40 KB ceiling and the top slice candidate** (rows 27-31),
-`gotchas.md` 34.5 KB, `registers/u16.md` 279 lines. `method.md`'s "Session start-up cost" rules and the three close
-audits (compile gate dated by `.obj` freshness, `tmp/_tmp_s31_cite_audit_s31.ps1`,
-`tmp/_tmp_u15_locator_verify.ps1`) apply every session; `tooling.md` needs the session-31 instruments added at its next
-slice. `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the instrument index)
-and `gotchas.md` (the caveats it points at). Completed-session records stay in `memory-bank/archive/`, never here.
+Last updated: 4 Nov 2026 (session 33 `window.cpp` CLOSED - **34 of 38 TUs reviewed, 4 left**; the review is in its last
+mile). **The headline: P1 is CLOSED folder-wide - 0 unresolvable bindings of 428.** `window.cpp`'s `CreateWindowT` bound
+`qor_pp_useswinapiAW(user32, CreateWindow)` -> `CreateWindowW`, which **is not an export and never can be**: the SDK's
+`CreateWindow`/`CreateWindowW` are function-like macros forwarding to `CreateWindowExA/W` (`winuser.h:4464`, `:4468`) and
+the binding macro stringizes the pasted name before any macro can expand (G1) - so every spelling of that stem is a P1,
+which is why the fix is to bind the real export with an explicit `0` `dwExStyle`. Same TU: **U18's founding pair**
+(`LogicalToPhysicalPoint`/`PhysicalToLogicalPoint`, `void` + `voidCall` -> `BOOL`, header included - a published-signature
+change, consumer probe clean), **two dropped `const`s** restored, and **U14(b)'s last three argument-deducing `Call<>`
+sites** made explicit -> the folder is now **428 explicit / 0 deducing** while U14(a) stays at its D15 freeze (163 spaced /
+265 tight). U16's largest guarded population yet: **34 of 85** prototypes version-gated, highest floor `0x0605`, three
+guard names new to the review. **HEAD is still at session 32 + the gotchas refactor (`0a24b655`) - session 33's 20 modified
++ 3 new record/source files are uncommitted at this close**; commit them before starting session 34.
+Record state after this close: `status.md` **198 lines / 20.5 KB**, `archive/session-log.md` 233 lines / **29.0 KB** (its
+31/33 close-out notes sliced into `archive/session-log-notes-31-33.md`, 135 lines / 12.9 KB, hash-verified rejoin),
+`gotchas/sessions-31-33.md` (renamed from `sessions-31-32.md`), `tooling.md` **~36.5 KB - next over the ceiling**.
+Close audits all green: gate `tmp/_tmp_cl_all_final3_s33.log` (38 echoes, 0 diagnostics, 0 stale `.obj`, run 22:25:10 after
+the last source touch at 20:11:31 - the earlier `final2` run was invalidated by a late comment-only edit), locator
+46/46 pointing right, cite audit 41 cited artefacts / 0 unexpected missing, `registers/README.md` + `archive/README.md`
+line counts refreshed. The record tree is `src/platform/os/windows/api_layer/user/{status,method,tooling,gotchas}.md` +
+`registers/` + `archive/`. Completed-session records stay in `memory-bank/archive/`, never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 31 (`systemshutdown.cpp`) closed 4 Nov 2026 - 1 defect class fixed; 32 of 38 TUs reviewed.** The TU's two
-  `WINAPI`-qualified definition heads were a real (x86-only) ill-formedness, not style. Durable record additions:
-  `registers/u6.md`'s addendum (**x86 buildability - 93 of 106 api_layer TUs fail on `kernel32.h:92`
-  `PUNWIND_HISTORY_TABLE`**) and the refuted 0x0601 U16 lead in `registers/u16.md`. Sessions 28-30 (`rectangle.cpp`,
-  `resource.cpp`'s **U11** fix, `scrollbar.cpp`'s module-token normalization) and 23-27 (`message.cpp` **P2 CLOSED**,
-  `monitor.cpp`, `mouse.cpp` **10 P1 binding fixes**, `painting.cpp`, `processthread.cpp`) are closed; their detail is
-  `archive/tu/<tu>.md` and the session log, not here. The load-bearing result of session 25 stays in force: `AW` over a
-  stem with **no A/W family** throws at run time on every call, so bare `qor_pp_useswinapi` is **D13's other half**, not a
-  style call.
+- **Session 33 (`window.cpp`) closed 4 Nov 2026 - 85 wrappers, 6 code fixes; the last TU of the review with defects.**
+  Its record additions are `registers/prescan.md` (**P1 CLOSED**, P5 re-measured to 2 benign rows), `u18.md` (founding
+  pair fixed, item kept open as the published-type list), `u16.md` (34/85 gated), `u19.md` (71 LAYER / 49 INDIRECT upper
+  bound / 49 BYPASS with 2 real groups; the `TrackPopupMenu` lead discharged to `menu.cpp`), `u14.md` (b) closed sites),
+  `u25.md` and `census.md`. Sessions 28-32 and 23-27 stay in `archive/tu/<tu>.md` + the session log, not here. The
+  load-bearing rule from session 25 still governs the four remaining TUs: `AW` over a stem with **no A/W family** throws
+  on every call, so bare `qor_pp_useswinapi` is **D13's other half**, not a style call - and session 33 adds its mirror:
+  a stem whose bare name is a **macro** can never be bound at all. Census correction booked with this close: **428 bindings
+  is the closed folder total over all 38 sources, not a floor** - the scans always walked all 38 files, so the session-32
+  "add `window.cpp`'s 85 later" framing was wrong (`registers/census.md`, session-33 entry).
 
 ## Decisions in force (pointer only - not restated here)
  - Project wide decisions are recorded in `docs/agent/DECISIONS.md`. The memory bank deliberately does not duplicate their text.

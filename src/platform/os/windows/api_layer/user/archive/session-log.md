@@ -52,7 +52,9 @@ line was sha256-matched against `tmp/_tmp_s29_preslice_sessionlog.md` before the
 | 30 | `scrollbar.cpp` | 12 tokens + 1 contract block (102 -> 156 lines) | **0 defects.** All 12 stems are bare single exports, so P1/P2/P6 cannot arise; signatures clean 12/12 (`_tmp_sigcmp.ps1`, its one `CALL TYPE MISMATCH` being the new `const ::RECT *p` vs `const ::RECT*` **pointer-spacing** artifact); 0 header-vs-definition name divergence, 4 def-vs-SDK name divergences over 3 members (U18, published names); every `Call<>` tight. **One defect class fixed:** all 12 bindings spelled the binding macro's module token `User32` - the folder's last such site (12 of 428 bindings; G4's cited co-offender `combobox.cpp` no longer spells it, so G4's population was stale). Proved behaviour-neutral three ways: `/EP` pre/post differ on **exactly 12 lines**, each only that literal; an x64+x86 probe where `user32`/`User32`/`USER32`/`user32.dll` resolve to one `HMODULE`, a bogus name to NULL, and **0 of 12** entry points differ by module spelling; code-only `/EP` output **SHA-256 identical** across the contract-block insertion. Folder census after the fix: **428 bindings, 428 `user32` tokens, 0 non-lowercase sites.** U16: 12/12 DESKTOP-partition, only 2 version-guarded - `GetScrollInfo`/`SetScrollInfo` under `#if(WINVER >= 0x0400)` (`winuser.h:12026`), the item's **first 0x0400 gate** and its first `NOSCROLL`/`NOWINABLE` guard names. U21: 13 "Scroll" exports, 12 wrapped; the 13th `ScrollChildren` is exported but **undeclared in the SDK**, so not wrappable. U19: 8 LAYER / 8 "INDIRECT" / 0 BYPASS / 0 MEMBER, all 8 INDIRECT being the caller's own same-named member definitions, and nothing in-tree constructs `ScrollBar` - a latent façade chain. U26: the caller mirror `ScrollInfo` is **layout-identical to `SCROLLINFO` on both arches** (28 bytes, all 7 offsets), but `nPos`/`nTrackPos` alone lack a default initializer, so a default-constructed struct carries an indeterminate `int` through `GetScrollInfo`/`SetScrollInfo`. U2: 0 checks, 0 `_Check_return_`, and all 4 `int`-returning members have 0 as a legal value. T7 **35 -> 36** (`scrollbar.cpp:11`). Gate: 38/38, exit 0, `scrollbar.obj` newer than the source. Narrative `archive/tu/scrollbar.md` |
 | 31 | `systemshutdown.cpp` | 5 | **1 defect class fixed:** `:37`/`:44` were the folder's only two **`WINAPI`-qualified `User32::` definition heads**, disagreeing with the unmarked declarations at `user32.h:605`/`:606` - **ill-formed for x86** (`C2373` x2) and a **silent no-op for x64** (identical `__cdecl` decoration on both sides of a caller probe, `dumpbin /disasm` byte-identical, `/EP` non-blank lines 154,302 both sides). 5/5 bare single exports (D13-correct), 5/5 `decl==def` including parameter names, **0 U18 traffic**, U16 5/5 DESKTOP with **1** version gate (`LockWorkStation` `_WIN32_WINNT >= 0x0500`; the `ShutdownBlockReason` trio has **no** floor - refutes the 0x0601 pre-flag lead), **0 callers of any class** for all 5 stems (D14 - no U19/U15 row), T7 36 -> 37. Opened a folder-wide measure in `registers/u6.md`: **x86 is unbuildable - 93 of 106 api_layer TUs fail on `kernel32.h:92` `PUNWIND_HISTORY_TABLE`**, the 13 survivors being exactly the `winqor_api_*.cpp` glue TUs. Narrative `archive/tu/systemshutdown.md` |
 | 32 | `text.cpp` | 4 | **0 defects, 0 code edits** (contract block only; neutrality proved by `/EP`: **154,296 non-blank lines before and after, +81 comment lines (453,279 -> 453,360 total), 0 non-blank differences**, 4 W literals unchanged, 0 bare and 0 `…WW`). The folder's **only TU where all four bound stems have the SDK A/W macro live at the binding site** (`winuser.h:8269`/`:8331`/`:8470`/`:8494`) - `qor_pp_useswinapiAW` pastes `W` onto a bare name before that name can expand, so P1/P2/P6 are **correct by construction** and the `…WW` exports a double-suffix would need do not exist. Header range corrected to `user32.h:568-:571`; `GetTabbedTextExtent` returns `DWORD` on both sides (**refutes** the `SIZE` lead). **U23 gains a second class**: `CONST LPINT` on the tab-stop parameter is `INT* const`, not the SDK's `CONST INT *` - probe `tmp/_tmp_s32_u23_probe.cpp` compiles, negative control `_neg.cpp` gives `C2664`; plus the `DT_MODIFYSTRING` `_Inout_` +4-characters buffer contract (`winuser.h:8250`, `:8309`) that `LPCTSTR` hides. U16 4/4 DESKTOP, 1/4 version-gated (`DrawTextExT` under `#if(WINVER >= 0x0400)`), new guard name **`NODRAWTEXT`**; 0 U4/U11/U13/U17/U18/U25/U26; U19 0 (the `DT_*` family is **comment-only in-tree**, caller passes only `DT_EDITCONTROL`); U15 0 by D14 (12 consumers in `ui/gui/painting/themedata.cpp`, 2 in `winqor_kernelobj.cpp`). Closed the comment-only token measure: `user32.h` 14 -> **12** (2 were live code), `text.cpp` 0 -> **12**. Carried **U12/U13 + U18** lead: `windowproperties.cpp:173` unqualified `SetLayeredWindowAttributes`, double-gated at `WINVER`/`_WIN32_WINNT >= 0x0600`, `DWORD` vs SDK `BOOL`. **Record repair:** `tmp/_tmp_s32_queue_audit.ps1` re-derived the queue from the session logs - the Queue table had a duplicated `text.cpp` row, no `windowprocedure.cpp` row, and `window.cpp` at 270 when it is **615** lines; 33/38 TUs now reviewed. Gate `tmp/_tmp_cl_all_s32.log`: 38/38 TU echoes, 0 errors, 0 warnings, 0 stale `.obj`. Narrative `archive/tu/text.md` |
-| 33..38 | not started (5 TUs left, see "Queue" in `status.md`; next `window.cpp`, **85 wrappers over 615 lines**, census says 50) | | | |
+| 33 | `window.cpp` | 85 wrappers: 6 code edits + 67-line contract block (615 -> 692 lines) | **6 fixes, the folder's largest single-TU defect count.** (1) **The folder's last P1, now CLOSED** - `CreateWindowT` bound `qor_pp_useswinapiAW(user32, CreateWindow)` -> `CreateWindowW`, which **is not an export and never can be**: `winuser.h:4464`/`:4468` make `CreateWindow`/`CreateWindowW` function-like macros forwarding to `CreateWindowExA/W` with `dwExStyle = 0`, and the binding macro stringizes the pasted name before any macro can expand (G1). Now `…AW(user32, CreateWindowEx)` + an explicit `0` argument (`:189`-`:200`). Run-breaking - **every** `CreateWindowT` call failed `GetProcAddress` (U5 caches the null). Proven pre and post by `/EP` classification (`_tmp_win_pp_s33.bat` -> `_tmp_win_ppclass_s33{,_final}.txt`: 85 binding lines, 84 distinct names, missing 1 -> **0**, `…WW` 2 -> 0, `…T` 17 -> 0) and by the folder census (**428 bindings, 1 -> 0 unresolvable**, `_tmp_p1census_final2_s33.txt`). (2) **U18's founding pair fixed** - `LogicalToPhysicalPoint`/`PhysicalToLogicalPoint` were `void` + `voidCall`, discarding the SDK `BOOL` (`winuser.h:9526`,`:9533`) that distinguishes "point outside the physical/logical area"; now `BOOL`/`Call<BOOL, HWND, ::LPPOINT>` (`:505`,`:528`) with `user32.h:188`,`:191` - a **published-signature change**. (3-4) **Two dropped `const`s** restored vs the SDK (`SetWindowPlacement` `winuser.h:4775`, `TileWindows` `:12240`) at `:593`/`:597`, `:649`/`:653` + header `:200`,`:208`. (5) **U14(b)'s last 3 deducing sites** made explicit (`:186`,`:327`,`:390`) -> folder **428 explicit / 0 deducing**; U14(a) untouched at the D15 freeze (163 spaced / 265 tight). (6) Rest clean: 85/85 bindings literal-exported (75 direct + 10 AW, D13-correct), module token `user32` 85/85, 0 `WINAPI`-qualified heads, 0 spaced call parens. 0 live P5 (wrong-stem 1 -> 2 rows: this TU's deliberate `CreateWindowT -> CreateWindowEx` alias beside `cursor.cpp:64`). U16 record result: **34 of 85** prototypes version-gated - the item's largest population, three guard names new to the review (`NOWINABLE` 11, `NODEFERWINDOWPOS` 3, `NOMDI` 3) and its **highest floor 0x0605**; 83/85 DESKTOP, 9 also GAMES, `SoundSentry` also PC_APP. U26: **8 caller structs** cross into this TU by `reinterpret_cast` and are **layout-identical on x64 AND x86** (`WINDOWPLACEMENT` 44, `WINDOWINFO` 60, `UPDATELAYEREDWINDOWINFO` 80/40, `ALTTABINFO` 40) - the one residual is `WindowPlacement::length` having **no initializer** against the SDK's `length == sizeof` contract (`windowcontroller.h:86`, latent: 0 callers). U19: 71 LAYER / 49 INDIRECT (upper bound) / 49 BYPASS / 74 MEMBER over 340 variants; only 2 real bypass groups (`ui/gl/helperwindow.cpp:59`,`:75`; `ui/gl/windowimpl.cpp` 10 x `AdjustWindowRectEx*`); the handed-off **`TrackPopupMenu` BYPASS lead is discharged** - it belongs to `menu.cpp`. U1/U2: 0 handlers, 0 checks, 54 `BOOL`/pointer returns unsound-to-check; T7's dead `returncheck.h` include left (35 unchanged). Consumer probe `ui/gui/controllers/windowcontroller.cpp` (`CL_EXIT=0`, 6 signatures live). Gate `tmp/_tmp_cl_all_final3_s33.log` 38/38 at `/W4`, 0 diagnostics, 0 stale `.obj` (run 22:25:10 vs source 20:11:31). Narrative `archive/tu/window.md` |
+
+| 34..38 | not started (4 TUs left, see "Queue" in `status.md`; next `windowclass.cpp` 114 lines, then `winqor_api_user.cpp` (glue) 14, `windowprocedure.cpp` 30, `windowproperties.cpp` 51 - all four re-measured 4 Nov 2026) | | | |
 
 **Session 17 (`hook.cpp`, 31 Oct 2026) - closed.** Row 17 above plus new items **P6** and **U27** carry the record, and the TU
 narrative is the 64-line comment block now at `hook.cpp:16-79`, so this session has no separate write-up (the session-16
@@ -221,69 +223,11 @@ this file passed the 40 KB ceiling. Moved block `SHA256
 09136B67A3331B040BA9A3CA6E01E4808FFCC9C073047C123A49AA549A064852
 `; rejoin hash-verified before the move.
 
-### Session 31 - `systemshutdown.cpp` (4 Nov 2026)
+## Session 31 and 33 close-out notes moved out
 
-5 wrappers, `user32.h:601`-`:606` under the header's own misspelled label `//System Shutdwown functions`, 51 -> **116
-lines** (contract block only). **One defect class, fixed:** `:37` and `:44` read `BOOL WINAPI User32::ShutdownBlockReasonDestroy`
-/ `...Query` - the **only two `WINAPI`-qualified `User32::` definition heads in all 38 TUs**, while `user32.h:605`/`:606`
-declare those members with no convention token. Removed. Not a style call: MSVC rejects the disagreement when the TU is
-compiled **for x86** with `error C2373: 'qor::win::api::User32::ShutdownBlockReasonDestroy': redefinition; different type
-modifiers` (same at `:44`), i.e. the TU was **ill-formed** - and on x64, the only arch the tree configures
-(`CMakeSettings.json:4` `x64-Debug`, generator `Visual Studio 17 2022`), the modifier is dropped, so those two heads changed
-nothing. Proof of neutrality, three ways: a caller probe (`tmp/_tmp_s31_winapi_probe_s31.cpp`) shows the symbol MSVC emits
-and the symbol a consumer of the header declaration references are **the same `__cdecl` decoration** on both sides
-(`?ShutdownBlockReasonDestroy@User32@api@win@qor@@SAHPEAUHWND__@@@Z`, `tmp/_tmp_s31_winapi_s31.txt`); `dumpbin /disasm` of
-the object is **identical before and after** (42,310 lines each, 2 differing lines, both the dump header:
-`tmp/_tmp_s31_x64_pre_s31.asm` / `_post_s31.asm`); and the `/EP` diff is **55 lines, of which 51 blank**, the other 4 being
-only the two definition heads (`BOOL __stdcall User32::...` -> `BOOL User32::...`) - **non-blank lines 154,302 both sides**,
-all 5 binding literals byte-identical.
-**Binding (D13):** 5/5 bare single exports, no A/W family - `ExitWindowsEx` 10F, `LockWorkStation` 26C,
-`ShutdownBlockReasonCreate` 39C, `ShutdownBlockReasonDestroy` 39D, `ShutdownBlockReasonQuery` 39E; a family walk over the
-1,018-name table gives **exactly 1 export per stem** and the `um` headers carry **0 `#define <Stem>` alias sites**, so the
-bare `qor_pp_useswinapi` at `:19, :26, :33, :40, :47` is the only spelling that can bind them (`/EP` emits exactly those
-5 literals against `L"user32"`); 0 P1, 0 P2, 0 P6.
-**Signatures:** 5/5 `decl==def` on return type, parameter types, parameter names and `Call<>` arity
-(`_tmp_sigcmp.ps1 -Tu systemshutdown.cpp -First 602 -Last 606`), 0 name divergences of any kind - the first TU with no U18
-name traffic at all.
-**U16:** 5/5 prototypes are `WINAPI_PARTITION_DESKTOP`, **exactly one version-gated** - `LockWorkStation` under
-`#if(_WIN32_WINNT >= 0x0500)` (`winuser.h:14912`); `ExitWindowsEx` (`:3639`, also inside `#ifndef NOUSER`) and the
-`ShutdownBlockReason` trio (the `#pragma region Desktop Family` block opened `:15919`, which also defines
-`MAX_STR_BLOCKREASON 256`) carry **no version floor**. This **refutes the session-30 U16 lead** ("expect the highest
-version floor yet, likely 0x0601") - the trio has none, and no guard name outside the population already recorded appears.
-**U19:** 0 callers anywhere - the comment-stripped scan over `src`, `examples` and `test` with all five stems prints
-**0 LAYER / 0 INDIRECT / 0 BYPASS / 0 MEMBER**; published surface, so **no U19 or U15 row** (D14).
-**U1/U2:** 5/5 return `BOOL`, 0 `Win32ErrorHandler`, 0 `CheckReturn`, and **0 `_Check_return_` on the 5 prototypes**;
-`ShutdownBlockReasonDestroy`'s `FALSE` distinguishes `ERROR_SHUTDOWN_IN_PROGRESS` from `ERROR_NOT_FOUND`, so the
-session-28 answer-shaped-`BOOL` caution applies. `:11` includes `../returncheck.h` and uses none of it - **T7 36 -> 37**.
-**Build note (recorded in `registers/u6.md`, no new register):** `kernel32.h:92` names `PUNWIND_HISTORY_TABLE`, which the
-SDK typedefs only under `#if defined(_AMD64_)||defined(_ARM_)||defined(_ARM64_)` (`winnt.h:21939`-`:21963`), so that one
-header line makes **93 of the 106 api_layer TUs fail with C2061 on x86** (`tmp/_tmp_s31_x86_apiall_s31.txt`, digest
-`tmp/_tmp_s31_x86_digest_s31.ps1`); the 13 survivors are the library glue TUs, and `kerrorhandling.cpp:104` then fails with
-C2065 `'TargetGp': undeclared identifier`. The same x86 blind spot is what kept U6's stack corruption invisible until the
-x86 probe caught it, and it is what hid this TU's C2373 pair from 30 sessions of x64-only gates.
-**Gate:** single TU `cl_exit=0` (`tmp/_tmp_compile_one.ps1`); library `tmp/_tmp_cl_all_s31c.log` **38 echoes / 0
-diagnostics**, dated by `.obj` freshness (all 38 newer than the edited source). Census unchanged: 428 bindings, 428
-lowercase `user32` module tokens, call-parens 421 tight / 0 spaced, this TU contributes 0 spaced `Call< ` sites (U14 frozen,
-D15). Narrative `archive/tu/systemshutdown.md`.
-**Pre-flags for the next TU (`text.cpp`, 44 lines / 2,028 B, `user32.h:567`-`:571` under `//Font and Text functions`, 4
-members `DrawTextT`, `DrawTextExT`, `GetTabbedTextExtentT`, `TabbedTextOutT`):**
-- **All 4 bindings are `qor_pp_useswinapiAW` and all 4 stems are A/W-only with no bare export**: `DrawTextA` DB `00036A30`
-  / `DrawTextW` DE `00024390`, `DrawTextExA` DC `00053630` / `DrawTextExW` DD `00023E50`, `GetTabbedTextExtentA` 1CB / W
-  1CC, `TabbedTextOutA` 3AB / W 3AC; a word-boundary walk of the export table prints **`DrawText`, `DrawTextEx`,
-  `GetTabbedTextExtent`, `TabbedTextOut` all count=0** - `AW` is D13-correct and P6 cannot arise (unlike `CallMsgFilter` /
-  `BroadcastSystemMessage`).
-- **The bare names exist only as SDK macros or a managed inline**: `#define DrawText DrawTextA` (`winuser.h:8271`,
-  `!UNICODE`) plus `#if defined(_M_CEE)` `__inline int DrawText(` at `:8274`-`:8278`, while `DrawTextEx`,
-  `GetTabbedTextExtent` and `TabbedTextOut` have **0 SDK declarations**. The binding macro stringizes the pasted name, so
-  the macro never expands there - but consumers see the macro, which is a U26 include-order question for these 4 names.
-- **`user32.h:571` spells the parameter type `CONST::LPINT`** (no space) where `:570` uses `CONST LPINT`, and `text.cpp:36`
-  copies `CONST::LPINT` in the head but `CONST ::LPINT` in its `Call< >` list - a U14(a)-family token-spacing site,
-  cosmetic only (U14 itself is frozen by D15).
-- **Hygiene:** longest line **175**, 3 comment lines, **no contract block** - add one. Parse signatures with
-  `_tmp_sigcmp.ps1 -Tu text.cpp -First 568 -Last 571` (the section head is `:567`; `-First 655` lands in
-  `//Authorization functions` and parses nothing).
-- **Return policy (U1/U2):** `int`, `int`, `DWORD`, `LONG`; `DrawText` returns the text height and `DrawTextEx` a line
-  count or error code, so test the session-27 rule ("only sound where the failure value is not also a legal success value")
-  against 0 before any check idea. 0 checks present, and `:11` includes `../returncheck.h` unused - **T7 37 -> 38** if left.
-- **Expect U16 traffic:** the four prototypes sit at `winuser.h:8248`, `:8260`, `:8306`, `:8320`, `:8448`, `:8460`, `:8478`,
-  `:8487` - region-walk the guards with the depth-counted walk, never a backward scan (`winuser.h:4121`).
+The close-out notes for session 31 (`systemshutdown.cpp`) and session 33 (`window.cpp`) are kept verbatim in
+`archive/session-log-notes-31-33.md` - moved on 4 Nov 2026 when this file passed the 40 KB ceiling. Moved block
+`SHA256 
+1F2CF8F8522031B1D70A99B73DB58AB544DF0E1792A086176701F81A487D7540
+`; rejoin hash-verified before the move. Rows 31 and 33 of the table above are unaffected.
+

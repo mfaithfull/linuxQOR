@@ -147,3 +147,15 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   header is the only thing that would make a future check compile, and removing includes is a folder-wide decision
   (same stance as the other 35 sites). Remaining dead includes after this TU: 36 of the 37 that include it; the one real
   consumer is `processthread.cpp` (3 sites) plus `errorhandling.cpp` (1).
+
+- **T7 re-measured 4 Nov 2026 (session 33, `window.cpp`) - unchanged at 37 includes / 35 dead, and the arithmetic in the
+  entry above is restated to settle it.** `tmp/_tmp_rcinclude_scan.ps1` run over the folder after this session prints
+  `sources scanned: 38`, `includes ../returncheck.h: 37` (all but the glue `winqor_api_user.cpp`), `TUs with a real code
+  hit: 2` (`processthread.cpp` x3 at `:85`,`:94`,`:110`; `errorhandling.cpp` x1 at `:81`) and
+  `include-without-use: 35`. So the folder figure has been **35 dead since session 30** and the "35 -> 36" line above
+  counts one TU twice (`scrollbar.cpp` was already inside the 35 in the head text) - the two numbers describe the same
+  37-include population. `window.cpp:11` is in that population (0 `Win32ErrorHandler`, 0 `CheckReturn` in its 85 bodies,
+  `tmp/_tmp_s33_verify.ps1`) and was **not** removed: the standing policy is that the deletion waits for one folder-wide
+  go-ahead, not 38 per-TU passes. Gate for whoever executes it stays the same (38/38 at `/W4` + re-run of the scan,
+  expect `includes: 2`, `include-without-use: 0`).
+

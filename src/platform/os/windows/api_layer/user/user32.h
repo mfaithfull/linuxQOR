@@ -185,10 +185,10 @@ namespace qor { namespace win { namespace api {
         static BOOL IsWindowVisible(HWND hWnd);
         static BOOL IsZoomed(HWND hWnd);
         static BOOL LockSetForegroundWindow(UINT uLockCode);
-        static void LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint);
+        static BOOL LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint);
         static BOOL MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
         static BOOL OpenIcon(HWND hWnd);
-        static void PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint);
+        static BOOL PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint);
         static HWND RealChildWindowFromPoint(HWND hwndParent, ::POINT ptParentClientCoords);
         static UINT RealGetWindowClassT(HWND hwnd, LPTSTR pszType, UINT cchType);
         static BOOL RegisterShellHookWindow(HWND hWnd);
@@ -197,7 +197,7 @@ namespace qor { namespace win { namespace api {
         static HWND SetParent(HWND hWndChild, HWND hWndNewParent);
         static BOOL SetProcessDefaultLayout(DWORD dwDefaultLayout);
         static BOOL SetProcessDPIAware(void);
-        static BOOL SetWindowPlacement(HWND hWnd, ::WINDOWPLACEMENT* lpwndpl);
+        static BOOL SetWindowPlacement(HWND hWnd, const ::WINDOWPLACEMENT* lpwndpl);
         static BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
         static BOOL SetWindowTextT(HWND hWnd, LPCTSTR lpString);
         static BOOL ShowOwnedPopups(HWND hWnd, BOOL fShow);
@@ -205,7 +205,7 @@ namespace qor { namespace win { namespace api {
         static BOOL ShowWindowAsync(HWND hWnd, int nCmdShow);
         static BOOL SoundSentry(void);
         static void SwitchToThisWindow(HWND hWnd, BOOL fAltTab);
-        static WORD TileWindows(HWND hwndParent, UINT wHow, ::RECT* lpRect, UINT cKids, const HWND* lpKids);
+        static WORD TileWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids);
         static BOOL UpdateLayeredWindow(HWND hwnd, HDC hdcDst, ::POINT* pptDst, ::SIZE* psize, HDC hdcSrc, ::POINT* pptSrc, COLORREF crKey, ::BLENDFUNCTION* pblend, DWORD dwFlags);
         static BOOL UpdateLayeredWindowIndirect(HWND hwnd, const ::UPDATELAYEREDWINDOWINFO* pULWInfo);
         static HWND WindowFromPhysicalPoint(::POINT Point);

@@ -4,10 +4,10 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 
 | File | Lines | Was session-log-archive.md |
 |---|--:|---|
-| `archive/history.md` | 90 | 1334-1394 |
+| `archive/history.md` | 119 | 1334-1394 |
 | `archive/preamble.md` | 7 | 1-5 |
 | `archive/prescan-help.md` | 121 | 1098-1216 |
-| `archive/README.md` | 43 | - |
+| `archive/README.md` | 50 | - |
 | `archive/session-log-1-8.md` | 19 | - |
 | `archive/session-log-17-19.md` | 11 | - |
 | `archive/session-log-20-22.md` | 11 | - |
@@ -15,8 +15,9 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/session-log-25-26.md` | 10 | - |
 | `archive/session-log-27-28.md` | 103 | - |
 | `archive/session-log-9-16.md` | 17 | - |
-| `archive/session-log.md` | 289 | 1217-1333 |
-| `archive/session-log-notes-24-30.md` | 137 | - |
+| `archive/session-log-notes-24-30.md` | 136 | - |
+| `archive/session-log-notes-31-33.md` | 140 | - |
+| `archive/session-log.md` | 233 | 1217-1333 |
 | `archive/tooling-13-20.md` | 66 | - |
 | `archive/tooling-21-26.md` | 116 | - |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
@@ -45,4 +46,5 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/resource.md` | 101 | - |
 | `archive/tu/scrollbar.md` | 97 | - |
 | `archive/tu/systemshutdown.md` | 67 | - |
-| `archive/tu/text.md` | 92 | - |
+| `archive/tu/text.md` | 93 | - |
+| `archive/tu/window.md` | 113 | - |

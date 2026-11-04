@@ -127,3 +127,26 @@ TUs still to be reviewed:
   `Resource` definitions are unqualified free functions (U11). Re-run in every session; a new row is still a
   P1-class finding until disproved.
 
+
+- **P1 CLOSED 4 Nov 2026 (session 33, `window.cpp`) - 0 unresolvable bindings left in the folder.** The sole survivor the
+  entry above names (`window.cpp:124 CreateWindow`) was fixed in that TU's own session. Two independent pre-fix
+  measurements agreed: `/EP` emitted 85 binding literals of which **1** is not in the export table
+  (`MISSING CreateWindowW`, `tmp/_tmp_win_ppclass_s33_pre.txt`), and the folder census printed
+  `FAIL window.cpp:124 AW(user32, CreateWindow) CreateWindowA=False CreateWindowW=False`
+  (`tmp/_tmp_p1census_pre_s33.txt` - 428 bindings, **1** unresolvable). Post-fix: 85 binding lines, **84 distinct names,
+  0 not in the export table**, 0 `…WW`, 0 `…T`, module literal `user32` 85/85 (`tmp/_tmp_win_pp_s33.bat` ->
+  `tmp/_tmp_win_pp_s33.txt`, classified by `tmp/_tmp_win_ppclass_s33.ps1` -> `tmp/_tmp_win_ppclass_s33_final.txt` and
+  `_post.txt`), and the folder census is **428 bindings / 0 unresolvable** (`tmp/_tmp_p1census_final2_s33.txt`).
+  The class is now closed with a fact worth keeping: **`CreateWindow` and `CreateWindowW` are not exports and never can
+  be** - `winuser.h:4464`/`:4468` define them as *function-like macros* forwarding to `CreateWindowExA/W` with
+  `dwExStyle = 0`, and the binding macro stringizes the pasted name before any macro can expand (G1), so every spelling
+  of that stem is a P1. `CreateWindowT` now binds `qor_pp_useswinapiAW(user32, CreateWindowEx)` and passes the literal
+  `0` itself (`window.cpp:189-200`). With **P2** closed in session 23 and **P5** at 0 live instances, **no binding defect
+  class remains open anywhere in this library**.
+- **P5 re-measured 4 Nov 2026 (session 33): 1 -> 2 rows, and the new row is this session's own deliberate alias.**
+  `tmp/_tmp_wrong_stem_scan.ps1` -> `tmp/_tmp_wrongstem_final_s33.txt`: 38 files, 428 `User32::` definitions, 428 bindings
+  scanned, **mismatched 2** - `cursor.cpp:64 CopyCursorT -> CopyIcon` (P3's correct-binding/odd-name case) and
+  `window.cpp:197 CreateWindowT -> winapiAW(user32, CreateWindowEx)` (the alias created by the P1 fix above). Both are
+  known-benign, so **P5 keeps 0 live instances**; a later session that sees exactly these two rows reads them as clean,
+  not as a finding.
+
