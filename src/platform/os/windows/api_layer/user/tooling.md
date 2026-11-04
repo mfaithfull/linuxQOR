@@ -285,3 +285,24 @@ write pass** (`_tmp_s30_digest.ps1` -> `_tmp_s30_digest.txt`, then `_s30_*.txt` 
 sessions should keep that shape, and should slice `gotchas.md` (30 KB) and freeze the closed per-TU rows of
 `registers/u16.md` (27 KB) and `registers/u19.md` (26 KB) the way `tooling.md` was sliced in sessions 29-30.
 `archive/tooling-21-26.md` is this session's slice of `tooling.md:73-184`.
+
+
+## Added 4 Nov 2026 (session 32, `text.cpp`)
+
+| Instrument | What it prints | Notes |
+|---|---|---|
+| `tmp/_tmp_s32_preflags.ps1` | per-TU const-site spellings, binding macros, binding literals, guard/version lines for a TU | generic; take `-Tu`-style paths inline |
+| `tmp/_tmp_text_pp_s32.bat <src> <out.txt> <out.err>` | `cl /EP /P` capture of one TU (the 453k-line stream) | never print it; feed it to the neutrality diff |
+| `tmp/_tmp_s32_neutral.ps1` (+`_neutral2.ps1` for the post2 capture) | line-count delta, **non-blank difference count**, and the binding-literal check between two `/EP` captures | the comment-edit gate; see `gotchas.md` on naming captures |
+| `tmp/_tmp_s32_pplits.ps1` | `User32` token split (code vs comment) for one file set at a time | the file-split regex cannot take two overlapping `-InFile` sets |
+| `tmp/_tmp_s32_guards.ps1` | `#if`/`#endif` ranges and guard names around a TU's members (`tmp/_tmp_s32_guards.txt`) | source of the `NODRAWTEXT` and `WINVER >= 0x0400` findings |
+| `tmp/_tmp_s32_tcallers.ps1` | unqualified definition heads + caller census across `src` for a stem list | found `windowproperties.cpp:173` (U12/U13) |
+| `tmp/_tmp_s32_family.ps1` | per-file member counts (T-suffixed vs not), bound stems, macro-vs-direct binding | used for the queue/family cross-check |
+| `tmp/_tmp_s32_names.ps1` | **parameter-name and type comparison, definition vs SDK declaration**, with the corrected const matcher | supersedes `_tmp_sigcmp.ps1` for const typedefs (`gotchas.md`) |
+| `tmp/_tmp_s32_dbg.ps1` | small helper that prints the intermediate match sets the naming scan used | debugging only |
+| `tmp/_tmp_s32_u23_probe.cpp` / `_neg.cpp` + `tmp/_tmp_s32_u23_probe.bat` | positive/negative probe that proves `CONST LPINT` == `INT * const` | the U23 evidence; run the negative too |
+| `tmp/_tmp_s32_gatecheck.ps1` | gate-log TU echoes, error/warning lines, **stale or missing `.obj`**, `text.cpp` vs `text.obj` freshness | the only sound way to date the gate (`gotchas.md`) |
+| `tmp/_tmp_s32_queue_audit.ps1` | for each of the 38 `.cpp` files, the number of session-log rows naming it | **re-derives the Queue table**; it exposed the duplicated `text.cpp` row and the missing `windowprocedure.cpp` row |
+| `tmp/_tmp_s33_preflags.ps1` | first-pass counts for `window.cpp` | **broken head regex - reported 0 heads; do not trust it**, use the direct `Select-String` counts in the session-33 pre-flags |
+| `tmp/_tmp_s33_prebind.ps1` | every `window.cpp` binding classified `bare-export` / `AW-macro-needed` / `NEITHER` against the export table | run it before reading its `.txt`; the first output was the pre-fix all-`NEITHER` run |
+| `tmp/_tmp_s32_slice_log.ps1` | **the reference record splice**: measures a line range, verifies `head + block + tail == original` by SHA256 **before** writing, writes the slice with the block hash in its header, leaves a pointer, prints both sizes | use this whenever a record file passes ~40 KB; run it, then re-point `archive/README.md` and the `status.md` locator |

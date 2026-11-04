@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 4 Nov 2026 (session 31 `systemshutdown.cpp` CLOSED - **32 of 38 TUs reviewed**. 5 wrappers, **1 defect
+Last updated: 4 Nov 2026 (session 32 `text.cpp` CLOSED - **33 of 38 TUs reviewed**.
 class fixed**: the folder's only two `WINAPI`-qualified `User32::` definition heads (`ShutdownBlockReasonDestroy`/`Query`)
 disagreed with the unmarked header declarations, which makes the TU **ill-formed for x86** (`C2373` x2) and a **no-op for
 x64** - proved by a caller probe with one identical `__cdecl` decoration on both sides, `dumpbin /disasm` byte-identical

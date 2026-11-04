@@ -271,3 +271,15 @@ D15); **T7 36 -> 37**. New measurement for the record: x86 is not buildable tree
 carries a 50-line contract block (`:16`-`:65`), leaving **5 unreviewed TUs** without one (`text` 44, `windowclass` 114,
 `windowprocedure` 30, `windowproperties` 51, `window` 615) plus the glue TU.
 
+
+
+## Measured 4 Nov 2026 (session 32) - `window.cpp` wrapper count corrected: 50 -> **85**
+
+The census row for `window.cpp` (and the "50 wrappers / 270 lines" figure carried in several sessions' pre-flags) is
+wrong. Direct counts on the file (4 Nov 2026): **615 lines**, `qor_pp_fcontext` = **85**, qualified definition heads
+(`^    ... User32::Name(`) = **85**, binding macros = **85** (10 `qor_pp_useswinapiAW` + 75 direct
+`qor_pp_useswinapi`), `Library::Call<` = **82** - so **3 wrapper bodies have no `Library::Call<` line** and session 33
+must account for them. The file has only **3 comment lines**, i.e. no closure block yet. Consequence for the folder-wide
+totals: every per-TU wrapper count for the remaining five TUs (`window.cpp`, `windowclass.cpp`, `windowprocedure.cpp`,
+`windowproperties.cpp`, `winqor_api_user.cpp`) must be re-measured with the same three counters before the census is
+closed, and the binding-site census (428 at session 30) is a **floor**, not a total, until `window.cpp`'s 85 are added.

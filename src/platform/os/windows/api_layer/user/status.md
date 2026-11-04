@@ -1,9 +1,7 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 4 Nov 2026 - **session 31 (`systemshutdown.cpp`) CLOSED; session 32 `text.cpp` is the current TU** (its
-pre-flags are the last block of this file, and the full version is the hand-off at the end of
-`archive/session-log.md`). HEAD carries **sessions 1-30** (`ed4eaf8c` = 28, `d18d98ac` = 29, session 30 committed at its
-close); session 31 is committed at its own close; `user32.h` untouched at 695 lines throughout. Review of
+Last updated 4 Nov 2026 - **session 32 (`text.cpp`) CLOSED; session 33 `window.cpp` is the current TU** (its
+pre-flags are the last block of this file). Review of
 `src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for
 correctness, consistency, safety, UB and conformance to the api_layer conventions. Protocol: **one translation unit per
 session** - the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are
@@ -30,7 +28,20 @@ the consumed pre-flags (that detail belongs in `archive/tu/` and the session-log
 Slice by exact line range, hash-verify the rejoin, re-point the indexes, then re-run the locator generator + the splice.
 
 ## Live state (4 Nov 2026)
-- **32 of 38 TUs reviewed** (sessions 1-31); the 6 left are the Queue table below. **Session 31 (`systemshutdown.cpp`)
+- **33 of 38 TUs reviewed**; the 5 left are the Queue table below. **Session 32 (`text.cpp`) CLOSED 4 Nov 2026** - 4
+  wrappers (the whole `user32.h:567` *Font and Text functions* section), **0 defects, 0 code edits** (comment block only;
+  neutrality proved by `/EP`: 154,296 non-blank lines before and after, +80 comment lines, 0 non-blank differences).
+  It is the folder's **only TU where all four bound stems have their SDK A/W macro live at the binding site**
+  (`winuser.h:8269`/`:8331`/`:8470`/`:8494`): `qor_pp_useswinapiAW` pastes `W` onto a **bare** name before that name can
+  expand, so `/EP` shows `"DrawTextW"`, `"DrawTextExW"`, `"GetTabbedTextExtentW"`, `"TabbedTextOutW"` - 0 bare literals,
+  0 of the non-existent `…WW` exports, i.e. P1/P2/P6 **correct by construction** (the G1 case). 4/4 `decl==def`
+  (0 U4/U11/U13/U17), **0 U18 traffic**, and **U23 gains a second class**: `CONST LPINT` on a pointer parameter is
+  `INT* const` in a member-function parameter list, not the SDK's `CONST INT *` (probe-proved - the whole tab-stop array
+  is writable through `GetTabbedTextExtentT`/`TabbedTextOutT`), plus the `DT_MODIFYSTRING` `_Inout_` buffer contract the
+  `LPCTSTR` parameter hides. U16: 4/4 DESKTOP, 1/4 version-gated (`DrawTextExT` inside `#if(WINVER >= 0x0400)`), new
+  guard name `NODRAWTEXT`. U25 0, U19 0 instances (the `DT_*` family is comment-only in-tree), U15 0 (D14), U26 0 (no
+  mirrored struct); all four stems have live out-of-folder consumers -> 0 wrong-stem rows, 0 dead exports.
+- **Session 31 (`systemshutdown.cpp`)
   CLOSED 4 Nov 2026** - 5 wrappers, **1 defect class fixed**: `:37`/`:44` were the folder's only two `WINAPI`-qualified
   `User32::` definition heads, disagreeing with the unmarked declarations at `user32.h:605`/`:606`, which makes the TU
   **ill-formed for x86** (`C2373` x2) and a **no-op for x64** (same `__cdecl` decoration on both sides of a caller probe,
@@ -53,14 +64,15 @@ Slice by exact line range, hash-verify the rejoin, re-point the indexes, then re
   0x0501 gate + the **empty** `#if`/`#endif` at `winuser.h:4121`; **T7**). `archive/tu/` narratives cover sessions 1-15 and
   21-31; sessions 16-20 have their narrative in the row only.
 
-## Queue - 6 TUs left, alphabetical (lines = on-disk physical lines, measured 4 Nov 2026)
+## Queue - 5 TUs left, alphabetical (lines = on-disk physical lines, re-measured 4 Nov 2026)
+Repaired 4 Nov 2026 by `tmp/_tmp_s32_queue_audit.ps1` (for each of the 38 `.cpp` files, count the session-log rows that
+name it): exactly five TUs have **no** session row. The previous table carried a **duplicated `text.cpp` row**.
 
 | # | TU | lines | # | TU | lines |
 |--:|---|--:|--:|---|--:|
-| 32 | `text.cpp` | 44 | 35 | `windowproperties.cpp` | 51 |
-| 32 | `text.cpp` | 44 | 35 | `windowproperties.cpp` | 51 |
-| 33 | `windowclass.cpp` | 114 | 36 | `winqor_api_user.cpp` (glue) | 14 |
-| 34 | `windowprocedure.cpp` | 30 | 37 | `window.cpp` | **615** |
+| 33 | `window.cpp` | **615** | 35 | `windowproperties.cpp` | 51 |
+| 34 | `windowclass.cpp` | 114 | 36 | `windowprocedure.cpp` | 30 |
+| 37 | `winqor_api_user.cpp` (glue) | 14 | | | |
 
 868 lines remain, **615 of them in one TU** (`window.cpp`, last in the queue). What is left of the binding census is
 `window.cpp:124 CreateWindow` (`tmp/_tmp_p1census_post_s28.txt`: 428 bindings, **1** unresolvable); **P2, P5 and U14 are
@@ -176,43 +188,45 @@ session 28's, 29's and 30's are byte-identical - so date one by `tmp/obj/<tu>.ob
 **all-libraries gate** `tmp/_tmp_cl_all_apiall_u6.bat` (106 sources), meaningful only as a diff against a pre-fix run
 (pre-existing `C1083` at `opengl/wgl.cpp:31` plus 165 warnings on HEAD).
 
-## Pre-flags for the current TU (rolling - keep this under ~40 lines)
+## Pre-flags for session 33 (`window.cpp`) - measured 4 Nov 2026
 
-**Consumed:** session 31's pre-flags are superseded by its row + `archive/tu/systemshutdown.md`. Held: 5/5 bare single
-exports, 0 callers of any class (D14), the T7 dead include, the misspelled label. Overturned: the **U16 lead** ("highest
-floor yet, likely `0x0601`") - the `ShutdownBlockReason` trio has **no floor**; and the `WINAPI` singleton was **not** "at
-best style" - for x86 it is `C2373` ill-formedness (fixed), for x64 a no-op. Unpredicted: the x86 buildability wall
-(`kernel32.h:92`, 93 of 106 api_layer TUs). Pre-flags are leads, never facts.
+**This is the largest TU of the review and the census count for it is wrong.** `window.cpp` is **615 lines** with
+**85 wrappers**, not the 50 in `registers/census.md`: `qor_pp_fcontext` = 85, qualified definition heads
+(`^    ... User32::Name(`) = 85, binding macros = 85, `Library::Call<` = **82** - so **3 wrapper bodies have no
+`Library::Call<` line**; find them first (multi-line `Call<` site, a body that does not call, or a comment-adjacent
+head). The file has only **3 comment lines**, i.e. no closure block yet. Fix the census row in the same session.
 
-**Session 32 `text.cpp`** (44 lines, 2,028 B; 4 wrappers declared `user32.h:568`-`:571` inside the `:567`
-`//Font and Text functions` section: `DrawTextT`, `DrawTextExT`, `GetTabbedTextExtentT`, `TabbedTextOutT`). Measured 4 Nov
-with the session-31 scan set - the full hand-off is the last block of `archive/session-log.md`.
-- **All 4 bindings are `qor_pp_useswinapiAW`, and all 4 stems are A/W-only with no bare export**: `DrawTextA` DB /
-  `DrawTextW` DE, `DrawTextExA` DC / `DrawTextExW` DD, `GetTabbedTextExtentA` 1CB / W 1CC, `TabbedTextOutA` 3AB / W 3AC;
-  a word-boundary walk of `tmp/_tmp_user32_exports.txt` prints **bare `DrawText`, `DrawTextEx`, `GetTabbedTextExtent`,
-  `TabbedTextOut` all count=0**, so `AW` is D13-correct and **P6 cannot arise** (unlike `CallMsgFilter`/
-  `BroadcastSystemMessage`). Expect **0 P1** - re-run `_tmp_wrong_stem_scan.ps1` anyway (it found `cursor.cpp:64` in
-  session 31's re-run).
-- **The bare names exist only as SDK macros / a managed inline**: `#define DrawText DrawTextA` (`winuser.h:8271`,
-  `!UNICODE`) and `#if defined(_M_CEE)` `__inline int DrawText(` at `:8274`-`:8278`; `DrawTextEx`, `GetTabbedTextExtent`
-  and `TabbedTextOut` have **0 SDK declarations**. The binding macro stringizes the pasted name so the macro never expands
-  in the binding - but **consumers see the macro**: a U26 include-order question for these 4 `*T` signatures.
-- **`user32.h:571` spells the parameter type `CONST::LPINT`** (no space) where `:570` writes `CONST LPINT`, and
-  `text.cpp:36` copies `CONST::LPINT` in the head but `CONST ::LPINT` inside its `Call< >` list - a U14(a)-family
-  token-spacing site, cosmetic; U14 itself is frozen (D15) - record, do not re-format the frozen population.
-- **Signatures:** parse with `_tmp_sigcmp.ps1 -Tu text.cpp -First 568 -Last 571` (`-First 655` lands in
-  `//Authorization functions` and parses 1 declaration only). Returns `int`, `int`, `DWORD`, `LONG` - test the session-27
-  rule against 0 (`DrawText` returns the text height, `DrawTextEx` a line count or error) before any check idea; 0 checks
-  present, and `:11`'s unused `../returncheck.h` makes **T7 37 -> 38**.
-- **U16:** prototypes at `winuser.h:8248`, `:8260`, `:8306`, `:8320`, `:8448`, `:8460`, `:8478`, `:8487` - expect the
-  `#if(WINVER >= 0x0400)` region; depth-counted walk only (`tmp/_tmp_s31_measures.ps1` now prints declaration heads with
-  their `WINUSERAPI`/`WINAPI` tokens too).
-- **Hygiene:** longest line **175**, 3 comment lines, **no contract block** - add one; 0 TAB/trailing space expected
-  (verify - the pattern in the session-31 one-liner was malformed).
+**Binding is where the risk is (start here).** 10 `qor_pp_useswinapiAW` + **75 direct `qor_pp_useswinapi`** (unlike every
+reviewed TU so far - `text.cpp` was 4/4 AW). `tmp/_tmp_s33_prebind.ps1` (re-run it; its saved `.txt` is the pre-fix
+all-`NEITHER` run, see `gotchas.md`) classifies against the export table:
+- `direct | bare-export` **75/75** - every directly-bound stem is a real user32.dll export, so those 75 are P1-clean
+  **by fact**, not by assumption. It includes `358:InternalGetWindowText` (an undocumented export the layer wraps).
+- `AWmacro | AW-macro-needed` 6 - `132:CreateWindowEx`, `197:FindWindow`, `204:FindWindowEx`, `337:GetWindowText`,
+  `344:GetWindowTextLength`, `533:SetWindowText` bind only because the SDK A/W macro rewrites the name (the G1 case);
+  confirm the macro is live at each site (partition + `UNICODE` conditions), which is exactly the P2 test.
+- `AWmacro | NEITHER` **1 - `124:CreateWindow`**, and this is almost certainly the folder's **last unresolvable P1
+  binding**: user32.dll exports `CreateWindowExW` but **no** `CreateWindow`/`CreateWindowW` (the SDK's `CreateWindow` is
+  an inline `winuser.h` function), so `_NAME##W` cannot bind. P1's post-`mouse.cpp` count was "11 -> 1"; check whether
+  that 1 is here, and confirm with `dumpbin /exports` + `cl /EP` on the TU rather than from the register.
+- `AWmacro | bare-export` 3 - list them; if a bare export also has an A/W macro live, the AW macro is rewriting a name
+  that would have bound anyway (P2-adjacent, cosmetic).
 
-## Deferred by user decision (4 Nov 2026, session 31 close) - do these first next session
+Other leads to carry in: **U12/U13/U18** - `windowproperties.cpp:173` unqualified `SetLayeredWindowAttributes`
+(`registers/u12.md:18`) is double-gated (`WINVER >= 0x0600` :51-:205 and `_WIN32_WINNT >= 0x0600` :118-:197), so first
+establish whether that TU compiles it at all, then compare `DWORD` against the SDK's `BOOL` (the folder's first U18
+instance, `windowproperties.cpp:211`, is in the same file). **U17**: the earlier family scan flagged non-`T` names in
+this range (`CallWndRetProc`, `GetCaretBidiMode`, `SetCaretBidiMode`, `GetWindowRgnBox`, `TrackPopupMenu`) - re-measure
+per file; D10b says record, do not rename. **U19**: `window.cpp` carries the `TrackPopupMenu` BYPASS split lead, but
+`_tmp_u19_tlayer_s26.ps1` needs the comment-stripping fix from `gotchas.md` before its flag counts are usable.
+**U26**: `TagRECT` (`window.cpp:235` region, `TagRECT:BOOL:HDWP:HPAINTBUFFER:INT:INT:BOOL`) is the mirror question.
+**U14(b)**'s three deducing `Call<>` sites and **U27**'s `SetScrollInfo` question are still parked here (D15 froze U14's
+tally; the three sites are not part of it). `tmp/_tmp_s33_preflags.ps1` is **broken** (reported 0 heads) - do not run it;
+the numbers above came from direct `Select-String` counts, recorded in `tooling.md`.
 
-1. **Slice `archive/session-log.md`** (408 lines / **41.1 KB**, over the ceiling): rows 27-31 verbatim ->
-   `archive/session-log-27-31.md`, hash-verify the rejoin, re-point this file's table row and `archive/README.md`.
-   `tooling.md` also still needs the session-31 instruments added (`_tmp_s31_measures.ps1`,
-   `_tmp_s31_cite_audit_s31.ps1`, `_tmp_s31_x86_apiall_s31.bat` + digest, `_tmp_s31_winapi_s31.bat` + probe).
+### Correction to a long-standing instrument (found here)
+`_tmp_sigcmp.ps1`'s const test matched only the **first** `CONST`, so it **missed `CONST LPINT` typedef-const spellings
+entirely**. `_tmp_s32_names.ps1` fixes it with `(const[ ]+[A-Za-z_][A-Za-z0-9_]*\*+)`. Consequence: any earlier
+U18/U25 "0 divergences" claim resting on that test covers only `CONST X*` / `CONST::X*`, **not** `CONST LPINT`. Also
+repaired this session: the **Queue table** (duplicated `text.cpp` row, missing `windowprocedure.cpp`, `window.cpp` at
+270 when it is **615** lines) - audit instrument `tmp/_tmp_s32_queue_audit.ps1`, which is now the way to re-derive the
+queue instead of trusting the table.
