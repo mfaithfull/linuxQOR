@@ -57,7 +57,7 @@ the instrument caveats moved out of this file into `tooling.md` / `gotchas.md`; 
 ## Also in this folder
 
 - `tooling.md` - the `tmp/` instrument index: what each scan prints, when it was added, which TU it was built for.
-- `gotchas.md` - referenced from `tooling.md`: instrument caveats and the traps in editing these records from PowerShell.
+- `gotchas.md` (index) + `gotchas/` - referenced from `tooling.md`: the instrument caveats and the traps in editing these records from PowerShell, one file per kind, routed by the trigger block in the index.
 - `status.md` - the per-session boot brief; it owns the record's file index, the register locator and the gate definition.
 ## Session start-up cost (rules adopted 3 Nov 2026, session 30)
 

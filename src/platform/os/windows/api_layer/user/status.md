@@ -15,14 +15,14 @@ found; anything that changes library-wide behaviour or needs a decision goes in 
 | `registers/<file>.md` - **one register entry per file**, index in `registers/README.md` | verbatim register text: P1-P5 `prescan.md`, P6+U27 `p6-u27.md`, G1-G6 `ground-rules.md`, U1-U26 `u<n>.md`, T1-T5 `tasks.md`, totals `census.md` | only the ids named by the locator below or by the current TU's pre-flags |
 | `method.md` | the per-TU review method: the numbered steps one session runs | every session, before it starts |
 | `tooling.md` | the `tmp/` instrument index - what each scan prints, when it was added, for which TU | before running an instrument or the gate |
-| `gotchas.md` | the caveats those instruments carry and the traps in editing these records (indexed from `tooling.md`) | before acting on any instrument flag |
+| `gotchas.md` (index) + `gotchas/<kind>.md` | instrument blind spots, evidence integrity, record-editing traps - the trigger block in `gotchas.md` names the file | when a trigger row matches the task at hand |
 | `archive/tu/<tu>.md` - **one narrative per TU**, index in `archive/README.md` | that TU's narrative + verdict detail | only the TU you just reviewed |
 | `archive/session-log.md` | the session-log table (rows 29-30) + per-session closure notes; older rows in the six `archive/session-log-<range>.md` slices | only while writing the row for the TU you just reviewed |
 | `archive/history.md`, `archive/prescan-help.md` | consolidation/split history, consumed `help.cpp` pre-flags | never, unless auditing the record itself |
 
 The rule: **findings, narratives and register text never go in this file.** New finding -> the register file the locator
 names; new TU narrative -> `archive/tu/<tu>.md`; new row -> `archive/session-log.md`; new instrument -> `tooling.md`, new
-caveat -> `gotchas.md`; folder-wide measures -> append to the **end** of `registers/census.md` (append-only). Hard rule:
+caveat -> the `gotchas/` file its trigger names (index `gotchas.md`); folder-wide measures -> append to the **end** of `registers/census.md` (append-only). Hard rule:
 **no record file over ~40 KB**, this file under 220 lines / 22 KB - when it is over, compress the **Live state** bullets and
 the consumed pre-flags (that detail belongs in `archive/tu/` and the session-log row), never the locator.
 Slice by exact line range, hash-verify the rejoin, re-point the indexes, then re-run the locator generator + the splice.

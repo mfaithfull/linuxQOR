@@ -88,3 +88,32 @@ session-21/22/24/25 close-out notes, `registers/u26.md`) are left as written - t
 Any close-out audit that enumerates record files for the ceiling check must now include `tooling.md` and `gotchas.md`;
 `tmp/_tmp_s25_verify.ps1` still names only `method.md`.
 
+
+## How `gotchas.md` was split (4 Nov 2026) - the index stays, the caveats move to `gotchas/`
+
+`gotchas.md` had reached 393 lines / 39,677 B - the largest live record file in the folder - and sessions 29-30 had
+recorded slicing it as the next size-hygiene step (`tooling.md`, session-30 note). It is now an **index** in the shape of
+`memory-bank/gotchas.md`: YAML frontmatter (`Type: Index`) carrying `Trigger:` / `File:` pairs, then the routing notes.
+The caveats live in `gotchas/`, one file per kind:
+
+- `gotchas/instrument-flags.md` - the standing instrument blind spots (was the "Instrument caveats" section).
+- `gotchas/evidence-integrity.md` - gate logs, `/EP` captures, verifier output (was "Evidence integrity").
+- `gotchas/record-editing.md` - the traps in editing these records from PowerShell (was "Editing these records (and any
+  long text file) from PowerShell": sessions 21-27).
+- `gotchas/sessions-28-30.md` and `gotchas/sessions-31-32.md` - the session blocks of sessions 28-32, **kept as they were
+  measured** under their own headings rather than re-sorted by kind, so every entry keeps the pass that measured it.
+
+Mechanics, same as the splits above: the pre-split file is kept at `tmp/_tmp_gotchas_presplit.md`, the sections moved by
+exact line range (`12-31`, `33-67`, `70-188`, `190-321`, `322-393`) under `tmp/_tmp_gotchas_split.ps1`, and
+`tmp/_tmp_gotchas_verify.ps1` asserts that **every non-blank line of the pre-split file appears verbatim in the union** of
+the index and the five files - 368 of 368, restated/dropped 0, snapshot SHA256
+`73BDB1E78D3C2B5E45BA2159964C12FEB3B37BB1370A110145C4CDC9ADF1D739`. Nothing was merged, reworded or dropped: the only new
+text is the index's trigger block and file table, and one provenance line at the head of each moved section. Each new file
+was re-checked for the folder format (ASCII, CRLF, final newline, no trailing whitespace, no tabs).
+
+Re-pointed: the `status.md` index row and its routing rule, the `method.md` folder list, the `tooling.md` lead-in and the
+session-30 "should slice `gotchas.md`" note. Pointers that say "see `gotchas.md`" - `tooling.md`, the registers, the TU
+narratives, the session-log slices - are left as written: that path is now the index, and the trigger block inside it
+names the file. Any close-out audit that enumerates record files for the ceiling check must now include `gotchas/*.md`;
+`tmp/_tmp_s29_sizes.ps1` and `tmp/_tmp_s25_verify.ps1` still name only `gotchas.md`.
+
