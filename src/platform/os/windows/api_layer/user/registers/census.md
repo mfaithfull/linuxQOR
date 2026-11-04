@@ -256,3 +256,18 @@
   intended lines differ each way, `"CopyImage"`/`"LoadImageW"` byte-identical); consumer probe `tmp/_tmp_res_ref_s29.cpp`
   links both members with **0** unresolved for either.
 
+## Session 31 census update (4 Nov 2026, `systemshutdown.cpp`)
+
+`systemshutdown.cpp` reviewed: 5 wrappers, **1 defect fixed** - the folder's only two `WINAPI`-qualified `User32::`
+definition heads (`:37` `ShutdownBlockReasonDestroy`, `:44` `ShutdownBlockReasonQuery`) normalized to the bare spelling the
+other 3 heads and `user32.h:602`-`:606` use; ill-formed for x86 (`C2373` x2), a no-op for x64 (identical mangled symbol and
+`dumpbin /disasm` byte-identical). Folder totals after the fix: **428 bindings, 428 lowercase `user32` module tokens, 0
+`WINAPI`-qualified definition heads (was 2), 1 unresolvable binding left** (`window.cpp:124 CreateWindow`). Signatures 5/5
+`decl==def` incl. parameter names; U4, U11, U13, U17, U18 all 0 for this TU; U16 5/5 DESKTOP, 1 version-gated
+(`LockWorkStation` `_WIN32_WINNT >= 0x0500`); U19/U15 0 sites of any class; U14 untouched (frozen 163 spaced / 265 tight,
+D15); **T7 36 -> 37**. New measurement for the record: x86 is not buildable tree-wide - **93 of 106** api_layer TUs fail on
+`kernel32.h:92` `PUNWIND_HISTORY_TABLE` (`registers/u6.md` addendum). Gate: `tmp/_tmp_cl_all_s31c.log` 38 echoes /
+0 diagnostics, all 38 objects newer than the edited source; single-TU `cl_exit=0`. Block census: `systemshutdown.cpp` now
+carries a 50-line contract block (`:16`-`:65`), leaving **5 unreviewed TUs** without one (`text` 44, `windowclass` 114,
+`windowprocedure` 30, `windowproperties` 51, `window` 615) plus the glue TU.
+

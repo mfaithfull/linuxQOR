@@ -319,3 +319,28 @@ run - both confirmed for the session-11 run.
   first entry was `_tmp_s30_digest.txt lines=2 bytes=0` - the half-written file being written into while it is being
   read. Same family as "a record file must not state its own size": exclude the output file from any scan that lists its
   own directory.
+## Session 31 (`systemshutdown.cpp`, 4 Nov 2026)
+
+- **A convention token on a member definition is a compile error on one arch only.** `C2373 "redefinition; different type
+  modifiers"` appears **only when the TU is compiled for x86**; every x64 gate in 30 sessions passed with the same source.
+  So "the folder gate is clean" is **not** evidence about calling conventions - for anything in `library.h` /
+  `qor_pp_uses*` / definition-head shape, add an x86 compile (`vcvarsamd64_x86.bat`, then `cl` with the same flags).
+  Beware: **the tree does not build for x86 at all** - 93 of 106 api_layer TUs die at `kernel32.h:92`
+  (`PUNWIND_HISTORY_TABLE` is inside `#if defined(_AMD64_)||defined(_ARM_)||defined(_ARM64_)`, `um/winnt.h:21939`), so an
+  x86 run's *baseline* is 93 failures, not 0; compare error sets against `tmp/_tmp_s31_x86_apiall_s31.txt`.
+- **`dumpbin /disasm` before/after is the cheapest convention-neutrality proof, but diff it in memory and cap the print.**
+  42,310 lines per dump; `Compare-Object` prints the whole difference set, so `Select-Object -First 12` it - and expect the
+  `Dump of file ...` header line to differ, which in a genuinely neutral change is the *only* difference.
+- **`dumpbin /symbols` separates the two halves of a convention question**: the defining object shows the member symbol as
+  `notype () External`, a caller object shows it `UNDEF`; identical decorated names on both sides proves there is no
+  dangling declaration. `/disasm` proves the code, `/symbols` proves the ABI name.
+- **PowerShell hygiene for the record scripts:** `Get-Content` has **no `-Skip`** parameter (use `Select-Object -Skip N`);
+  merging large arrays with `$a + $b` can yield a fixed-size collection, so build with `$frag=@(); $frag+=$a; $frag+=$b`
+  when the result must stay mutable (a `.RemoveAt()` on a merged array throws "Collection was of a fixed size"); a
+  `pwsh` inline command containing `` `t `` inside double quotes breaks the parser - put such scans in a `.ps1` file. For
+  the non-ASCII scan use `[^\x00-\x7F]`; `[\x{2019}]` is not valid .NET regex. Inline `pwsh -Command "...$_..."` strings
+  lose `$_` to the outer quoting level - a scan that needs `$_` goes in a `.ps1` file too.
+- **Never verify an append in the same command that made it**: in session 31 `Add-Content` followed by
+  `Get-Content -Last 8` printed the pre-append tail. Confirm appends with a line-count delta plus
+  `Select-String -Pattern 'Session NN'`, and print the new block's first and last line separately.
+

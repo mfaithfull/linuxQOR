@@ -339,3 +339,70 @@ cannot be dated by its hash). Narrative `archive/tu/scrollbar.md`.
 **Pre-flags for the next TU (`systemshutdown.cpp`, 51 lines / 1,734 B, `user32.h:601`-`:606`, 5 members
 `ExitWindowsEx`, `LockWorkStation`, `ShutdownBlockReasonCreate/Destroy/Query`): the section label itself is misspelled -
 `//System Shutdwown functions` at `user32.h:601`.**
+
+### Session 31 - `systemshutdown.cpp` (4 Nov 2026)
+
+5 wrappers, `user32.h:601`-`:606` under the header's own misspelled label `//System Shutdwown functions`, 51 -> **116
+lines** (contract block only). **One defect class, fixed:** `:37` and `:44` read `BOOL WINAPI User32::ShutdownBlockReasonDestroy`
+/ `...Query` - the **only two `WINAPI`-qualified `User32::` definition heads in all 38 TUs**, while `user32.h:605`/`:606`
+declare those members with no convention token. Removed. Not a style call: MSVC rejects the disagreement when the TU is
+compiled **for x86** with `error C2373: 'qor::win::api::User32::ShutdownBlockReasonDestroy': redefinition; different type
+modifiers` (same at `:44`), i.e. the TU was **ill-formed** - and on x64, the only arch the tree configures
+(`CMakeSettings.json:4` `x64-Debug`, generator `Visual Studio 17 2022`), the modifier is dropped, so those two heads changed
+nothing. Proof of neutrality, three ways: a caller probe (`tmp/_tmp_s31_winapi_probe_s31.cpp`) shows the symbol MSVC emits
+and the symbol a consumer of the header declaration references are **the same `__cdecl` decoration** on both sides
+(`?ShutdownBlockReasonDestroy@User32@api@win@qor@@SAHPEAUHWND__@@@Z`, `tmp/_tmp_s31_winapi_s31.txt`); `dumpbin /disasm` of
+the object is **identical before and after** (42,310 lines each, 2 differing lines, both the dump header:
+`tmp/_tmp_s31_x64_pre_s31.asm` / `_post_s31.asm`); and the `/EP` diff is **55 lines, of which 51 blank**, the other 4 being
+only the two definition heads (`BOOL __stdcall User32::...` -> `BOOL User32::...`) - **non-blank lines 154,302 both sides**,
+all 5 binding literals byte-identical.
+**Binding (D13):** 5/5 bare single exports, no A/W family - `ExitWindowsEx` 10F, `LockWorkStation` 26C,
+`ShutdownBlockReasonCreate` 39C, `ShutdownBlockReasonDestroy` 39D, `ShutdownBlockReasonQuery` 39E; a family walk over the
+1,018-name table gives **exactly 1 export per stem** and the `um` headers carry **0 `#define <Stem>` alias sites**, so the
+bare `qor_pp_useswinapi` at `:19, :26, :33, :40, :47` is the only spelling that can bind them (`/EP` emits exactly those
+5 literals against `L"user32"`); 0 P1, 0 P2, 0 P6.
+**Signatures:** 5/5 `decl==def` on return type, parameter types, parameter names and `Call<>` arity
+(`_tmp_sigcmp.ps1 -Tu systemshutdown.cpp -First 602 -Last 606`), 0 name divergences of any kind - the first TU with no U18
+name traffic at all.
+**U16:** 5/5 prototypes are `WINAPI_PARTITION_DESKTOP`, **exactly one version-gated** - `LockWorkStation` under
+`#if(_WIN32_WINNT >= 0x0500)` (`winuser.h:14912`); `ExitWindowsEx` (`:3639`, also inside `#ifndef NOUSER`) and the
+`ShutdownBlockReason` trio (the `#pragma region Desktop Family` block opened `:15919`, which also defines
+`MAX_STR_BLOCKREASON 256`) carry **no version floor**. This **refutes the session-30 U16 lead** ("expect the highest
+version floor yet, likely 0x0601") - the trio has none, and no guard name outside the population already recorded appears.
+**U19:** 0 callers anywhere - the comment-stripped scan over `src`, `examples` and `test` with all five stems prints
+**0 LAYER / 0 INDIRECT / 0 BYPASS / 0 MEMBER**; published surface, so **no U19 or U15 row** (D14).
+**U1/U2:** 5/5 return `BOOL`, 0 `Win32ErrorHandler`, 0 `CheckReturn`, and **0 `_Check_return_` on the 5 prototypes**;
+`ShutdownBlockReasonDestroy`'s `FALSE` distinguishes `ERROR_SHUTDOWN_IN_PROGRESS` from `ERROR_NOT_FOUND`, so the
+session-28 answer-shaped-`BOOL` caution applies. `:11` includes `../returncheck.h` and uses none of it - **T7 36 -> 37**.
+**Build note (recorded in `registers/u6.md`, no new register):** `kernel32.h:92` names `PUNWIND_HISTORY_TABLE`, which the
+SDK typedefs only under `#if defined(_AMD64_)||defined(_ARM_)||defined(_ARM64_)` (`winnt.h:21939`-`:21963`), so that one
+header line makes **93 of the 106 api_layer TUs fail with C2061 on x86** (`tmp/_tmp_s31_x86_apiall_s31.txt`, digest
+`tmp/_tmp_s31_x86_digest_s31.ps1`); the 13 survivors are the library glue TUs, and `kerrorhandling.cpp:104` then fails with
+C2065 `'TargetGp': undeclared identifier`. The same x86 blind spot is what kept U6's stack corruption invisible until the
+x86 probe caught it, and it is what hid this TU's C2373 pair from 30 sessions of x64-only gates.
+**Gate:** single TU `cl_exit=0` (`tmp/_tmp_compile_one.ps1`); library `tmp/_tmp_cl_all_s31c.log` **38 echoes / 0
+diagnostics**, dated by `.obj` freshness (all 38 newer than the edited source). Census unchanged: 428 bindings, 428
+lowercase `user32` module tokens, call-parens 421 tight / 0 spaced, this TU contributes 0 spaced `Call< ` sites (U14 frozen,
+D15). Narrative `archive/tu/systemshutdown.md`.
+**Pre-flags for the next TU (`text.cpp`, 44 lines / 2,028 B, `user32.h:567`-`:571` under `//Font and Text functions`, 4
+members `DrawTextT`, `DrawTextExT`, `GetTabbedTextExtentT`, `TabbedTextOutT`):**
+- **All 4 bindings are `qor_pp_useswinapiAW` and all 4 stems are A/W-only with no bare export**: `DrawTextA` DB `00036A30`
+  / `DrawTextW` DE `00024390`, `DrawTextExA` DC `00053630` / `DrawTextExW` DD `00023E50`, `GetTabbedTextExtentA` 1CB / W
+  1CC, `TabbedTextOutA` 3AB / W 3AC; a word-boundary walk of the export table prints **`DrawText`, `DrawTextEx`,
+  `GetTabbedTextExtent`, `TabbedTextOut` all count=0** - `AW` is D13-correct and P6 cannot arise (unlike `CallMsgFilter` /
+  `BroadcastSystemMessage`).
+- **The bare names exist only as SDK macros or a managed inline**: `#define DrawText DrawTextA` (`winuser.h:8271`,
+  `!UNICODE`) plus `#if defined(_M_CEE)` `__inline int DrawText(` at `:8274`-`:8278`, while `DrawTextEx`,
+  `GetTabbedTextExtent` and `TabbedTextOut` have **0 SDK declarations**. The binding macro stringizes the pasted name, so
+  the macro never expands there - but consumers see the macro, which is a U26 include-order question for these 4 names.
+- **`user32.h:571` spells the parameter type `CONST::LPINT`** (no space) where `:570` uses `CONST LPINT`, and `text.cpp:36`
+  copies `CONST::LPINT` in the head but `CONST ::LPINT` in its `Call< >` list - a U14(a)-family token-spacing site,
+  cosmetic only (U14 itself is frozen by D15).
+- **Hygiene:** longest line **175**, 3 comment lines, **no contract block** - add one. Parse signatures with
+  `_tmp_sigcmp.ps1 -Tu text.cpp -First 568 -Last 571` (the section head is `:567`; `-First 655` lands in
+  `//Authorization functions` and parses nothing).
+- **Return policy (U1/U2):** `int`, `int`, `DWORD`, `LONG`; `DrawText` returns the text height and `DrawTextEx` a line
+  count or error code, so test the session-27 rule ("only sound where the failure value is not also a legal success value")
+  against 0 before any check idea. 0 checks present, and `:11` includes `../returncheck.h` unused - **T7 37 -> 38** if left.
+- **Expect U16 traffic:** the four prototypes sit at `winuser.h:8248`, `:8260`, `:8306`, `:8320`, `:8448`, `:8460`, `:8478`,
+  `:8487` - region-walk the guards with the depth-counted walk, never a backward scan (`winuser.h:4121`).
