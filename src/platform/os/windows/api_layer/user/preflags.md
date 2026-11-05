@@ -15,9 +15,11 @@ the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen
 - **Fixable defects: none queued.** Every TU-level defect found in sessions 1-37 was either fixed in place or booked to
   an open item; the queue having emptied means there is no known unfixed wrapper.
 - **Open items** (rule + decision + measured detail in `registers/u<n>.md`): U1, U2, U4, U5, U7, U8, U9, U10, U12, U13,
-  U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U28**. Frozen - append nothing: P1, P2, P5, U11, U14 (D15),
-  U15 (D14), U6, U3. The newest, **U28** (`registers/u28.md`), is four wrappers binding entry points that exist only in
-  the 64-bit `user32.dll` image; it is latent because x86 does not build at all.
+  U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U27** (in `registers/p6-u27.md` - `STRICT` changes the identity
+  of `HOOKPROC` and of every `DECLARE_HANDLE`, so 3 of `hook.cpp`'s 4 wrappers change published name between the arms).
+  Frozen - append nothing: P1, P2, P5, U11, U14 (D15), U15 (D14), U6, U3. **U28 is CLOSED 5 Nov 2026 by D17**: the four
+  `*Ptr` wrappers in `windowclass.cpp` bind names only the 64-bit `user32.dll` image exports, which is now simply the
+  correct spelling for the only supported target, so they need no change.
 - **Tasks T1-T6** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries. **T7 is CLOSED (5 Nov 2026,
   D16)** - the 35 dead `#include "../returncheck.h"` lines are deleted, only `processthread.cpp` and `errorhandling.cpp`
   still include it, and the scan (`_tmp_rcinclude_scan.ps1`, include test now line-anchored) reads **2 includes /
@@ -25,8 +27,11 @@ the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen
   those 35 files, so a bare `:NNN` self-citation written under line 11 reads **one lower** than the source now says
   (703 bare tokens with `N >= 12` measured there, 315 of them candidates, 388 already naming other files). Repairing it
   is a semantic paragraph-level pass of its own - `gotchas/evidence-integrity.md` has the inheritance rule - not a TU pass.
-- **Architectural blocker**: x86 - session 31 measured 93 of 106 `api_layer` TUs failing at `kernel32.h:92`
-  (`registers/u6.md`, frozen). Nothing in this folder can be validated on x86 until that moves.
+- **Architecture: x64 only** - user decision **D17** (5 Nov 2026, `docs/agent/DECISIONS.md`; in-tree note
+  `src/platform/os/windows/purpose.md:3`). The x86 blocker that used to sit in this list is **closed as not-to-be-fixed**:
+  session 31's measurement (93 of 106 `api_layer` TUs failing an x86 compile at `kernel32.h:92`) stands as history, the
+  kernel-header follow-up sketched in `registers/u6.md` is withdrawn, and **no x86 compile is a step in any gate here** -
+  which also retires the two-arch legs of the review's mirror/live probes (`tooling.md`).
 
 ## One measured lead deliberately left unregistered (session 37)
 

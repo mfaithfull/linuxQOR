@@ -17,6 +17,7 @@
 - `<Windows.h>` and related Windows API headers resolve from Windows Kits 10 include directories supplied through the environment; CMake does not normally add a `/I` for them.
 - Windows SDK `FORCEINLINE` definitions are visible in api_layer translation units, enabling header-inline wrappers.
 - `WINAPI_FAMILY_PARTITION` and `_WIN32_WINNT` decide which SDK definitions exist; threadpool callback variants may be APP/partition, WIN7-gated, or DESKTOP-only.
+- **Windows targets are 64-bit (amd64) only - no 32-bit x86** (decision D17, `docs/agent/DECISIONS.md`; in-tree note `src/platform/os/windows/purpose.md:3`). `CMakeSettings.json` has the single `x64-Debug` profile, the tree does not compile for x86, and no agent gate or verification pass runs an x86 compile.
 
 ## Build system and verification
 

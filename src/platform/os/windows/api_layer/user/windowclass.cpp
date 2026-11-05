@@ -47,6 +47,9 @@ namespace qor { namespace win { namespace api {
     //RESOLVED. pFunc is a function-local static const, so on x86 those four would cache NULL (G5) and throw "Missing
     //library function." on every call (U8). Latent, not live: x86 does not build at all (session 31 - 93 of 106
     //api_layer TUs fail at kernel32.h:92, U6), so the fix travels with that blocker rather than with this TU.
+    //CLOSED 5 Nov 2026 by user decision D17 (docs/agent/DECISIONS.md): Windows is 64-bit (amd64) only, no 32-bit x86
+    //(src/platform/os/windows/purpose.md:3), so that blocker is closed as not-to-be-fixed and these four bindings are the
+    //correct spelling for the only supported image - no arch-conditional binding is to be added here.
     //
     //U16: only "RegisterClassExW" (winuser.h:4368) sits under a version floor - "#if(WINVER >= 0x0400)" at :4359. The other
     //13 sit under _WINUSER_/NOUSER plus WINAPI_FAMILY_PARTITION - DESKTOP alone at :4329 (GetClassInfoW) and :9963 (the

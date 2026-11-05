@@ -14,6 +14,9 @@ Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1`
   Beware: **the tree does not build for x86 at all** - 93 of 106 api_layer TUs die at `kernel32.h:92`
   (`PUNWIND_HISTORY_TABLE` is inside `#if defined(_AMD64_)||defined(_ARM_)||defined(_ARM64_)`, `um/winnt.h:21939`), so an
   x86 run's *baseline* is 93 failures, not 0; compare error sets against `tmp/_tmp_s31_x86_apiall_s31.txt`.
+  **Retired as a step 5 Nov 2026 by decision D17 (`docs/agent/DECISIONS.md`): Windows support is 64-bit only, so do not add
+  an x86 compile to any gate.** The blindness this entry measured still stands as a hazard - x64 gates cannot see
+  arch-dependent defects - but it is now closed by the x64-only contract rather than by probing for it.
 - **`dumpbin /disasm` before/after is the cheapest convention-neutrality proof, but diff it in memory and cap the print.**
   42,310 lines per dump; `Compare-Object` prints the whole difference set, so `Select-Object -First 12` it - and expect the
   `Dump of file ...` header line to differ, which in a genuinely neutral change is the *only* difference.

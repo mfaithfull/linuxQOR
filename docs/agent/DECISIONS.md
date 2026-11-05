@@ -385,3 +385,69 @@ Record of the action: the T7 entry head in
 `src/platform/os/windows/api_layer/user/registers/tasks.md`, the closed/open id lines and the queue `lines` column in
 that folder's `status.md`, and its `preflags.md`. No header, CMake file or file outside that folder's 35 sources changed.
 
+## D17: Windows support is 64-bit (amd64) only - no 32-bit x86 target - POLICY (5 Nov 2026)
+
+Decision (user, 5 Nov 2026): **there will be no 32-bit x86 (Win32) target.** Recorded in-tree at
+`src/platform/os/windows/purpose.md:3` ("Windows support is 64-bit (amd_x64) only. No 32-bit (x86) support"). It
+formalises what the build already does: `CMakeSettings.json:4` carries the single `x64-Debug` profile with
+`inheritEnvironments: [ "msvc_x64_x64" ]` at `:7`. It is a **scope** decision, not a build change - nothing in the
+reviewed `api_layer/user` folder is architecture-conditional at all. Measured 5 Nov 2026 over that folder's 38 `.cpp` and
+over `user32.h`: **0 `#ifdef _WIN64` / `_M_IX86` / `_X86_` arms**; the only `_WIN64` tokens in the folder are sentences
+inside `windowclass.cpp`'s review banner (`:42`, `:53`) describing the SDK's own guards.
+
+What it settles in the `api_layer/user` review record (`src/platform/os/windows/api_layer/user/`):
+
+- **U28 is CLOSED by this decision** (`registers/u28.md`). The four `*Ptr` members (`windowclass.cpp:77`, `:119`, `:140`,
+  `:147`, binding `Get/SetWindowLongPtrW` and `Get/SetClassLongPtrW`) name entry points the 32-bit `user32.dll` image does
+  not export. That is now simply the correct spelling for the only image the project targets, so the wrappers stay exactly
+  as they are and the arch-conditional binding that entry contemplated as the fix is out of scope. The x64 leg of the
+  session-34 probe (16/16 names RESOLVED) is the leg that describes the supported target.
+- **U6's x86 blocker is withdrawn as a blocker** (`registers/u6.md`, session-31 addendum (b)). `kernel32.h:92` names
+  `PUNWIND_HISTORY_TABLE`, which the SDK typedefs with no `_X86_` arm, so 93 of 106 `api_layer` TUs fail an x86 compile with
+  `C2061`. That line stays as it is, and the suggested kernel-layer follow-up recorded in that entry ("give
+  `RtlLookupFunctionEntry`'s third parameter a type the SDK defines on every arch, or guard the declaration") is **not to
+  be actioned**. The measurement keeps its value: it is the reason x64-only gates cannot see arch-dependent defects, which
+  is why U6's stack corruption needed a dedicated probe and why the `WINAPI`-on-a-member `C2373` pair survived 30 sessions.
+- **x86 compile legs stop being a step anywhere.** The guidance at `gotchas/sessions-31-33.md:13-16` to add an x86 compile
+  when touching a `qor_pp_uses*` / definition-head shape is retired, together with the x86 legs of the review's two-arch
+  instruments indexed in `tooling.md` (the `Message`/`MSG`, `MONITORINFOEX`, `SCROLLINFO` and `WINDOW*` mirror probes, the
+  `DrawState`/`GrayString` live probe, U6's calling-convention probe). No folder's gate includes an x86 compile. Frozen
+  history (`census.md`, `archive/`, `gotchas/sessions-*.md`) keeps the x86 numbers as measured and is not edited.
+- **x86-only exposure is no longer exposure.** U26's `Message`/`MSG` caller mirror is field-identical at 48 bytes on x64 and
+  divergent only on x86 (40 vs 28 bytes from `lParam` on), so on the supported arch the cast is sound: the live defects U26
+  carries are the published `winqor_gui` headers' uninitialized fields (`ScrollInfo::nPos`/`nTrackPos`,
+  `WindowPlacement::length`), not any layout. U18's "same width on x86 and x64, so no ABI effect" notes and U16's
+  `_WIN64`-guarded-prototype notes need no follow-up under this decision.
+
+What it does **not** buy is an x86 build, or a clear failure when someone attempts one. An x86 compile still dies at
+`kernel32.h:92` with a misleading `C2061 'PUNWIND_HISTORY_TABLE'` in 93 of 106 `api_layer` TUs, the 13 survivors being
+exactly the library glue TUs. An arch guard (an `#error` in the Windows platform headers, or a CMake arch check) would turn
+that into a one-line message, but it is a `cmake/`/kernel-header change of the same class as the version-string hazard
+session 37 left unregistered at `src/platform/os/windows/api_layer/user/preflags.md`, so this pass deliberately registers
+neither.
+
+Record: the closure line in `registers/u28.md`, the status line on the session-31 addendum in `registers/u6.md`, the
+architecture bullet and id lines in that folder's `preflags.md` and `status.md`, and a Windows-target bullet in
+`memory-bank/techContext.md`. No source, header or CMake file is touched by this decision.
+- **x86 compile legs stop being a step anywhere.** The guidance at `gotchas/sessions-31-33.md:13-16` to add an x86 compile
+  when touching a `qor_pp_uses*` / definition-head shape is retired, together with the x86 legs of the review's two-arch
+  instruments indexed in `tooling.md` (the `Message`/`MSG`, `MONITORINFOEX`, `SCROLLINFO` and `WINDOW*` mirror probes, the
+  `DrawState`/`GrayString` live probe, U6's calling-convention probe). No folder's gate includes an x86 compile. Frozen
+  history (`census.md`, `archive/`, `gotchas/sessions-*.md`) keeps the x86 numbers as measured and is not edited.
+- **x86-only exposure is no longer exposure.** U26's `Message`/`MSG` caller mirror is field-identical at 48 bytes on x64 and
+  divergent only on x86 (40 vs 28 bytes from `lParam` on), so on the supported arch the cast is sound: the live defects U26
+  carries are the published `winqor_gui` headers' uninitialized fields (`ScrollInfo::nPos`/`nTrackPos`,
+  `WindowPlacement::length`), not any layout. U18's "same width on x86 and x64, so no ABI effect" notes and U16's
+  `_WIN64`-guarded-prototype notes need no follow-up under this decision.
+
+What it does **not** buy is an x86 build, or a clear failure when someone attempts one. An x86 compile still dies at
+`kernel32.h:92` with a misleading `C2061 'PUNWIND_HISTORY_TABLE'` in 93 of 106 `api_layer` TUs, the 13 survivors being
+exactly the library glue TUs. An arch guard (an `#error` in the Windows platform headers, or a CMake arch check) would turn
+that into a one-line message, but it is a `cmake/`/kernel-header change of the same class as the version-string hazard
+session 37 left unregistered at `src/platform/os/windows/api_layer/user/preflags.md`, so this pass deliberately registers
+neither.
+
+Record: the closure line in `registers/u28.md`, the status line on the session-31 addendum in `registers/u6.md`, the
+architecture bullet and id lines in that folder's `preflags.md` and `status.md`, and a Windows-target bullet in
+`memory-bank/techContext.md`. No source, header or CMake file is touched by this decision.
+

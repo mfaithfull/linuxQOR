@@ -116,10 +116,12 @@ and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to
   `G1`-`G6` -> `registers/ground-rules.md` | `T1`-`T7` -> `registers/tasks.md` | folder totals -> `registers/census.md`.
 - Closed / frozen - append nothing: **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
-  includes are gone, the scan now reads 2 includes / 0 without use).
-- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U28**,
+  includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
+  four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image).
+- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27,
   P3, P4, P6, T1-T6. Each statement and its measured detail is in the file the map names - open that file, never the tree.
-- Decisions in force (D13, the return-check policy, D14, D15, D16) are in `docs/agent/DECISIONS.md` and are not restated here.
+- Decisions in force (D13, the return-check policy, D14, D15, D16, **D17 x64-only / no 32-bit x86**) are in
+  `docs/agent/DECISIONS.md` and are not restated here.
 
 ## Gate (identical every session)
 
@@ -128,9 +130,12 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Fo c:\RAID0\Develop\linuxQOR\tmp\obj\ <all 38 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 38 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
+**The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
+`D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
+dating rule below cannot be read.
 Edited TU standalone at `/W4` exit 0, then the whole library **38/38** exit 0 with no diagnostics. Date the gate by
 `tmp/obj/<tu>.obj` being newer than the source - a clean 38-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
@@ -140,7 +145,9 @@ binding literals. `user32.h` untouched unless the session says otherwise; a libr
 ## There is no next TU - what a further session in this folder works from
 
 All 38 sources are reviewed, so the queue above is closed and `preflags.md` no longer pre-flags a TU: it carries the
-folder-level leads instead. A next session picks from the open items and tasks the map above names (U1-U26, U28, P3, P4,
-P6, T1-T7), or moves to another `api_layer` folder. The gate below is unchanged and still applies to any edit here.
+folder-level leads instead. A next session picks from the open items and tasks the map above names (U1-U27 less the frozen
+ids, P3, P4, P6, T1-T6), or moves to another `api_layer` folder. Architecture is settled - Windows is 64-bit only (D17), so
+no session here reopens an x86 question or runs an x86 compile. The gate above is unchanged and still applies to any edit
+here.
 
 

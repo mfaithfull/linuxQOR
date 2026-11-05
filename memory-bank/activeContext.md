@@ -24,7 +24,7 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   0 wrappers, 0 dead includes, 0 UB, idiom-conformant with the 12 sibling `api_layer` glue TUs. Narrative and all
   measurements: the banner at `winqor_api_user.cpp:4-72`. It is committed, so nothing about it is to be re-derived.
 - **The queue is empty - there is no next TU.** What a further session in this folder would work from (open items, the
-  T1-T6 tasks, the x86 blocker, and the unregistered version-string hazard) is in
+  T1-T6 tasks, the x64-only decision D17 and what it closed, and the unregistered version-string hazard) is in
   `src/platform/os/windows/api_layer/user/preflags.md`; `status.md` still carries the queue table, the id map and the
   compile gate for any future edit here.
 
