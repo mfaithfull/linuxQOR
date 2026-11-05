@@ -1,7 +1,7 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 5 Nov 2026 - **session 35 (`windowproperties.cpp`) CLOSED; 2 TUs left**: `windowprocedure.cpp` (30 lines),
-`winqor_api_user.cpp` (glue, 14) - **44 source lines remain**. Reviewing
+Last updated 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED; 1 TU left**: `winqor_api_user.cpp` (the module
+glue, 14 lines). Reviewing
 `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
@@ -39,50 +39,34 @@ layer - the part that had to be regenerated at every close and re-verified becau
    `tmp/_tmp_*_pp_*.txt`; never read a whole register; `archive/` and `gotchas/sessions-*.md` are opened only to research
    a named closed session. **This file stays under 120 lines.**
 
-## Queue - 3 TUs left, alphabetical
+## Queue - 1 TU left, alphabetical
 
 | # | TU | lines | wrappers | status |
 |--:|---|--:|--:|---|
-| 36 | `windowprocedure.cpp` | 30 | 2 | next |
-| 37 | `winqor_api_user.cpp` (glue) | 14 | 0 | - |
+| 37 | `winqor_api_user.cpp` (glue) | 14 | 0 | next |
 
-Sessions 1-35 are closed: **36 of the 38 sources reviewed** (some sessions covered two TUs). History is write-once and is
+Sessions 1-36 are closed: **37 of the 38 sources reviewed** (some sessions covered two TUs). History is write-once and is
 not boot material: `archive/session-log*.md` (rows plus verdict detail, and the only narrative for sessions 16-20) and
 `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to either.
 
+## Session 36 - `windowprocedure.cpp` (closed 5 Nov 2026)
+
+- Clean TU: 2/2 pairs in header order, 0 U4 / U11 / U13 / U17, 0 return or parameter divergence against `winuser.h:4146`,
+  `:4159`, `:4181`, `:4190`, 2/2 bindings resolve (`CallWindowProcW`, `DefWindowProcW`), nothing to fix. Narrative: the
+  banner at `windowprocedure.cpp:16-73`.
+- Two measured facts that outlive the TU: `WNDPROC` is a genuine type check in this build, but a wrong **calling
+  convention** procedure only fails it on x86 - the arch that does not build (U6); and `Get/SetWindowLongPtrT` answer
+  `LONG_PTR`, not convertible to `WNDPROC` on either arch, so "read the procedure back out of `GWLP_WNDPROC` and hand it
+  to `CallWindowProcT`" needs a cast no in-tree caller makes. U7 lands hardest here: `Library::Call`'s SEH handler hands a
+  0 **to the OS** from a window procedure.
+- U19: 1 live layer call (`ui/gui/window.cpp:106`, reached from 32 handler sites) plus 2 live SDK bypasses in the main
+  window procedure itself (`windowfactory.cpp:71`, `:75`), which skip this layer's `qor_pp_fcontext` and SEH frame.
+
 ## Session 35 - `windowproperties.cpp` (closed 5 Nov 2026)
 
-- 5/5 declaration-definition pairs in header order (`user32.h:595`-`:599`, definitions at `:79`, `:86`, `:93`, `:100`,
-  `:107` post-banner), all `static`, all `T`-suffixed, 5/5 `qor_pp_fcontext`: 0 U4 / U11 / U13 / U17. 0 return-type
-  divergences against the SDK - `int`, `int`, `HANDLE`, `HANDLE`, `BOOL` against `winuser.h:8969`, `:8950`, `:8913`,
-  `:8931`, `:8894` - so U18 clean, and the three `LPCTSTR` parameters are exact under this build (`is_same<LPCTSTR,LPCWSTR>
-  =1`), i.e. U26's mapping, not a reinterpret. Full detail: the banner at `windowproperties.cpp:16-77`.
-- Binding D13-clean: a fresh x64 `dumpbin /exports` (and the session-22 x86 capture) gives every stem `<stem>A` + `<stem>W`
-  and **no bare export**, so `qor_pp_useswinapiAW` is the only spelling that could resolve; `cl /EP` after the banner: 5
-  literals `EnumPropsW`, `EnumPropsExW`, `GetPropW`, `RemovePropW`, `SetPropW`, module `L"user32"` 5/5, 0 unresolved,
-  0 `WW`, 0 `T`; wrong-stem scan 0 hits here (folder: 428 bindings, 2 flagged, both older TUs).
-- **The two callback parameters are type-checked, not `FARPROC`.** Probe (`tmp/_tmp_s35_cbprobe.cpp` + `.bat`) measures
-  `is_same<PROPENUMPROC,PROPENUMPROCW>=1`, `is_same<PROPENUMPROCEX,PROPENUMPROCEXW>=1`, and
-  `is_convertible<consumer-callback,PROPENUMPROC>=1` is **not** a silent widening: `BOOL` **is** `int` and `LPCTSTR` **is**
-  `LPCWSTR`, so `windowcontroller.cpp:684` is the same type as the SDK's `PROPENUMPROCW`. Only a `NO_STRICT` consumer
-  turns them into `FARPROC` (`winuser.h:169`, `:172`) - and `STRICT` is set by the SDK itself (`minwindef.h:23`,
-  `ntdef.h:787`), which `hook.cpp:67` already records.
-- U1/U2: 0 handlers, 0 checks, and **0 `_Check_return_` on all 10 A/W prototypes**, and no check would be sound: `GetProp`
-  and `RemoveProp` answer `NULL` for "no such property", which is also what `Library::Call` returns for a failed call
-  (U7), so the layer cannot separate "absent" from "call failed"; `EnumPropsT`/`EnumPropsExT` return an `int` in which 0
-  is legal. U20: those `HANDLE`s carry **pointers** the consumers cast back (`windowfactory.cpp:51`, `dialog.cpp:57`), so
-  this TU feeds U20 through the pointer-as-handle channel with no destroy path on it. U19: 9 live callers, all through the
-  layer; the four `GetPropW`/`SetPropW` sites in `gl/windowimpl.cpp` (`:534`, `:1427`, `:1597`, `:2131`) are inside block
-  comments opened at `:530`, `:1303`, `:2092`, so 0 live bypass. U16: guard depth 3 (`_WINUSER_` / `NOUSER` / DESKTOP)
-  with **no version floor** on any of the five.
-- Two blemishes, **left as-is by user decision 5 Nov 2026**: the `:97` spacing nit (U14 frozen by D15) and the dead
-  `../returncheck.h` include at `:11` (T7 waits for the folder-wide go-ahead, not a per-TU pass).
-- **Hand-off correction.** Session 34's pre-flags said `SetLayeredWindowAttributes` is declared-without-definition. Wrong:
-  declared `user32.h:196`, **defined** `window.cpp:565` with bare `qor_pp_useswinapi` (`:568`) - the D13-conformant
-  spelling for a name with one export on both arches and no A/W family (prototype `winuser.h:4633`, DESKTOP family, no
-  floor). Not a U4 candidate, and not this TU's: it belongs to `window.cpp` (session 33).
-- Gate: standalone `/W4` exit 0, then the whole library **38/38, exit 0, no diagnostics**, both after the +63-line banner
-  (comment-only); `tmp/obj/windowproperties.obj` dated after the source, and `cl /EP` re-run after the last edit still 5/5.
+- Clean TU: 5/5 pairs, 5/5 bindings, nothing to fix; its two blemishes (a U14 spacing nit, the dead `returncheck.h`
+  include) left as-is by user decision. Narrative: the banner at `windowproperties.cpp:16-77`. It also corrected a stale
+  hand-off: `SetLayeredWindowAttributes` **is** defined, at `window.cpp:565`.
 
 ## Open items - id to file (derivable; there is no index to maintain)
 
@@ -110,15 +94,12 @@ byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the la
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
 106-source all-libraries gate, read as a diff against a pre-fix run.
 
-## Pre-flags for session 36 (`windowprocedure.cpp`) - measured 5 Nov 2026
+## Pre-flags for session 37 (`winqor_api_user.cpp`) - measured 5 Nov 2026 (the last TU)
 
-Captures already made this session: `tmp/_tmp_user32_exports_s36.txt` (x64 export table) and `tmp/_tmp_win_pp_s36.txt`
-(`cl /EP` of this TU, digest `tmp/_tmp_s36_ppclass.txt`: 2 binding literals `CallWindowProcW`, `DefWindowProcW`, module
-`L"user32"` 2/2, 0 unresolved, 0 `WW`, 0 `T`). `tmp/` is git-ignored scratch and does get cleaned, so re-run
-`tmp/_tmp_win_pp_s36.bat` first if they are gone, and re-read the `cl /EP` literals rather than the source spelling (G1).
-
-Every number below is from one run: `tmp/_tmp_s36_pre.ps1` -> `tmp/_tmp_s36_pre.txt` (this session's pre-flag script,
-copied from `tmp/_tmp_s35_pre.ps1` with the TU, stems and capture paths swapped), plus `tmp/_tmp_s36_ppclass.ps1`.
+Glue, not wrappers: 14 lines, 0 `User32::` definitions, 0 bindings, 0 `qor_pp_fcontext`, no `user32.h` / `library.h` /
+`../returncheck.h` include - steps 1-5b and ids U4 / U11 / U13 / U17 / U18 / U19 / U25 / U26 have nothing to bite on. The
+measures that do apply were run this session by `tmp/_tmp_s37_pre.bat` and `tmp/_tmp_s37_ep.bat` (both `/EP` captures read
+only by a grep for `QORModule`, never opened).
 
 - `user32.h:321` `//Window Procedure functions`, declarations `:322`-`:323`: **2 declarations, 2 definitions**, both
   `static`, both `T`-suffixed, defined in header order at `:16` `CallWindowProcT`, `:23` `DefWindowProcT` - U4 / U11 /
