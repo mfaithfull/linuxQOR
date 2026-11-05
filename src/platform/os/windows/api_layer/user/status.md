@@ -66,43 +66,43 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 
 | TU | lines | narrative | status |
 |---|--:|---|---|
-| `accelerator.cpp` | 60 | `archive/tu/accelerator.md` | closed |
-| `accessibility.cpp` | 50 | `archive/tu/accessibility-timer.md` | closed |
-| `brush.cpp` | 29 | `archive/tu/brush.md` | closed |
-| `caret.cpp` | 78 | `archive/tu/caret.md` | closed |
-| `clipboard.cpp` | 178 | `archive/tu/clipboard.md` | closed |
-| `combobox.cpp` | 59 | `archive/tu/combobox.md` | closed |
-| `console.cpp` | 50 | `archive/tu/console.md` | closed |
-| `coordtransform.cpp` | 57 | `archive/tu/coordtransform.md` | closed |
-| `cursor.cpp` | 166 | `archive/tu/cursor.md` | closed |
-| `desktop.cpp` | 174 | `archive/tu/desktop.md` | closed |
-| `devicecontext.cpp` | 115 | `archive/tu/devicecontext.md` | closed |
-| `devicemanagement.cpp` | 87 | `archive/tu/devicemanagement.md` | closed |
-| `dialog.cpp` | 192 | `archive/tu/dialog.md` | closed |
+| `accelerator.cpp` | 59 | `archive/tu/accelerator.md` | closed |
+| `accessibility.cpp` | 49 | `archive/tu/accessibility-timer.md` | closed |
+| `brush.cpp` | 28 | `archive/tu/brush.md` | closed |
+| `caret.cpp` | 77 | `archive/tu/caret.md` | closed |
+| `clipboard.cpp` | 177 | `archive/tu/clipboard.md` | closed |
+| `combobox.cpp` | 58 | `archive/tu/combobox.md` | closed |
+| `console.cpp` | 49 | `archive/tu/console.md` | closed |
+| `coordtransform.cpp` | 56 | `archive/tu/coordtransform.md` | closed |
+| `cursor.cpp` | 165 | `archive/tu/cursor.md` | closed |
+| `desktop.cpp` | 173 | `archive/tu/desktop.md` | closed |
+| `devicecontext.cpp` | 114 | `archive/tu/devicecontext.md` | closed |
+| `devicemanagement.cpp` | 86 | `archive/tu/devicemanagement.md` | closed |
+| `dialog.cpp` | 191 | `archive/tu/dialog.md` | closed |
 | `errorhandling.cpp` | 92 | `archive/tu/errorhandling.md` | closed |
-| `filledshapes.cpp` | 99 | `archive/tu/filledshapes.md` | closed |
-| `help.cpp` | 108 | `archive/session-log*.md` | closed |
-| `hook.cpp` | 108 | `archive/session-log*.md` | closed |
-| `icon.cpp` | 169 | `archive/session-log*.md` | closed |
-| `ime.cpp` | 55 | `archive/session-log*.md` | closed |
-| `keyboard.cpp` | 316 | `archive/session-log*.md` | closed |
-| `mdi.cpp` | 112 | `archive/tu/mdi.md` | closed |
-| `menu.cpp` | 355 | `archive/tu/menu.md` | closed |
-| `message.cpp` | 274 | `archive/tu/message.md` | closed |
-| `monitor.cpp` | 162 | `archive/tu/monitor.md` | closed |
-| `mouse.cpp` | 167 | `archive/tu/mouse.md` | closed |
-| `painting.cpp` | 261 | `archive/tu/painting.md` | closed |
+| `filledshapes.cpp` | 98 | `archive/tu/filledshapes.md` | closed |
+| `help.cpp` | 107 | `archive/session-log*.md` | closed |
+| `hook.cpp` | 107 | `archive/session-log*.md` | closed |
+| `icon.cpp` | 168 | `archive/session-log*.md` | closed |
+| `ime.cpp` | 54 | `archive/session-log*.md` | closed |
+| `keyboard.cpp` | 315 | `archive/session-log*.md` | closed |
+| `mdi.cpp` | 111 | `archive/tu/mdi.md` | closed |
+| `menu.cpp` | 354 | `archive/tu/menu.md` | closed |
+| `message.cpp` | 273 | `archive/tu/message.md` | closed |
+| `monitor.cpp` | 161 | `archive/tu/monitor.md` | closed |
+| `mouse.cpp` | 166 | `archive/tu/mouse.md` | closed |
+| `painting.cpp` | 260 | `archive/tu/painting.md` | closed |
 | `processthread.cpp` | 122 | `archive/tu/processthread.md` | closed |
-| `rectangle.cpp` | 174 | `archive/tu/rectangle.md` | closed |
-| `resource.cpp` | 41 | `archive/tu/resource.md` | closed |
-| `scrollbar.cpp` | 156 | `archive/tu/scrollbar.md` | closed |
-| `systemshutdown.cpp` | 102 | `archive/tu/systemshutdown.md` | closed |
-| `text.cpp` | 125 | banner `:16` | closed |
-| `timer.cpp` | 33 | `archive/tu/accessibility-timer.md` | closed |
-| `window.cpp` | 692 | banner `:16` | closed |
-| `windowclass.cpp` | 158 | banner `:16` | closed |
-| `windowprocedure.cpp` | 90 | banner `:16` | closed |
-| `windowproperties.cpp` | 114 | banner `:16` | closed |
+| `rectangle.cpp` | 173 | `archive/tu/rectangle.md` | closed |
+| `resource.cpp` | 40 | `archive/tu/resource.md` | closed |
+| `scrollbar.cpp` | 155 | `archive/tu/scrollbar.md` | closed |
+| `systemshutdown.cpp` | 101 | `archive/tu/systemshutdown.md` | closed |
+| `text.cpp` | 124 | banner `:16` | closed |
+| `timer.cpp` | 32 | `archive/tu/accessibility-timer.md` | closed |
+| `window.cpp` | 691 | banner `:16` | closed |
+| `windowclass.cpp` | 157 | banner `:16` | closed |
+| `windowprocedure.cpp` | 89 | banner `:16` | closed |
+| `windowproperties.cpp` | 113 | banner `:16` | closed |
 | `winqor_api_user.cpp` | 83 | banner `:4` | closed |
 
 **38 of 38 sources reviewed** in sessions 1-37 - **the queue is empty, the folder review is complete** (some sessions
@@ -115,10 +115,11 @@ and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to
 - `U<n>` -> `registers/u<n>.md` | `P1`-`P5` -> `registers/prescan.md` | `P6`, `U27` -> `registers/p6-u27.md` |
   `G1`-`G6` -> `registers/ground-rules.md` | `T1`-`T7` -> `registers/tasks.md` | folder totals -> `registers/census.md`.
 - Closed / frozen - append nothing: **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
-  3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**.
+  3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
+  includes are gone, the scan now reads 2 includes / 0 without use).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U28**,
-  P3, P4, P6, T1-T7. Each statement and its measured detail is in the file the map names - open that file, never the tree.
-- Decisions in force (D13, the return-check policy, D14, D15) are in `docs/agent/DECISIONS.md` and are not restated here.
+  P3, P4, P6, T1-T6. Each statement and its measured detail is in the file the map names - open that file, never the tree.
+- Decisions in force (D13, the return-check policy, D14, D15, D16) are in `docs/agent/DECISIONS.md` and are not restated here.
 
 ## Gate (identical every session)
 

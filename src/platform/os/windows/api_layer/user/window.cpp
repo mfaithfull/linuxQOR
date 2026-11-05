@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -69,7 +68,7 @@ namespace qor { namespace win { namespace api {
     //member-call. Only two groups are genuine SDK calls that skip this layer: ui/gl/helperwindow.cpp:59,:75
     //(::CreateWindowExW, ::ShowWindow) and ui/gl/windowimpl.cpp (AdjustWindowRectEx x5, AdjustWindowRectExForDpi x5);
     //the rest are same-named non-SDK members or the raw-SDK examples/experimental/.../retropad. U1/U2: 0
-    //Win32ErrorHandler, 0 CheckReturn (the returncheck.h include is unused here - T7). U25: 1 `CONST` token on a code
+    //Win32ErrorHandler, 0 CheckReturn (its dead returncheck.h include went - T7, 5 Nov 2026). U25: 1 `CONST` token on a code
     //line in this TU - CascadeWindows' call list at :158 spells it `CONST ::RECT*` while that member's own definition
     //(:154) spells it `const ::RECT*`, one member holding both spellings of the same type; the file's 11 other const
     //tokens are all lowercase, over 8 code lines (:154, :158, :593, :597, :649, :653, :664, :668). No new shape ->

@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -66,8 +65,8 @@ namespace qor { namespace win { namespace api {
     //U16: all five pairs sit at guard depth 3 - "#ifndef _WINUSER_", "#ifndef NOUSER",
     //WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) - over winuser.h:8884-:8976, none with a WINVER or _WIN32_WINNT
     //floor, so no availability floor to record here. U25: 0 CONST and 0 lowercase const in this TU and in its 5 header
-    //declarations - clean. T7: #include "../returncheck.h" at :11 is unused here (no CheckReturn, BoolCheck or
-    //Win32ErrorHandler), one of the folder's 35 dead includes, and it stays: removing it is the folder-wide T7 decision,
+    //declarations - clean. T7: the #include "../returncheck.h" at (then) :11 was unused here (no CheckReturn, BoolCheck
+    //or Win32ErrorHandler) - one of the folder's 35 dead includes; removed under T7 on 5 Nov 2026, the folder-wide
     //not a per-TU pass. U14: :97 writes Library::Call< HANDLE, HWND, LPCTSTR>( with no space before the "(" - U14 is
     //frozen (D15) and the user decided on 5 Nov 2026 to leave it; left as-is, no tally booked.
     //

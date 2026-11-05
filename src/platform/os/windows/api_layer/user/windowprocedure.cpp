@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -67,8 +66,8 @@ namespace qor { namespace win { namespace api {
     //occurrences are commented out (gl/windowimpl.cpp, view/handlers/interactive/ime.cpp).
     //U16: guard depth 3 - "#ifndef _WINUSER_", "#ifndef NOUSER", WINAPI_FAMILY_PARTITION(DESKTOP | GAMES) - with no
     //WINVER or _WIN32_WINNT floor on either pair, so nothing to record. U25: 0 CONST and 0 lowercase const in this TU
-    //and in its 2 header declarations. T7: #include "../returncheck.h" at :11 is unused here (0 CheckReturn, BoolCheck
-    //or Win32ErrorHandler) - one of the folder's 35 dead includes, left for the folder-wide decision. U14 is frozen
+    //and in its 2 header declarations. T7: the #include "../returncheck.h" at (then) :11 was unused here (0 CheckReturn,
+    //BoolCheck or Win32ErrorHandler) - one of the 35 dead, removed under T7 on 5 Nov 2026. U14 is frozen
     //(D15): :80 writes Library::Call<LRESULT,WNDPROC, HWND, UINT, WPARAM, LPARAM>( - glued comma, no space before the
     //"(" - left as-is, no tally booked.
 

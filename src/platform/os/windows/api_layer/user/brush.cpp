@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {

@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -64,8 +63,8 @@ namespace qor { namespace win { namespace api {
     //
     //Return policy (U1/U2): 0 Win32ErrorHandler and 0 CheckReturn in all twelve wrappers, and none of the twelve SDK
     //prototypes carries _Check_return_ (tmp/_tmp_s30_measure2.txt), so a discarded failure leaves no trace on either
-    //side - the settled policy for this layer, not a per-TU fix. :11 includes ../returncheck.h and uses none of it (one
-    //of the 35 dead includes; left in place).
+    //side - the settled policy for this layer, not a per-TU fix. Its ../returncheck.h include (then :11) used none of it
+    // - one of the 35 dead includes, removed under T7 on 5 Nov 2026.
 
     BOOL User32::EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows)
     {

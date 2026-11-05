@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -91,8 +90,8 @@ namespace qor { namespace win { namespace api {
     //Call-site idiom: 11/11 qor_pp_fcontext and 11/11 explicit Call<> template arguments (0 argument-deducing; the
     //folder's 3 deducing sites are all in window.cpp). All eleven sites now use the folder's tight Call< spelling -
     //this TU was 11 spaced / 0 tight, and normalising it moves folder U14(a) from 174 spaced / 254 tight to
-    //163 / 265 by user decision. :11 includes ../returncheck.h and uses nothing from it: one of T7's 35 dead
-    //includes, left in place because T7 is a deferred folder task.
+    //163 / 265 by user decision. Its ../returncheck.h include (then :11) used nothing from it: one of T7's 35 dead
+    //includes, removed 5 Nov 2026 when the folder-wide decision behind T7 was taken.
 
     BOOL User32::CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc)
     {

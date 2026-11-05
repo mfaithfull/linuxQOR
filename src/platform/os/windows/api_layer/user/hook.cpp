@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -76,7 +75,7 @@ namespace qor { namespace win { namespace api {
     //Liveness (U15 4/4 dead): tmp/_tmp_bypass_scan.ps1 over the four stems reports stems 4, LAYER 0, INDIRECT 0,
     //BYPASS 0, MEMBER 0 - the first section of the review with no caller anywhere and no SDK-import call either,
     //confirmed by a raw tree grep in which HHOOK and HOOKPROC appear in no file of src/examples/test at all.
-    //U1 0 handlers and U2 0 CheckReturn over the 4 call sites (settled policy); ../returncheck.h is included and unused.
+    //U1 0 handlers and U2 0 CheckReturn over the 4 call sites (settled policy); its dead ../returncheck.h include went (T7).
     BOOL User32::CallMsgFilterT(LPMSG lpMsg, int nCode)
     {
         qor_pp_fcontext;

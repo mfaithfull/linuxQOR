@@ -118,7 +118,8 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   it belongs with the `U4`/`U13` sweep and the T1/T3/T4/T5 decision set, not with a TU review.
 
 
-- **T7 - 35 of the 38 `user` sources `#include "../returncheck.h"` and use nothing from it.** Opened 3 Nov 2026 at the
+- **T7 - CLOSED 5 Nov 2026 (D16) - the 35 dead `#include "../returncheck.h"` lines are gone; the 2 real consumers keep
+  theirs.** Opened 3 Nov 2026 at the
   session-27 (`processthread.cpp`) close-out, while pre-flagging `rectangle.cpp`, and registered as a **deferred task** by
   user decision the same day: the fix is mechanical, only the go-ahead is missing. Measured with the instrument written
   for it, `tmp/_tmp_rcinclude_scan.ps1` (output `tmp/_tmp_rcinclude_s27.txt`): **37 of 38** sources include the header -
@@ -139,8 +140,14 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   applied TU by TU as sessions pass through. Whoever executes it: one line per TU, no ABI and no published-surface
   change, gate = the folder compile **38/38 at `/W4`, exit 0, no diagnostics** plus a re-run of
   `tmp/_tmp_rcinclude_scan.ps1` (expect `includes ../returncheck.h: 2`, `include-without-use: 0`).
+  **Executed 5 Nov 2026 under D16: 35 files, exactly one line each (`git diff --numstat` = 27 rows of `0 1` plus 8 rows of
+  `1 2` / `2 3` - the extra pairs are the comment sentences that used to say the include was still there); the scan re-run
+  prints `includes: 2` / `include-without-use: 0`; the folder compiled 38/38, exit 0, 0 diagnostics, every `.obj` newer
+  than its source. The scan's include test had to be made line-anchored - un-anchored it also counts the three TUs whose
+  banner *quotes* the include text, which prints a false `5 / 3`. The one-line shift's effect on the in-source `:NNN`
+  self-citations is measured and left to its own pass in D16.**
 
-- **T7 count moved 35 -> 36 (3 Nov 2026, session 30, `scrollbar.cpp`).** `scrollbar.cpp:11` includes
+- **[history - T7 closed by D16] T7 count moved 35 -> 36 (3 Nov 2026, session 30, `scrollbar.cpp`).** `scrollbar.cpp:11` includes
   `../returncheck.h` and uses none of it - the TU has 0 `CheckReturn` sites, so the include is dead like the 35 already
   listed. Measured with `tmp/_tmp_s30_closeprep.ps1` (prints every `#include` of the TU) against
   `tmp/_tmp_s30_measure2.txt` (0 `CheckReturn`, 0 `Win32ErrorHandler`). The include is **not** removed: with G6 the
@@ -148,7 +155,7 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   (same stance as the other 35 sites). Remaining dead includes after this TU: 36 of the 37 that include it; the one real
   consumer is `processthread.cpp` (3 sites) plus `errorhandling.cpp` (1).
 
-- **T7 re-measured 4 Nov 2026 (session 33, `window.cpp`) - unchanged at 37 includes / 35 dead, and the arithmetic in the
+- **[history - T7 closed by D16] T7 re-measured 4 Nov 2026 (session 33, `window.cpp`) - unchanged at 37 includes / 35 dead, and the arithmetic in the
   entry above is restated to settle it.** `tmp/_tmp_rcinclude_scan.ps1` run over the folder after this session prints
   `sources scanned: 38`, `includes ../returncheck.h: 37` (all but the glue `winqor_api_user.cpp`), `TUs with a real code
   hit: 2` (`processthread.cpp` x3 at `:85`,`:94`,`:110`; `errorhandling.cpp` x1 at `:81`) and

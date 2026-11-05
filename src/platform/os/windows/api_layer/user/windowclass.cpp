@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -54,8 +53,8 @@ namespace qor { namespace win { namespace api {
     //offsets block), DESKTOP | GAMES at :4289, :4357, :9855, :10209 - plus NOWINOFFSETS (:9965) and _WIN64 (:9897, :10020)
     //on the four *Ptr (tmp/_tmp_s34_u16.txt, depth-counted).
     //U25: this TU spells CONST (4 sites: :102, :106, :109, :113) like its two header declarations (user32.h:626, :627)
-    //and uses no lowercase const - recorded, not restyled. T7: #include "../returncheck.h" at :11 is unused here (0
-    //CheckReturn/BoolCheck/Win32ErrorHandler) - one of the folder's 35 dead includes.
+    //and uses no lowercase const - recorded, not restyled. T7: the #include "../returncheck.h" at (then) :11 was unused
+    //here (0 CheckReturn/BoolCheck/Win32ErrorHandler) - dead, removed under T7 on 5 Nov 2026.
 
     BOOL User32::GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass)
     {

@@ -8,7 +8,6 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
-#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -55,8 +54,8 @@ namespace qor { namespace win { namespace api {
     //Return policy (U1/U2): 5/5 return BOOL, 0 Win32ErrorHandler and 0 CheckReturn in all five wrappers, and no SDK
     //prototype carries _Check_return_, so a discarded FALSE leaves no trace on either side - including
     //ShutdownBlockReasonDestroy's documented ERROR_SHUTDOWN_IN_PROGRESS / ERROR_NOT_FOUND distinction and
-    //ExitWindowsEx's failure when the shutdown is not permitted. :11 includes ../returncheck.h and uses none of it
-    //(one of the 36 dead includes in this folder; left in place).
+    //ExitWindowsEx's failure when the shutdown is not permitted. Its ../returncheck.h include (then :11) used none of it
+    // - one of the folder's 35 dead includes, removed under T7 on 5 Nov 2026.
     //
     //Build note: this TU cannot be compiled for x86 for a reason outside itself - kernel32.h:92 names
     //PUNWIND_HISTORY_TABLE, which the SDK typedefs only under #if defined(_AMD64_)||defined(_ARM_)||defined(_ARM64_)

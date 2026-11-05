@@ -18,11 +18,13 @@ the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen
   U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U28**. Frozen - append nothing: P1, P2, P5, U11, U14 (D15),
   U15 (D14), U6, U3. The newest, **U28** (`registers/u28.md`), is four wrappers binding entry points that exist only in
   the 64-bit `user32.dll` image; it is latent because x86 does not build at all.
-- **Tasks T1-T7** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries. The one with a measured,
-  purely mechanical fix waiting only on a go-ahead is **T7**: 37 of the 38 sources include `../returncheck.h` and only 2
-  use it, so **35 includes are dead** (`winqor_api_user.cpp` is the one source that never includes it). Deletion waits for
-  one folder-wide decision rather than 38 per-TU passes; `registers/tasks.md:121-161` has the scan and the expected
-  post-fix numbers.
+- **Tasks T1-T6** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries. **T7 is CLOSED (5 Nov 2026,
+  D16)** - the 35 dead `#include "../returncheck.h"` lines are deleted, only `processthread.cpp` and `errorhandling.cpp`
+  still include it, and the scan (`_tmp_rcinclude_scan.ps1`, include test now line-anchored) reads **2 includes /
+  0 without use**. What T7 left behind is **the citation shift**: deleting line 11 moved every line below it up by one in
+  those 35 files, so a bare `:NNN` self-citation written under line 11 reads **one lower** than the source now says
+  (703 bare tokens with `N >= 12` measured there, 315 of them candidates, 388 already naming other files). Repairing it
+  is a semantic paragraph-level pass of its own - `gotchas/evidence-integrity.md` has the inheritance rule - not a TU pass.
 - **Architectural blocker**: x86 - session 31 measured 93 of 106 `api_layer` TUs failing at `kernel32.h:92`
   (`registers/u6.md`, frozen). Nothing in this folder can be validated on x86 until that moves.
 
