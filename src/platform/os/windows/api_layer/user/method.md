@@ -58,49 +58,59 @@ the instrument caveats moved out of this file into `tooling.md` / `gotchas.md`; 
 
 - `tooling.md` - the `tmp/` instrument index: what each scan prints, when it was added, which TU it was built for.
 - `gotchas.md` (index) + `gotchas/` - referenced from `tooling.md`: the instrument caveats and the traps in editing these records from PowerShell, one file per kind, routed by the trigger block in the index.
-- `status.md` - the per-session boot brief; it owns the record's file index, the register locator and the gate definition.
-## Session start-up cost (rules adopted 3 Nov 2026, session 30)
+- `status.md` - the per-session boot brief: the record protocol, the queue of all 38 sources, the open-item map and the
+  gate definition.
+- `preflags.md` - the next TU's pre-flags: written wholesale at the previous close, read once at boot, replaced wholesale,
+  never edited in place.
+## Reading cost - the four rules that still hold (5 Nov 2026)
 
-The record tree is read at every session start, so its reading cost **is** the review's cost, and a session that reads
-large artefacts loses its own context before it measures anything. Rules in force:
+The record tree is 91 markdown files / 788 KB (measured 5 Nov 2026) and is read at session start, so its reading cost
+**is** the review's cost.
+These four survive; the rest of the old "Session start-up cost" section (register appending, fragment assemblers, the
+220-line ceiling, the three-audit close) is retired and kept verbatim at `archive/protocol-v1-2026-11-05.md`.
 
 - **Never open a `/EP` capture or any `tmp/_tmp_*_pp_*.txt`** - each is ~453k lines / 7 MB. Every capture gets a digest
   produced by the same script that made it; the digest is what is read. Compare captures with a script that prints only the
   difference count.
 - **One pre-scan script per TU, one short output** covering steps 1-5 (header section, bindings + export/A/W existence, SDK
-  prototypes, hygiene, U19 spellings, T7 include) - `tmp/_tmp_s31_preflags.ps1` is the current shape, ~110 output lines.
-  Do not run five instruments and read five outputs.
-- **Appending to an accumulating register**: read that file's entry head plus its last ~25 lines, never the whole tally,
-  and never a closed register (D14/D15).
-- **Write the record from fragment files with one assembler** (`tmp/_s30_*.txt` + `tmp/_tmp_s30_asm*.ps1`), so the write
-  pass never re-reads the record it is editing.
-- **`status.md` stays under 220 lines / 22 KB**: at close, compress the outgoing session bullet instead of adding one, and
-  keep the pre-flags section under 40 lines.
-- **Commit at session close** - an uncommitted tree makes every later `git status` check noise.
-- Close every session with three audits, not one: the **compile gate** (38/38 dated by `.obj` freshness), the **cite audit**
-  (`tmp/_tmp_s29_cite_audit.ps1` - every `tmp/` artefact the records cite must exist; 0 of 198 missing at session 30) and
-  the **locator verify** (`tmp/_tmp_u15_locator_verify.ps1`). **Superseded 5 Nov 2026 by protocol v2 below** - the cite
-  audit and the locator verify are retired; the compile gate alone stands, and the commit is what makes the close auditable.
+  prototypes, hygiene, U19 spellings, T7 include). Do not run five instruments and read five outputs.
+- **A register is opened for one id at a time and only its entry head is read.** Registers are never appended to and a
+  closed or frozen one is never opened at session start.
+- **The boot read-set is `status.md` + `method.md` + `preflags.md` + the current TU.** `archive/` and
+  `gotchas/sessions-*.md` are opened only for a named TU or session.
 
-## Closing a session under protocol v2 (adopted 5 Nov 2026, session 34)
+## Closing a session under protocol v3 - the close ends with the commit (5 Nov 2026)
 
-Steps 1-7 above are the review and are unchanged. What changed is the **write pass**: the record's read-set had grown to
-about 269 KB, so a session compacted before it could measure anything and then re-read to convince itself nothing was
-lost. The protocol itself is in `status.md`; a close is six writes and one gate.
+Steps 1-7 of the review are unchanged. The write pass is bounded: **every artefact is written once, nothing is read back,
+and the session is not closed until the tree is clean.** The v2 close is retired and kept verbatim at
+`archive/protocol-v1-2026-11-05.md`.
 
 1. Write the review banner **into the TU** - `//=== api_layer conventions ====` at the top of the `.cpp` - from final
    measurements: the counts, the instrument slug behind each count, the verdict for every id the TU touches, and why
-   anything was recorded rather than fixed. This is the session's narrative.
+   anything was recorded rather than fixed. This is the session's whole narrative.
 2. Create a `registers/u<n>.md` **only** for a genuinely new open item (`u28.md` is the shape). Append nothing to an
    existing register, and nothing at all to a closed or frozen id.
 3. Touch an existing register only when this TU **changes that item's status**, and then add one line naming the session.
-4. Edit **`status.md` and nothing else**: tick the queue, reduce the closing session to pointers into its own banner, and
-   measure the next TU's pre-flags from the source instead of inheriting them.
-5. Gate: edited TU standalone at `/W4` exit 0, whole library 38/38 exit 0, dated by `tmp/obj/<tu>.obj` being newer than
-   the source. This is the only audit v2 keeps.
-6. Commit the TU, any new register, `status.md` and `memory-bank/activeContext.md` in one commit. **A session is not
-   closed until the tree is clean** - an uncommitted close is what forces the next session to re-derive what happened.
-7. Retired - do not run them: the register-locator generator, the README line-count refreshers, the queue audit that
-   counts session-log rows, the `tmp/` cite audit, the locator verify, dash counting, and every hash-verified slice or
-   splice. None is needed once no record file is edited twice.
+4. Edit `status.md`: change that TU's queue row from `next` to `closed`. Nothing else in it - no session section, no
+   verdict summary, no hand-off bullets. The banner in the source holds all of that.
+5. Write `preflags.md` **wholesale** for the next TU, measured from that TU's source and never inherited. When the review
+   is over, write the folder verdict there instead and say so.
+6. Gate: edited TU standalone at `/W4` exit 0, then the whole library 38/38 exit 0, dated by `tmp/obj/<tu>.obj` being
+   newer than the source. Re-run it **after** the banner is added. This is the only audit.
+7. Commit the TU, any new register, `status.md`, `preflags.md` and `memory-bank/activeContext.md` in one commit - then
+   **stop**. Do not re-open any of them to check that the write took: `git show` of the commit is the audit, and the
+   read-back pass is what turned sessions 34-36 into a compaction loop.
+8. Never run, and never write back into the procedure: the register-locator generator, the README line-count refreshers,
+   the queue audit that counts session-log rows, the `tmp/` cite audit, the locator verify, dash counting, and every
+   hash-verified slice or splice. None is needed once no record file is edited twice.
+
+### Method reminders that survive every protocol revision
+
+- Re-run the standalone compile after the banner is added - the gate must be dated after the last edit.
+- Date the gate by `tmp/obj/<tu>.obj` being newer than the source; a clean log's hash cannot date it, because clean runs
+  are byte-identical (this cost a re-run in sessions 31 and 34).
+- Count `CONST` / `const` case-sensitively.
+- Write the banner from final measurements, not from interim scans.
+- A pre-flag is a lead, not a finding: re-measure anything you act on. The section retired at this close had a heading
+  naming one TU over another TU's measurements.
 

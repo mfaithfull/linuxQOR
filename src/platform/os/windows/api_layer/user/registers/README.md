@@ -1,12 +1,13 @@
 # registers/ - index
 
-**Protocol v2 (5 Nov 2026, session 34): nothing is appended to a register any more.** A register holds one item's rule,
-its decision and its measured detail; per-TU instances live in the review banner at the top of the `.cpp` that found
-them, so an instance is read from the source instead of tallied here. Open a register only for an id you are acting on,
-and read its entry head. A **new** open item gets its own `u<n>.md` - the shape is `u28.md`.
+**The record protocol lives in `../status.md` and is not restated here.** Under protocol v3 nothing is appended to a
+register: a register holds one item's rule, its decision and its measured detail, while per-TU instances live in the
+review banner at the top of the `.cpp` that found them, so an instance is read from the source instead of tallied here.
+Open a register only for an id you are acting on, and read its entry head. A **new** open item gets its own `u<n>.md` -
+the shape is `u28.md`.
 
-The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted: the refresher
-(`_tmp_s33_readme_refresh.ps1`) and the locator generator (`_tmp_status_index_gen_s33.ps1`) are retired.
+The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
+generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
 Closed / frozen - append nothing: `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,

@@ -1,72 +1,113 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED; 1 TU left**: `winqor_api_user.cpp` (the module
-glue, 14 lines). Reviewing
+Last updated 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED and committed (`f4334e05`); 1 TU left**:
+`winqor_api_user.cpp` (the module glue, 14 lines). Reviewing
 `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
 
-## Record protocol v2 (adopted 5 Nov 2026, session 34)
+## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
 
-The record grew to 88 files / 762 KB and the read-set this file told a session to open reached **269 KB**, which forced a
-compaction before anything was measured and re-reading afterwards. v2 removes that cost. **No record content was
-deleted** - the audit on 5 Nov found the prose records are primary, not duplicate: only 3 of the 38 sources carry an
-in-source review banner, and sessions 16-20 exist nowhere outside the session-log rows. What v2 retires is the **derived**
-layer - the part that had to be regenerated at every close and re-verified because it kept drifting. The superseded
-`status.md` (session 33, 204 lines, with its locator table and per-session summaries) is kept verbatim at
-`archive/status-v1-2026-11-04.md` - not boot material, wording reference only.
+v2 cut the boot read-set, but session 36 still compacted during its write pass: it measured the TU, wrote its banner and
+passed the gate, then spent the rest of the session updating the record and never reached the commit. Four measured
+causes, all fixed here - (a) retired v1 rules were still written as imperatives inside the live procedure file
+(`method.md`), so a session runs audits it has already been told to stop running; (b) this file carried per-session prose
+that already exists in the TU banner, so every close rewrote about half of it (71 of 134 lines at session 36) and then
+re-read it to convince itself nothing was lost; (c) the file was over its own 120-line ceiling, which forces a
+compress-then-recheck pass on every close; (d) the close was left uncommitted, which is what makes the next session
+re-derive everything. **No record content was deleted** - the superseded procedure text is verbatim at
+`archive/protocol-v1-2026-11-05.md`.
 
-1. **The TU's in-source review block is the narrative.** Every reviewed TU gets a `//=== api_layer conventions ====`
-   banner at the top of its `.cpp` (`windowclass.cpp:16-57` is the model: counts, the instrument slug behind each count,
-   the verdict for each id it touches, and why anything was recorded rather than fixed). It cannot drift, because it sits
-   on the code it describes, and it needs no index entry. `archive/tu/<tu>.md` (sessions 1-15, 21-33) stays as frozen
-   history - open one only to research a closed TU.
-2. **Write-once records.** A record file is created by the session that writes it and never edited afterwards; the only
-   file a session edits is this one. Consequence: no slicing, no splices, no hash-verified rejoins, no line-count
-   columns - and the ~40 KB ceiling stops being a live rule, because nothing grows any more.
-3. **No generated index.** The id-to-file map is derivable from the id (below). Retired: the register locator, its
-   generator `_tmp_status_index_gen_s33.ps1`, the README line-count refreshers, and `_tmp_s32_queue_audit.ps1`, which
-   re-derived the queue by counting session-log rows. The queue table below is authoritative; `git log --oneline --` this
-   folder and a grep for the review banner let a session confirm its state without re-deriving anything.
-4. **Registers hold the rule, not a running tally.** Open a register only for an id being acted on, and read its entry
-   head. Per-TU instances now go in the TU block, so `registers/u16.md`, `registers/u19.md`, `registers/u26.md` and
-   `registers/census.md` are **frozen at their session-34 state**: kept for provenance, never read at session start, never
-   appended to. A **new** open item still gets its own `registers/u<n>.md` - the shape is `u28.md`.
-5. **Never cite `tmp/` artefacts in durable text.** `tmp/` is deleted at task end (`memory-bank/techContext.md:36-38`), so
-   such a citation is dead as it is written; name the instrument's script slug instead. Retired with this rule: the
-   `tmp/` cite audit and the locator verify.
-6. **Boot read-set = this file + `method.md` + the current TU** (about 30 KB). Never open an `/EP` capture or
-   `tmp/_tmp_*_pp_*.txt`; never read a whole register; `archive/` and `gotchas/sessions-*.md` are opened only to research
-   a named closed session. **This file stays under 120 lines.**
+1. **The close ends with `git commit`, and the session is not closed before it happens.** `git log` / `git show` are the
+   resumption record. A later session never re-reads this tree to find out what an earlier one did.
+2. **Every artefact is written once and not opened again in the same session.** The commit's diff is the audit; the compile
+   gate below is the only gate. No cite audit, no locator verify, no queue audit, no read-back pass.
+3. **The TU's in-source review block is the narrative.** Every reviewed TU gets a `//=== api_layer conventions ====`
+   banner at the top of its `.cpp` (`windowprocedure.cpp:16-73` is the current model: counts, the instrument slug behind
+   each count, the verdict for every id the TU touches, and why anything was recorded rather than fixed). It cannot drift,
+   because it sits on the code it describes, and it needs no index entry. `archive/tu/<tu>.md` (sessions 1-15, 21-33)
+   stays as frozen history - open one only to research a closed TU.
+4. **This file carries no per-session prose.** One row per source file in the queue below; closing a session changes that
+   row's `status` cell and nothing else here. No session section, no verdict summary, no hand-off bullets - the banner in
+   the source holds all of it. This is what keeps the per-close diff at one or two lines.
+5. **Pre-flags for the next TU live in `preflags.md`** - written wholesale by the closing session, read once at boot,
+   replaced wholesale at the next close. Never edited in place, never carried forward, never diffed against its previous
+   version (git holds that). Measuring the next TU from source beats inheriting numbers.
+6. **Retired procedure does not stay in a live file.** Nothing in `method.md` may order a step that is no longer
+   performed; superseded procedure moves to `archive/`. Annotating a retired imperative with "superseded" does not stop
+   the next session from running it - that is how sessions 34-36 lost their write passes.
+7. **Registers hold the rule, never a running tally.** A **new** open item gets `registers/u<n>.md` (`u28.md` is the
+   shape); no register is ever appended to, and a closed or frozen one is never opened at session start
+   (`registers/census.md`, `u16.md`, `u19.md`, `u26.md`).
+8. **Never cite `tmp/` artefacts in durable text.** `tmp/` is deleted at task end (`memory-bank/techContext.md:36-38`), so
+   such a citation is dead as it is written; name the instrument's script slug instead.
+9. **Boot read-set = this file + `method.md` + `preflags.md` + the current TU** (about 30 KB of the folder's 91 markdown
+   files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
+   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 160 lines** - the
+   ceiling is structural, not a task at close: the queue holds one fixed row per source (38 rows), the protocol and the
+   gate are fixed text, and a close adds no prose. A close that grows this file has broken rule 4.
 
-## Queue - 1 TU left, alphabetical
+## Resuming after a context reset - ask git, not the record
 
-| # | TU | lines | wrappers | status |
-|--:|---|--:|--:|---|
-| 37 | `winqor_api_user.cpp` (glue) | 14 | 0 | next |
+    git -C c:\RAID0\Develop\linuxQOR log --oneline -3 -- src/platform/os/windows/api_layer/user
+    git -C c:\RAID0\Develop\linuxQOR status --porcelain -- src/platform/os/windows/api_layer/user
+    git -C c:\RAID0\Develop\linuxQOR grep -n "=== api_layer conventions" -- src/platform/os/windows/api_layer/user
 
-Sessions 1-36 are closed: **37 of the 38 sources reviewed** (some sessions covered two TUs). History is write-once and is
-not boot material: `archive/session-log*.md` (rows plus verdict detail, and the only narrative for sessions 16-20) and
-`archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to either.
+An empty second command under a `close session N` head means session N is closed and there is nothing to re-derive. The
+third lists every TU that carries its own banner (measured 5 Nov 2026: **5 of 38** - `text.cpp`, `window.cpp`,
+`windowclass.cpp`, `windowprocedure.cpp`, `windowproperties.cpp`); every other closed TU is named in the queue column
+below. If `git status` is not empty, the unfinished close **is** the state - finish it, do not re-measure it.
 
-## Session 36 - `windowprocedure.cpp` (closed 5 Nov 2026)
+## Queue - all 38 sources, alphabetical (one row each; a close edits one `status` cell)
 
-- Clean TU: 2/2 pairs in header order, 0 U4 / U11 / U13 / U17, 0 return or parameter divergence against `winuser.h:4146`,
-  `:4159`, `:4181`, `:4190`, 2/2 bindings resolve (`CallWindowProcW`, `DefWindowProcW`), nothing to fix. Narrative: the
-  banner at `windowprocedure.cpp:16-73`.
-- Two measured facts that outlive the TU: `WNDPROC` is a genuine type check in this build, but a wrong **calling
-  convention** procedure only fails it on x86 - the arch that does not build (U6); and `Get/SetWindowLongPtrT` answer
-  `LONG_PTR`, not convertible to `WNDPROC` on either arch, so "read the procedure back out of `GWLP_WNDPROC` and hand it
-  to `CallWindowProcT`" needs a cast no in-tree caller makes. U7 lands hardest here: `Library::Call`'s SEH handler hands a
-  0 **to the OS** from a window procedure.
-- U19: 1 live layer call (`ui/gui/window.cpp:106`, reached from 32 handler sites) plus 2 live SDK bypasses in the main
-  window procedure itself (`windowfactory.cpp:71`, `:75`), which skip this layer's `qor_pp_fcontext` and SEH frame.
+Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of `//=== api_layer conventions`, presence of
+`archive/tu/<name>.md`). Not regenerated - the queue is complete, so nothing can drift except the one cell being closed.
+`lines` counts the source as it stands now, including its review banner.
 
-## Session 35 - `windowproperties.cpp` (closed 5 Nov 2026)
+| TU | lines | narrative | status |
+|---|--:|---|---|
+| `accelerator.cpp` | 60 | `archive/tu/accelerator.md` | closed |
+| `accessibility.cpp` | 50 | `archive/tu/accessibility-timer.md` | closed |
+| `brush.cpp` | 29 | `archive/tu/brush.md` | closed |
+| `caret.cpp` | 78 | `archive/tu/caret.md` | closed |
+| `clipboard.cpp` | 178 | `archive/tu/clipboard.md` | closed |
+| `combobox.cpp` | 59 | `archive/tu/combobox.md` | closed |
+| `console.cpp` | 50 | `archive/tu/console.md` | closed |
+| `coordtransform.cpp` | 57 | `archive/tu/coordtransform.md` | closed |
+| `cursor.cpp` | 166 | `archive/tu/cursor.md` | closed |
+| `desktop.cpp` | 174 | `archive/tu/desktop.md` | closed |
+| `devicecontext.cpp` | 115 | `archive/tu/devicecontext.md` | closed |
+| `devicemanagement.cpp` | 87 | `archive/tu/devicemanagement.md` | closed |
+| `dialog.cpp` | 192 | `archive/tu/dialog.md` | closed |
+| `errorhandling.cpp` | 92 | `archive/tu/errorhandling.md` | closed |
+| `filledshapes.cpp` | 99 | `archive/tu/filledshapes.md` | closed |
+| `help.cpp` | 108 | `archive/session-log*.md` | closed |
+| `hook.cpp` | 108 | `archive/session-log*.md` | closed |
+| `icon.cpp` | 169 | `archive/session-log*.md` | closed |
+| `ime.cpp` | 55 | `archive/session-log*.md` | closed |
+| `keyboard.cpp` | 316 | `archive/session-log*.md` | closed |
+| `mdi.cpp` | 112 | `archive/tu/mdi.md` | closed |
+| `menu.cpp` | 355 | `archive/tu/menu.md` | closed |
+| `message.cpp` | 274 | `archive/tu/message.md` | closed |
+| `monitor.cpp` | 162 | `archive/tu/monitor.md` | closed |
+| `mouse.cpp` | 167 | `archive/tu/mouse.md` | closed |
+| `painting.cpp` | 261 | `archive/tu/painting.md` | closed |
+| `processthread.cpp` | 122 | `archive/tu/processthread.md` | closed |
+| `rectangle.cpp` | 174 | `archive/tu/rectangle.md` | closed |
+| `resource.cpp` | 41 | `archive/tu/resource.md` | closed |
+| `scrollbar.cpp` | 156 | `archive/tu/scrollbar.md` | closed |
+| `systemshutdown.cpp` | 102 | `archive/tu/systemshutdown.md` | closed |
+| `text.cpp` | 125 | banner `:16` | closed |
+| `timer.cpp` | 33 | `archive/tu/accessibility-timer.md` | closed |
+| `window.cpp` | 692 | banner `:16` | closed |
+| `windowclass.cpp` | 158 | banner `:16` | closed |
+| `windowprocedure.cpp` | 90 | banner `:16` | closed |
+| `windowproperties.cpp` | 114 | banner `:16` | closed |
+| `winqor_api_user.cpp` | 14 | - | **next (session 37)** |
 
-- Clean TU: 5/5 pairs, 5/5 bindings, nothing to fix; its two blemishes (a U14 spacing nit, the dead `returncheck.h`
-  include) left as-is by user decision. Narrative: the banner at `windowproperties.cpp:16-77`. It also corrected a stale
-  hand-off: `SetLayeredWindowAttributes` **is** defined, at `window.cpp:565`.
+**37 of 38 sources reviewed** in sessions 1-36 (some sessions covered two TUs; sessions 16-20 exist nowhere outside the
+session-log rows). History is write-once and is not boot material: `archive/session-log*.md` (rows plus verdict detail)
+and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to either.
 
 ## Open items - id to file (derivable; there is no index to maintain)
 
@@ -94,41 +135,12 @@ byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the la
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
 106-source all-libraries gate, read as a diff against a pre-fix run.
 
-## Pre-flags for session 37 (`winqor_api_user.cpp`) - measured 5 Nov 2026 (the last TU)
+## Pre-flags for the next TU (session 37) - in `preflags.md`
 
-Glue, not wrappers: 14 lines, 0 `User32::` definitions, 0 bindings, 0 `qor_pp_fcontext`, no `user32.h` / `library.h` /
-`../returncheck.h` include - steps 1-5b and ids U4 / U11 / U13 / U17 / U18 / U19 / U25 / U26 have nothing to bite on. The
-measures that do apply were run this session by `tmp/_tmp_s37_pre.bat` and `tmp/_tmp_s37_ep.bat` (both `/EP` captures read
-only by a grep for `QORModule`, never opened).
+`preflags.md` is written wholesale at this close, read once at boot, replaced wholesale at the next close. The pre-flag
+body that stood here is retired: its heading named `winqor_api_user.cpp` while its bullets measured
+`windowprocedure.cpp` (at pre-banner line numbers `:16`, `:23`), because the section was edited in place at the previous
+close. Nothing is lost - the measurement survives in the `windowprocedure.cpp` banner, and the superseded text is in git
+at `f4334e05`, `status.md:104`-`:134`.
 
-- `user32.h:321` `//Window Procedure functions`, declarations `:322`-`:323`: **2 declarations, 2 definitions**, both
-  `static`, both `T`-suffixed, defined in header order at `:16` `CallWindowProcT`, `:23` `DefWindowProcT` - U4 / U11 /
-  U13 / U17 expected clean. 2 `qor_pp_fcontext`, 2 `qor_pp_useswinapiAW`, 2 explicit `Library::Call`, 0 `voidCall`,
-  0 `CONST` / 0 `const` (U25 clean), 7 includes with `../returncheck.h` at `:11` unused - one more **T7**.
-- Stems `CallWindowProc`, `DefWindowProc`: no bare export, `A` and `W` both exported (x64 capture, x86 capture alike), so
-  the `AW` spelling is forced and P1 / P2 / P6 cannot arise here.
-- SDK prototypes: `DefWindowProcA/W` at `winuser.h:4146`, `:4159` - `LRESULT` / `WINAPI`; the name sits after an
-  `#ifndef _MAC` split (`:4139`-`:4145`) whose **taken** arm is `LRESULT` + `WINAPI` (`:4140`-`:4141`) and whose untaken
-  arm is `LRESULT` + `CALLBACK` (`:4143`-`:4144`), so a reader who takes the three lines immediately above the name reads
-  the wrong calling convention - the pre-flag script's "ret/conv" line does exactly that here.
-  `CallWindowProcA/W` appear **twice**: `:4181`, `:4190` under `STRICT` with `_In_ WNDPROC lpPrevWndFunc`, and `:4207`,
-  `:4216` under `!STRICT` with `_In_ FARPROC`. Guard depth 3 (`_WINUSER_` / `NOUSER` / DESKTOP **| GAMES**) on all four,
-  no version floor - so U16 has nothing to record.
-- `WNDPROC` itself is `LRESULT (CALLBACK*)(HWND, UINT, WPARAM, LPARAM)` at `winuser.h:91`, outside the `STRICT` arms, and
-  there is **no** `typedef FARPROC WNDPROC`, so the layer's parameter survives `NO_STRICT` while the SDK's own prototype
-  switches to `FARPROC`. `CallWindowProcT` is the only wrapper in the folder that hands a **caller-authored callback**
-  straight to the OS: run the session-35 probe shape (`is_same` / `is_convertible`, `tmp/_tmp_s35_cbprobe.cpp`) against
-  `WNDPROC` before writing the verdict, the same way U18's callback question was settled here.
-- Liveness: **one live in-tree call between the two wrappers** - `ui/gui/window.cpp:106` (`User32::DefWindowProcT`), which
-  `window.h:67` exposes as the `Window` member that 32 `view/handlers/**` sites call as `window.DefWindowProcT(...)`;
-  `CallWindowProcT` has **0 callers** (D14: published surface, so no finding). The scan's single "BYPASS" row is its own
-  match of the `Window::DefWindowProcT` **definition** (`window.cpp:104`), not an SDK call. Two genuine SDK bypasses are
-  in `examples/experimental/osspecific/windows/retropad/retropad.cpp:890` and `controller.cpp:324` (`DefWindowProc` macro)
-  - examples, so U19's scope note applies to them.
-- Return semantics: `LRESULT` is an answer, never a status, so the session-27 soundness test bars any zero-check (U2 -
-  and 0 `_Check_return_` on these prototypes); check the handler idiom that throws the value away
-  (`... ? 0 : window.DefWindowProcT(...)`) rather than proposing a check. `:20` writes
-  `Library::Call<LRESULT,WNDPROC, HWND, UINT, WPARAM, LPARAM>(` - glued comma and no space before the `(`: **U14 is frozen
-  (D15)**, so book no tally, and record only what a decision asks for.
-- Method reminders that survive v2: re-run the standalone compile after the banner is added; date the gate by `.obj`
-  freshness; count `CONST` / `const` case-sensitively; write the banner from final measurements, not from interim scans.
+

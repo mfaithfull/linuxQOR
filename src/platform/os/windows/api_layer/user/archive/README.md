@@ -3,6 +3,11 @@
 ## `status-v1-2026-11-04.md` - the superseded `status.md` (session 33), kept verbatim
 Written 5 Nov 2026 when protocol v2 replaced it. Not boot material; wording reference only.
 
+## `protocol-v1-2026-11-05.md` - the superseded record procedure, kept verbatim
+Written 5 Nov 2026 when protocol v3 replaced the v2 close and the v1 "Session start-up cost" rules. Live procedure is
+`../method.md` and live protocol is `../status.md`; **a retired rule must not stay in either of those files**, which is
+what this file is for. Not boot material - open it only to read what a retired rule actually said.
+
 
 > **FROZEN at session 34 (5 Nov 2026).** Write-once history: the rows and narratives below are the only record for sessions 16-20, so nothing is deleted and nothing is appended. Not boot material - open a file here only when a named closed session is being researched. New sessions write their narrative into the review banner of the `.cpp` they reviewed (`status.md`, protocol v2).
 Per-TU narratives, one file per TU, verbatim slices of the pre-split session-log-archive.md.

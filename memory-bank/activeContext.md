@@ -1,30 +1,29 @@
 # Active Context
 
-Last updated: 5 Nov 2026 - **session 35 (`windowproperties.cpp`) CLOSED: 36 of 38 TUs reviewed, 2 left**
-(`windowprocedure.cpp` 30 lines, `winqor_api_user.cpp` 14 - 44 source lines). Session 35 fixed nothing: the TU measured
-clean (5/5 declaration-definition pairs in header order, 0 return-type divergence, 5/5 bindings resolving to `<stem>W` on
-both arches, 0 U4/U11/U13/U17), its one probe settled that `PROPENUMPROC`/`PROPENUMPROCEX` are the **W** callback shapes
-under `STRICT` (so the callback parameters are type-checked, not `FARPROC`), and its two blemishes (the U14 spacing nit,
-the dead `returncheck.h` include) were left as-is by user decision. It also corrected a stale hand-off:
-`SetLayeredWindowAttributes` is not declared-without-definition - it is defined at `window.cpp:565`.
+Last updated: 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED and committed (`f4334e05`); 1 TU left**:
+`winqor_api_user.cpp` (the module glue, 14 lines, 0 wrappers, 0 bindings). Session 36 fixed nothing - the TU measured
+clean (2/2 declaration-definition pairs in header order, 2/2 bindings resolving to `<stem>W`, 0 U4/U11/U13/U17/U18) - and
+its two durable findings are recorded in its own review banner at `windowprocedure.cpp:16-73`.
 
-**The record protocol changed at this close - protocol v2, defined in `status.md`.** The record had reached 88 files
-/ 762 KB and the read-set a session was told to open had reached 269 KB, which forced compaction and then re-checking.
-Under v2: the review banner written into each reviewed `.cpp` is the session narrative; record files are write-once
-and are never edited afterwards; the generated locator, the README line-count columns, the queue audit and the `tmp/`
-cite audit are retired; and `status.md` + `method.md` + the current TU (~30 KB) are the whole boot read-set.
-Per-session narrative does not belong in this file - it is in `status.md`, the session log and the source banners.
+**The record protocol turned over twice in two closes: v2 at session 34, v3 after session 36.** Session 36 measured the
+TU, passed the compile gate and wrote its banner, then lost the remainder of the session to the record write pass and
+reached a compaction without committing. The four measured causes were: retired rules left as imperatives inside the live
+procedure file, per-session prose in the one file every close has to edit, a line ceiling the file had already broken, and
+an uncommitted close. v3 fixes all four - the close **is** the commit, every artefact is written once and never read back,
+`status.md` carries only tables, and pre-flags moved to their own wholesale-replaced `preflags.md`. The superseded
+procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
+Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 35 (`windowproperties.cpp`) CLOSED 5 Nov 2026** - 5 wrappers, 0 binding / signature / convention defects
-  requiring a change. Narrative: the review banner at `windowproperties.cpp:16-77`.
-- **Next: session 36, `windowprocedure.cpp`** (30 lines, 2 wrappers - `CallWindowProcT`, `DefWindowProcT`), then the glue
-  `winqor_api_user.cpp` closes the library. Fresh pre-flags for it are in `status.md`; instruments already prepared:
-  `tmp/_tmp_s36_pre.ps1`, `tmp/_tmp_s36_ppclass.ps1`, `tmp/_tmp_win_pp_s36.bat` (export table + `/EP` capture already run).
+- **Session 36 (`windowprocedure.cpp`) CLOSED 5 Nov 2026** - 2 wrappers, 0 defects requiring a change. Narrative and all
+  measurements: the banner at `windowprocedure.cpp:16-73`. It is committed (`f4334e05`), so nothing about it is to be
+  re-derived by a later session.
+- **Next: session 37, `winqor_api_user.cpp`** - the last TU, and it closes the folder review. Its pre-flags are in
+  `src/platform/os/windows/api_layer/user/preflags.md`; the authoritative queue is in `status.md`.
 
 ## Decisions in force (pointer only - not restated here)
  - Project wide decisions are recorded in `docs/agent/DECISIONS.md`. The memory bank deliberately does not duplicate their text.
@@ -34,9 +33,10 @@ lines a new session needs to start, or moved to `memory-bank/archive/`. Session 
 
 ## Where the record lives (boot order)
 
-1. `src/platform/os/windows/api_layer/user/status.md` - the review boot file: live state, TU queue, the id-to-file map,
-   the verification gate and the current TU's pre-flags. With `method.md` and the TU itself this is the **whole** boot
-   read-set (protocol v2): about 30 KB.
+1. `src/platform/os/windows/api_layer/user/status.md` - the review boot file: the protocol, the queue of all 38 sources,
+   the id-to-file map and the compile gate. With `method.md`, `preflags.md` and the current TU this is the **whole** boot
+   read-set (protocol v3): about 30 KB. Whether an earlier session finished is answered by `git log --oneline` and a clean
+   `git status` for that folder - never by reading the record deeper.
 2. `src/platform/os/windows/api_layer/user/registers/` - one file per open item; open only the file for an id you are
    acting on, and read its entry head. Never the whole tree. `../method.md` holds the procedure, `../tooling.md` the
    instrument index and `../gotchas.md` the caveats that index points at.
