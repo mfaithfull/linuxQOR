@@ -1,4 +1,10 @@
 # archive/ - index (generated, 2 Nov 2026)
+
+## `status-v1-2026-11-04.md` - the superseded `status.md` (session 33), kept verbatim
+Written 5 Nov 2026 when protocol v2 replaced it. Not boot material; wording reference only.
+
+
+> **FROZEN at session 34 (5 Nov 2026).** Write-once history: the rows and narratives below are the only record for sessions 16-20, so nothing is deleted and nothing is appended. Not boot material - open a file here only when a named closed session is being researched. New sessions write their narrative into the review banner of the `.cpp` they reviewed (`status.md`, protocol v2).
 Per-TU narratives, one file per TU, verbatim slices of the pre-split session-log-archive.md.
 Open only the TU you are writing about. New TU: create archive/tu/<name>.md and add the row in session-log.md.
 

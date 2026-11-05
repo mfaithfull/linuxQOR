@@ -1,5 +1,7 @@
 # Defect census, sessions 1-23 (append-only; the sessions 1-16/1-21 text below stays verbatim)
 
+> **FROZEN at session 34 (5 Nov 2026).** Provenance only: not boot material, never appended to, never read unless a named closed session is being researched. Per-TU instances now live in the review banner of the source file itself (`status.md`, protocol v2).
+
 ## Defect census (sessions 1-16 snapshot; moved verbatim out of status.md on 1 Nov 2026)
 
 ### Defect census, sessions 1-21 (22 TU entries, 180 wrappers)

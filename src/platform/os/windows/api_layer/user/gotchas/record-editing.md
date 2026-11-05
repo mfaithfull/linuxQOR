@@ -5,7 +5,29 @@ Description: "Traps in editing these records, or any long text file, from PowerS
 
 Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1` - snapshot `tmp/_tmp_gotchas_presplit.md`, verbatim rejoin proven by `tmp/_tmp_gotchas_verify.ps1`.
 
+## Which of these still apply under protocol v2 (5 Nov 2026)
+
+Protocol v2 (`status.md`) retires most of the machinery this file describes, and with it most of these traps: there are no
+slices, no splices, no hash-verified rejoins, no locator splices, no line-count refreshers, no 40 KB ceiling arithmetic,
+and no record file is edited twice. **Do not build that machinery again.** What still applies whenever you edit `status.md`
+(the one file a session edits) or any long text file from PowerShell:
+
+- PowerShell text-handling traps: `-like` and the backtick, `[IO.File]::*Text` resolving relative paths against the .NET
+  current directory, nested-array flattening, and `[string]::Replace` overload resolution handing `WriteAllText` a `$null`
+  and truncating a record to 0 bytes. Assert non-null and non-empty immediately before any write, and snapshot first.
+- The `editor` tool matches whole lines, so long single-line table rows need a script with exact substrings - and prefer
+  `editor` for prose, since it cannot truncate.
+- Writing an in-source review block: its self-citations must use the **post-insert** line numbering, since the block moves
+  every definition below it. That rule is now more important, not less, because the block *is* the record.
+- Measurement discipline: absolute code-point measurement rather than `git show` through PowerShell, instrument slugs
+  rather than `tmp/` paths in durable text, "the only / none / all" claims needing an instrument before they are written,
+  and `CALL NOT PARSED` meaning "the instrument could not read this", not "this site is wrong".
+
+Everything below is retained verbatim as measured history of the pre-v2 record; it is read when a trap above is being hit,
+not at session start.
+
 ## Editing these records (and any long text file) from PowerShell
+
 - Counting en/em dashes by piping `git show HEAD:<path>` through PowerShell reports **0** (cp1252 re-decode) - measure with
   `[System.IO.File]::ReadAllText` on the working file and compare code-point groups instead; do not "normalize" encoding.
   The original note with the memory-bank dash counts is in the archive's `filledshapes.cpp` section. Measured 31 Oct: `method.md` had

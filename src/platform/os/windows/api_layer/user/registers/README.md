@@ -1,11 +1,16 @@
-# registers/ - index (rows refreshed by tmp/_tmp_s33_readme_refresh.ps1, 4 Nov 2026; locator generator
-# tmp/_tmp_status_index_gen_s33.ps1)
-Bodies are verbatim slices of the pre-split registers.md (line range given). Append findings to the file named,
-never to status.md. For the accumulating entries (u2, u16, u17, u19, u20, u25) read only the entry head for the rule
-and append your per-TU instances at the end of the file - do not read the whole tally back. u14 and u15 are CLOSED
-(user decisions 2 and 3 Nov 2026, policies D14 and D15 in docs/agent/DECISIONS.md): their tallies are frozen and
-NOTHING is appended to them. **P1, P2 and P5 are closed as of 4 Nov 2026** (session 33) - the binding-defect classes
-are complete at 428 bindings / 0 unresolvable, so `prescan.md` receives no new binding rows.
+# registers/ - index
+
+**Protocol v2 (5 Nov 2026, session 34): nothing is appended to a register any more.** A register holds one item's rule,
+its decision and its measured detail; per-TU instances live in the review banner at the top of the `.cpp` that found
+them, so an instance is read from the source instead of tallied here. Open a register only for an id you are acting on,
+and read its entry head. A **new** open item gets its own `u<n>.md` - the shape is `u28.md`.
+
+The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted: the refresher
+(`_tmp_s33_readme_refresh.ps1`) and the locator generator (`_tmp_status_index_gen_s33.ps1`) are retired.
+
+Closed / frozen - append nothing: `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
+428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
+`u26.md`.
 
 | File | Lines | Register ids | Was registers.md |
 |---|--:|---|---|

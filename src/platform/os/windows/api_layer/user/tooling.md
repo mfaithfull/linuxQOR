@@ -1,5 +1,7 @@
 # winqor_api_user - tooling index (`tmp/` scratch instruments)
 
+> **FROZEN at session 34 (5 Nov 2026).** Provenance only: not boot material, never appended to, never read unless a named closed session is being researched. Per-TU instances now live in the review banner of the source file itself (`status.md`, protocol v2).
+
 Open before running an instrument or the gate. Procedure: `method.md`. **This file says what each instrument prints;
 `gotchas.md` (the index; the caveats are in `gotchas/`) says what it does not see - read that entry before acting on a
 flag.**

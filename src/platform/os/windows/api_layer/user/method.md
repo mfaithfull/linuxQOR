@@ -79,5 +79,28 @@ large artefacts loses its own context before it measures anything. Rules in forc
 - **Commit at session close** - an uncommitted tree makes every later `git status` check noise.
 - Close every session with three audits, not one: the **compile gate** (38/38 dated by `.obj` freshness), the **cite audit**
   (`tmp/_tmp_s29_cite_audit.ps1` - every `tmp/` artefact the records cite must exist; 0 of 198 missing at session 30) and
-  the **locator verify** (`tmp/_tmp_u15_locator_verify.ps1`).
+  the **locator verify** (`tmp/_tmp_u15_locator_verify.ps1`). **Superseded 5 Nov 2026 by protocol v2 below** - the cite
+  audit and the locator verify are retired; the compile gate alone stands, and the commit is what makes the close auditable.
+
+## Closing a session under protocol v2 (adopted 5 Nov 2026, session 34)
+
+Steps 1-7 above are the review and are unchanged. What changed is the **write pass**: the record's read-set had grown to
+about 269 KB, so a session compacted before it could measure anything and then re-read to convince itself nothing was
+lost. The protocol itself is in `status.md`; a close is six writes and one gate.
+
+1. Write the review banner **into the TU** - `//=== api_layer conventions ====` at the top of the `.cpp` - from final
+   measurements: the counts, the instrument slug behind each count, the verdict for every id the TU touches, and why
+   anything was recorded rather than fixed. This is the session's narrative.
+2. Create a `registers/u<n>.md` **only** for a genuinely new open item (`u28.md` is the shape). Append nothing to an
+   existing register, and nothing at all to a closed or frozen id.
+3. Touch an existing register only when this TU **changes that item's status**, and then add one line naming the session.
+4. Edit **`status.md` and nothing else**: tick the queue, reduce the closing session to pointers into its own banner, and
+   measure the next TU's pre-flags from the source instead of inheriting them.
+5. Gate: edited TU standalone at `/W4` exit 0, whole library 38/38 exit 0, dated by `tmp/obj/<tu>.obj` being newer than
+   the source. This is the only audit v2 keeps.
+6. Commit the TU, any new register, `status.md` and `memory-bank/activeContext.md` in one commit. **A session is not
+   closed until the tree is clean** - an uncommitted close is what forces the next session to re-derive what happened.
+7. Retired - do not run them: the register-locator generator, the README line-count refreshers, the queue audit that
+   counts session-log rows, the `tmp/` cite audit, the locator verify, dash counting, and every hash-verified slice or
+   splice. None is needed once no record file is edited twice.
 
