@@ -166,3 +166,46 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   go-ahead, not 38 per-TU passes. Gate for whoever executes it stays the same (38/38 at `/W4` + re-run of the scan,
   expect `includes: 2`, `include-without-use: 0`).
 
+
+- **T8 - execute U18: make every wrapper's published signature match the export it binds, and close the named coverage
+  gap.** Opened 5 Nov 2026 by the folder's `purpose.md` (policy **D18**, `docs/agent/DECISIONS.md`); the measured site
+  list is the D18 block at the foot of `registers/u18.md`. Tranches, each its own commit, each gated by the `status.md`
+  gate (edited TU standalone at `/W4`, then the folder 38/38):
+  0. **Answer three questions first** (D18 deliberately leaves them open), and answer them in `docs/agent/DECISIONS.md`:
+     (a) is the "full set" all 1,018 exports or the 117 that `winuser.h` declares? (b) do both `A` and `W` variants get a
+     wrapper, or the `W` form plus the `T` alias - this is U17's suffix question, and it sets the size of (a);
+     (c) are superseded exports (`keybd_event`, `mouse_event`, the DDE family) wrapped at all? Nothing after step 0 is
+     mechanical until these are settled.
+  1. **Published-type fixes, one TU per commit.** `keyboard.cpp`: `GetKeyboardLayoutList` `UINT` -> `int`
+     (`winuser.h:1313`) at `user32.h:79` + `keyboard.cpp:133` + Call list `:137`; `keybd_event` `void*` -> `ULONG_PTR`
+     (`:6071`) at `user32.h:87` + `:189` + `voidCall` list `:193`. `menu.cpp`: `InsertMenuT`/`ModifyMenuT` `void*` ->
+     `UINT_PTR` (`:7658`, `:7667`, `:7704`, `:7713`) at `user32.h:239`, `:245` + `menu.cpp:249`, `:291` + Call lists
+     `:253`, `:295`; `TrackPopupMenu`'s last slot `HWND` -> `CONST RECT *` (`:7759`) at `user32.h:252` + `menu.cpp:340` +
+     Call list `:344`. Header, definition and `Call<>` list must change in the same edit - a header/Call-list mismatch is
+     the U14 class of defect, not a style nit.
+  2. **Consumer probe per TU, before the header change lands.** Compile the callers against the edited header the way
+     session 33 did (`_tmp_win_consumer_s33.bat` in `tooling.md`): the live sites are
+     `ui/gui/controllers/i_m/menu.cpp:173`, `:183` (they pass an item id into the `UINT_PTR` slot, so the caller side needs
+     a `UINT_PTR` parameter or a cast), `windowcontroller.cpp:313-315`, `:328-330` and
+     `scrollbarcontroller.cpp:50-52`, `:57`, `:72`. Fix the `winqor_gui` side in a separate commit; `TrackPopupMenu` has
+     no caller, so it is latent.
+  3. **Decide `TrackPopupMenu`'s reserved slot rather than retype it blindly**: the SDK marks it `_Reserved_ CONST RECT *`
+     (it must be NULL), and the layer spells it `HWND`, which under `STRICT` can only ever carry NULL. Retype it, or drop
+     the parameter and pass NULL - do not leave the `HWND` slot as it is.
+  4. **Parameter-name alignment in one folder-wide commit**, not TU by TU (16 recorded sites: `scrollbar.cpp:69`
+     `wSBFlags` -> `wSBflags`, `:83` and `:127` `fnBar` -> `nBar`, `:127` `fRedraw` -> `redraw`; `window.cpp:174`, `:315`,
+     `:385`, `:427`, `:543`, `:641`; six in `menu.cpp`). Re-measure the folder first with a **comment-stripped,
+     case-sensitive** decl-vs-`winuser.h` comparison - per-TU counts were taken at different times and the
+     `-match '^(.+)T$'` trap in `gotchas/instrument-flags.md` truncates every stem ending in a lowercase `t`.
+  5. **Add the coordinate-transform pair U18 was opened over**: `LogicalToPhysicalPointForPerMonitorDPI` and
+     `PhysicalToLogicalPointForPerMonitorDPI` (`BOOL (HWND, LPPOINT)`, single exports 26E / 2AC, no A/W family and no
+     stem -> stemW macro, so bare `qor_pp_useswinapi` is correct under D13). Declare them beside `user32.h:188`/`:191`
+     and define them in `window.cpp` beside the pair session 33 fixed (`:504`, `:527`) - the section question (U12) is
+     resolved by placing them with their siblings. The `#if(WINVER >= 0x0603)` guard around the SDK prototypes is live
+     (`sdkddkver.h:251` defaults `WINVER` to `0x0A00`; nothing in the build sets it). Re-run `_tmp_wrong_stem_scan.ps1`
+     and the `/EP` binding-literal check after this step.
+  6. **The 117-name backlog.** Work it family by family, one family per session, applying the D18 rule from the first
+     line: the wrapper's signature is the `winuser.h` prototype. Keep the dispositioned name list in a durable file
+     (`registers/u18-coverage.md`) - the instrument's output `tmp/_tmp_u18_gap_sdk.txt` does not survive the task.
+  U18 closes when steps 1-5 are in and every backlog name has a disposition. Do not mark it closed on any partial pass.
+

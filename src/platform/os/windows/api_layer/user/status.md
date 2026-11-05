@@ -6,6 +6,11 @@ folder review is complete**. Reviewing
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
 
+**Purpose (authoritative: `purpose.md`, added 5 Nov 2026, policy D18 in `docs/agent/DECISIONS.md`): the library intends a
+full set of wrapper functions for the exports of `user32.dll`.** A wrapper is therefore judged against the export it
+binds, and an export with no wrapper is a gap. The actionable lead is **T8** (`registers/tasks.md`) - the U18 conformance
+pass.
+
 ## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
 
 v2 cut the boot read-set, but session 36 still compacted during its write pass: it measured the TU, wrote its banner and
@@ -41,7 +46,7 @@ re-derive everything. **No record content was deleted** - the superseded procedu
    (`registers/census.md`, `u16.md`, `u19.md`, `u26.md`).
 8. **Never cite `tmp/` artefacts in durable text.** `tmp/` is deleted at task end (`memory-bank/techContext.md:36-38`), so
    such a citation is dead as it is written; name the instrument's script slug instead.
-9. **Boot read-set = this file + `method.md` + `preflags.md` + the current TU** (about 30 KB of the folder's 91 markdown
+9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
    open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 160 lines** - the
    ceiling is structural, not a task at close: the queue holds one fixed row per source (38 rows), the protocol and the
@@ -113,15 +118,15 @@ and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to
 ## Open items - id to file (derivable; there is no index to maintain)
 
 - `U<n>` -> `registers/u<n>.md` | `P1`-`P5` -> `registers/prescan.md` | `P6`, `U27` -> `registers/p6-u27.md` |
-  `G1`-`G6` -> `registers/ground-rules.md` | `T1`-`T7` -> `registers/tasks.md` | folder totals -> `registers/census.md`.
+  `G1`-`G6` -> `registers/ground-rules.md` | `T1`-`T8` -> `registers/tasks.md` | folder totals -> `registers/census.md`.
 - Closed / frozen - append nothing: **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
   includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
   four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27,
-  P3, P4, P6, T1-T6. Each statement and its measured detail is in the file the map names - open that file, never the tree.
-- Decisions in force (D13, the return-check policy, D14, D15, D16, **D17 x64-only / no 32-bit x86**) are in
-  `docs/agent/DECISIONS.md` and are not restated here.
+  P3, P4, P6, T1-T6, **T8**. Each statement and its measured detail is in the file the map names - open that file, never the tree.
+- Decisions in force (D13, the return-check policy, D14, D15, D16, D17 x64-only / no 32-bit x86, **D18 purpose = full
+  wrapper set over user32.dll's exports**) are in `docs/agent/DECISIONS.md` and are not restated here.
 
 ## Gate (identical every session)
 
@@ -145,9 +150,9 @@ binding literals. `user32.h` untouched unless the session says otherwise; a libr
 ## There is no next TU - what a further session in this folder works from
 
 All 38 sources are reviewed, so the queue above is closed and `preflags.md` no longer pre-flags a TU: it carries the
-folder-level leads instead. A next session picks from the open items and tasks the map above names (U1-U27 less the frozen
-ids, P3, P4, P6, T1-T6), or moves to another `api_layer` folder. Architecture is settled - Windows is 64-bit only (D17), so
-no session here reopens an x86 question or runs an x86 compile. The gate above is unchanged and still applies to any edit
-here.
+folder-level leads instead, and its lead is **T8** - the U18 conformance pass opened by `purpose.md` (D18). A next session
+picks T8 or another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T1-T6), or moves to another
+`api_layer` folder. Architecture is settled - Windows is 64-bit only (D17), so no session here reopens an x86 question or
+runs an x86 compile. The gate above is unchanged and still applies to any edit here.
 
 

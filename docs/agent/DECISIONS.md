@@ -397,6 +397,42 @@ inside `windowclass.cpp`'s review banner (`:42`, `:53`) describing the SDK's own
 
 What it settles in the `api_layer/user` review record (`src/platform/os/windows/api_layer/user/`):
 
+## D18: winqor_api_user's purpose is a full wrapper set over user32.dll's exports - a wrapper's signature mirrors the export - POLICY (5 Nov 2026)
+
+Decision (user, 5 Nov 2026): the folder now carries a purpose statement,
+`src/platform/os/windows/api_layer/user/purpose.md` - "winqor_api_user intends to provide a full set of wrapper functions
+for the exports of the User32.dll Windows system library". Recorded as a decision because it changes the review's
+acceptance criterion for that folder: a wrapper is judged against **the export it binds**, and an unwrapped export is a
+**gap**, not a scope choice. It also fills the folder's last `purpose.md` hole - the four sibling folders `api_layer/`,
+`api_layer/gdi`, `api_layer/kernel` and `api_layer/shell` already had one, per the rule at
+`memory-bank/systemPatterns.md:16` ("every new folder needs `purpose.md`").
+
+What it settles in the `api_layer/user` record:
+
+- **U18 stops being a deferred surface decision and becomes conformance work** (`registers/u18.md`). Its divergences were
+  left unfixed on two grounds: "published signature, therefore a user decision", and "same width on x86 and x64, so no
+  ABI effect" - the second already removed by D17. Under the purpose statement the direction is fixed: **a wrapper's
+  published signature equals the SDK prototype for the export it binds** (return type, parameter types, const-ness,
+  parameter names), changed in `user32.h`, in the definition and in the `Library::Call<>` list together. The executable
+  plan is **T8** in `registers/tasks.md`.
+- **Coverage becomes measurable, and is measured** (5 Nov 2026, instrument `tmp/_tmp_u18_coverage4.ps1` over the captured
+  export table and `winuser.h` 10.0.26100): **1,018 export names** (1,014 ordinal+RVA rows + 4 forwarded rows - the split
+  already recorded in `gotchas/instrument-flags.md`), **525 members** declared in `user32.h`, **428 bindings** across the
+  38 TUs, **648 exports matched** by a member name after A/W and `T` normalization, **117 SDK-declared exports with no
+  wrapper at all**, and **253 unwrapped exports that have no `winuser.h` prototype** (undocumented / internal).
+- **U4's direction is completion, not deletion**: where a declared-but-undefined member names a real export (T1's
+  `Get`/`SetUserObjectSecurity`, T3's power pair), the stated intent points at adding the definition, not removing the
+  declaration.
+
+What it does **not** decide, and which T8 step 0 asks before anything executes: whether the 253 undocumented exports are
+inside the "full set"; whether both `A` and `W` variants must be wrapped or the `W` form plus a `T` alias suffices (that
+is U17's suffix policy); and how superseded exports (`keybd_event`, `mouse_event`, the DDE family) are dispositioned.
+
+Record: the D18 status block in `registers/u18.md`, the new **T8** in `registers/tasks.md`, the `purpose.md` pointer and
+id lines in that folder's `status.md` and `preflags.md`, and one line in the api_layer section of
+`memory-bank/systemPatterns.md`. No source, header or CMake file is touched by this decision.
+
+
 - **U28 is CLOSED by this decision** (`registers/u28.md`). The four `*Ptr` members (`windowclass.cpp:77`, `:119`, `:140`,
   `:147`, binding `Get/SetWindowLongPtrW` and `Get/SetClassLongPtrW`) name entry points the 32-bit `user32.dll` image does
   not export. That is now simply the correct spelling for the only image the project targets, so the wrappers stay exactly

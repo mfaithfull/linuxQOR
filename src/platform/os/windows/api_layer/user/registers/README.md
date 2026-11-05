@@ -22,7 +22,7 @@ Closed / frozen - append nothing: `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1
 | `preamble.md` | 9 | - | 1-7 |
 | `prescan.md` | 152 | P1, P2, P3, P4, P5, P5, P1, P5, P1, P5 | 8-76 |
 | `README.md` | 45 | - | - |
-| `tasks.md` | 161 | T1, T2, T3, T4, T5, T6, T7, T7 | 958-1031 |
+| `tasks.md` | 161 | T1, T2, T3, T4, T5, T6, T7, T8 | 958-1031 |
 | `u1.md` | 10 | U1 | 129-136 |
 | `u10.md` | 20 | U10 | 209-226 |
 | `u11.md` | 42 | U11, U11 | 227-236 |

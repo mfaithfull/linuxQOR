@@ -15,7 +15,7 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user source review (one TU per session)
+## Current focus: winqor_api_user - TU review complete, the T8 conformance pass is next
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
@@ -23,8 +23,14 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
 - **Session 37 (`winqor_api_user.cpp`) CLOSED 5 Nov 2026** - the module glue: 1 declaration / 1 definition pairing,
   0 wrappers, 0 dead includes, 0 UB, idiom-conformant with the 12 sibling `api_layer` glue TUs. Narrative and all
   measurements: the banner at `winqor_api_user.cpp:4-72`. It is committed, so nothing about it is to be re-derived.
-- **The queue is empty - there is no next TU.** What a further session in this folder would work from (open items, the
-  T1-T6 tasks, the x64-only decision D17 and what it closed, and the unregistered version-string hazard) is in
+- **The queue is empty - there is no next TU.** The folder has a purpose statement now
+  (`src/platform/os/windows/api_layer/user/purpose.md`, 5 Nov 2026: "a full set of wrapper functions for the exports of the
+  User32.dll Windows system library"), recorded as policy **D18** in `docs/agent/DECISIONS.md`; it changes the acceptance
+  criterion - a wrapper's published signature is the SDK prototype of the export it binds, and an unwrapped export is a
+  gap. The work that follows is **T8** (`.../api_layer/user/registers/tasks.md`; measured sites in `.../registers/u18.md`):
+  1 return type, 4 parameter types, 16 parameter names, 2 unwrapped `*ForPerMonitorDPI` exports, then a 117-name
+  SDK-declared coverage backlog (253 further exports have no `winuser.h` prototype). Other leads - open items, the T1-T6
+  tasks, D17 and what it closed, the unregistered version-string hazard - remain in
   `src/platform/os/windows/api_layer/user/preflags.md`; `status.md` still carries the queue table, the id map and the
   compile gate for any future edit here.
 

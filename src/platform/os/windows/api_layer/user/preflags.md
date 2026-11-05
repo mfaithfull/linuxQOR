@@ -1,8 +1,22 @@
 # Folder-level leads - the TU queue is complete (session 37, 5 Nov 2026)
 
-Written wholesale at the session-37 close. All 38 sources in `src/platform/os/windows/api_layer/user` are reviewed, so
-there is no next TU and this file no longer pre-flags one; it lists what a further session in this folder would pick up.
+Written wholesale at the session-37 close and amended at the **D18 / purpose.md decision the same day** (5 Nov 2026). All
+38 sources in `src/platform/os/windows/api_layer/user` are reviewed, so there is no next TU and this file no longer
+pre-flags one; it lists what a further session in this folder would pick up, and its lead is T8.
 **Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
+
+## The actionable lead: T8 - the U18 conformance pass (5 Nov 2026)
+
+The folder now has a purpose statement, `purpose.md`: the library "intends to provide a full set of wrapper functions for
+the exports of the User32.dll Windows system library". That is policy **D18** in `docs/agent/DECISIONS.md`, and it changes
+what counts as a defect here: a wrapper's published signature is the `winuser.h` prototype for the export it binds, and an
+export with no wrapper is a gap. The work is **T8** (`registers/tasks.md`), the measured sites are the D18 block at the
+foot of `registers/u18.md`. Headline measurements (5 Nov 2026): **1,018 export names**, **525 members**, **428 bindings**,
+**648 exports already matched**, **117 SDK-declared exports unwrapped**, **253 unwrapped with no prototype**; U18's own
+site list is 1 return type + 4 parameter types + 16 parameter names + 2 missing `*ForPerMonitorDPI` members.
+
+T8 step 0 blocks everything: three sub-decisions (undocumented exports in or out; `A` and `W` both wrapped or `W` + `T`
+alias - U17; superseded exports wrapped or not) must be answered in `docs/agent/DECISIONS.md` first.
 
 ## Where the per-TU record is
 
@@ -12,15 +26,18 @@ the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen
 
 ## Open work in this folder, by class
 
-- **Fixable defects: none queued.** Every TU-level defect found in sessions 1-37 was either fixed in place or booked to
-  an open item; the queue having emptied means there is no known unfixed wrapper.
+- **Fixable defects: none queued by a TU pass, but D18 creates a class of them.** Every TU-level defect found in sessions
+  1-37 was either fixed in place or booked to an open item, and the queue having emptied means there is no known unfixed
+  wrapper. Under `purpose.md` the published-signature divergences collected in `registers/u18.md` are no longer neutral
+  surface decisions - they are the defect population, and T8 is how they get fixed.
 - **Open items** (rule + decision + measured detail in `registers/u<n>.md`): U1, U2, U4, U5, U7, U8, U9, U10, U12, U13,
   U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U27** (in `registers/p6-u27.md` - `STRICT` changes the identity
   of `HOOKPROC` and of every `DECLARE_HANDLE`, so 3 of `hook.cpp`'s 4 wrappers change published name between the arms).
   Frozen - append nothing: P1, P2, P5, U11, U14 (D15), U15 (D14), U6, U3. **U28 is CLOSED 5 Nov 2026 by D17**: the four
   `*Ptr` wrappers in `windowclass.cpp` bind names only the 64-bit `user32.dll` image exports, which is now simply the
   correct spelling for the only supported target, so they need no change.
-- **Tasks T1-T6** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries. **T7 is CLOSED (5 Nov 2026,
+- **Tasks T1-T6 and T8** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries - **T8 is the lead**,
+  the U18 conformance pass this file opens with. **T7 is CLOSED (5 Nov 2026,
   D16)** - the 35 dead `#include "../returncheck.h"` lines are deleted, only `processthread.cpp` and `errorhandling.cpp`
   still include it, and the scan (`_tmp_rcinclude_scan.ps1`, include test now line-anchored) reads **2 includes /
   0 without use**. What T7 left behind is **the citation shift**: deleting line 11 moved every line below it up by one in
