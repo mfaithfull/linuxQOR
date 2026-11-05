@@ -1,37 +1,43 @@
-# Pre-flags for the next TU - session 37, `winqor_api_user.cpp` (the module glue)
+# Folder-level leads - the TU queue is complete (session 37, 5 Nov 2026)
 
-Measured 5 Nov 2026 (session 36), shape re-read from the source at the protocol-v3 rewrite.
+Written wholesale at the session-37 close. All 38 sources in `src/platform/os/windows/api_layer/user` are reviewed, so
+there is no next TU and this file no longer pre-flags one; it lists what a further session in this folder would pick up.
+**Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
 
-**Write-once.** The closing session writes this file wholesale; the next session reads it once at boot and edits it
-never. There is no previous version to diff against here - it is in git. Do not carry anything forward from it.
+## Where the per-TU record is
 
-## What this TU is (measured from `winqor_api_user.cpp`, 14 lines)
+Each reviewed `.cpp` carries its own `//=== api_layer conventions ====` banner at the top - that is the narrative, and
+`winqor_api_user.cpp:4-72` is the last of them. `status.md` holds the queue (all rows `closed`), the id-to-file map and
+the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen, not boot material).
 
-- 5 `#include`: `src/configuration/configuration.h` `:4`, `<buildnumber.h>` behind `#ifdef NDEBUG` `:5`-`:7`,
-  `src/qor/module/module.h` `:8`. **No** `user32.h`, **no** `../library.h`, **no** `../returncheck.h`.
-- One definition: `qor::Module& ThisModule(void)` `:10`, whose body is a function-local
-  `static qor::Module QORModule("Querysoft Open Runtime: Windows API User Module", qor_pp_module_ver_string)` `:12`
-  and `return QORModule;` `:13`. No namespace block.
-- 0 `User32::` definitions, 0 bindings, 0 `qor_pp_fcontext`, 0 `Library::Call`, 0 `CheckReturn`, 0 `Win32ErrorHandler`.
+## Open work in this folder, by class
 
-## Consequence for the method
+- **Fixable defects: none queued.** Every TU-level defect found in sessions 1-37 was either fixed in place or booked to
+  an open item; the queue having emptied means there is no known unfixed wrapper.
+- **Open items** (rule + decision + measured detail in `registers/u<n>.md`): U1, U2, U4, U5, U7, U8, U9, U10, U12, U13,
+  U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U28**. Frozen - append nothing: P1, P2, P5, U11, U14 (D15),
+  U15 (D14), U6, U3. The newest, **U28** (`registers/u28.md`), is four wrappers binding entry points that exist only in
+  the 64-bit `user32.dll` image; it is latent because x86 does not build at all.
+- **Tasks T1-T7** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries. The one with a measured,
+  purely mechanical fix waiting only on a go-ahead is **T7**: 37 of the 38 sources include `../returncheck.h` and only 2
+  use it, so **35 includes are dead** (`winqor_api_user.cpp` is the one source that never includes it). Deletion waits for
+  one folder-wide decision rather than 38 per-TU passes; `registers/tasks.md:121-161` has the scan and the expected
+  post-fix numbers.
+- **Architectural blocker**: x86 - session 31 measured 93 of 106 `api_layer` TUs failing at `kernel32.h:92`
+  (`registers/u6.md`, frozen). Nothing in this folder can be validated on x86 until that moves.
 
-Steps 1-5b and ids **U4 / U11 / U13 / U17 / U18 / U19 / U25 / U26** have nothing to bite on: there is no wrapper, no
-declaration in `user32.h`, no SDK entry point and no callback in this TU. What is left to measure:
+## One measured lead deliberately left unregistered (session 37)
 
-- **The module-registration idiom** - `ThisModule()` and its function-local `static qor::Module` - against the sibling
-  `api_layer/kernel` and `api_layer/shell` glue and against the other `ThisModule()` definitions in `src`: signature,
-  function-local-static shape, and the `qor_pp_module_ver_string` argument.
-- **`<buildnumber.h>` behind `#ifdef NDEBUG` (`:5`-`:7`)**: nothing in the body names a build number, so this is a
-  **T7**-class dead include under a build guard - check what the sibling glue does before recording it.
-- **Hygiene**: `:12` indents with a tab where the rest of the folder indents 4 spaces, and the TU has no
-  `qor::win::api` namespace block. Both are U14-class convention notes and **U14 is frozen (D15)** - record only what a
-  decision asks for, book no tally.
-- **Gate unchanged**: this TU is one of the 38 in the folder-wide compile command in `status.md`.
+`qor_pp_ver_major/minor/patch` are supplied only by `target_compile_definitions` (this folder's `CMakeLists.txt:45-48`).
+Compile without them and the module glue TU builds **clean at `/W4`, exit 0**: `qor_pp_stringize_i` is `#text`
+(`src/macros/stringize.hpp:43`), so the module's version string becomes the literal `"qor_pp_ver_major" "." ...`.
+The build number cannot go missing silently (the `#ifdef NDEBUG` include of `buildnumber.h` hard-fails with `C1083`);
+the version triple can, in each of the **163** `src/**/CMakeLists.txt` that pass `qor_pp_ver_major` (measured 5 Nov 2026).
+User decision 5 Nov 2026: **no register entry** - it is a build-system change (`cmake/`, or an `#error` in
+`src/macros/moduleversion.hpp`), not a folder-pass one. If it is ever acted on, do it there, and re-run the
+all-libraries gate.
 
-## Instruments NOT to run here
+## Gate if this folder is touched again
 
-The export-table capture, the `/EP` binding digest, the wrong-stem scan, the LAYER/BYPASS scan and the callback
-`is_convertible` probe have no input in this TU - 0 bindings, 0 SDK calls, 0 callbacks. Running them is what produced the
-stale pre-flag block this file replaces (a `winqor_api_user.cpp` heading over `windowprocedure.cpp` measurements; the
-retired text and its git locator are in `archive/protocol-v1-2026-11-05.md`).
+Unchanged, and it is the only gate: the edited TU standalone at `/W4`, then the folder's 38 sources in one `cl`
+invocation - command line in `status.md`, "Gate" section. Date it by `tmp/obj/<tu>.obj` being newer than the source.

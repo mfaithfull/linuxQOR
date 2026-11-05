@@ -1,7 +1,7 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED and committed (`f4334e05`); 1 TU left**:
-`winqor_api_user.cpp` (the module glue, 14 lines). Reviewing
+Last updated 5 Nov 2026 - **session 37 (`winqor_api_user.cpp`) CLOSED and committed; all 38 sources reviewed, the
+folder review is complete**. Reviewing
 `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
@@ -103,10 +103,11 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `windowclass.cpp` | 158 | banner `:16` | closed |
 | `windowprocedure.cpp` | 90 | banner `:16` | closed |
 | `windowproperties.cpp` | 114 | banner `:16` | closed |
-| `winqor_api_user.cpp` | 14 | - | **next (session 37)** |
+| `winqor_api_user.cpp` | 83 | banner `:4` | closed |
 
-**37 of 38 sources reviewed** in sessions 1-36 (some sessions covered two TUs; sessions 16-20 exist nowhere outside the
-session-log rows). History is write-once and is not boot material: `archive/session-log*.md` (rows plus verdict detail)
+**38 of 38 sources reviewed** in sessions 1-37 - **the queue is empty, the folder review is complete** (some sessions
+covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). History is write-once and is not boot
+material: `archive/session-log*.md` (rows plus verdict detail)
 and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to either.
 
 ## Open items - id to file (derivable; there is no index to maintain)
@@ -135,12 +136,10 @@ byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the la
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
 106-source all-libraries gate, read as a diff against a pre-fix run.
 
-## Pre-flags for the next TU (session 37) - in `preflags.md`
+## There is no next TU - what a further session in this folder works from
 
-`preflags.md` is written wholesale at this close, read once at boot, replaced wholesale at the next close. The pre-flag
-body that stood here is retired: its heading named `winqor_api_user.cpp` while its bullets measured
-`windowprocedure.cpp` (at pre-banner line numbers `:16`, `:23`), because the section was edited in place at the previous
-close. Nothing is lost - the measurement survives in the `windowprocedure.cpp` banner, and the superseded text is in git
-at `f4334e05`, `status.md:104`-`:134`.
+All 38 sources are reviewed, so the queue above is closed and `preflags.md` no longer pre-flags a TU: it carries the
+folder-level leads instead. A next session picks from the open items and tasks the map above names (U1-U26, U28, P3, P4,
+P6, T1-T7), or moves to another `api_layer` folder. The gate below is unchanged and still applies to any edit here.
 
 

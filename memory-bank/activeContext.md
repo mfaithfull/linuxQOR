@@ -1,9 +1,10 @@
 # Active Context
 
-Last updated: 5 Nov 2026 - **session 36 (`windowprocedure.cpp`) CLOSED and committed (`f4334e05`); 1 TU left**:
-`winqor_api_user.cpp` (the module glue, 14 lines, 0 wrappers, 0 bindings). Session 36 fixed nothing - the TU measured
-clean (2/2 declaration-definition pairs in header order, 2/2 bindings resolving to `<stem>W`, 0 U4/U11/U13/U17/U18) - and
-its two durable findings are recorded in its own review banner at `windowprocedure.cpp:16-73`.
+Last updated: 5 Nov 2026 - **session 37 (`winqor_api_user.cpp`) CLOSED and committed; all 38 sources of
+`src/platform/os/windows/api_layer/user` are reviewed, so the TU queue is empty and the folder review is complete.**
+Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
+durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
+banner at `winqor_api_user.cpp:4-72`.
 
 **The record protocol turned over twice in two closes: v2 at session 34, v3 after session 36.** Session 36 measured the
 TU, passed the compile gate and wrote its banner, then lost the remainder of the session to the record write pass and
@@ -19,11 +20,13 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 36 (`windowprocedure.cpp`) CLOSED 5 Nov 2026** - 2 wrappers, 0 defects requiring a change. Narrative and all
-  measurements: the banner at `windowprocedure.cpp:16-73`. It is committed (`f4334e05`), so nothing about it is to be
-  re-derived by a later session.
-- **Next: session 37, `winqor_api_user.cpp`** - the last TU, and it closes the folder review. Its pre-flags are in
-  `src/platform/os/windows/api_layer/user/preflags.md`; the authoritative queue is in `status.md`.
+- **Session 37 (`winqor_api_user.cpp`) CLOSED 5 Nov 2026** - the module glue: 1 declaration / 1 definition pairing,
+  0 wrappers, 0 dead includes, 0 UB, idiom-conformant with the 12 sibling `api_layer` glue TUs. Narrative and all
+  measurements: the banner at `winqor_api_user.cpp:4-72`. It is committed, so nothing about it is to be re-derived.
+- **The queue is empty - there is no next TU.** What a further session in this folder would work from (open items, the
+  T1-T7 tasks, the x86 blocker, and the unregistered version-string hazard) is in
+  `src/platform/os/windows/api_layer/user/preflags.md`; `status.md` still carries the queue table, the id map and the
+  compile gate for any future edit here.
 
 ## Decisions in force (pointer only - not restated here)
  - Project wide decisions are recorded in `docs/agent/DECISIONS.md`. The memory bank deliberately does not duplicate their text.
