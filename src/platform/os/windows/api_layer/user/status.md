@@ -81,11 +81,19 @@ not boot material: `archive/session-log*.md` (rows plus verdict detail, and the 
 
 ## Gate (identical every session)
 
-Edited TU standalone at `/W4` exit 0 (`tmp/_tmp_compile_one.ps1 <tu>.cpp`); whole library **38/38** at `/W4`, exit 0, no
-diagnostics (`tmp/_tmp_compile_all.ps1`), dated by `tmp/obj/<tu>.obj` being newer than the source - a clean 38-TU log
-cannot be dated by its hash, because clean runs are byte-identical. `cl /EP` after the last edit must still yield the
-expected binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally
-needs the 106-source all-libraries gate (`tmp/_tmp_cl_all_apiall_u6.bat`), read as a diff against a pre-fix run.
+`tmp/` does not persist between sessions, so the gate is the **command line**, not a script to be found - recreate the
+wrapper by slug if it is missing. Compile the whole folder with:
+
+    cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
+       /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
+       /I c:\RAID0\Develop\linuxQOR /Fo c:\RAID0\Develop\linuxQOR\tmp\obj\ <all 38 .cpp>
+
+after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
+Edited TU standalone at `/W4` exit 0, then the whole library **38/38** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 38-TU log **cannot** be dated by its hash, because clean runs are
+byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
+binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
+106-source all-libraries gate, read as a diff against a pre-fix run.
 
 ## Pre-flags for session 35 (`windowproperties.cpp`) - measured 5 Nov 2026
 
