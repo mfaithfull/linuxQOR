@@ -1,11 +1,12 @@
 # Active Context
 
-Last updated: 5 Nov 2026 - **session 34 (`windowclass.cpp`) CLOSED: 35 of 38 TUs reviewed, 3 left**
-(`windowproperties.cpp` 51 lines, `windowprocedure.cpp` 30, `winqor_api_user.cpp` 14 - 95 source lines). Session 34
-opened one item and recorded it without fixing it: **U28** (`registers/u28.md`) - the four `*Ptr` members bind
-`Get/Set*LongPtrW`, names that only the 64-bit `user32.dll` image exports (`winuser.h` gates the `*Ptr` prototypes
-under `_WIN64` and makes `*PtrA`/`*PtrW` macros otherwise), so on x86 they would cache a NULL binding and throw on
-every call. Latent, not live: x86 does not build at all (U6). The fix belongs with that arch blocker.
+Last updated: 5 Nov 2026 - **session 35 (`windowproperties.cpp`) CLOSED: 36 of 38 TUs reviewed, 2 left**
+(`windowprocedure.cpp` 30 lines, `winqor_api_user.cpp` 14 - 44 source lines). Session 35 fixed nothing: the TU measured
+clean (5/5 declaration-definition pairs in header order, 0 return-type divergence, 5/5 bindings resolving to `<stem>W` on
+both arches, 0 U4/U11/U13/U17), its one probe settled that `PROPENUMPROC`/`PROPENUMPROCEX` are the **W** callback shapes
+under `STRICT` (so the callback parameters are type-checked, not `FARPROC`), and its two blemishes (the U14 spacing nit,
+the dead `returncheck.h` include) were left as-is by user decision. It also corrected a stale hand-off:
+`SetLayeredWindowAttributes` is not declared-without-definition - it is defined at `window.cpp:565`.
 
 **The record protocol changed at this close - protocol v2, defined in `status.md`.** The record had reached 88 files
 / 762 KB and the read-set a session was told to open had reached 269 KB, which forced compaction and then re-checking.
@@ -19,10 +20,11 @@ Per-session narrative does not belong in this file - it is in `status.md`, the s
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 34 (`windowclass.cpp`) CLOSED 5 Nov 2026** - 14 wrappers, 0 binding / signature / convention defects, and
-  one new register (U28). Narrative: the review banner at `windowclass.cpp:16-57`.
-- **Next: session 35, `windowproperties.cpp`** (51 lines, 5 wrappers). Its pre-flags are in `status.md`, measured
-  fresh - the inherited ones were stale, which is one of the things v2 removes.
+- **Session 35 (`windowproperties.cpp`) CLOSED 5 Nov 2026** - 5 wrappers, 0 binding / signature / convention defects
+  requiring a change. Narrative: the review banner at `windowproperties.cpp:16-77`.
+- **Next: session 36, `windowprocedure.cpp`** (30 lines, 2 wrappers - `CallWindowProcT`, `DefWindowProcT`), then the glue
+  `winqor_api_user.cpp` closes the library. Fresh pre-flags for it are in `status.md`; instruments already prepared:
+  `tmp/_tmp_s36_pre.ps1`, `tmp/_tmp_s36_ppclass.ps1`, `tmp/_tmp_win_pp_s36.bat` (export table + `/EP` capture already run).
 
 ## Decisions in force (pointer only - not restated here)
  - Project wide decisions are recorded in `docs/agent/DECISIONS.md`. The memory bank deliberately does not duplicate their text.
