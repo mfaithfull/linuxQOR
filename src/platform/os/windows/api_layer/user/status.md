@@ -6,10 +6,11 @@ folder review is complete**. Reviewing
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
 
-**Purpose (authoritative: `purpose.md`, added 5 Nov 2026, policy D18 in `docs/agent/DECISIONS.md`): the library intends a
-full set of wrapper functions for the exports of `user32.dll`.** A wrapper is therefore judged against the export it
-binds, and an export with no wrapper is a gap. The actionable lead is **T8** (`registers/tasks.md`) - the U18 conformance
-pass.
+**Purpose (authoritative: `purpose.md`, added 5 Nov 2026; policy D18 + same-day scope addendum in
+`docs/agent/DECISIONS.md`): the library intends a full set of wrapper functions for the exports of `user32.dll` - scoped to
+the exports `winuser.h` declares, superseded families excluded.** A wrapper is judged against the export it binds, and an
+unwrapped declared export is a gap (**109 names** remain, listed in `registers/u18-coverage.md`). The actionable lead is
+**T8** (`registers/tasks.md`) - the U18 conformance pass.
 
 ## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
 

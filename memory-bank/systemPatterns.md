@@ -64,7 +64,9 @@ A pipeline element is usually its own shared library. A filter derives from `qor
 Each `src/platform/os/windows/api_layer/<lib>` module wraps one system DLL with a stateless idiom. Since 5 Nov 2026 the
 folder `api_layer/user` also has a purpose standard (policy D18, `docs/agent/DECISIONS.md`): it intends **a full set of
 wrapper functions for that DLL's exports**, so a wrapper's published signature must equal the SDK prototype for the export
-it binds, and an export with no wrapper is a gap to be dispositioned, not a scope choice.
+it binds, and a **declared** export with no wrapper is a gap to be dispositioned. Scope was fixed the same day: the target
+set is the exports the SDK header declares, superseded families excluded - exports the header does not declare are not
+gaps.
 1. `qor_pp_useswinapi(<dllbase>, Name)` binds `Name` at call time from the already loaded image using `GetModuleHandle` + `GetProcAddress`; no CMake link against the system DLL is needed, and the built library should not import it.
 2. `Library::Call<RET, Args...>(pFunc, args...)` applies the exception filter around the call and passes SDK argument types verbatim. `Library::voidCall` is the void form.
 3. `Win32ErrorHandler _;` runs the exception filter at call sites. `CheckReturn<HRESULT>::TType` / `CheckReturn<BOOL>::TType` raise a `Win32Error` only where zero/false means failure; handle/count/pointer families return raw.

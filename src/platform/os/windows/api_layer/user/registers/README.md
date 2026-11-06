@@ -33,6 +33,7 @@ Closed / frozen - append nothing: `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1
 | `u16.md` | 302 | U16, U16, U16, U16, U16, U16, U16, U16 | 448-574 |
 | `u17.md` | 56 | U17 | 575-616 |
 | `u18.md` | 105 | U18, U18, U18 | 617-630 |
+| `u18-coverage.md` | 49 | (U18 backlog disposition list, not a register id) | - |
 | `u19.md` | 284 | U19, U19, U19, U19, U19, U19, U19 | 631-741 |
 | `u2.md` | 68 | U2, U2, U2, U2, U2 | 137-142 |
 | `u20.md` | 79 | U20 | 742-818 |

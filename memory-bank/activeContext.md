@@ -28,8 +28,10 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   User32.dll Windows system library"), recorded as policy **D18** in `docs/agent/DECISIONS.md`; it changes the acceptance
   criterion - a wrapper's published signature is the SDK prototype of the export it binds, and an unwrapped export is a
   gap. The work that follows is **T8** (`.../api_layer/user/registers/tasks.md`; measured sites in `.../registers/u18.md`):
-  1 return type, 4 parameter types, 16 parameter names, 2 unwrapped `*ForPerMonitorDPI` exports, then a 117-name
-  SDK-declared coverage backlog (253 further exports have no `winuser.h` prototype). Other leads - open items, the T1-T6
+  1 return type, 4 parameter types, 16 parameter names, 2 unwrapped `*ForPerMonitorDPI` exports, then a **109-name**
+  coverage backlog (scope decided the same day: documented exports only, superseded families excluded - the 253
+  prototype-less exports are out; per-name dispositions in `.../registers/u18-coverage.md`). Other leads - open items, the
+  T1-T6
   tasks, D17 and what it closed, the unregistered version-string hazard - remain in
   `src/platform/os/windows/api_layer/user/preflags.md`; `status.md` still carries the queue table, the id map and the
   compile gate for any future edit here.

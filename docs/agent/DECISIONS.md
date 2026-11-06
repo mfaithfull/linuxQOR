@@ -427,6 +427,33 @@ What it settles in the `api_layer/user` record:
 What it does **not** decide, and which T8 step 0 asks before anything executes: whether the 253 undocumented exports are
 inside the "full set"; whether both `A` and `W` variants must be wrapped or the `W` form plus a `T` alias suffices (that
 is U17's suffix policy); and how superseded exports (`keybd_event`, `mouse_event`, the DDE family) are dispositioned.
+**Two of those three were answered the same day - see the D18 addendum below.**
+
+## D18 addendum (5 Nov 2026): the scope of the "full set" is the documented set, superseded families excluded
+
+User answer to the first and third of D18's open questions: the "full set" in `purpose.md` is **the exports that
+`winuser.h` declares**, and the **superseded families are explicitly excluded** - named as the **DDE family** and the
+**`keybd_event` / `mouse_event`** pair. Consequences, measured the same day (`_tmp_u18_coverage4.ps1`,
+`_tmp_u18_buckets.ps1`; the disposition list is durable in `registers/u18-coverage.md`):
+
+- **The 253 exports with no `winuser.h` prototype are out of scope.** That is where this decision has teeth - it turns
+  "a gap to be dispositioned" into "not a gap at all" for a quarter of the DLL's surface.
+- **The named exclusions remove nothing from the backlog, because those families are already fully wrapped**: `user32.h`
+  declares 28 DDE members against the 33 DDE exports (every A/W pair behind one `T` member), and both input-event
+  functions are wrapped. The exclusions protect existing wrappers from deletion; they do not shrink the work.
+- **Applied consistently, the same rule excludes 7 more names that are themselves superseded twins** whose replacement the
+  library already wraps: `GetClassLongA/W` + `SetClassLongA/W` (the `*Ptr` twins are exports 12D/12E and 324/325 and are
+  wrapped at `windowclass.cpp:76`, `:118`) and `SetWindowsHookA/W` + `UnhookWindowsHook` (wrapped as `SetWindowsHookExT` /
+  `UnhookWindowsHookEx` at `hook.cpp:93`, `:100`; `hook.cpp:68-69` already recorded those three as exported and named
+  nowhere here). One further name, `SetWindowsHookExAW`, is an instrument artifact - a real export no header declares.
+- **The backlog is therefore 109 names, not 117**: family tranches Pointer 32 / DPI 21 / Touch-gesture 14 /
+  Display-config 7 / Shutdown-power 3 / Misc 26, plus 6 held-open legacy names, worked one family per session (T8 step 6).
+- **Still open:** U17's suffix policy (after the exclusions only two A/W pairs remain in the backlog, so it moves the count
+  by one wrapper), and 6 legacy/utility names with no wrapped replacement that the "superseded twin" test does not decide
+  (`GetWindowWord`, `SetWindowWord`, `SetMessageQueue`, `DragObject`, `wsprintfA/W`) - excluding those takes the target to
+  103.
+
+No source, header or CMake file is touched by this addendum either; it changes a target count and a disposition list.
 
 Record: the D18 status block in `registers/u18.md`, the new **T8** in `registers/tasks.md`, the `purpose.md` pointer and
 id lines in that folder's `status.md` and `preflags.md`, and one line in the api_layer section of

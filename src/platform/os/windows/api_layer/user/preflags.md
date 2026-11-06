@@ -15,8 +15,13 @@ foot of `registers/u18.md`. Headline measurements (5 Nov 2026): **1,018 export n
 **648 exports already matched**, **117 SDK-declared exports unwrapped**, **253 unwrapped with no prototype**; U18's own
 site list is 1 return type + 4 parameter types + 16 parameter names + 2 missing `*ForPerMonitorDPI` members.
 
-T8 step 0 blocks everything: three sub-decisions (undocumented exports in or out; `A` and `W` both wrapped or `W` + `T`
-alias - U17; superseded exports wrapped or not) must be answered in `docs/agent/DECISIONS.md` first.
+Scope was decided the same day (**D18 addendum**): documented set only, superseded families (DDE, `keybd_event` /
+`mouse_event`) excluded - so the 253 undocumented exports are out of scope and the backlog is **109 names**, dispositioned
+by family in `registers/u18-coverage.md`.
+
+T8 step 0 is **mostly settled**: scope is the documented set minus superseded families (D18 addendum). One sub-question is
+still open - U17's `A`/`W` suffix policy - but it moves the backlog by one wrapper, and it does not gate T8 steps 1-5,
+which are the fixes U18 was actually opened over. Start at T8 step 1.
 
 ## Where the per-TU record is
 

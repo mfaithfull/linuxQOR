@@ -171,11 +171,12 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   gap.** Opened 5 Nov 2026 by the folder's `purpose.md` (policy **D18**, `docs/agent/DECISIONS.md`); the measured site
   list is the D18 block at the foot of `registers/u18.md`. Tranches, each its own commit, each gated by the `status.md`
   gate (edited TU standalone at `/W4`, then the folder 38/38):
-  0. **Answer three questions first** (D18 deliberately leaves them open), and answer them in `docs/agent/DECISIONS.md`:
-     (a) is the "full set" all 1,018 exports or the 117 that `winuser.h` declares? (b) do both `A` and `W` variants get a
-     wrapper, or the `W` form plus the `T` alias - this is U17's suffix question, and it sets the size of (a);
-     (c) are superseded exports (`keybd_event`, `mouse_event`, the DDE family) wrapped at all? Nothing after step 0 is
-     mechanical until these are settled.
+  0. ~~Answer three questions first~~ **Mostly settled 5 Nov 2026 by the user's scope decision (D18 addendum,
+     `docs/agent/DECISIONS.md`): the "full set" is the exports `winuser.h` declares, and the superseded families - the DDE
+     family and `keybd_event`/`mouse_event` - are explicitly excluded.** The 253 undocumented exports are therefore out of
+     scope. One sub-question is still open and blocks only tranche 6's arithmetic, not steps 1-5: does every A/W pair get
+     two members or a `W` member plus the `T` alias (**U17**) - after the exclusions exactly two pairs remain in the
+     backlog (`ChangeMenuA/W`, `wsprintfA/W`), so it moves the count by one wrapper.
   1. **Published-type fixes, one TU per commit.** `keyboard.cpp`: `GetKeyboardLayoutList` `UINT` -> `int`
      (`winuser.h:1313`) at `user32.h:79` + `keyboard.cpp:133` + Call list `:137`; `keybd_event` `void*` -> `ULONG_PTR`
      (`:6071`) at `user32.h:87` + `:189` + `voidCall` list `:193`. `menu.cpp`: `InsertMenuT`/`ModifyMenuT` `void*` ->
@@ -204,8 +205,15 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
      resolved by placing them with their siblings. The `#if(WINVER >= 0x0603)` guard around the SDK prototypes is live
      (`sdkddkver.h:251` defaults `WINVER` to `0x0A00`; nothing in the build sets it). Re-run `_tmp_wrong_stem_scan.ps1`
      and the `/EP` binding-literal check after this step.
-  6. **The 117-name backlog.** Work it family by family, one family per session, applying the D18 rule from the first
-     line: the wrapper's signature is the `winuser.h` prototype. Keep the dispositioned name list in a durable file
-     (`registers/u18-coverage.md`) - the instrument's output `tmp/_tmp_u18_gap_sdk.txt` does not survive the task.
-  U18 closes when steps 1-5 are in and every backlog name has a disposition. Do not mark it closed on any partial pass.
+  6. **The backlog: 109 names, dispositioned in `registers/u18-coverage.md`** (measured 5 Nov 2026 with
+     `_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`; the 117-name figure first quoted for D18 is a raw bucket count that
+     the scope decision reduces). Work it **one family per session** in the tranche order that file gives, applying the
+     D18 rule from the first line: the wrapper's signature is the `winuser.h` prototype, and the disposition list is
+     edited as each family lands (Pointer 32, DPI/awareness 21, Touch/gesture 14, Display config 7, Shutdown/power 3,
+     Misc 26, held-open legacy 6 - those sum to the 109). Seven names are already dispositioned **excluded** (superseded
+     twins whose `*Ptr`/`Ex` replacement the library wraps: `Get/SetClassLongA/W`, `SetWindowsHookA/W`,
+     `UnhookWindowsHook`) and one is an instrument artifact (`SetWindowsHookExAW`, no prototype).
+     See that file for the per-name list before starting a tranche.
+  U18 closes when steps 1-5 are in and every one of the 109 backlog names is either wrapped or carries a written exclusion.
+  Do not mark it closed on any partial pass.
 
