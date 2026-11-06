@@ -33,11 +33,11 @@ namespace qor { namespace win { namespace api {
     //callers narrowing it to unsigned short truncate deliberately; GetDialogBaseUnits returns packed font metrics,
     //never a failure code; the MessageBox* family returns a button ID or 0, and 0 also means failure (status.md U2).
 
-    HWND User32::CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM lParamInit)
+    HWND User32::CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, CreateDialogIndirectParam);
-        return Library::Call<HWND, HINSTANCE, LPCDLGTEMPLATE, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplate, hWndParent, lpDialogFunc, lParamInit);
+        return Library::Call<HWND, HINSTANCE, LPCDLGTEMPLATE, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
     }
 
     HWND User32::CreateDialogParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
@@ -82,11 +82,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<LONG>(pFunc);
     }
 
-    int User32::GetDlgCtrlID(HWND hwndCtl)
+    int User32::GetDlgCtrlID(HWND hWnd)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetDlgCtrlID);
-        return Library::Call<int, HWND>(pFunc, hwndCtl);
+        return Library::Call<int, HWND>(pFunc, hWnd);
     }
 
     HWND User32::GetDlgItem(HWND hDlg, int nIDDlgItem)
@@ -103,11 +103,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<UINT, HWND, int, BOOL*, BOOL>(pFunc, hDlg, nIDDlgItem, lpTranslated, bSigned);
     }
 
-    UINT User32::GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int nMaxCount)
+    UINT User32::GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int cchMax)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetDlgItemText);
-        return Library::Call<UINT, HWND, int, LPTSTR, int>(pFunc, hDlg, nIDDlgItem, lpString, nMaxCount);
+        return Library::Call<UINT, HWND, int, LPTSTR, int>(pFunc, hDlg, nIDDlgItem, lpString, cchMax);
     }
 
     HWND User32::GetNextDlgGroupItem(HWND hDlg, HWND hCtl, BOOL bPrevious)
@@ -152,11 +152,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT, WORD>(pFunc, hWnd, lpText, lpCaption, uType, wLanguageId);
     }
 
-    int User32::MessageBoxIndirectT(const ::LPMSGBOXPARAMS lpMsgBoxParams)
+    int User32::MessageBoxIndirectT(const ::LPMSGBOXPARAMS lpmbp)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, MessageBoxIndirect);
-        return Library::Call<int, const ::LPMSGBOXPARAMS>(pFunc, lpMsgBoxParams);
+        return Library::Call<int, const ::LPMSGBOXPARAMS>(pFunc, lpmbp);
     }
 
     //NOTE: Thanks to CPian Maurizio Pisano

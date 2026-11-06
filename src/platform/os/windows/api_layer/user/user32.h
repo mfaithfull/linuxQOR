@@ -76,21 +76,21 @@ namespace qor { namespace win { namespace api {
         static HWND GetFocus(void);
         static UINT GetKBCodePage(void);
         static HKL GetKeyboardLayout(DWORD idThread);
-        static UINT GetKeyboardLayoutList(int nBuff, HKL* lpList);
+        static int GetKeyboardLayoutList(int nBuff, HKL* lpList);
         static BOOL GetKeyboardLayoutNameT(LPTSTR pwszKLID);
         static BOOL GetKeyboardState(PBYTE lpKeyState);
         static int GetKeyboardType(int nTypeFlag);
-        static int GetKeyNameTextT(LONG lParam, LPTSTR lpString, int nSize);
+        static int GetKeyNameTextT(LONG lParam, LPTSTR lpString, int cchSize);
         static SHORT GetKeyState(int nVirtKey);
         static BOOL GetLastInputInfo(PLASTINPUTINFO plii);
         static BOOL IsWindowEnabled(HWND hWnd);
-        static VOID keybd_event(BYTE bVk, BYTE bScan, DWORD dwFlags, void* dwExtraInfo);
+        static VOID keybd_event(BYTE bVk, BYTE bScan, DWORD dwFlags, ULONG_PTR dwExtraInfo);
         static HKL LoadKeyboardLayoutT(LPCTSTR pwszKLID, UINT Flags);
         static UINT MapVirtualKeyT(UINT uCode, UINT uMapType);
         static UINT MapVirtualKeyExT(UINT uCode, UINT uMapType, HKL dwhkl);
         static DWORD OemKeyScan(WORD wOemChar);
         static BOOL RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk);
-        static UINT SendInput(UINT nInputs, LPINPUT pInputs, int cbSize);
+        static UINT SendInput(UINT cInputs, LPINPUT pInputs, int cbSize);
         static HWND SetActiveWindow(HWND hWnd);
         static HWND SetFocus(HWND hWnd);
         static BOOL SetKeyboardState(LPBYTE lpKeyState);
@@ -130,7 +130,7 @@ namespace qor { namespace win { namespace api {
         static BOOL AdjustWindowRectEx(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle);
         static BOOL AdjustWindowRectExForDpi(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
         static BOOL AllowSetForegroundWindow(DWORD dwProcessId);
-        static BOOL AnimateWindow(HWND hwnd, DWORD dwTime, DWORD dwFlags);
+        static BOOL AnimateWindow(HWND hWnd, DWORD dwTime, DWORD dwFlags);
         static BOOL AnyPopup(void);
         static UINT ArrangeIconicWindows(HWND hWnd);
         static HDWP BeginDeferWindowPos(int nNumWindows);
@@ -139,12 +139,12 @@ namespace qor { namespace win { namespace api {
         static WORD CascadeWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids);
         static BOOL ChangeWindowMessageFilter(UINT message, DWORD dwFlag);
         static HWND ChildWindowFromPoint(HWND hWndParent, ::POINT Point);
-        static HWND ChildWindowFromPointEx(HWND hwndParent, ::POINT pt, UINT uFlags);
+        static HWND ChildWindowFromPointEx(HWND hwnd, ::POINT pt, UINT flags);
         static BOOL CloseWindow(HWND hWnd);
         static HWND CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
-        static HWND CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+        static HWND CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
         static HDWP DeferWindowPos(HDWP hWinPosInfo, HWND hWnd, HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags);
-        static BOOL DeregisterShellHookWindow(HWND hWnd);
+        static BOOL DeregisterShellHookWindow(HWND hwnd);
         static BOOL DestroyWindow(HWND hWnd);
         static BOOL EndDeferWindowPos(HDWP hWinPosInfo);
         static BOOL EndTask(HWND hWnd, BOOL fShutDown, BOOL fForce);
@@ -152,13 +152,13 @@ namespace qor { namespace win { namespace api {
         static BOOL EnumThreadWindows(DWORD dwThreadId, WNDENUMPROC lpfn, LPARAM lParam);
         static BOOL EnumWindows(WNDENUMPROC lpEnumFunc, LPARAM lParam);
         static HWND FindWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName);
-        static HWND FindWindowExT(HWND hwndParent, HWND hwndChildAfter, LPCTSTR lpszClass, LPCTSTR lpszWindow);
+        static HWND FindWindowExT(HWND hWndParent, HWND hWndChildAfter, LPCTSTR lpszClass, LPCTSTR lpszWindow);
         static BOOL GetAltTabInfoT(HWND hwnd, int iItem, ::PALTTABINFO pati, LPTSTR pszItemText, UINT cchItemText);
         static HWND GetAncestor(HWND hwnd, UINT gaFlags);
         static BOOL GetClientRect(HWND hWnd, ::LPRECT lpRect);
         static HWND GetDesktopWindow(void);
         static HWND GetForegroundWindow(void);
-        static BOOL GetGUIThreadInfo(DWORD idThread, ::LPGUITHREADINFO lpgui);
+        static BOOL GetGUIThreadInfo(DWORD idThread, ::LPGUITHREADINFO pgui);
         static HWND GetLastActivePopup(HWND hWnd);
         static BOOL GetLayeredWindowAttributes(HWND hwnd, COLORREF* pcrKey, BYTE* pbAlpha, DWORD* pdwFlags);
         static HWND GetParent(HWND hWnd);
@@ -168,16 +168,16 @@ namespace qor { namespace win { namespace api {
         static HWND GetTopWindow(HWND hWnd);
         static HWND GetWindow(HWND hWnd, UINT uCmd);
         static BOOL GetWindowInfo(HWND hwnd, ::PWINDOWINFO pwi);
-        static UINT GetWindowModuleFileNameT(HWND hwnd, LPTSTR lpszFileName, UINT cchFileNameMax);
+        static UINT GetWindowModuleFileNameT(HWND hwnd, LPTSTR pszFileName, UINT cchFileNameMax);
         static BOOL GetWindowPlacement(HWND hWnd, ::WINDOWPLACEMENT* lpwndpl);
         static BOOL GetWindowRect(HWND hWnd, ::LPRECT lpRect);
         static int GetWindowTextT(HWND hWnd, LPTSTR lpString, int nMaxCount);
         static int GetWindowTextLengthT(HWND hWnd);
         static DWORD GetWindowThreadProcessId(HWND hWnd, LPDWORD lpdwProcessId);
-        static int InternalGetWindowText(HWND hWnd, LPWSTR lpString, int nMaxCount);
+        static int InternalGetWindowText(HWND hWnd, LPWSTR pString, int cchMaxCount);
         static BOOL IsChild(HWND hWndParent, HWND hWnd);
         static BOOL IsGUIThread(BOOL bConvert);
-        static BOOL IsHungAppWindow(HWND hWnd);
+        static BOOL IsHungAppWindow(HWND hwnd);
         static BOOL IsIconic(HWND hWnd);
         static BOOL IsProcessDPIAware(void);
         static BOOL IsWindow(HWND hWnd);
@@ -186,12 +186,14 @@ namespace qor { namespace win { namespace api {
         static BOOL IsZoomed(HWND hWnd);
         static BOOL LockSetForegroundWindow(UINT uLockCode);
         static BOOL LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint);
+        static BOOL LogicalToPhysicalPointForPerMonitorDPI(HWND hWnd, LPPOINT lpPoint);
         static BOOL MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
         static BOOL OpenIcon(HWND hWnd);
         static BOOL PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint);
+        static BOOL PhysicalToLogicalPointForPerMonitorDPI(HWND hWnd, LPPOINT lpPoint);
         static HWND RealChildWindowFromPoint(HWND hwndParent, ::POINT ptParentClientCoords);
-        static UINT RealGetWindowClassT(HWND hwnd, LPTSTR pszType, UINT cchType);
-        static BOOL RegisterShellHookWindow(HWND hWnd);
+        static UINT RealGetWindowClassT(HWND hwnd, LPTSTR ptszClassName, UINT cchClassNameMax);
+        static BOOL RegisterShellHookWindow(HWND hwnd);
         static BOOL SetForegroundWindow(HWND hWnd);
         static BOOL SetLayeredWindowAttributes(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
         static HWND SetParent(HWND hWndChild, HWND hWndNewParent);
@@ -204,17 +206,17 @@ namespace qor { namespace win { namespace api {
         static BOOL ShowWindow(HWND hWnd, int nCmdShow);
         static BOOL ShowWindowAsync(HWND hWnd, int nCmdShow);
         static BOOL SoundSentry(void);
-        static void SwitchToThisWindow(HWND hWnd, BOOL fAltTab);
+        static void SwitchToThisWindow(HWND hwnd, BOOL fUnknown);
         static WORD TileWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids);
-        static BOOL UpdateLayeredWindow(HWND hwnd, HDC hdcDst, ::POINT* pptDst, ::SIZE* psize, HDC hdcSrc, ::POINT* pptSrc, COLORREF crKey, ::BLENDFUNCTION* pblend, DWORD dwFlags);
-        static BOOL UpdateLayeredWindowIndirect(HWND hwnd, const ::UPDATELAYEREDWINDOWINFO* pULWInfo);
+        static BOOL UpdateLayeredWindow(HWND hWnd, HDC hdcDst, ::POINT* pptDst, ::SIZE* psize, HDC hdcSrc, ::POINT* pptSrc, COLORREF crKey, ::BLENDFUNCTION* pblend, DWORD dwFlags);
+        static BOOL UpdateLayeredWindowIndirect(HWND hWnd, const ::UPDATELAYEREDWINDOWINFO* pULWInfo);
         static HWND WindowFromPhysicalPoint(::POINT Point);
         static HWND WindowFromPoint(::POINT Point);
 
         //Menu functions
         static BOOL AppendMenuT(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem);
-        static DWORD CheckMenuItem(HMENU hmenu, UINT uIDCheckItem, UINT uCheck);
-        static BOOL CheckMenuRadioItem(HMENU hmenu, UINT idFirst, UINT idLast, UINT idCheck, UINT uFlags);
+        static DWORD CheckMenuItem(HMENU hMenu, UINT uIDCheckItem, UINT uCheck);
+        static BOOL CheckMenuRadioItem(HMENU hmenu, UINT first, UINT last, UINT check, UINT flags);
         static HMENU CreateMenu(void);
         static HMENU CreatePopupMenu(void);
         static BOOL DeleteMenu(HMENU hMenu, UINT uPosition, UINT uFlags);
@@ -229,28 +231,28 @@ namespace qor { namespace win { namespace api {
         static BOOL GetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi);
         static int GetMenuItemCount(HMENU hMenu);
         static UINT GetMenuItemID(HMENU hMenu, int nPos);
-        static BOOL GetMenuItemInfoT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii);
+        static BOOL GetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPosition, LPMENUITEMINFO lpmii);
         static BOOL GetMenuItemRect(HWND hWnd, HMENU hMenu, UINT uItem, ::LPRECT lprcItem);
         static UINT GetMenuState(HMENU hMenu, UINT uId, UINT uFlags);
-        static int GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int nMaxCount, UINT uFlag);
+        static int GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int cchMax, UINT flags);
         static HMENU GetSubMenu(HMENU hMenu, int nPos);
         static HMENU GetSystemMenu(HWND hWnd, BOOL bRevert);
-        static BOOL HiliteMenuItem(HWND hwnd, HMENU hmenu, UINT uItemHilite, UINT uHilite);
-        static BOOL InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, void* uIDNewItem, LPCTSTR lpNewItem);
-        static BOOL InsertMenuItemT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPCMENUITEMINFO lpmii);
+        static BOOL HiliteMenuItem(HWND hWnd, HMENU hMenu, UINT uIDHiliteItem, UINT uHilite);
+        static BOOL InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem);
+        static BOOL InsertMenuItemT(HMENU hmenu, UINT item, BOOL fByPosition, LPCMENUITEMINFO lpmi);
         static BOOL IsMenu(HMENU hMenu);
         static HMENU LoadMenuT(HINSTANCE hInstance, LPCTSTR lpMenuName);
         static HMENU LoadMenuIndirectT(CONST MENUTEMPLATE* lpMenuTemplate);
         static int MenuItemFromPoint(HWND hWnd, HMENU hMenu, POINT ptScreen);
-        static BOOL ModifyMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, void* uIDNewItem, LPCTSTR lpNewItem);
+        static BOOL ModifyMenuT(HMENU hMnu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem);
         static BOOL RemoveMenu(HMENU hMenu, UINT uPosition, UINT uFlags);
         static BOOL SetMenu(HWND hWnd, HMENU hMenu);
         static BOOL SetMenuDefaultItem(HMENU hMenu, UINT uItem, UINT fByPos);
         static BOOL SetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi);
         static BOOL SetMenuItemBitmaps(HMENU hMenu, UINT uPosition, UINT uFlags, HBITMAP hBitmapUnchecked, HBITMAP hBitmapChecked);
-        static BOOL SetMenuItemInfoT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii);
-        static BOOL TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, HWND prcRect);
-        static BOOL TrackPopupMenuEx(HMENU hmenu, UINT fuFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm);
+        static BOOL SetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPositon, LPMENUITEMINFO lpmii);
+        static BOOL TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, const RECT* prcRect);
+        static BOOL TrackPopupMenuEx(HMENU hMenu, UINT uFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm);
 
         //Process and Thread functions
         static BOOL AttachThreadInput(DWORD idAttach, DWORD idAttachTo, BOOL fAttach);
@@ -260,13 +262,13 @@ namespace qor { namespace win { namespace api {
         static DWORD WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds);
 
         //Painting functions
-        static HDC BeginPaint(HWND hwnd, ::LPPAINTSTRUCT lpPaint);
+        static HDC BeginPaint(HWND hWnd, ::LPPAINTSTRUCT lpPaint);
         static BOOL DrawAnimatedRects(HWND hwnd, int idAni, CONST::RECT* lprcFrom, CONST::RECT* lprcTo);
-        static BOOL DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprc, UINT uFlags);
+        static BOOL DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprect, UINT flags);
         static BOOL DrawEdge(HDC hdc, ::LPRECT qrc, UINT edge, UINT grfFlags);
         static BOOL DrawFocusRect(HDC hDC, CONST::RECT* lprc);
         static BOOL DrawFrameControl(HDC hdc, ::LPRECT lprc, UINT uType, UINT uState);
-        static BOOL DrawStateT(HDC hdc, HBRUSH hbr, ::DRAWSTATEPROC lpOutputFunc, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT fuFlags);
+        static BOOL DrawStateT(HDC hdc, HBRUSH hbrFore, ::DRAWSTATEPROC qfnCallBack, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT uFlags);
         static BOOL EndPaint(HWND hWnd, CONST::PAINTSTRUCT* lpPaint);
         static int ExcludeUpdateRgn(HDC hDC, HWND hWnd);
         static BOOL GetUpdateRect(HWND hWnd, ::LPRECT lpRect, BOOL bErase);
@@ -287,9 +289,9 @@ namespace qor { namespace win { namespace api {
         static HWND WindowFromDC(HDC hDC);
 
         //Message and Message Queue functions
-        static long BroadcastSystemMessageT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam);
-        static long BroadcastSystemMessageExT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam, ::PBSMINFO pBSMInfo);
-        static LRESULT DispatchMessageT(const MSG* lpmsg);
+        static long BroadcastSystemMessageT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam);
+        static long BroadcastSystemMessageExT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam, ::PBSMINFO pbsmInfo);
+        static LRESULT DispatchMessageT(const MSG* lpMsg);
         static BOOL GetInputState(void);
         static BOOL GetMessageT(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax);
         static LPARAM GetMessageExtraInfo(void);
@@ -304,7 +306,7 @@ namespace qor { namespace win { namespace api {
         static BOOL PostThreadMessageT(DWORD idThread, UINT Msg, WPARAM wParam, LPARAM lParam);
         static UINT RegisterWindowMessageT(LPCTSTR lpString);
         static BOOL ReplyMessage(LRESULT lResult);
-        static BOOL SendMessageCallbackT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, ::SENDASYNCPROC lpCallBack, ULONG_PTR dwData);
+        static BOOL SendMessageCallbackT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, ::SENDASYNCPROC lpResultCallBack, ULONG_PTR dwData);
         static LRESULT SendMessageTimeoutT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, UINT fuFlags, UINT uTimeout, PDWORD_PTR lpdwResult);
         static LRESULT SendMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
         static BOOL SendNotifyMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -323,7 +325,7 @@ namespace qor { namespace win { namespace api {
         static LRESULT DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
         //DC functions
-        static LONG ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwflags);
+        static LONG ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwFlags);
         static LONG ChangeDisplaySettingsExT(LPCTSTR lpszDeviceName, ::LPDEVMODE lpDevMode, HWND hwnd, DWORD dwflags, LPVOID lParam);
         static BOOL EnumDisplayDevicesT(LPCTSTR lpDevice, DWORD iDevNum, ::PDISPLAY_DEVICE lpDisplayDevice, DWORD dwFlags);
         static BOOL EnumDisplaySettingsT(LPCTSTR lpszDeviceName, DWORD iModeNum, ::LPDEVMODE lpDevMode);
@@ -380,7 +382,7 @@ namespace qor { namespace win { namespace api {
 
         //Cursor functions
         static BOOL ClipCursor(const RECT* lpRect);
-        static HCURSOR CopyCursorT(HCURSOR pcur);
+        static HCURSOR CopyCursorT(HCURSOR hIcon);
         static HCURSOR CreateCursor(HINSTANCE hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const VOID* pvANDPlane, const VOID* pvXORPlane);
         static BOOL DestroyCursor(HCURSOR hCursor);
         static BOOL GetClipCursor(LPRECT lpRect);
@@ -418,7 +420,7 @@ namespace qor { namespace win { namespace api {
 
         //Keyboard Accelerator functions
         static int CopyAcceleratorTableT(HACCEL hAccelSrc, LPACCEL lpAccelDst, int cAccelEntries);
-        static HACCEL CreateAcceleratorTableT(LPACCEL lpaccl, int cEntries);
+        static HACCEL CreateAcceleratorTableT(LPACCEL paccel, int cAccel);
         static BOOL DestroyAcceleratorTable(HACCEL hAccel);
         static HACCEL LoadAcceleratorsT(HINSTANCE hInstance, LPCTSTR lpTableName);
         static int TranslateAcceleratorT(HWND hWnd, HACCEL hAccTable, LPMSG lpMsg);
@@ -440,8 +442,8 @@ namespace qor { namespace win { namespace api {
         static UINT PrivateExtractIconsT(LPCTSTR szFileName, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags);
 
         //Resource functions
-        static HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags);
-        static HANDLE LoadImageT(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
+        static HANDLE CopyImage(HANDLE h, UINT type, int cx, int cy, UINT flags);
+        static HANDLE LoadImageT(HINSTANCE hInst, LPCTSTR name, UINT type, int cx, int cy, UINT fuLoad);
 
         //Rectangle functions
         static BOOL CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc);
@@ -467,24 +469,24 @@ namespace qor { namespace win { namespace api {
         static BOOL ShowCaret(HWND hWnd);
 
         //Dialog functions
-        static HWND CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM lParamInit);
+        static HWND CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam);
         static HWND CreateDialogParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam);
         static LRESULT DefDlgProcT(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam);
         static INT_PTR DialogBoxIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE hDialogTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam);
         static INT_PTR DialogBoxParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam);
         static BOOL EndDialog(HWND hDlg, INT_PTR nResult);
         static LONG GetDialogBaseUnits(void);
-        static int GetDlgCtrlID(HWND hwndCtl);
+        static int GetDlgCtrlID(HWND hWnd);
         static HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
         static UINT GetDlgItemInt(HWND hDlg, int nIDDlgItem, BOOL* lpTranslated, BOOL bSigned);
-        static UINT GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int nMaxCount);
+        static UINT GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int cchMax);
         static HWND GetNextDlgGroupItem(HWND hDlg, HWND hCtl, BOOL bPrevious);
         static HWND GetNextDlgTabItem(HWND hDlg, HWND hCtl, BOOL bPrevious);
         static BOOL IsDialogMessageT(HWND hDlg, LPMSG lpMsg);
         static BOOL MapDialogRect(HWND hDlg, LPRECT lpRect);
         static int MessageBoxT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
         static int MessageBoxExT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId);
-        static int MessageBoxIndirectT(const ::LPMSGBOXPARAMS lpMsgBoxParams);
+        static int MessageBoxIndirectT(const ::LPMSGBOXPARAMS lpmbp);
         //NOTE: Thanks to CPian Maurizio Pisano
         static int MessageBoxTimeout(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds);
         static LRESULT SendDlgItemMessageT(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -549,7 +551,7 @@ namespace qor { namespace win { namespace api {
 
         //Combo Box functions
         static int DlgDirListComboBoxT(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
-        static BOOL DlgDirSelectComboBoxExT(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
+        static BOOL DlgDirSelectComboBoxExT(HWND hwndDlg, LPTSTR lpString, int cchOut, int idComboBox);
         static BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
 
         //Mouse functions
@@ -565,21 +567,21 @@ namespace qor { namespace win { namespace api {
         static BOOL TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
 
         //Font and Text functions
-        static int DrawTextT(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat);
-        static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT dwDTFormat, ::LPDRAWTEXTPARAMS lpDTParams);
-        static DWORD GetTabbedTextExtentT(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
-        static LONG TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
+        static int DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format);
+        static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp);
+        static DWORD GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
+        static LONG TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
 
         //ScrollBar functions
-        static BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
+        static BOOL EnableScrollBar(HWND hWnd, UINT wSBflags, UINT wArrows);
         static BOOL GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi);
-        static BOOL GetScrollInfo(HWND hwnd, int fnBar, ::LPSCROLLINFO lpsi);
+        static BOOL GetScrollInfo(HWND hwnd, int nBar, ::LPSCROLLINFO lpsi);
         static int GetScrollPos(HWND hWnd, int nBar);
         static BOOL GetScrollRange(HWND hWnd, int nBar, LPINT lpMinPos, LPINT lpMaxPos);
         static BOOL ScrollDC(HDC hDC, int dx, int dy, const ::RECT *lprcScroll, const ::RECT *lprcClip, HRGN hrgnUpdate, ::LPRECT lprcUpdate);
         static BOOL ScrollWindow(HWND hWnd, int XAmount, int YAmount, const ::RECT* lpRect, const ::RECT* lpClipRect);
         static int ScrollWindowEx(HWND hWnd, int dx, int dy, const ::RECT* prcScroll, const ::RECT* prcClip, HRGN hrgnUpdate, ::LPRECT prcUpdate, UINT flags);
-        static int SetScrollInfo(HWND hwnd, int fnBar, ::LPCSCROLLINFO lpsi, BOOL fRedraw);
+        static int SetScrollInfo(HWND hwnd, int nBar, ::LPCSCROLLINFO lpsi, BOOL redraw);
         static int SetScrollPos(HWND hWnd, int nBar, int nPos, BOOL bRedraw);
         static BOOL SetScrollRange(HWND hWnd, int nBar, int nMinPos, int nMaxPos, BOOL bRedraw);
         static BOOL ShowScrollBar(HWND hWnd, int wBar, BOOL bShow);
@@ -618,7 +620,7 @@ namespace qor { namespace win { namespace api {
 
         //Window-Class functions
         static BOOL GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass);
-        static BOOL GetClassInfoExT(HINSTANCE hinst, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx);
+        static BOOL GetClassInfoExT(HINSTANCE hInstance, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx);
         static ULONG_PTR GetClassLongPtrT(HWND hWnd, int nIndex);
         static int GetClassNameT(HWND hWnd, LPTSTR lpClassName, int nMaxCount);
         static WORD GetClassWord(HWND hWnd, int nIndex);
@@ -659,10 +661,10 @@ namespace qor { namespace win { namespace api {
         BOOL SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID);
 
         //Active Accessibility functions
-        static HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
+        static HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC pfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwFlags);
         static BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
-        static BOOL IsWinEventHookInstalled(DWORD dwEvent);
-        static void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
+        static BOOL IsWinEventHookInstalled(DWORD event);
+        static void NotifyWinEvent(DWORD event, HWND hwnd, LONG idObject, LONG idChild);
 
         //Timer functions
         static BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);

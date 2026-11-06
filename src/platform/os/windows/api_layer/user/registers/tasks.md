@@ -193,11 +193,24 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
   3. **Decide `TrackPopupMenu`'s reserved slot rather than retype it blindly**: the SDK marks it `_Reserved_ CONST RECT *`
      (it must be NULL), and the layer spells it `HWND`, which under `STRICT` can only ever carry NULL. Retype it, or drop
      the parameter and pass NULL - do not leave the `HWND` slot as it is.
-  4. **Parameter-name alignment in one folder-wide commit**, not TU by TU (16 recorded sites: `scrollbar.cpp:69`
-     `wSBFlags` -> `wSBflags`, `:83` and `:127` `fnBar` -> `nBar`, `:127` `fRedraw` -> `redraw`; `window.cpp:174`, `:315`,
-     `:385`, `:427`, `:543`, `:641`; six in `menu.cpp`). Re-measure the folder first with a **comment-stripped,
-     case-sensitive** decl-vs-`winuser.h` comparison - per-TU counts were taken at different times and the
-     `-match '^(.+)T$'` trap in `gotchas/instrument-flags.md` truncates every stem ending in a lowercase `t`.
+  4. ~~**Parameter-name alignment in one folder-wide commit**, not TU by TU~~ **Done 6 Nov 2026.** The "16 recorded
+     sites" was wrong: the comment-stripped, case-sensitive decl-vs-`winuser.h` instrument (`tmp/_tmp_t8_sigcmp.ps1`,
+     registered in `gotchas/instrument-flags.md`) measured **102 divergent parameter names over 54 members**, and
+     `tmp/_tmp_t8_rename.ps1` renamed **101 of them across 15 files** - header declaration and definition together,
+     because renaming one side alone breaks the build. `InSendMessageEx` is the one row not applied: the layer declares
+     that parameter as bare `void`, so there is no name to change - a type divergence, recorded under U18, not a naming
+     one. Post-pass: 0 decl-vs-SDK name divergence over the 421 SDK-matched members (`tmp/_tmp_t8_sigcmp_post4.txt`),
+     0 decl-vs-definition divergence folder-wide (`tmp/_tmp_t8_decldef_post.txt`), layer gate 38/38
+     (`tmp/_tmp_t8_layer_gate_post.txt`), consumer gate 4/4 (`tmp/_tmp_t8_consumers5.txt`). Six members carry
+     parameters the SDK declares **without** a name (`GetMenuInfo`, `SetMenuInfo`, `Get/SetWindowContextHelpId`,
+     `SetDoubleClickTime`, `RegisterClassExT`) - nothing to align to, left as they are. `CopyCursorT` is excluded from
+     the instrument because `CopyCursor` is a function-like macro (`winuser.h:10681`), so any prototype the parser
+     finds is an inactive `#ifdef` arm; the member binds `CopyIconW`, so it was aligned by hand to that prototype's
+     `hIcon` (`cursor.cpp:60`, `user32.h:385`). The rename pass is also what exposed that T8 step 2's consumer fix had
+     never landed: with `InsertMenuT`/`ModifyMenuT` taking `UINT_PTR`, `ui/gui/controllers/i_m/menu.cpp:173`, `:183`
+     failed with C2664. Fixed there with `reinterpret_cast<UINT_PTR>(idNewItem)` at both call sites; the GUI header
+     cannot carry `UINT_PTR` (it is parsed before the Windows headers), so the SDK-shaped parameter type on
+     `Menu::InsertSubMenu`/`Menu::Modify` stays open.
   5. **Add the coordinate-transform pair U18 was opened over**: `LogicalToPhysicalPointForPerMonitorDPI` and
      `PhysicalToLogicalPointForPerMonitorDPI` (`BOOL (HWND, LPPOINT)`, single exports 26E / 2AC, no A/W family and no
      stem -> stemW macro, so bare `qor_pp_useswinapi` is correct under D13). Declare them beside `user32.h:188`/`:191`

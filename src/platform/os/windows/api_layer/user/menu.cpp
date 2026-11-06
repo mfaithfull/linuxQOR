@@ -33,16 +33,20 @@ namespace qor { namespace win { namespace api {
     //Signatures: 0 return-type divergences. tmp/_tmp_menu_ret_s22.ps1 reads the SDK return type off its own line above the
     //stem, and all 39 agree - 24 BOOL, 7 HMENU (CreateMenu, CreatePopupMenu, GetMenu, GetSubMenu, GetSystemMenu, LoadMenu,
     //LoadMenuIndirect), 3 UINT (GetMenuDefaultItem, GetMenuItemID, GetMenuState), 3 int (GetMenuItemCount, GetMenuString,
-    //MenuItemFromPoint), 1 DWORD (CheckMenuItem), 1 LONG (GetMenuCheckMarkDimensions). Three parameter types do diverge,
-    //and all three are published header surface, so they are recorded (U18) and not changed in a TU session:
-    //  - TrackPopupMenu's last parameter is HWND prcRect (:341, user32.h:252) where the SDK has _Reserved_ CONST RECT*
-    //    (winuser.h:7759-7766). STRICT is on in this build (winnt.h defines it unless NO_STRICT - measured in session 17),
-    //    so HWND is struct HWND__* and a RECT* will not convert implicitly: the slot can carry only NULL or a cast.
-    //    Pointer-sized on both architectures, so no ABI effect and no UB - and the wrapper has no caller at all (below).
-    //  - InsertMenuT (:250) and ModifyMenuT (:292) take void* uIDNewItem where the SDK takes UINT_PTR (winuser.h:7658,
-    //    :7667, :7704, :7713). AppendMenuT (:82) in the same section spells it correctly, so the section contradicts
-    //    itself. The SDK's UINT_PTR exists so one slot can carry either an item id or a string pointer; void* forces a
-    //    cast on the id case, and the two live callers pass it through (ui/gui/controllers/i_m/menu.cpp:173, :183).
+    //MenuItemFromPoint), 1 DWORD (CheckMenuItem), 1 LONG (GetMenuCheckMarkDimensions). The three parameter types that
+    //used to diverge are fixed (T8 steps 1-3, 6 Nov 2026):
+    //  - TrackPopupMenu (:340) now spells the SDK's own seven parameters - int nReserved plus const RECT* prcRect
+    //    (winuser.h:7759-7766) - instead of the HWND prcRect slot this file declared before STRICT made that slot
+    //    uncarriable except as NULL.
+    //  - InsertMenuT (:250) and ModifyMenuT (:292) now take UINT_PTR uIDNewItem as the SDK does (winuser.h:7658,
+    //    :7667, :7704, :7713) and as AppendMenuT (:82) always did, so the section no longer contradicts itself. The two
+    //    live callers (ui/gui/controllers/i_m/menu.cpp:173, :183) pass a pointer, so each now casts
+    //    reinterpret_cast<UINT_PTR>; the GUI header cannot name UINT_PTR at all (it is parsed before the Windows
+    //    headers), which is why the cast sits at the call site and not in Menu::InsertSubMenu / Menu::Modify.
+    //Parameter names here are the SDK's since the folder-wide alignment of the same day (U18 step 4): 21 names over 9
+    //members moved, hmenu -> hMenu at CheckMenuItem and TrackPopupMenuEx, hMenu -> hmenu at GetMenuItemInfoT,
+    //InsertMenuItemT and SetMenuItemInfoT (the SDK really does spell it that way there), and fByPosition -> fByPositon,
+    //the SDK's own typo at winuser.h:8015 - the rule is the prototype, typo included.
     //Each Call<> list restates its member's published types, so the lists at :254 and :296 inherit the divergence: fixing a
     //signature here means fixing the list too, which is the U23 shape.
     //
@@ -85,18 +89,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HMENU, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uFlags, uIDNewItem, lpNewItem);
     }
 
-    DWORD User32::CheckMenuItem(HMENU hmenu, UINT uIDCheckItem, UINT uCheck)
+    DWORD User32::CheckMenuItem(HMENU hMenu, UINT uIDCheckItem, UINT uCheck)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CheckMenuItem);
-        return Library::Call<DWORD, HMENU, UINT, UINT>(pFunc, hmenu, uIDCheckItem, uCheck);
+        return Library::Call<DWORD, HMENU, UINT, UINT>(pFunc, hMenu, uIDCheckItem, uCheck);
     }
 
-    BOOL User32::CheckMenuRadioItem(HMENU hmenu, UINT idFirst, UINT idLast, UINT idCheck, UINT uFlags)
+    BOOL User32::CheckMenuRadioItem(HMENU hmenu, UINT first, UINT last, UINT check, UINT flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CheckMenuRadioItem);
-        return Library::Call<BOOL, HMENU, UINT, UINT, UINT, UINT>(pFunc, hmenu, idFirst, idLast, idCheck, uFlags);
+        return Library::Call<BOOL, HMENU, UINT, UINT, UINT, UINT>(pFunc, hmenu, first, last, check, flags);
     }
 
     HMENU User32::CreateMenu(void)
@@ -197,11 +201,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<UINT, HMENU, int>(pFunc, hMenu, nPos);
     }
 
-    BOOL User32::GetMenuItemInfoT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii)
+    BOOL User32::GetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPosition, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetMenuItemInfo);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hMenu, uItem, fByPosition, lpmii);
+        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmii);
     }
 
     BOOL User32::GetMenuItemRect(HWND hWnd, HMENU hMenu, UINT uItem, ::LPRECT lprcItem)
@@ -218,11 +222,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, uId, uFlags);
     }
 
-    int User32::GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int nMaxCount, UINT uFlag)
+    int User32::GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int cchMax, UINT flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetMenuString);
-        return Library::Call<int, HMENU, UINT, LPTSTR, int, UINT>(pFunc, hMenu, uIDItem, lpString, nMaxCount, uFlag);
+        return Library::Call<int, HMENU, UINT, LPTSTR, int, UINT>(pFunc, hMenu, uIDItem, lpString, cchMax, flags);
     }
 
     HMENU User32::GetSubMenu(HMENU hMenu, int nPos)
@@ -239,25 +243,25 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HMENU, HWND, BOOL>(pFunc, hWnd, bRevert);
     }
 
-    BOOL User32::HiliteMenuItem(HWND hwnd, HMENU hmenu, UINT uItemHilite, UINT uHilite)
+    BOOL User32::HiliteMenuItem(HWND hWnd, HMENU hMenu, UINT uIDHiliteItem, UINT uHilite)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, HiliteMenuItem);
-        return Library::Call<BOOL, HWND, HMENU, UINT, UINT>(pFunc, hwnd, hmenu, uItemHilite, uHilite);
+        return Library::Call<BOOL, HWND, HMENU, UINT, UINT>(pFunc, hWnd, hMenu, uIDHiliteItem, uHilite);
     }
 
-    BOOL User32::InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, void* uIDNewItem, LPCTSTR lpNewItem)
+    BOOL User32::InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, InsertMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT, void*, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
     }
 
-    BOOL User32::InsertMenuItemT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPCMENUITEMINFO lpmii)
+    BOOL User32::InsertMenuItemT(HMENU hmenu, UINT item, BOOL fByPosition, LPCMENUITEMINFO lpmi)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, InsertMenuItem);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPCMENUITEMINFO>(pFunc, hMenu, uItem, fByPosition, lpmii);
+        return Library::Call<BOOL, HMENU, UINT, BOOL, LPCMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmi);
     }
 
     BOOL User32::IsMenu(HMENU hMenu)
@@ -288,11 +292,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, HMENU, POINT>(pFunc, hWnd, hMenu, ptScreen);
     }
 
-    BOOL User32::ModifyMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, void* uIDNewItem, LPCTSTR lpNewItem)
+    BOOL User32::ModifyMenuT(HMENU hMnu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, ModifyMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT, void*, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMnu, uPosition, uFlags, uIDNewItem, lpNewItem);
     }
 
     BOOL User32::RemoveMenu(HMENU hMenu, UINT uPosition, UINT uFlags)
@@ -330,25 +334,25 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HMENU, UINT, UINT, HBITMAP, HBITMAP>(pFunc, hMenu, uPosition, uFlags, hBitmapUnchecked, hBitmapChecked);
     }
 
-    BOOL User32::SetMenuItemInfoT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii)
+    BOOL User32::SetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPositon, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, SetMenuItemInfo);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hMenu, uItem, fByPosition, lpmii);
+        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPositon, lpmii);
     }
 
-    BOOL User32::TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, HWND prcRect)
+    BOOL User32::TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, const RECT* prcRect)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, TrackPopupMenu);
-        return Library::Call<BOOL, HMENU, UINT, int, int, int, HWND, HWND>(pFunc, hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
+        return Library::Call<BOOL, HMENU, UINT, int, int, int, HWND, const RECT*>(pFunc, hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
     }
 
-    BOOL User32::TrackPopupMenuEx(HMENU hmenu, UINT fuFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm)
+    BOOL User32::TrackPopupMenuEx(HMENU hMenu, UINT uFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, TrackPopupMenuEx);
-        return Library::Call<BOOL, HMENU, UINT, int, int, HWND, ::LPTPMPARAMS>(pFunc, hmenu, fuFlags, x, y, hwnd, lptpm);
+        return Library::Call<BOOL, HMENU, UINT, int, int, HWND, ::LPTPMPARAMS>(pFunc, hMenu, uFlags, x, y, hwnd, lptpm);
     }
 
 }}}//qor::win::api

@@ -170,7 +170,7 @@ namespace qor{ namespace platform { namespace win{
 
     bool Menu::InsertSubMenu(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newItem)
     {
-        return User32::InsertMenuT(MENU_HANDLE, position, flags, idNewItem, newItem.c_str()) ? true : false;
+        return User32::InsertMenuT(MENU_HANDLE, position, flags, reinterpret_cast<UINT_PTR>(idNewItem), newItem.c_str()) ? true : false;
     }
 
     bool Menu::InsertItem(unsigned int item, bool byPosition, const MenuItemInfo& itemInfo)
@@ -180,7 +180,7 @@ namespace qor{ namespace platform { namespace win{
 
     bool Menu::Modify(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newText)
     {
-        return User32::ModifyMenuT(MENU_HANDLE, position, flags, idNewItem, newText.c_str()) ? true : false;
+        return User32::ModifyMenuT(MENU_HANDLE, position, flags, reinterpret_cast<UINT_PTR>(idNewItem), newText.c_str()) ? true : false;
     }
 
     bool Menu::Remove(unsigned int position, unsigned int flags)

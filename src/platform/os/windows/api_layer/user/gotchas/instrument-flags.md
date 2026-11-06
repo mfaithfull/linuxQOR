@@ -31,3 +31,23 @@ Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1`
   **declaration** in another library (`ui/gui/controllers/.../menu.h:95 Menu* GetSubMenu(int)`) as a BYPASS call site:
   3 of the 18 menu rows are that. Quote row counts and real-call counts separately, and check the file/line kind before
   calling a site a bypass.
+- **SAL annotations carry other parameters' names, so they must be stripped before a parameter name is read.** A
+  last-identifier rule applied to `_In_reads_(cAccel) LPACCEL paccel` returns `cAccel`. Measured 6 Nov 2026 on
+  `tmp/_tmp_t8_sigcmp.ps1`'s first run: of 137 rows, ~20 were that artifact (`ToUnicode` p3 `cchBuff`,
+  `MapWindowPoints` p2 `cPoints`, `PrivateExtractIconsW` p0 `MAX_PATH`, `RealGetWindowClassW` and
+  `CopyAcceleratorTableW` p1 `return`, `SendInput` p1 `cInputs`). Strip `^_[A-Za-z0-9_]*_ (\( ... \))?` repeatedly
+  first, then read the trailing identifier.
+- **A stem that is a function-like macro has no live prototype.** `CopyCursor` is `#define CopyCursor(pcur)
+  ((HCURSOR)CopyIcon((HICON)(pcur)))` (`winuser.h:10681`); a `WINAPI name(...)` regex only sees the inactive `#else` arm's
+  `CopyCursor(HCURSOR hCursor)`. Comparing a wrapper against such a name aligns it to the wrong export - `CopyCursorT`
+  binds `CopyIconW`, so its parameter is `hIcon`. The instrument now prints `EXCLUDED` for these and the alignment is done
+  by hand against the export in the `qor_pp_useswinapi` line.
+- **The SDK sometimes declares a parameter with no name at all** (`SetDoubleClickTime(_In_ UINT)`,
+  `RegisterClassExW(_In_ CONST WNDCLASSEXW *)`, `GetMenuInfo(_In_ HMENU, _Inout_ LPMENUINFO)`). Six library members sit on
+  that; there is nothing to align to, so a name-diff instrument must report them separately (`SDK-UNNAMED` rows) rather
+  than as divergences.
+- **Renaming a parameter is two edits, not one.** The header declaration and the definition's parameter list *and its body
+  uses* all carry the name; renaming only the declaration leaves a definition that no longer matches, which compiles but
+  re-introduces the divergence the scan is meant to remove (`tmp/_tmp_t8_rename.ps1` therefore edits both, scoped to one
+  member's extent so a common name like `uFlags` in other declarations is untouched, and uses `-creplace` so `hmenu` ->
+  `hMenu` cannot touch the type `HMENU`).

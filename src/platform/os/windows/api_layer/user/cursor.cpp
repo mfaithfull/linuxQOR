@@ -57,11 +57,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, const RECT*>(pFunc, lpRect);
     }
 
-    HCURSOR User32::CopyCursorT(HCURSOR pcur)
+    HCURSOR User32::CopyCursorT(HCURSOR hIcon)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CopyIcon);
-        return Library::Call< HCURSOR, HCURSOR >(pFunc, pcur);
+        return Library::Call< HCURSOR, HCURSOR >(pFunc, hIcon);
     }
 
     HCURSOR User32::CreateCursor(HINSTANCE hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const VOID* pvANDPlane, const VOID* pvXORPlane)

@@ -102,25 +102,25 @@ namespace qor { namespace win { namespace api {
     //BOOL-returning wrappers plus PostQuitMessage's voidCall. A Win32 FALSE from GetMessage/PeekMessage/PostMessage is
     //therefore silent here, and an SEH fault is indistinguishable from a legitimate zero (U1, U2, U7).
 
-    long User32::BroadcastSystemMessageT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam)
+    long User32::BroadcastSystemMessageT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, BroadcastSystemMessage);
-        return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM>(pFunc, dwFlags, lpdwRecipients, uiMessage, wParam, lParam);
+        return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM>(pFunc, flags, lpInfo, Msg, wParam, lParam);
     }
 
-    long User32::BroadcastSystemMessageExT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam, ::PBSMINFO pBSMInfo)
+    long User32::BroadcastSystemMessageExT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam, ::PBSMINFO pbsmInfo)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, BroadcastSystemMessageEx);
-        return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM, ::PBSMINFO>(pFunc, dwFlags, lpdwRecipients, uiMessage, wParam, lParam, pBSMInfo);
+        return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM, ::PBSMINFO>(pFunc, flags, lpInfo, Msg, wParam, lParam, pbsmInfo);
     }
 
-    LRESULT User32::DispatchMessageT(const MSG* lpmsg)
+    LRESULT User32::DispatchMessageT(const MSG* lpMsg)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DispatchMessage);
-        return Library::Call<LRESULT, const MSG*>(pFunc, lpmsg);
+        return Library::Call<LRESULT, const MSG*>(pFunc, lpMsg);
     }
 
     BOOL User32::GetInputState(void)
@@ -221,11 +221,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, LRESULT>(pFunc, lResult);
     }
 
-    BOOL User32::SendMessageCallbackT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, ::SENDASYNCPROC lpCallBack, ULONG_PTR dwData)
+    BOOL User32::SendMessageCallbackT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, ::SENDASYNCPROC lpResultCallBack, ULONG_PTR dwData)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, SendMessageCallback);
-        return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM, ::SENDASYNCPROC, ULONG_PTR>(pFunc, hWnd, Msg, wParam, lParam, lpCallBack, dwData);
+        return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM, ::SENDASYNCPROC, ULONG_PTR>(pFunc, hWnd, Msg, wParam, lParam, lpResultCallBack, dwData);
     }
 
     LRESULT User32::SendMessageTimeoutT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, UINT fuFlags, UINT uTimeout, PDWORD_PTR lpdwResult)

@@ -54,11 +54,11 @@ namespace qor { namespace win { namespace api {
     //defines neither (grep of cmake/ and every CMakeLists.txt), and no WINVER is pinned, so sdkddkver.h's 0x0A00 default
     //keeps all of them visible today.
 
-    LONG User32::ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwflags)
+    LONG User32::ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwFlags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, ChangeDisplaySettings);
-        return Library::Call< LONG, ::LPDEVMODE, DWORD >(pFunc, lpDevMode, dwflags);
+        return Library::Call< LONG, ::LPDEVMODE, DWORD >(pFunc, lpDevMode, dwFlags);
     }
 
     LONG User32::ChangeDisplaySettingsExT(LPCTSTR lpszDeviceName, ::LPDEVMODE lpDevMode, HWND hwnd, DWORD dwflags, LPVOID lParam)

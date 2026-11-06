@@ -51,11 +51,11 @@ namespace qor { namespace win { namespace api {
     //LockWindowUpdate :8760 BOOL, PaintDesktop :8522 BOOL, RedrawWindow :8720 BOOL, SetWindowRgn :8649 int,
     //UpdateWindow :8502 BOOL, ValidateRect :8697 BOOL, ValidateRgn :8712 BOOL, WindowFromDC :8563 HWND
     //(tmp/_tmp_paint_ret_s26.ps1 - the SDK puts the return type on its own line, so a declaration-line
-    //instrument cannot see it: session 22's caveat). Two members rename SDK parameters case-insensitively
-    //(DrawCaption's lprc / uFlags against the SDK's lprect / flags, DrawStateT's hbr / lpOutputFunc / fuFlags
-    //against hbrFore / qfnCallBack / uFlags); parameter names are not part of a signature, so that is not a
-    //finding. Case-only differences (BeginPaint's hwnd against the SDK's hWnd) pass the folder's -eq-based
-    //name compare - the same semantics every session since 8 has used.
+    //instrument cannot see it: session 22's caveat). Two members used to rename SDK parameters (DrawCaption's
+    //lprc / uFlags against the SDK's lprect / flags, DrawStateT's hbr / lpOutputFunc / fuFlags against hbrFore /
+    //qfnCallBack / uFlags, BeginPaint's hwnd against the SDK's hWnd); all six were renamed to the SDK spelling by
+    //the folder-wide parameter-name alignment of 6 Nov 2026 (U18 step 4), which is also what showed that the
+    //folder's -eq-based name compare had been blind to the case-only ones like hwnd/hWnd all along.
     //
     //The two *T members are the only pair in the folder where the A/W choice is invisible in the types:
     //DrawStateA and DrawStateW declare the same opaque LPARAM lData / WPARAM wData and GrayStringA/W the same
@@ -82,11 +82,11 @@ namespace qor { namespace win { namespace api {
     //25 binding literals are unchanged (tmp/_tmp_paint_pp_pre_s26.txt vs tmp/_tmp_paint_pp_post_s26.txt).
 
 
-    HDC User32::BeginPaint(HWND hwnd, ::LPPAINTSTRUCT lpPaint)
+    HDC User32::BeginPaint(HWND hWnd, ::LPPAINTSTRUCT lpPaint)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, BeginPaint);
-        return Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hwnd, lpPaint);
+        return Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hWnd, lpPaint);
     }
 
     BOOL User32::DrawAnimatedRects(HWND hwnd, int idAni, CONST::RECT* lprcFrom, CONST::RECT* lprcTo)
@@ -96,11 +96,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, int, CONST ::RECT*, CONST ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
     }
 
-    BOOL User32::DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprc, UINT uFlags)
+    BOOL User32::DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprect, UINT flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, DrawCaption);
-        return Library::Call<BOOL, HWND, HDC, ::LPCRECT, UINT>(pFunc, hwnd, hdc, lprc, uFlags);
+        return Library::Call<BOOL, HWND, HDC, ::LPCRECT, UINT>(pFunc, hwnd, hdc, lprect, flags);
     }
 
     BOOL User32::DrawEdge(HDC hdc, ::LPRECT qrc, UINT edge, UINT grfFlags)
@@ -124,11 +124,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, lprc, uType, uState);
     }
 
-    BOOL User32::DrawStateT(HDC hdc, HBRUSH hbr, ::DRAWSTATEPROC lpOutputFunc, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT fuFlags)
+    BOOL User32::DrawStateT(HDC hdc, HBRUSH hbrFore, ::DRAWSTATEPROC qfnCallBack, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT uFlags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DrawState);
-        return Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbr, lpOutputFunc, lData, wData, x, y, cx, cy, fuFlags);
+        return Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbrFore, qfnCallBack, lData, wData, x, y, cx, cy, uFlags);
     }
 
     BOOL User32::EndPaint(HWND hWnd, CONST::PAINTSTRUCT* lpPaint)

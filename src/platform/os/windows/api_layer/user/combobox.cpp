@@ -22,7 +22,7 @@ namespace qor { namespace win { namespace api {
     //the AW macro takes the W entry point and LPTSTR is wide - the same switch drives both halves.
     //The DlgDir pair is dialog-oriented and addresses the control by id inside hDlg. lpPathSpec is _Inout_
     //(winuser.h:11648,11657): the call rewrites the caller's buffer, which stays caller-owned and must be sized for
-    //the path plus whatever text comes back; DlgDirSelectComboBoxEx writes at most nCount characters into the
+    //the path plus whatever text comes back; DlgDirSelectComboBoxEx writes at most cchOut characters into the
     //caller-owned lpString (_Out_writes_(cchOut), winuser.h:11672,11680). Neither allocates anything, and the file
     //filter is the DDL_* set (winuser.h:11607-11616). GetComboBoxInfo needs pcbi->cbSize pre-set to
     //sizeof(COMBOBOXINFO) and returns the combo box's own child window handles (hwndItem, hwndList), which stay
@@ -41,11 +41,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, LPTSTR, int, int, UINT>(pFunc, hDlg, lpPathSpec, nIDComboBox, nIDStaticPath, uFiletype);
     }
 
-    BOOL User32::DlgDirSelectComboBoxExT(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox)
+    BOOL User32::DlgDirSelectComboBoxExT(HWND hwndDlg, LPTSTR lpString, int cchOut, int idComboBox)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DlgDirSelectComboBoxEx);
-        return Library::Call<BOOL, HWND, LPTSTR, int, int>(pFunc, hDlg, lpString, nCount, nIDComboBox);
+        return Library::Call<BOOL, HWND, LPTSTR, int, int>(pFunc, hwndDlg, lpString, cchOut, idComboBox);
     }
 
     BOOL User32::GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi)

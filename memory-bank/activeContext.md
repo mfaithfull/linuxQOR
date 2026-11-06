@@ -1,7 +1,8 @@
 # Active Context
 
-Last updated: 5 Nov 2026 - **session 37 (`winqor_api_user.cpp`) CLOSED and committed; all 38 sources of
-`src/platform/os/windows/api_layer/user` are reviewed, so the TU queue is empty and the folder review is complete.**
+Last updated: 6 Nov 2026 - **T8 (the `winqor_api_user` conformance pass) steps 1-5 are done; step 6 - the 109-name
+coverage backlog - is the next session's planning target.** The TU queue that preceded it is closed: all 38 sources of
+`src/platform/os/windows/api_layer/user` were reviewed by session 37, so no review banner is owed.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.
@@ -28,9 +29,12 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   User32.dll Windows system library"), recorded as policy **D18** in `docs/agent/DECISIONS.md`; it changes the acceptance
   criterion - a wrapper's published signature is the SDK prototype of the export it binds, and an unwrapped export is a
   gap. The work that follows is **T8** (`.../api_layer/user/registers/tasks.md`; measured sites in `.../registers/u18.md`):
-  1 return type, 4 parameter types, 16 parameter names, 2 unwrapped `*ForPerMonitorDPI` exports, then a **109-name**
-  coverage backlog (scope decided the same day: documented exports only, superseded families excluded - the 253
-  prototype-less exports are out; per-name dispositions in `.../registers/u18-coverage.md`). Other leads - open items, the
+  1 return type, 4 parameter types, **102** parameter names (not the 16 the per-TU records added up to), 2 unwrapped
+  `*ForPerMonitorDPI` exports, then a **109-name** coverage backlog. Steps 1-5 are in as of 6 Nov 2026 - the names pass
+  renamed 101 of the 102 across header and definition together, and step 2's consumer fix only landed when that rename
+  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. (scope decided 5 Nov: documented
+  exports only, superseded families excluded - the 253 prototype-less exports are out; per-name dispositions in
+  `.../registers/u18-coverage.md`). Other leads - open items, the
   T1-T6
   tasks, D17 and what it closed, the unregistered version-string hazard - remain in
   `src/platform/os/windows/api_layer/user/preflags.md`; `status.md` still carries the queue table, the id map and the

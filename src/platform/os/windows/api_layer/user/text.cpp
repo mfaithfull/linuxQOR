@@ -23,8 +23,9 @@ namespace qor { namespace win { namespace api {
     //tmp/_tmp_sigcmp.ps1 -Tu text.cpp -First 568 -Last 571 reports 4/4 declaration==definition for return type,
     //parameter types, names and Call<> arity, and its one "CALL TYPE MISMATCH" is the instrument's known
     //CONST::LPINT vs CONST ::LPINT artifact at :83, not a defect (gotchas.md). tmp/_tmp_s32_names.ps1: 0 header-vs-
-    //definition parameter-name divergences; def-vs-SDK names diverge on 4/4 members (13 names, e.g. nCount/chCount, X/x),
-    //published names only, and 0 def-vs-SDK type divergences over the four signatures.
+    //definition parameter-name divergences; def-vs-SDK names diverged on 4/4 members (13 names, e.g. nCount/chCount, X/x)
+    //until the folder-wide parameter-name alignment of 6 Nov 2026 renamed all thirteen to the SDK spelling (U18 step 4),
+    //and 0 def-vs-SDK type divergences over the four signatures.
     //
     //Binding (D13): all four stems are A/W-only - a word-boundary walk of tmp/_tmp_user32_exports.txt gives bare
     //DrawText, DrawTextEx, GetTabbedTextExtent and TabbedTextOut at count 0, while DrawTextA (DB)/DrawTextW (DE),
@@ -93,32 +94,32 @@ namespace qor { namespace win { namespace api {
     //   glue TU.
 
 
-    int User32::DrawTextT(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat)
+    int User32::DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DrawText);
-        return Library::Call< int, HDC, LPCTSTR, int, ::LPRECT, UINT >(pFunc, hDC, lpString, nCount, lpRect, uFormat);
+        return Library::Call< int, HDC, LPCTSTR, int, ::LPRECT, UINT >(pFunc, hdc, lpchText, cchText, lprc, format);
     }
 
-    int User32::DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT dwDTFormat, ::LPDRAWTEXTPARAMS lpDTParams)
+    int User32::DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DrawTextEx);
-        return Library::Call< int, HDC, LPTSTR, int, ::LPRECT, UINT, ::LPDRAWTEXTPARAMS >(pFunc, hdc, lpchText, cchText, lprc, dwDTFormat, lpDTParams);
+        return Library::Call< int, HDC, LPTSTR, int, ::LPRECT, UINT, ::LPDRAWTEXTPARAMS >(pFunc, hdc, lpchText, cchText, lprc, format, lpdtp);
     }
 
-    DWORD User32::GetTabbedTextExtentT(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions)
+    DWORD User32::GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, CONST LPINT lpnTabStopPositions)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetTabbedTextExtent);
-        return Library::Call< DWORD, HDC, LPCTSTR, int, int, CONST LPINT >(pFunc, hDC, lpString, nCount, nTabPositions, lpnTabStopPositions);
+        return Library::Call< DWORD, HDC, LPCTSTR, int, int, CONST LPINT >(pFunc, hdc, lpString, chCount, nTabPositions, lpnTabStopPositions);
     }
 
-    LONG User32::TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin)
+    LONG User32::TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, TabbedTextOut);
-        return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, CONST ::LPINT, int >(pFunc, hDC, X, Y, lpString, nCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
+        return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, CONST ::LPINT, int >(pFunc, hdc, x, y, lpString, chCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
     }
 
 }}}//qor::win::api

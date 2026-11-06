@@ -23,18 +23,18 @@ namespace qor { namespace win { namespace api {
     // qor_pp_useswinapiAW is required and resolves to "LoadImageW". Neither wrapper inspects the HANDLE it returns:
     // a NULL failure is silent here, which is the settled policy for this layer (no CheckReturn, no handler).
 
-    HANDLE User32::CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags)
+    HANDLE User32::CopyImage(HANDLE h, UINT type, int cx, int cy, UINT flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CopyImage);
-        return Library::Call< HANDLE, HANDLE, UINT, int, int, UINT >(pFunc, hImage, uType, cxDesired, cyDesired, fuFlags);
+        return Library::Call< HANDLE, HANDLE, UINT, int, int, UINT >(pFunc, h, type, cx, cy, flags);
     }
 
-    HANDLE User32::LoadImageT(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad)
+    HANDLE User32::LoadImageT(HINSTANCE hInst, LPCTSTR name, UINT type, int cx, int cy, UINT fuLoad)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, LoadImage);
-        return Library::Call< HANDLE, HINSTANCE, LPCTSTR, UINT, int, int, UINT >(pFunc, hinst, lpszName, uType, cxDesired, cyDesired, fuLoad);
+        return Library::Call< HANDLE, HINSTANCE, LPCTSTR, UINT, int, int, UINT >(pFunc, hInst, name, type, cx, cy, fuLoad);
     }
 
 }}}//qor::win::api

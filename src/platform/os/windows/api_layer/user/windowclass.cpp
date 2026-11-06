@@ -66,11 +66,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASS >(pFunc, hInstance, lpClassName, lpWndClass);
     }
 
-    BOOL User32::GetClassInfoExT(HINSTANCE hinst, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx)
+    BOOL User32::GetClassInfoExT(HINSTANCE hInstance, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetClassInfoEx);
-        return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASSEX >(pFunc, hinst, lpszClass, lpwcx);
+        return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASSEX >(pFunc, hInstance, lpszClass, lpwcx);
     }
 
     ULONG_PTR User32::GetClassLongPtrT(HWND hWnd, int nIndex)

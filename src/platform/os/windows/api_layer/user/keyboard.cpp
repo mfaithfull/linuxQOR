@@ -34,10 +34,11 @@ namespace qor { namespace win { namespace api {
     //(GetKeyboardLayoutName 16D/16E, VkKeyScan 3E1/3E4, VkKeyScanEx 3E2/3E3). GetKBCodePage is a real function and a
     //real export (winuser.h:5918, ordinal 167), not the TEB macro older documentation describes.
     //
-    //Signatures: every parameter and return type matches the SDK prototype except two divergences that are recorded
-    //rather than changed - GetKeyboardLayoutList returns UINT here against the SDK's int (winuser.h:1313), and
-    //keybd_event takes void* dwExtraInfo against the SDK's ULONG_PTR (winuser.h:6071). Both are same-width on x86 and
-    //x64 so the ABI is unaffected, and both are published surface, hence U18 and not a fix. Zero-argument lists are
+    //Signatures: every parameter and return type now matches the SDK prototype. Two divergences stood until T8 step 1 on
+    //6 Nov 2026 - GetKeyboardLayoutList returned UINT here against the SDK's int (winuser.h:1313), and keybd_event took
+    //void* dwExtraInfo against the SDK's ULONG_PTR (winuser.h:6071); "same width on x86 and x64" is no longer grounds to
+    //leave one (D17 voided that argument, D18 fixed the site), and the parameter names are the SDK's since step 4.
+    //Zero-argument lists are
     //(void) (U14c), and all 34 Call/voidCall sites now name their template arguments - this TU held 2 of the folder's
     //6 deducing sites (U14b).
     //
@@ -130,11 +131,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HKL, DWORD >(pFunc, idThread);
     }
 
-    UINT User32::GetKeyboardLayoutList(int nBuff, HKL* lpList)
+    int User32::GetKeyboardLayoutList(int nBuff, HKL* lpList)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetKeyboardLayoutList);
-        return Library::Call< UINT, int, HKL* >(pFunc, nBuff, lpList);
+        return Library::Call< int, int, HKL* >(pFunc, nBuff, lpList);
     }
 
     BOOL User32::GetKeyboardLayoutNameT(LPTSTR pwszKLID)
@@ -158,11 +159,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, int >(pFunc, nTypeFlag);
     }
 
-    int User32::GetKeyNameTextT(LONG lParam, LPTSTR lpString, int nSize)
+    int User32::GetKeyNameTextT(LONG lParam, LPTSTR lpString, int cchSize)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetKeyNameText);
-        return Library::Call< int, LONG, LPTSTR, int >(pFunc, lParam, lpString, nSize);
+        return Library::Call< int, LONG, LPTSTR, int >(pFunc, lParam, lpString, cchSize);
     }
 
     SHORT User32::GetKeyState(int nVirtKey)
@@ -186,11 +187,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }
 
-    VOID User32::keybd_event(BYTE bVk, BYTE bScan, DWORD dwFlags, void* dwExtraInfo)
+    VOID User32::keybd_event(BYTE bVk, BYTE bScan, DWORD dwFlags, ULONG_PTR dwExtraInfo)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, keybd_event);
-        return Library::voidCall< BYTE, BYTE, DWORD, void* >(pFunc, bVk, bScan, dwFlags, dwExtraInfo);
+        return Library::voidCall< BYTE, BYTE, DWORD, ULONG_PTR >(pFunc, bVk, bScan, dwFlags, dwExtraInfo);
     }
 
     HKL User32::LoadKeyboardLayoutT(LPCTSTR pwszKLID, UINT Flags)
@@ -228,11 +229,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HWND, int, UINT, UINT >(pFunc, hWnd, id, fsModifiers, vk);
     }
 
-    UINT User32::SendInput(UINT nInputs, LPINPUT pInputs, int cbSize)
+    UINT User32::SendInput(UINT cInputs, LPINPUT pInputs, int cbSize)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, SendInput);
-        return Library::Call< UINT, UINT, LPINPUT, int >(pFunc, nInputs, pInputs, cbSize);
+        return Library::Call< UINT, UINT, LPINPUT, int >(pFunc, cInputs, pInputs, cbSize);
     }
 
     HWND User32::SetActiveWindow(HWND hWnd)

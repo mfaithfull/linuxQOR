@@ -43,9 +43,9 @@ namespace qor { namespace win { namespace api {
     //Signatures: return types read from winuser.h with tmp/_tmp_scroll_ret_s30.ps1, which prints the line above the
     //stem - BOOL EnableScrollBar :8859, GetScrollBarInfo :14763, GetScrollInfo :12061, GetScrollRange :8842, ScrollDC
     //:8776, ScrollWindow :8766, SetScrollRange :8832, ShowScrollBar :8851; int GetScrollPos :8825, ScrollWindowEx
-    //:8788, SetScrollInfo :12052, SetScrollPos :8816. Four parameter names differ from the SDK's (wSBFlags vs
-    //wSBflags, fnBar vs nBar twice, fRedraw vs redraw) - recorded under U18, cosmetic, and header and definition agree
-    //with each other verbatim, so nothing inside this library contradicts itself.
+    //:8788, SetScrollInfo :12052, SetScrollPos :8816. Four parameter names differed from the SDK's (wSBFlags vs
+    //wSBflags, fnBar vs nBar twice, fRedraw vs redraw) until the folder-wide parameter-name alignment of 6 Nov 2026
+    //renamed all four to the SDK spelling in header and definition together - 0 name divergence remains (U18 step 4).
     //
     //SDK visibility (U16): 12/12 prototypes are WINAPI_PARTITION_DESKTOP only; 3 are version-gated - SetScrollInfo and
     //GetScrollInfo under #if(WINVER >= 0x0400) (winuser.h:12026), GetScrollBarInfo under #if(WINVER >= 0x0500)
@@ -66,11 +66,11 @@ namespace qor { namespace win { namespace api {
     //side - the settled policy for this layer, not a per-TU fix. Its ../returncheck.h include (then :11) used none of it
     // - one of the 35 dead includes, removed under T7 on 5 Nov 2026.
 
-    BOOL User32::EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows)
+    BOOL User32::EnableScrollBar(HWND hWnd, UINT wSBflags, UINT wArrows)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, EnableScrollBar);
-        return Library::Call<BOOL, HWND, UINT, UINT>(pFunc, hWnd, wSBFlags, wArrows);
+        return Library::Call<BOOL, HWND, UINT, UINT>(pFunc, hWnd, wSBflags, wArrows);
     }
 
     BOOL User32::GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi)
@@ -80,11 +80,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, LONG, ::PSCROLLBARINFO>(pFunc, hwnd, idObject, psbi);
     }
 
-    BOOL User32::GetScrollInfo(HWND hwnd, int fnBar, ::LPSCROLLINFO lpsi)
+    BOOL User32::GetScrollInfo(HWND hwnd, int nBar, ::LPSCROLLINFO lpsi)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetScrollInfo);
-        return Library::Call<BOOL, HWND, int, ::LPSCROLLINFO>(pFunc, hwnd, fnBar, lpsi);
+        return Library::Call<BOOL, HWND, int, ::LPSCROLLINFO>(pFunc, hwnd, nBar, lpsi);
     }
 
     int User32::GetScrollPos(HWND hWnd, int nBar)
@@ -124,11 +124,11 @@ namespace qor { namespace win { namespace api {
             hWnd, dx, dy, prcScroll, prcClip, hrgnUpdate, prcUpdate, flags);
     }
 
-    int User32::SetScrollInfo(HWND hwnd, int fnBar, ::LPCSCROLLINFO lpsi, BOOL fRedraw)
+    int User32::SetScrollInfo(HWND hwnd, int nBar, ::LPCSCROLLINFO lpsi, BOOL redraw)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, SetScrollInfo);
-        return Library::Call<int, HWND, int, ::LPCSCROLLINFO, BOOL>(pFunc, hwnd, fnBar, lpsi, fRedraw);
+        return Library::Call<int, HWND, int, ::LPCSCROLLINFO, BOOL>(pFunc, hwnd, nBar, lpsi, redraw);
     }
 
     int User32::SetScrollPos(HWND hWnd, int nBar, int nPos, BOOL bRedraw)

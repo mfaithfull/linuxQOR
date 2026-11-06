@@ -26,11 +26,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HACCEL, LPACCEL, int>(pFunc, hAccelSrc, lpAccelDst, cAccelEntries);
     }
 
-    HACCEL User32::CreateAcceleratorTableT(LPACCEL lpaccl, int cEntries)
+    HACCEL User32::CreateAcceleratorTableT(LPACCEL paccel, int cAccel)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, CreateAcceleratorTable);
-        return Library::Call<HACCEL, LPACCEL, int>(pFunc, lpaccl, cEntries);
+        return Library::Call<HACCEL, LPACCEL, int>(pFunc, paccel, cAccel);
     }
 
     //DestroyAcceleratorTable has no A/W variants - it is a single user32.dll export, so the bare stem is
