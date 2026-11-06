@@ -125,6 +125,10 @@ register.
   family-shaped pattern (`Dpi` alone matched `CallNamedPipe` and `SetBackgroundPixmap`).
 - **Guard stacks are a forward pass** with an explicit stack; the backward `pop` form over `0..-1` silently iterates zero
   times. And a guard stack with no `WINVER` row means the declaration really is unguarded - it is not a scan miss.
+- **Pair the new section with `tmp/_tmp_t8_6b_pair2.ps1`, not `_tmp_t8_6b_pair.ps1`** - the latter ends the section at its
+  first `//` line, so a section with an in-section comment reads as truncated and reports a false
+  `defined-but-not-declared` list. Count folder totals comment-stripped (`_tmp_t8_6b_counts.ps1`): raw text reads
+  536 bindings against the true 483 because TU banners name the binding macros in prose.
 - **Pre-flag line numbers age**: 6b's preflags cited the two dialog enums at their closing braces and `DPI_AWARENESS` at
   its first enumerator. Re-derive typedef lines from the header, and re-derive `user32.h` self-citations after a header
   insert rather than offsetting them by hand.
