@@ -600,6 +600,32 @@ namespace qor { namespace win { namespace api {
         static BOOL UnregisterPointerInputTarget(HWND hwnd, POINTER_INPUT_TYPE pointerType);
         static BOOL UnregisterPointerInputTargetEx(HWND hwnd, POINTER_INPUT_TYPE pointerType);
 
+        //DPI awareness functions
+        static BOOL AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB);
+        static BOOL EnableNonClientDpiScaling(HWND hwnd);
+        static DPI_AWARENESS GetAwarenessFromDpiAwarenessContext(DPI_AWARENESS_CONTEXT value);
+        static DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS GetDialogControlDpiChangeBehavior(HWND hWnd);
+        static DIALOG_DPI_CHANGE_BEHAVIORS GetDialogDpiChangeBehavior(HWND hDlg);
+        //GetDpiAwarenessContextForProcess is the only member here whose SDK declaration is guarded by
+        //NTDDI_VERSION (#if (NTDDI_VERSION >= NTDDI_WIN10_19H1) at winuser.h:14545) rather than WINVER -
+        //live under the sdkddkver.h default, but a caller that pins NTDDI_VERSION lower loses the prototype.
+        static DPI_AWARENESS_CONTEXT GetDpiAwarenessContextForProcess(HANDLE hProcess);
+        static UINT GetDpiForSystem(void);
+        static UINT GetDpiFromDpiAwarenessContext(DPI_AWARENESS_CONTEXT value);
+        static UINT GetSystemDpiForProcess(HANDLE hProcess);
+        static int GetSystemMetricsForDpi(int nIndex, UINT dpi);
+        static DPI_AWARENESS_CONTEXT GetThreadDpiAwarenessContext(void);
+        static DPI_HOSTING_BEHAVIOR GetThreadDpiHostingBehavior(void);
+        static DPI_AWARENESS_CONTEXT GetWindowDpiAwarenessContext(HWND hwnd);
+        static DPI_HOSTING_BEHAVIOR GetWindowDpiHostingBehavior(HWND hwnd);
+        static BOOL IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT value);
+        static BOOL SetDialogControlDpiChangeBehavior(HWND hWnd, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS mask, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS values);
+        static BOOL SetDialogDpiChangeBehavior(HWND hDlg, DIALOG_DPI_CHANGE_BEHAVIORS mask, DIALOG_DPI_CHANGE_BEHAVIORS values);
+        static BOOL SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT value);
+        static DPI_AWARENESS_CONTEXT SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext);
+        static DPI_HOSTING_BEHAVIOR SetThreadDpiHostingBehavior(DPI_HOSTING_BEHAVIOR value);
+        static BOOL SystemParametersInfoForDpi(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, UINT dpi);
+
         //Font and Text functions
         static int DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format);
         static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp);

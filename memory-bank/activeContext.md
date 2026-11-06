@@ -1,10 +1,10 @@
 # Active Context
 
-Last updated: 6 Nov 2026 - **T8 steps 1-5 are done and step 6a (the Pointer family, 32 names) is in: new TU
-`src/platform/os/windows/api_layer/user/pointer.cpp`, so that folder is now 39 sources.** Step 6 continues one family per
-session; the next tranche is **6b - DPI / awareness, 21 names**, and the remaining backlog re-measures at **75 names**
+Last updated: 6 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`) and 6b
+(DPI / awareness, 21 names, `dpi.cpp`) are in, so that folder is now 40 sources.** Step 6 continues one family per
+session; the next tranche is **6c - Touch / gesture, 14 names**, and the remaining backlog re-measures at **54 names**
 (dispositions in `.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed: all 38 review
-sources were reviewed by session 37, so no review banner is owed - `pointer.cpp` carries its own.
+sources were reviewed by session 37, so no review banner is owed - the two coverage TUs carry their own.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.
@@ -34,8 +34,9 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   1 return type, 4 parameter types, **102** parameter names (not the 16 the per-TU records added up to), 2 unwrapped
   `*ForPerMonitorDPI` exports, then a **109-name** coverage backlog. Steps 1-5 are in as of 6 Nov 2026 - the names pass
   renamed 101 of the 102 across header and definition together, and step 2's consumer fix only landed when that rename
-  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Step **6a** (Pointer, 32) is in too, so
-  the backlog is **75** names. (scope decided 5 Nov: documented
+  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Steps **6a** (Pointer, 32) and **6b**
+  (DPI / awareness, 21) are in too, so
+  the backlog is **54** names. (scope decided 5 Nov: documented
   exports only, superseded families excluded - the 253 prototype-less exports are out; per-name dispositions in
   `.../registers/u18-coverage.md`). Other leads - open items, the
   T1-T6

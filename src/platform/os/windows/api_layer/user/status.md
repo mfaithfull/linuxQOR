@@ -1,7 +1,7 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 6 Nov 2026 - **T8 step 6a is in: `pointer.cpp` adds the 32 Pointer wrappers, so the folder is 39 sources; the
-38 review-queue TUs stay closed from session 37**. Reviewing
+Last updated 6 Nov 2026 - **T8 step 6b is in: `dpi.cpp` adds the 21 DPI / awareness wrappers, so the folder is 40 sources;
+the 38 review-queue TUs stay closed from session 37**. Reviewing
 `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
@@ -9,8 +9,8 @@ UB and conformance to the api_layer conventions. One translation unit per sessio
 **Purpose (authoritative: `purpose.md`, added 5 Nov 2026; policy D18 + same-day scope addendum in
 `docs/agent/DECISIONS.md`): the library intends a full set of wrapper functions for the exports of `user32.dll` - scoped to
 the exports `winuser.h` declares, superseded families excluded.** A wrapper is judged against the export it binds, and an
-unwrapped declared export is a gap (**75 names** remain after T8 steps 5 and 6a, listed in
-`registers/u18-coverage.md`; the next tranche is 6b, DPI / awareness, 21 names). The actionable lead is
+unwrapped declared export is a gap (**54 names** remain after T8 steps 5, 6a and 6b, listed in
+`registers/u18-coverage.md`; the next tranche is 6c, Touch / gesture, 14 names). The actionable lead is
 **T8** (`registers/tasks.md`) - the U18 conformance pass.
 
 ## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
@@ -51,7 +51,7 @@ re-derive everything. **No record content was deleted** - the superseded procedu
 9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
    open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 165 lines** - the
-   ceiling is structural, not a task at close: the queue holds one fixed row per source (39 rows since `pointer.cpp`
+   ceiling is structural, not a task at close: the queue holds one fixed row per source (40 rows since `dpi.cpp`
    joined on 6 Nov 2026), the protocol and the gate are fixed text, and a close adds no prose. Growing this file breaks 4.
 
 ## Resuming after a context reset - ask git, not the record
@@ -86,6 +86,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `devicecontext.cpp` | 114 | `archive/tu/devicecontext.md` | closed |
 | `devicemanagement.cpp` | 86 | `archive/tu/devicemanagement.md` | closed |
 | `dialog.cpp` | 191 | `archive/tu/dialog.md` | closed |
+| `dpi.cpp` | 271 | banner `:9` | closed (T8 6b, added 6 Nov 2026) |
 | `errorhandling.cpp` | 92 | `archive/tu/errorhandling.md` | closed |
 | `filledshapes.cpp` | 98 | `archive/tu/filledshapes.md` | closed |
 | `help.cpp` | 107 | `archive/session-log*.md` | closed |
@@ -114,9 +115,10 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `winqor_api_user.cpp` | 83 | banner `:4` | closed |
 
 **38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete (some
-sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). `pointer.cpp` joined on 6 Nov 2026
-as T8 step 6a coverage - **39 sources**, its narrative is its own banner, and it is the only row not from a review
-session. History is write-once and not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`. Append nothing.
+sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). `pointer.cpp` (T8 step 6a) and
+`dpi.cpp` (T8 step 6b) joined on 6 Nov 2026 as coverage - **40 sources** - each narrative is its own banner, and they are
+the only two rows not from a review session. History is write-once and not boot material: `archive/session-log*.md`,
+`archive/tu/<tu>.md`. Append nothing.
 
 ## Open items - id to file (derivable; there is no index to maintain)
 
@@ -137,23 +139,25 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 39 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 40 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
 **The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
 `D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
 dating rule below cannot be read.
-Edited TU standalone at `/W4` exit 0, then the whole library **39/39** exit 0 with no diagnostics. Date the gate by
-`tmp/obj/<tu>.obj` being newer than the source - a clean 39-TU log **cannot** be dated by its hash, because clean runs are
+Edited TU standalone at `/W4` exit 0, then the whole library **40/40** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 40-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
-107-source all-libraries gate as a **diff** against a pre-fix run (107 since `pointer.cpp`; standing baseline: 1 `C1083`
-at `opengl/wgl.cpp:31` and 165 warning lines).
+108-source all-libraries gate as a **diff** against a pre-fix run (108 since `dpi.cpp`; standing baseline 1 `C1083` at
+`opengl/wgl.cpp:31`, 165 warning lines, exit **2** - the diff is the signal, never the exit code, which must be captured
+inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time and writes a false 0).
 
 ## There is no next TU - what a further session in this folder works from
 
-All 38 review-queue TUs are closed and `pointer.cpp` (6a) with them, so `preflags.md` pre-flags no TU: it carries the
-folder-level leads, whose lead is **T8 step 6b - DPI / awareness, 21 names**. A next session picks that, another open item
+All 38 review-queue TUs are closed and `pointer.cpp` (6a) and `dpi.cpp` (6b) with them, so `preflags.md` pre-flags no TU:
+it carries the folder-level leads, whose lead is **T8 step 6c - Touch / gesture, 14 names**. A next session picks that,
+another open item
 the map above names (U1-U27 less the frozen ids, P3, P4, P6, T1-T6), or moves to another `api_layer` folder. Architecture
 is settled - Windows is 64-bit only (D17) - and the gate above applies to any edit here.
 
