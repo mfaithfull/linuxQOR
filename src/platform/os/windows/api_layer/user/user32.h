@@ -566,6 +566,40 @@ namespace qor { namespace win { namespace api {
         static BOOL SwapMouseButton(BOOL fSwap);
         static BOOL TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
 
+        //Pointer input functions
+        static HSYNTHETICPOINTERDEVICE CreateSyntheticPointerDevice(POINTER_INPUT_TYPE pointerType, ULONG maxCount, POINTER_FEEDBACK_MODE mode);
+        static void DestroySyntheticPointerDevice(HSYNTHETICPOINTERDEVICE device);
+        static BOOL EnableMouseInPointer(BOOL fEnable);
+        static BOOL GetPointerCursorId(UINT32 pointerId, UINT32* cursorId);
+        static BOOL GetPointerDevice(HANDLE device, POINTER_DEVICE_INFO* pointerDevice);
+        static BOOL GetPointerDeviceCursors(HANDLE device, UINT32* cursorCount, POINTER_DEVICE_CURSOR_INFO* deviceCursors);
+        static BOOL GetPointerDeviceProperties(HANDLE device, UINT32* propertyCount, POINTER_DEVICE_PROPERTY* pointerProperties);
+        static BOOL GetPointerDeviceRects(HANDLE device, RECT* pointerDeviceRect, RECT* displayRect);
+        static BOOL GetPointerDevices(UINT32* deviceCount, POINTER_DEVICE_INFO* pointerDevices);
+        static BOOL GetPointerFrameInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_INFO* pointerInfo);
+        static BOOL GetPointerFrameInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_INFO* pointerInfo);
+        static BOOL GetPointerFramePenInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_PEN_INFO* penInfo);
+        static BOOL GetPointerFramePenInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_PEN_INFO* penInfo);
+        static BOOL GetPointerFrameTouchInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_TOUCH_INFO* touchInfo);
+        static BOOL GetPointerFrameTouchInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_TOUCH_INFO* touchInfo);
+        static BOOL GetPointerInfo(UINT32 pointerId, POINTER_INFO* pointerInfo);
+        static BOOL GetPointerInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_INFO* pointerInfo);
+        static BOOL GetPointerInputTransform(UINT32 pointerId, UINT32 historyCount, INPUT_TRANSFORM* inputTransform);
+        static BOOL GetPointerPenInfo(UINT32 pointerId, POINTER_PEN_INFO* penInfo);
+        static BOOL GetPointerPenInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_PEN_INFO* penInfo);
+        static BOOL GetPointerTouchInfo(UINT32 pointerId, POINTER_TOUCH_INFO* touchInfo);
+        static BOOL GetPointerTouchInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_TOUCH_INFO* touchInfo);
+        static BOOL GetPointerType(UINT32 pointerId, POINTER_INPUT_TYPE* pointerType);
+        static BOOL GetRawPointerDeviceData(UINT32 pointerId, UINT32 historyCount, UINT32 propertiesCount, POINTER_DEVICE_PROPERTY* pProperties, LONG* pValues);
+        static BOOL InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE device, CONST POINTER_TYPE_INFO* pointerInfo, UINT32 count);
+        static BOOL IsMouseInPointerEnabled(void);
+        static BOOL RegisterPointerDeviceNotifications(HWND window, BOOL notifyRange);
+        static BOOL RegisterPointerInputTarget(HWND hwnd, POINTER_INPUT_TYPE pointerType);
+        static BOOL RegisterPointerInputTargetEx(HWND hwnd, POINTER_INPUT_TYPE pointerType, BOOL fObserve);
+        static BOOL SkipPointerFrameMessages(UINT32 pointerId);
+        static BOOL UnregisterPointerInputTarget(HWND hwnd, POINTER_INPUT_TYPE pointerType);
+        static BOOL UnregisterPointerInputTargetEx(HWND hwnd, POINTER_INPUT_TYPE pointerType);
+
         //Font and Text functions
         static int DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format);
         static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp);

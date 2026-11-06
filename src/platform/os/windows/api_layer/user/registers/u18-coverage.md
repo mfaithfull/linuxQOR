@@ -12,7 +12,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 
 | Bucket | Names | Disposition |
 |---|--:|---|
-| Pointer (`GetPointer*`, `Register*PointerInputTarget*`, synthetic-pointer, mouse-in-pointer) | 32 | **In scope** - tranche 6a |
+| Pointer (`GetPointer*`, `Register*PointerInputTarget*`, synthetic-pointer, mouse-in-pointer) | 32 | **WRAPPED 6 Nov 2026** - T8 step 6a, new TU `pointer.cpp` |
 | DPI / awareness (`*Dpi*`, `*Awareness*`, `*Hosting*`, `EnableNonClientDpiScaling`) | 21 | **In scope** - tranche 6b |
 | Touch / gesture (`*Touch*`, `*Gesture*`) | 14 | **In scope** - tranche 6c |
 | Display config (`*DisplayConfig*`, `*DisplayAutoRotation*`) | 7 | **In scope** - tranche 6d |
@@ -22,6 +22,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | Superseded twins whose replacement the library **already wraps** (`GetClassLongA/W`, `SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`) | 7 | **Excluded** by the scope rule |
 | Instrument artifact (`SetWindowsHookExAW`) | 1 | **Removed** |
 | **Backlog to add** | **109** | 32+21+14+7+3+26+6 |
+| **— re-measured 6 Nov 2026, after steps 5 and 6a** | **75** | the Pointer row (32) and the step-5 pair (2) are gone: 21+14+7+3+24+6 |
 
 **Excluded - superseded twins (measured, not assumed).** `GetClassLongA`/`GetClassLongW` and `SetClassLongA`/`SetClassLongW`
 are exported (12C/12F, 323/326) but their `*Ptr` replacements are exports too (12D/12E, 324/325) and are wrapped at
@@ -47,4 +48,25 @@ declaredness (`SetWindowsHookExAW` -> `SetWindowsHookExA`, which is declared). N
 
 **Cross-reference to T8 step 5.** `LogicalToPhysicalPointForPerMonitorDPI` and `PhysicalToLogicalPointForPerMonitorDPI`
 sit in the Misc row and are scheduled ahead of the backlog (T8 step 5) because U18 was opened over them; they are part of
-the 109, not additional to it.
+the 109, not additional to it. **Done 6 Nov 2026** - declared at `user32.h:189`, `:193`, defined `window.cpp:513`, `:543`.
+
+## Tranche 6a closed - the Pointer family, 6 Nov 2026
+
+All 32 names in the Pointer row are now wrapped: new TU `pointer.cpp`, 32 definitions, 32 declarations in a new
+`//Pointer input functions` section at `user32.h:569-601`. The bucket count reconciles name-for-name against the export
+table: **41** `*Pointer*` names there, **9 with no `winuser.h` prototype** (`GetExtendedPointerDeviceProperty`,
+`GetPointerDeviceInputSpace`, `GetPointerDeviceOrientation`, `GetPointerFrameArrivalTimes`, `GetPointerFrameTimes`,
+`InitializePointerDeviceInjection`, `InitializePointerDeviceInjectionEx`, `InjectPointerInput`,
+`SetPointerDeviceInputSpace`), and 41 - 9 = 32. The 9 stay out by the scope rule, not by choice.
+
+**New limit on `_tmp_u18_coverage4.ps1`, found here.** The instrument walks the **export** table, so a name the header
+declares but the DLL does not export never appears as a gap. `EnableMouseInPointerForThread` is exactly that: declared at
+`winuser.h:6715` (inside `#if WDK_NTDDI_VERSION >= NTDDI_WIN10_RS3`) but absent from the local `user32.dll` capture - only
+ordinal `EA` `EnableMouseInPointer` is there. Wrapping it would install a permanently null `GetProcAddress` binding (the
+U5 class). Before wrapping anything **not** on the gap list, check the export table; the gap list cannot flag this.
+
+Folder figures re-measured the same day (`_tmp_u18_coverage4.ps1`): **559 members** / 1,018 export names / **682 covered**
+/ **83** declared-and-unwrapped / 253 no-prototype. 525 -> 559 is step 5 (+2) plus 6a (+32); 648 -> 682 the same +34.
+`_tmp_u18_buckets.ps1` now prints the Pointer row empty (`0: Pointer family []`) and 83 raw, which is the 75 net once the
+7 excluded twins and the 1 artifact are removed. Binding sites over the 39 sources re-count at **462** (`_tmp_wrong_stem_scan.ps1`:
+462 definitions, 462 bindings, 1-to-1) - 428 at the session-33 census, plus step 5's 2, plus 6a's 32.

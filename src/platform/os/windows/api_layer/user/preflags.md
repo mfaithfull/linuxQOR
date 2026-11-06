@@ -1,72 +1,81 @@
-# Folder-level leads - the TU queue is complete (session 37, 5 Nov 2026)
+# Folder-level leads - the queue is closed, T8 step 6b is next (6 Nov 2026)
 
-Written wholesale at the session-37 close and amended at the **D18 / purpose.md decision the same day** (5 Nov 2026). All
-38 sources in `src/platform/os/windows/api_layer/user` are reviewed, so there is no next TU and this file no longer
-pre-flags one; it lists what a further session in this folder would pick up, and its lead is T8.
+Written wholesale at the T8 step 6a close. All 38 review-queue sources are `closed` and `pointer.cpp` (6a coverage, not a
+review session) is closed with them, so there is no next TU: this file lists what a further session in this folder picks
+up, and its lead is **T8 step 6b - the DPI / awareness family, 21 names**.
 **Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
 
-## The actionable lead: T8 - the U18 conformance pass (5 Nov 2026)
+## Current folder figures (re-measured 6 Nov 2026 with `_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`)
 
-The folder now has a purpose statement, `purpose.md`: the library "intends to provide a full set of wrapper functions for
-the exports of the User32.dll Windows system library". That is policy **D18** in `docs/agent/DECISIONS.md`, and it changes
-what counts as a defect here: a wrapper's published signature is the `winuser.h` prototype for the export it binds, and an
-export with no wrapper is a gap. The work is **T8** (`registers/tasks.md`), the measured sites are the D18 block at the
-foot of `registers/u18.md`. Headline measurements (5 Nov 2026): **1,018 export names**, **525 members**, **428 bindings**,
-**648 exports already matched**, **117 SDK-declared exports unwrapped**, **253 unwrapped with no prototype**; U18's own
-site list is 1 return type + 4 parameter types + 16 parameter names + 2 missing `*ForPerMonitorDPI` members.
+**39 sources / 559 members / 462 bindings / 1,018 export names / 682 covered / 83 declared-and-unwrapped raw / 253 with no
+prototype.** Raw 83 minus the 7 excluded superseded twins and the 1 instrument artifact = **75 net backlog**: DPI/awareness
+**21**, Touch/gesture 14, Display config 7, Shutdown/power 3, Misc 24, held-open legacy 6. Per-name dispositions:
+`registers/u18-coverage.md`.
 
-Scope was decided the same day (**D18 addendum**): documented set only, superseded families (DDE, `keybd_event` /
-`mouse_event`) excluded - so the 253 undocumented exports are out of scope and the backlog is **109 names**, dispositioned
-by family in `registers/u18-coverage.md`.
+## T8 step 6b - the 21 DPI / awareness names, with the SDK facts already measured
 
-T8 step 0 is **mostly settled**: scope is the documented set minus superseded families (D18 addendum). One sub-question is
-still open - U17's `A`/`W` suffix policy - but it moves the backlog by one wrapper, and it does not gate T8 steps 1-5,
-which are the fixes U18 was actually opened over. Start at T8 step 1.
+All 21 are in the export table **and** declared in `winuser.h` 10.0.26100.0, and none of the 21 is a function-like macro or
+has an `A`/`W` sibling (the guard scan and the macro/A-W probe both give 0 hits), so all 21 bind **bare
+`qor_pp_useswinapi`** under D13 and `user32.h:9-17` needs **no new `#undef`** - unlike `SystemParametersInfo` (:11), whose
+macro rewrite is why that `#undef` exists; `SystemParametersInfoForDpi` is a separate name and is not rewritten.
 
-## Where the per-TU record is
+Five guard groups, and the layer adds **no `#if`** - `WINVER` defaults to `0x0A00` and `NTDDI_VERSION` to
+`WDK_NTDDI_VERSION = NTDDI_WIN11_GE` (`sdkddkver.h:166`, `:236-242`), so every group is live:
 
-Each reviewed `.cpp` carries its own `//=== api_layer conventions ====` banner at the top - that is the narrative, and
-`winqor_api_user.cpp:4-72` is the last of them. `status.md` holds the queue (all rows `closed`), the id-to-file map and
-the compile gate. Sessions 1-15 and 21-33 also have `archive/tu/<tu>.md` (frozen, not boot material).
+- **Dialog DPI change - 4 names, `winuser.h:5340`, `:5347`, `:5363`, `:5370`.** Guarded only by `NOCTLMGR` (`:4912`) plus
+  `WINAPI_PARTITION_DESKTOP` (`:5006`) - **no `WINVER` test at all**. The two `Get*` members return the **enum**, not
+  `BOOL`: `DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS` (`:5332`) and `DIALOG_DPI_CHANGE_BEHAVIORS` (`:5355`), each behind
+  `DEFINE_ENUM_FLAG_OPERATORS`, and the setters take a mask/values pair.
+- **Two DPI variants of already-wrapped members - `GetSystemMetricsForDpi` `:7418` (`NOSYMETRICS` `:7242`,
+  `#if(WINVER >= 0x0605)`) and `SystemParametersInfoForDpi` `:13280` (`NOSYSPARAMSINFO` `:12433`, same `WINVER`).** Their
+  stems are wrapped (`user32.h:686`, `:688` today), so U12's section question has an answer beside them.
+- **The `DPI_AWARENESS_CONTEXT` block - 11 names at `:14462`, `:14468`, `:14474`, `:14480`, `:14486`, `:14492`, `:14499`,
+  `:14511`, `:14517`, `:14523`, `:14539`, all inside `#if(WINVER >= 0x0605)` opening `:14458`.** `DPI_AWARENESS_CONTEXT` is
+  a `DECLARE_HANDLE` at `windef.h:256` and `DPI_AWARENESS` an enum at `windef.h:259` - both reach the layer through
+  `kernel32.h:12 #include <Windows.h>`, exactly as the `POINTER_*` types did in 6a. Return types to get right:
+  `SetThreadDpiAwarenessContext` returns the **previous context handle**, not `BOOL`, while
+  `SetProcessDpiAwarenessContext` (`:14539`, its own `#if(WINVER >= 0x0605)` at `:14535`) returns `BOOL`; `GetDpiForSystem`
+  and `GetSystemDpiForProcess` return `UINT`. `GetDpiForWindow` (`:14505`) is **already wrapped** (`user32.h:675`).
+- **`GetDpiAwarenessContextForProcess` `:14550` - the only backlog name guarded by `NTDDI_VERSION`, not `WINVER`**
+  (`#if (NTDDI_VERSION >= NTDDI_WIN10_19H1)` at `:14545`). Live under the default; worth one comment line, since a caller
+  that pins `NTDDI_VERSION` lower loses it.
+- **The hosting-behavior trio - `:14560`, `:14566`, `:14571`, `#if(WINVER >= 0x0606)` at `:14555`.** All three return
+  `DPI_HOSTING_BEHAVIOR` (`windef.h:272` region) and `SetThreadDpiHostingBehavior` returns the previous value.
 
-## Open work in this folder, by class
+Shape to follow is 6a's: one new TU for the family (6a used `pointer.cpp`), the `caret.cpp` / `pointer.cpp` body shape -
+four generic includes, `user32.h` then `../library.h` last, per body `qor_pp_fcontext;` + bare
+`qor_pp_useswinapi(user32, Name);` + explicit `Library::Call<...>`, a contract block at the head, no return checks (D15 /
+D18 pass-through). Check for a consumer before booking anything under U19: 6a had none in-tree.
 
-- **Fixable defects: none queued by a TU pass, but D18 creates a class of them.** Every TU-level defect found in sessions
-  1-37 was either fixed in place or booked to an open item, and the queue having emptied means there is no known unfixed
-  wrapper. Under `purpose.md` the published-signature divergences collected in `registers/u18.md` are no longer neutral
-  surface decisions - they are the defect population, and T8 is how they get fixed.
-- **Open items** (rule + decision + measured detail in `registers/u<n>.md`): U1, U2, U4, U5, U7, U8, U9, U10, U12, U13,
-  U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, **U27** (in `registers/p6-u27.md` - `STRICT` changes the identity
-  of `HOOKPROC` and of every `DECLARE_HANDLE`, so 3 of `hook.cpp`'s 4 wrappers change published name between the arms).
-  Frozen - append nothing: P1, P2, P5, U11, U14 (D15), U15 (D14), U6, U3. **U28 is CLOSED 5 Nov 2026 by D17**: the four
-  `*Ptr` wrappers in `windowclass.cpp` bind names only the 64-bit `user32.dll` image exports, which is now simply the
-  correct spelling for the only supported target, so they need no change.
-- **Tasks T1-T6 and T8** (`registers/tasks.md`) and **P3, P4, P6** are the other actionable entries - **T8 is the lead**,
-  the U18 conformance pass this file opens with. **T7 is CLOSED (5 Nov 2026,
-  D16)** - the 35 dead `#include "../returncheck.h"` lines are deleted, only `processthread.cpp` and `errorhandling.cpp`
-  still include it, and the scan (`_tmp_rcinclude_scan.ps1`, include test now line-anchored) reads **2 includes /
-  0 without use**. What T7 left behind is **the citation shift**: deleting line 11 moved every line below it up by one in
-  those 35 files, so a bare `:NNN` self-citation written under line 11 reads **one lower** than the source now says
-  (703 bare tokens with `N >= 12` measured there, 315 of them candidates, 388 already naming other files). Repairing it
-  is a semantic paragraph-level pass of its own - `gotchas/evidence-integrity.md` has the inheritance rule - not a TU pass.
-- **Architecture: x64 only** - user decision **D17** (5 Nov 2026, `docs/agent/DECISIONS.md`; in-tree note
-  `src/platform/os/windows/purpose.md:3`). The x86 blocker that used to sit in this list is **closed as not-to-be-fixed**:
-  session 31's measurement (93 of 106 `api_layer` TUs failing an x86 compile at `kernel32.h:92`) stands as history, the
-  kernel-header follow-up sketched in `registers/u6.md` is withdrawn, and **no x86 compile is a step in any gate here** -
-  which also retires the two-arch legs of the review's mirror/live probes (`tooling.md`).
+## Standing limits carried from 6a (they bound every later tranche)
 
-## One measured lead deliberately left unregistered (session 37)
+- **The coverage instrument walks the export table, so "declared but not exported" is invisible to it.**
+  `EnableMouseInPointerForThread` (`winuser.h:6715`) is exactly that case, and wrapping it would have installed a
+  permanently null binding (the U5 class). Check the export table for every name the gap list gives, and the header for
+  every name it does not - the gap list cannot see either direction.
+- Export evidence is one `dumpbin /exports` capture of the local `System32\user32.dll`; signatures are read from SDK
+  10.0.26100.0 only.
+- **Forward flag for tranche 6d (Display config):** the `DISPLAYCONFIG_*` types are **not** in `WinUser.h` - they come from
+  `wingdi.h:3005`, which `winuser.h:13213` onward only *uses*; the `#include <tvout.h>` at `winuser.h:13057` resolves to
+  `shared/tvout.h`, not to a `um` header. `Get/SetDisplayAutoRotationPreferences` (`:16063`, `:16077`, inside
+  `#if(WINVER >= 0x0602)` at `:16001`) are the two names in that bucket that need no GDI type at all.
 
-`qor_pp_ver_major/minor/patch` are supplied only by `target_compile_definitions` (this folder's `CMakeLists.txt:45-48`).
-Compile without them and the module glue TU builds **clean at `/W4`, exit 0**: `qor_pp_stringize_i` is `#text`
-(`src/macros/stringize.hpp:43`), so the module's version string becomes the literal `"qor_pp_ver_major" "." ...`.
-The build number cannot go missing silently (the `#ifdef NDEBUG` include of `buildnumber.h` hard-fails with `C1083`);
-the version triple can, in each of the **163** `src/**/CMakeLists.txt` that pass `qor_pp_ver_major` (measured 5 Nov 2026).
-User decision 5 Nov 2026: **no register entry** - it is a build-system change (`cmake/`, or an `#error` in
-`src/macros/moduleversion.hpp`), not a folder-pass one. If it is ever acted on, do it there, and re-run the
-all-libraries gate.
+## Everything else a session might pick up
+
+- **Fixable defects: none queued by a TU pass.** D18 makes the published-signature divergences listed in `registers/u18.md`
+  the defect population; T8 steps 1-5 of those are in, so only step 6 (the backlog) remains.
+- **Open items**: U1, U2, U4, U5, U7-U10, U12, U13, U16, U17, U18, U19-U26, **U27** (`registers/p6-u27.md` - `STRICT`
+  changes the identity of `HOOKPROC` and of every `DECLARE_HANDLE`). Frozen, append nothing: P1, P2, P5, U11, U14, U15,
+  U6, U3, U28 (D17). **U17's `A`/`W` question still moves the count by exactly one wrapper** - `ChangeMenuA/W` and
+  `wsprintfA/W` are the only in-scope pairs left.
+- **Tasks T1-T6, T8** and **P3, P4, P6**. **T7 closed (D16)**, and what it left behind is the citation shift: deleting
+  line 11 moved every later `:NNN` self-citation down by one in 35 files (`gotchas/evidence-integrity.md` has the rule).
+- **Architecture: x64 only** (D17). No session here reopens an x86 question or runs an x86 compile.
+- Session 37's unregistered build-system lead - a `qor_pp_ver_*` version string that can go missing silently across 163
+  `CMakeLists.txt` - stays unregistered by user decision: act on it in `cmake/` or `src/macros/moduleversion.hpp`, not here.
 
 ## Gate if this folder is touched again
 
-Unchanged, and it is the only gate: the edited TU standalone at `/W4`, then the folder's 38 sources in one `cl`
-invocation - command line in `status.md`, "Gate" section. Date it by `tmp/obj/<tu>.obj` being newer than the source.
+Unchanged, and it is the only gate: the edited TU standalone at `/W4`, then the folder's **39** sources in one `cl`
+invocation - command line in `status.md`, "Gate" section. A coverage tranche is expected to change `user32.h`, so the
+**107-source** all-libraries run is part of the gate, and it is signal only as a diff against a pre-fix capture.

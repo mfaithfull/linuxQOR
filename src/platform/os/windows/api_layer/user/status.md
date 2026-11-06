@@ -1,7 +1,7 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 5 Nov 2026 - **session 37 (`winqor_api_user.cpp`) CLOSED and committed; all 38 sources reviewed, the
-folder review is complete**. Reviewing
+Last updated 6 Nov 2026 - **T8 step 6a is in: `pointer.cpp` adds the 32 Pointer wrappers, so the folder is 39 sources; the
+38 review-queue TUs stay closed from session 37**. Reviewing
 `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
 UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
 `git status` plus this file is all a session needs to resume after a context reset.
@@ -9,7 +9,8 @@ UB and conformance to the api_layer conventions. One translation unit per sessio
 **Purpose (authoritative: `purpose.md`, added 5 Nov 2026; policy D18 + same-day scope addendum in
 `docs/agent/DECISIONS.md`): the library intends a full set of wrapper functions for the exports of `user32.dll` - scoped to
 the exports `winuser.h` declares, superseded families excluded.** A wrapper is judged against the export it binds, and an
-unwrapped declared export is a gap (**109 names** remain, listed in `registers/u18-coverage.md`). The actionable lead is
+unwrapped declared export is a gap (**75 names** remain after T8 steps 5 and 6a, listed in
+`registers/u18-coverage.md`; the next tranche is 6b, DPI / awareness, 21 names). The actionable lead is
 **T8** (`registers/tasks.md`) - the U18 conformance pass.
 
 ## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
@@ -49,9 +50,9 @@ re-derive everything. **No record content was deleted** - the superseded procedu
    such a citation is dead as it is written; name the instrument's script slug instead.
 9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
-   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 160 lines** - the
-   ceiling is structural, not a task at close: the queue holds one fixed row per source (38 rows), the protocol and the
-   gate are fixed text, and a close adds no prose. A close that grows this file has broken rule 4.
+   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 165 lines** - the
+   ceiling is structural, not a task at close: the queue holds one fixed row per source (39 rows since `pointer.cpp`
+   joined on 6 Nov 2026), the protocol and the gate are fixed text, and a close adds no prose. Growing this file breaks 4.
 
 ## Resuming after a context reset - ask git, not the record
 
@@ -98,6 +99,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `monitor.cpp` | 161 | `archive/tu/monitor.md` | closed |
 | `mouse.cpp` | 166 | `archive/tu/mouse.md` | closed |
 | `painting.cpp` | 260 | `archive/tu/painting.md` | closed |
+| `pointer.cpp` | 292 | banner `:4` | closed (T8 6a, added 6 Nov 2026) |
 | `processthread.cpp` | 122 | `archive/tu/processthread.md` | closed |
 | `rectangle.cpp` | 173 | `archive/tu/rectangle.md` | closed |
 | `resource.cpp` | 40 | `archive/tu/resource.md` | closed |
@@ -111,10 +113,10 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `windowproperties.cpp` | 113 | banner `:16` | closed |
 | `winqor_api_user.cpp` | 83 | banner `:4` | closed |
 
-**38 of 38 sources reviewed** in sessions 1-37 - **the queue is empty, the folder review is complete** (some sessions
-covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). History is write-once and is not boot
-material: `archive/session-log*.md` (rows plus verdict detail)
-and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to either.
+**38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete (some
+sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). `pointer.cpp` joined on 6 Nov 2026
+as T8 step 6a coverage - **39 sources**, its narrative is its own banner, and it is the only row not from a review
+session. History is write-once and not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`. Append nothing.
 
 ## Open items - id to file (derivable; there is no index to maintain)
 
@@ -125,9 +127,8 @@ and `archive/tu/<tu>.md` (narratives for sessions 1-15, 21-33). Do not append to
   includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
   four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27,
-  P3, P4, P6, T1-T6, **T8**. Each statement and its measured detail is in the file the map names - open that file, never the tree.
-- Decisions in force (D13, the return-check policy, D14, D15, D16, D17 x64-only / no 32-bit x86, **D18 purpose = full
-  wrapper set over user32.dll's exports**) are in `docs/agent/DECISIONS.md` and are not restated here.
+  P3, P4, P6, T1-T6, **T8**. Open the file the map names for an id you are acting on, never the whole tree.
+- Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
 
@@ -136,24 +137,24 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 38 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 39 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
 **The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
 `D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
 dating rule below cannot be read.
-Edited TU standalone at `/W4` exit 0, then the whole library **38/38** exit 0 with no diagnostics. Date the gate by
-`tmp/obj/<tu>.obj` being newer than the source - a clean 38-TU log **cannot** be dated by its hash, because clean runs are
+Edited TU standalone at `/W4` exit 0, then the whole library **39/39** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 39-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
-106-source all-libraries gate, read as a diff against a pre-fix run.
+107-source all-libraries gate as a **diff** against a pre-fix run (107 since `pointer.cpp`; standing baseline: 1 `C1083`
+at `opengl/wgl.cpp:31` and 165 warning lines).
 
 ## There is no next TU - what a further session in this folder works from
 
-All 38 sources are reviewed, so the queue above is closed and `preflags.md` no longer pre-flags a TU: it carries the
-folder-level leads instead, and its lead is **T8** - the U18 conformance pass opened by `purpose.md` (D18). A next session
-picks T8 or another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T1-T6), or moves to another
-`api_layer` folder. Architecture is settled - Windows is 64-bit only (D17), so no session here reopens an x86 question or
-runs an x86 compile. The gate above is unchanged and still applies to any edit here.
+All 38 review-queue TUs are closed and `pointer.cpp` (6a) with them, so `preflags.md` pre-flags no TU: it carries the
+folder-level leads, whose lead is **T8 step 6b - DPI / awareness, 21 names**. A next session picks that, another open item
+the map above names (U1-U27 less the frozen ids, P3, P4, P6, T1-T6), or moves to another `api_layer` folder. Architecture
+is settled - Windows is 64-bit only (D17) - and the gate above applies to any edit here.
 
 

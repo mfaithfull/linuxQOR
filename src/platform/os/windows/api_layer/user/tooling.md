@@ -333,3 +333,15 @@ head regex, do not run**; `_tmp_s33_prebind.ps1` - per-TU binding classifier, re
 | `tmp/_tmp_status_index_gen_s33.ps1` | regenerate the register locator with **one bullet per id** (entry head + "(+N per-TU instance bullets later)"), 46 entries | replaces the s19-s22 behaviour of one bullet per register bullet (83 lines, over `status.md`'s ceiling); splice its output with the s33 splice script, then re-run `tmp/_tmp_u15_locator_verify.ps1` |
 | `tmp/_tmp_s33_readme_refresh.ps1` | refresh the `Lines` column of `registers/README.md` and `archive/README.md` in place, adding rows for files that have none | the two indexes go stale after any append; run it at close-out (it is idempotent) |
 
+
+## Added 6 Nov 2026 (T8 step 6a, `pointer.cpp`)
+
+| Instrument | What it prints | Notes |
+|---|---|---|
+| `tmp/_tmp_u18_coverage4.ps1` | folder coverage: members, export names, covered, **declared-and-unwrapped**, no-prototype, plus the member-names-matching-no-export list | walks the **export** table, so a declared-but-not-exported name never shows as a gap - that is how `EnableMouseInPointerForThread` nearly got wrapped (`registers/u18-coverage.md`) |
+| `tmp/_tmp_u18_buckets.ps1` | the unwrapped list split by family, plus A/W pairs both unwrapped and whether the layer declares each stem | the family tranche plan in `u18-coverage.md` comes from this; the raw 83 is not the net backlog (75) |
+| `tmp/_tmp_sdk_guard_scan.ps1` `-Names ...` | for each name: SDK line + the **stack of open `#if` guards** at that line | takes `-Names` on the command line; a guard stack with no `WINVER` row means the declaration really is unguarded (the 4 dialog DPI members) |
+| `tmp/_tmp_t8_6a_ppclass.ps1` | digest of an `/EP` capture: binding-line count, module literals, distinct name literals, **how many are not byte-equal to an export name**, duplicates | digest only - the capture itself was 453,294 lines and must never be opened (rule 9) |
+| `tmp/_tmp_t8_6a_apialldiff.ps1` | pre/post diff of the 107-source all-libraries log: exits, `.cpp` echoes, warning/error line counts, **set-difference of diagnostic lines** | its last row (`pointer_echo_in_post=0`) is a **false zero** - the log echoes the bare file name, not a path, so a `user\pointer\.cpp$` pattern matches nothing. Count with `-SimpleMatch 'pointer.cpp'` instead |
+| `tmp/_tmp_t8_6a_gate.bat` / `_tmp_t8_6a_single.bat` | the two gate legs: whole folder in one `cl`, and one TU standalone | recreate them from the `status.md` command line; `/Fo` must stay attached to the switch |
+| `tmp/_tmp_t8_6a_dig1.ps1` | one digest file per gate log: exit, echoes, **real** diagnostics, the `loose_diag_lines` that are only file-name echoes, `.obj` vs source freshness | `diag=1` on a clean log was `errorhandling.cpp` matching an `error` pattern - the loose rows are why the two counts differ |

@@ -37,7 +37,8 @@ mouse.cpp
 mdi.cpp
 devicemanagement.cpp
 combobox.cpp
-scrollbar.cpp)
+scrollbar.cpp
+pointer.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
