@@ -1,10 +1,11 @@
 # Active Context
 
-Last updated: 6 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`) and 6b
-(DPI / awareness, 21 names, `dpi.cpp`) are in, so that folder is now 40 sources.** Step 6 continues one family per
-session; the next tranche is **6c - Touch / gesture, 14 names**, and the remaining backlog re-measures at **54 names**
-(dispositions in `.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed: all 38 review
-sources were reviewed by session 37, so no review banner is owed - the two coverage TUs carry their own.
+Last updated: 6 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`), 6b
+(DPI / awareness, 21 names, `dpi.cpp`) and 6c (Touch / gesture, 14 names, `touch.cpp`) are in, so that folder is now
+41 sources / 594 members / 497 bindings.** Step 6 continues one family per session; the next tranche is **6d - Display
+configuration, 7 names** (pre-flags in `.../api_layer/user/preflags.md`), and the remaining backlog re-measures at
+**40 names** (dispositions in `.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed:
+all 38 review sources were reviewed by session 37, so no review banner is owed - the three coverage TUs carry their own.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.

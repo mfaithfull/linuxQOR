@@ -14,7 +14,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 |---|--:|---|
 | Pointer (`GetPointer*`, `Register*PointerInputTarget*`, synthetic-pointer, mouse-in-pointer) | 32 | **WRAPPED 6 Nov 2026** - T8 step 6a, new TU `pointer.cpp` |
 | DPI / awareness (`*Dpi*`, `*Awareness*`, `*Hosting*`, `EnableNonClientDpiScaling`) | 21 | **WRAPPED 6 Nov 2026** - T8 step 6b, new TU `dpi.cpp` |
-| Touch / gesture (`*Touch*`, `*Gesture*`) | 14 | **In scope** - tranche 6c |
+| Touch / gesture (`*Touch*`, `*Gesture*`) | 14 | **WRAPPED 6 Nov 2026** - T8 step 6c, new TU `touch.cpp` |
 | Display config (`*DisplayConfig*`, `*DisplayAutoRotation*`) | 7 | **In scope** - tranche 6d |
 | Shutdown / power (`CancelShutdown`, `*SuspendResumeNotification`) | 3 | **In scope** - tranche 6e |
 | Misc (menu, clipboard, affinity, feedback, immersive, tooltip, timers, undocumented-but-declared) | 26 | **In scope** - tranche 6f; 2 of these are T8 step 5, below |
@@ -24,6 +24,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | **Backlog to add** | **109** | 32+21+14+7+3+26+6 |
 | **— re-measured 6 Nov 2026, after steps 5 and 6a** | **75** | the Pointer row (32) and the step-5 pair (2) are gone: 21+14+7+3+24+6 |
 | **— re-measured 6 Nov 2026, after 6b** | **54** | the DPI / awareness row is empty too: 14+7+3+24+6 |
+| **— re-measured 6 Nov 2026, after 6c** | **40** | the Touch / gesture row is empty too: 7+3+24+6 (raw gap 62 -> 48) |
 
 **Excluded - superseded twins (measured, not assumed).** `GetClassLongA`/`GetClassLongW` and `SetClassLongA`/`SetClassLongW`
 are exported (12C/12F, 323/326) but their `*Ptr` replacements are exports too (12D/12E, 324/325) and are wrapped at
@@ -117,3 +118,50 @@ The same file's four `GetDpiForWindow` sites (`:361`, `:1130`, `:1212`, `:1462`)
 (`325-408`, `530-1301`, `530-1301`, `1303-1507`), so the already-wrapped name has no live bypass either. `winqor_gl` is not
 in the build (`ui/CMakeLists.txt:4`), which is why none of this links. U19 is FROZEN at session 34, so the split is booked
 in `dpi.cpp`'s banner, not appended to the register.
+
+## Tranche 6c closed - the Touch / gesture family, 6 Nov 2026
+
+All 14 names in the Touch / gesture row are now wrapped: new TU `touch.cpp`, 14 definitions, 14 declarations in a new
+`//Touch and gesture functions` section at `user32.h:629-646`. **Nothing shed**: the bucket filter (`Touch|Gesture`) over
+the gap list matches 19 export names, of which **4** were already wrapped by 6a in `pointer.cpp` (`GetPointerTouchInfo`
+`winuser.h:6574`, `GetPointerTouchInfoHistory` `:6581`, `GetPointerFrameTouchInfo` `:6589`,
+`GetPointerFrameTouchInfoHistory` `:6597` - they are `POINTER_TOUCH_INFO` accessors, so a name-based filter sees them
+twice), **1** is exported with no prototype in `winuser.h` at all (`MITSynthesizeTouchInput`, 0 hits - the
+prototype-less class this file already flags over `EnableMouseInPointerForThread`, out under the D18 rule), and the
+remaining **14** are wrapped. `_tmp_t8_6c_pre.ps1`: 14 exported with ordinals (51, 52, 15C, 15D, 15E, 1D4, 214, 21B, 245,
+2A5, 2F9, 2FA, 33F, 3CE), 0 function-like macros, 0 `A`/`W` siblings, 0 already declared - 14 in, 14 wrapped.
+
+Guard stacks re-measured per name (same forward-pass instrument): **5** innermost `#if(WINVER >= 0x0601)` inside
+`#ifndef NOUSER` (`GetTouchInputInfo:6243`, `CloseTouchInputHandle:6252`, `RegisterTouchWindow:6272`,
+`UnregisterTouchWindow:6279`, `IsTouchWindow:6285`), **4** innermost `#if(WINVER >= 0x0602)` inside `NOUSER`
+(`InitializeTouchInjection:6485`, `InjectTouchInput:6492`, `RegisterTouchHitTestingWindow:6726`,
+`PackTouchHitTestingProximityEvaluation:6773`), and **5** gesture names (`GetGestureInfo:15770`,
+`GetGestureExtraArgs:15783`, `CloseGestureInfoHandle:15801`, `SetGestureConfig:15869`, `GetGestureConfig:15884`) with
+`#if(WINVER >= 0x0601)` and **no `NOUSER` test at all** - the gesture half of the family sits outside the `NOUSER`
+region that the touch half sits in. All 14 are additionally inside
+`#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)`. `WINVER` defaults to `0x0A00`, so all 14 are live and the layer
+adds no `#if`; a caller that pins `WINVER` below `0x0602` loses the injection / hit-testing quartet from the SDK while
+`user32.h` still declares it. The `_tmp_t8_6c_protos.cpp` run (14 function-pointer typedefs initialised with
+`&<SDK name>`, `/W4`, no QOR define, no version macro, exit 0) settles liveness and signature conformance at once.
+
+
+Two pre-flag prototype claims were wrong and the published text was copied from `winuser.h` itself, not from the digest:
+the pre-scan **truncates** `GetTouchInputInfo`, `SetGestureConfig` and `GetGestureConfig` - those three prototypes are
+multi-line and their inline parameter comments contain `;`, which is where the digest's end-of-prototype scan stops - and
+the pre-flags gave `GetGestureConfig`'s count parameter as `_Inout_ PUINT`, whereas the SDK has `_In_ PUINT pcIDs`
+(`:15888`) and puts the in/out on the buffer (`_Inout_updates_(*pcIDs) PGESTURECONFIG`, `:15890`). An instrument that
+ends a prototype at the first `;` is unsafe for any `winuser.h` name with commented parameters; read the declaration
+block in the header whenever the digest's `proto=` line ends mid-list.
+
+Folder figures re-measured the same day (`_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`): **594 members** / 1,018
+export names / **717 covered** / **48** declared-and-unwrapped / 253 no-prototype; 580 -> 594 and 703 -> 717 are both
+exactly +14. The buckets instrument prints `0: Touch / gesture family []` alongside the already-empty Pointer and DPI
+rows, so three families are drained. 48 raw = **40 net backlog** (Display config 7, Shutdown/power 3, Misc 24, held-open
+legacy 6) + 7 excluded superseded twins + 1 instrument artifact. Binding sites over the 41 sources re-count at **497**
+(`_tmp_wrong_stem_scan.ps1`: 41 files, 497 `User32::` definitions, 497 bindings, 1-to-1; the 2 mismatches it still
+reports are the pre-existing `CopyCursorT -> CopyIcon` and `CreateWindowT -> CreateWindowEx`, and `touch.cpp` adds 0).
+
+**U19 for this family: 0 LAYER, 0 BYPASS** - 0 raw hits for all 14 names over the 3,228 `.h`/`.hpp`/`.cpp`/`.cxx` of
+`src`, `examples` and `test` (`_tmp_t8_6c_consumers.ps1`), so unlike 6b there is no split to book. U19 stays FROZEN at
+session 34.
+

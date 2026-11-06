@@ -626,6 +626,25 @@ namespace qor { namespace win { namespace api {
         static DPI_HOSTING_BEHAVIOR SetThreadDpiHostingBehavior(DPI_HOSTING_BEHAVIOR value);
         static BOOL SystemParametersInfoForDpi(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, UINT dpi);
 
+        //Touch and gesture functions
+        //HTOUCHINPUT (winuser.h:6193) and HGESTUREINFO (winuser.h:15691) are handles the OS hands out in the lParam
+        //of WM_TOUCH and WM_GESTURE - no wrapper here creates one, and the two Close* members close exactly those.
+        static BOOL CloseGestureInfoHandle(HGESTUREINFO hGestureInfo);
+        static BOOL CloseTouchInputHandle(HTOUCHINPUT hTouchInput);
+        static BOOL GetGestureConfig(HWND hwnd, DWORD dwReserved, DWORD dwFlags, PUINT pcIDs, PGESTURECONFIG pGestureConfig, UINT cbSize);
+        static BOOL GetGestureExtraArgs(HGESTUREINFO hGestureInfo, UINT cbExtraArgs, PBYTE pExtraArgs);
+        static BOOL GetGestureInfo(HGESTUREINFO hGestureInfo, PGESTUREINFO pGestureInfo);
+        static BOOL GetTouchInputInfo(HTOUCHINPUT hTouchInput, UINT cInputs, PTOUCHINPUT pInputs, int cbSize);
+        static BOOL InitializeTouchInjection(UINT32 maxCount, DWORD dwMode);
+        static BOOL InjectTouchInput(UINT32 count, CONST POINTER_TOUCH_INFO *contacts);
+        static BOOL IsTouchWindow(HWND hwnd, PULONG pulFlags);
+        //Returns LRESULT, not BOOL: the value is what a WM_TOUCHHITTESTING handler returns, not a success flag.
+        static LRESULT PackTouchHitTestingProximityEvaluation(const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, const TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval);
+        static BOOL RegisterTouchHitTestingWindow(HWND hwnd, ULONG value);
+        static BOOL RegisterTouchWindow(HWND hwnd, ULONG ulFlags);
+        static BOOL SetGestureConfig(HWND hwnd, DWORD dwReserved, UINT cIDs, PGESTURECONFIG pGestureConfig, UINT cbSize);
+        static BOOL UnregisterTouchWindow(HWND hwnd);
+
         //Font and Text functions
         static int DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format);
         static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp);

@@ -39,7 +39,8 @@ devicemanagement.cpp
 combobox.cpp
 scrollbar.cpp
 pointer.cpp
-dpi.cpp)
+dpi.cpp
+touch.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
