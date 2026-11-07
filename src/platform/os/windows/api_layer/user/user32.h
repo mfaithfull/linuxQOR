@@ -6,6 +6,10 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
+//The wsprintfT member below is header-inline (DECISIONS.md D20) and its body calls Library::varCall, so unlike
+//every other member here it needs the call facility at its definition point rather than at a TU's use site.
+#include "../library.h"
+
 #undef RegisterDeviceNotification
 #undef WinHelp
 #undef SystemParametersInfo
@@ -813,6 +817,32 @@ namespace qor { namespace win { namespace api {
         static UINT SetThreadCursorCreationScaling(UINT cursorDpi);
         static BOOL SetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity);
         static BOOL SetWindowFeedbackSetting(HWND hwnd, FEEDBACK_TYPE feedback, DWORD dwFlags, UINT32 size, const VOID* configuration);
+
+        //Legacy functions (T8 step 6g, added 7 Nov 2026) - the six held-open legacy exports that D19 decided IN
+        //scope (docs/agent/DECISIONS.md; the disposition list is registers/u18-coverage.md): GetWindowWord, SetWindowWord,
+        //SetMessageQueue, DragObject and the wsprintfA/W pair. Signatures are the winuser.h prototypes verbatim,
+        //parameter names included (D18) - the SDK gives wsprintfA/W no parameter names at winuser.h:326/:333, so the
+        //two names here are the layer's. wsprintfT comes first because it is the header-inline member; the four
+        //ordinary declarations below follow legacy.cpp's definition order, which is NOT the SDK's - in WinUser.h
+        //SetMessageQueue (:3500) precedes DragObject (:8145), while GetWindowWord (:9837) / SetWindowWord (:9844)
+        //keep the Get/Set adjacency of their WORD class twins in the window-class section. wsprintfA/W is one
+        //wsprintfT member over qor_pp_useswinapiAW (D13, the T-suffix convention; configuration.h:13 sets qor_pp_unicode
+        //1, so this build binds wsprintfW). wsprintfT is DEFINED here rather than in legacy.cpp because it is variadic:
+        //a member template is instantiated only where its body is visible, so declaring it here and defining the body in
+        //one TU leaves every consumer with unresolved symbols (measured: LNK2019 per tail shape, LNK1120 overall -
+        //DECISIONS.md D20). It carries no qor_pp_fcontext either - the flyer header is not included by this header and
+        //pulling it in is a folder-wide change; the four members below are ordinary declarations, defined in legacy.cpp.
+        template< class ...VarArgs >
+        static int wsprintfT(LPWSTR OutputString, LPCWSTR formatString, VarArgs... varArgs)
+        {
+            qor_pp_useswinapiAW(user32, wsprintf);
+            return Library::varCall< int, LPWSTR, LPCWSTR, VarArgs... >(pFunc, OutputString, formatString, varArgs...);
+        }
+
+        static DWORD DragObject(HWND hwndParent, HWND hwndFrom, UINT fmt, ULONG_PTR data, HCURSOR hcur);
+        static BOOL SetMessageQueue(int cMessagesMax);
+        static WORD GetWindowWord(HWND hWnd, int nIndex);
+        static WORD SetWindowWord(HWND hWnd, int nIndex, WORD wNewWord);
 
         //Console functions
         static NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD ConsoleInformationLength);

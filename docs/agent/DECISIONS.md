@@ -514,3 +514,82 @@ Record: the closure line in `registers/u28.md`, the status line on the session-3
 architecture bullet and id lines in that folder's `preflags.md` and `status.md`, and a Windows-target bullet in
 `memory-bank/techContext.md`. No source, header or CMake file is touched by this decision.
 
+
+## D19: the 6 held-open legacy names are in scope - wrap all of them - POLICY (7 Nov 2026)
+
+Decision (user, 7 Nov 2026): the 6 **held-open legacy names** in `registers/u18-coverage.md` - `GetWindowWord`, `SetWindowWord`,
+`SetMessageQueue`, `DragObject`, `wsprintfA`, `wsprintfW` - are **in scope**: the "full wrapper set" keeps them, so the
+backlog target stays **109** (the "excluding them takes it to 103" branch in that file is **not** taken). They move from
+"**Open question** - counted in until decided" to "**In scope** - tranche **6g**", the last tranche of T8 step 6.
+
+What it settles in the `api_layer/user` record:
+- The "one open question" U18/T8 waited on is closed. U18 stays **OPEN** only until **6g** actually wraps the 6 names
+  (D18's close rule: every one of the 109 backlog names is wrapped or carries a written exclusion). Wrapping is a session,
+  not a decision: each name gets a `user32.h` declaration + a definition in a new `legacy.cpp` TU + a binding, gated like 6a-6f.
+- The 6 are the whole net backlog (`u18-coverage.md`: raw 14 - 7 excluded superseded twins - 1 instrument artifact = 6).
+
+What it does **not** decide - the measured technical shape each wrapper needs, which the 6g session must still resolve:
+- **`wsprintfA`/`wsprintfW` are variadic** (`WinUser.h:326`/`:333`, `WINUSERAPI int WINAPIV wsprintfA/W(_Out_ LPSTR|LPWSTR,
+  _In_ _Printf_format_string_ LPCSTR|LPCWSTR, ...)`). The folder has **0** variadic members, and `Library::Call`
+  (`library.h:43-46`) is a variadic template that synthesizes a **fixed-arity** `ret(__stdcall *fPtr)(MethodArgs...)` from
+  the call-site list - so binding these would assert an arity the SDK never states. Wrapping them faithfully requires a
+  **variadic-wrapper shape this library does not yet have**. (The `__stdcall`/`__cdecl` half of the mismatch is immaterial
+  under D17 - Windows is x64-only, one calling convention - so the undeclared arity is the whole obstacle.)
+- **`wsprintfA/W` is the last A/W pair in scope** (with `ChangeMenuA/W`, already wrapped as one `ChangeMenuT` at 6f), so
+  under the folder's `W` + `T`-suffix / `qor_pp_useswinapiAW` convention it collapses to **one `wsprintfT` member** - 6 names
+  over ~5 new members - which is what keeps U17's A/W suffix question "one wrapper, not dozens."
+- **`GetWindowWord`/`SetWindowWord`** are the WORD twins of the wrapped `GetWindowLongT` (`user32.h:723`) / `SetWindowLongT`
+  (`:728`); the twin test nearly decides them and the width change is the only open factor. **`SetMessageQueue`**
+  (`WinUser.h:3500`, `BOOL (int cMessagesMax)`) and **`DragObject`** (`WinUser.h:8145`, `DWORD (HWND,HWND,UINT,ULONG_PTR,HCURSOR)`)
+  have neither a replacement nor a wrapped cousin.
+- The measured SDK facts for all 6 (ordinals, innermost guards, prototypes) are already in `tmp/_tmp_t8_6g_pre.txt` (pre-scan
+  written at the 6f close); run `tmp/_tmp_t8_6g_pre.ps1` after `tmp/_tmp_u18_coverage4.ps1` before starting 6g.
+
+Record: the D19 status line in `registers/u18.md`, the disposition row + the "Decided" block in `registers/u18-coverage.md`, and
+the step-6 backlog line + the close note in `registers/tasks.md`. No source, header or CMake file is touched by this decision.
+
+
+## D20: the variadic wrapper shape - `Library::varCall` and one header-inline `wsprintfT` member - POLICY (7 Nov 2026)
+
+D19 put `wsprintfA`/`wsprintfW` in scope, and wrapping them faithfully required a call shape this library did not have.
+D20 is the 6g session's decision over that shape, measured rather than assumed. It touches `library.h` (one new template),
+`user32.h` (one new section, one new `#include`) and `legacy.cpp` (a new TU) - unlike D19, which touched no source.
+
+**The convention half.** `minwindef.h:128` spells `WINAPI` as `__stdcall` and `:129` spells `WINAPIV` as `__cdecl`, because
+a variadic callee cannot clean a stack of unknown width - the caller does. `wsprintfA` (`WinUser.h:326`) and `wsprintfW`
+(`:333`) are the only exports in this folder declared `WINAPIV`, and every `qor_pp_useswinapi` binding in the folder names a
+`WINAPI` export, which is why `Library::Call`/`voidCall`/`inlineCall` all synthesize a `__stdcall` `fPtr`. Spelling a
+variadic `fPtr` `__stdcall` would be wrong on x86; this build is x64-only (D17), where the two conventions are one, so the
+difference is invisible in this tree and the spelling is what a 32-bit build would need.
+
+**The arity half, and the new variant (V).** The SDK writes `wsprintfA/W(_Out_ LPSTR|LPWSTR, _In_ _Printf_format_string_
+LPCSTR|LPCWSTR, ...)` - the tail is undeclared, so no fixed-arity `fPtr` states the call and `Library::Call`'s
+`ret(__stdcall *fPtr)(MethodArgs...)` cannot be used. `library.h` gains **`varCall`**: `template< typename ret, class ...MethodArgs >`
+synthesizing `ret(__cdecl *fPtr)(MethodArgs..., ...)` and forwarding with `std::forward< MethodArgs >(args)...`, same
+`DefProc` parameter, same null check and same exception filter as `Call`. It is variant **(V)** of the existing variant
+labelling (I = header-inline per D11).
+
+**Placement of the member body - the measured half.** `wsprintfT` is the folder's **one header-inline member**: declared
+**and defined** in `user32.h`. A member template is instantiated only where its body is visible, so the ordinary folder
+shape (declaration in the header, definition in the owning TU) leaves every consumer with unresolved symbols. Measured both
+ways: out-of-line gave **LNK2019 per tail shape and LNK1120 on the link** (`tmp/_tmp_6g_member_h3.h` + `_tmp_6g_member_d.cpp`
++ `_tmp_6g_member_e.cpp`), while the header-inline shape compiles at `/W4` exit 0 and forwards 0-, 1- and 2-argument tails
+to a sentinel-terminated stand-in callee printing **0/3/6** (`tmp/_tmp_6g_varcall_probe3.cpp`) - the pack reaches the callee
+at every arity.
+
+What it does **not** do - two consequences recorded rather than hidden:
+- The `qor_pp_useswinapi` binding inside a template body is a **function-local static**, so it is one `pFunc` per
+  instantiation, not one per member. Same resolution cost, one cache line each; no behaviour change.
+- The body carries **no `qor_pp_fcontext`**, because `user32.h` does not include the `functioncontext` flyer and pulling a
+  generic flyer header into the published API header is a folder-wide change, not a per-member decision. `wsprintfT` is
+  therefore the one member of the folder without the interception marker - recorded, not papered over.
+- `user32.h` gains `#include "../library.h"` for the body, the only such include in this folder; every other wrapper reaches
+  `Library::Call` from its own TU's include line.
+
+U17 (the A/W suffix question) is unaffected: `wsprintfA`/`wsprintfW` remain **one** `wsprintfT` member over
+`qor_pp_useswinapiAW` (D13), and `configuration.h:13` sets `qor_pp_unicode` to 1, so this build binds `wsprintfW` and
+`wsprintfA` stays unresolved at run time - the shape every other `AW` stem here already has.
+
+Record: the variant-(V) block in `library.h`, the section comment at `user32.h`, the banner of `legacy.cpp`, the D20 status
+lines in `registers/u18.md` and `registers/tasks.md`, and the close figures in `status.md` and `preflags.md`.
+

@@ -1,11 +1,12 @@
 # Active Context
 
-Last updated: 7 Nov 2026 - **T8 steps 1-6 are done: 6a `pointer.cpp` (32), 6b `dpi.cpp` (21), 6c `touch.cpp` (14),
-6d `displayconfig.cpp` (7), 6e `powermanagement.cpp` + `CancelShutdown` (3) and 6f `misc.cpp` (24 names / 23 members),
-so `src/platform/os/windows/api_layer/user` is 44 sources / 627 members / 530 bindings.** U18 stays OPEN on **one user
-decision**: the **6 held-open legacy names** (per-name dispositions in `.../api_layer/user/registers/u18-coverage.md`,
-measurement pre-flags in `.../api_layer/user/preflags.md`). The 38-source review queue closed at session 37 and the six
-coverage TUs each carry their own review banner, so there is no next review TU.
+Last updated: 7 Nov 2026 - **T8 steps 1-6 are done, including the last tranche 6g: 6a `pointer.cpp` (32), 6b `dpi.cpp` (21),
+6c `touch.cpp` (14), 6d `displayconfig.cpp` (7), 6e `powermanagement.cpp` + `CancelShutdown` (3), 6f `misc.cpp` (24 names / 23
+members) and 6g `legacy.cpp` (6 names / 5 members), so `src/platform/os/windows/api_layer/user` is 45 sources / 632 members /
+535 bindings.** **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave `wsprintfA`/`wsprintfW` a variadic
+wrapper; per-name dispositions in `.../api_layer/user/registers/u18-coverage.md`, measurement pre-flags in
+`.../api_layer/user/preflags.md`) and the backlog is empty - the 8 raw gap names all carry written exclusions. The 38-source
+review queue closed at session 37 and the seven coverage TUs each carry their own review banner, so there is no next review TU.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.
@@ -19,7 +20,7 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - review queue and T8 step 6 closed; the 6 held-open legacy names await a user decision
+## Current focus: winqor_api_user - review queue, T8 step 6 and U18 all closed; the backlog is empty
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
@@ -34,8 +35,10 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   1 return type, 4 parameter types, **102** parameter names (not the 16 the per-TU records added up to), 2 unwrapped
   `*ForPerMonitorDPI` exports, then a **109-name** coverage backlog. Steps 1-5 are in as of 6 Nov 2026 - the names pass
   renamed 101 of the 102 across header and definition together, and step 2's consumer fix only landed when that rename
-  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Steps **6a**-**6f** are all in as of
-  7 Nov 2026, so the backlog is **6** held-open legacy names awaiting a user decision (scope decided 5 Nov: documented
+  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Steps **6a**-**6g** are all in as of
+  7 Nov 2026, so the backlog is **empty** (D19 decided the last 6 names - `GetWindowWord`, `SetWindowWord`, `SetMessageQueue`,
+  `DragObject`, `wsprintfA`/`wsprintfW` - IN scope, and 6g wrapped them as 5 members: four ordinary ones in `legacy.cpp` plus
+  the folder's one header-inline `wsprintfT` member over `Library::varCall`, D20; scope decided 5 Nov: documented
   exports only, superseded families excluded - the 253 prototype-less exports are out; per-name dispositions in
   `.../registers/u18-coverage.md`). Other leads - open items, the
   T1-T6
@@ -51,7 +54,7 @@ lines a new session needs to start, or moved to `memory-bank/archive/`. Session 
 
 ## Where the record lives (boot order)
 
-1. `src/platform/os/windows/api_layer/user/status.md` - the review boot file: the protocol, the queue of all 44 sources,
+1. `src/platform/os/windows/api_layer/user/status.md` - the review boot file: the protocol, the queue of all 45 sources,
    the id-to-file map and the compile gate. With `method.md`, `preflags.md` and the current TU this is the **whole** boot
    read-set (protocol v3): about 30 KB. Whether an earlier session finished is answered by `git log --oneline` and a clean
    `git status` for that folder - never by reading the record deeper.

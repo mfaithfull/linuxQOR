@@ -223,7 +223,7 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
      the scope decision reduces). Work it **one family per session** in the tranche order that file gives, applying the
      D18 rule from the first line: the wrapper's signature is the `winuser.h` prototype, and the disposition list is
      edited as each family lands (Pointer 32, DPI/awareness 21, Touch/gesture 14, Display config 7, Shutdown/power 3,
-     Misc 26, held-open legacy 6 - those sum to the 109). Seven names are already dispositioned **excluded** (superseded
+     Misc 26, held-open legacy 6 (decided in scope by D19 - tranche 6g) - those sum to the 109). Seven names are already dispositioned **excluded** (superseded
      twins whose `*Ptr`/`Ex` replacement the library wraps: `Get/SetClassLongA/W`, `SetWindowsHookA/W`,
      `UnhookWindowsHook`) and one is an instrument artifact (`SetWindowsHookExAW`, no prototype).
      See that file for the per-name list before starting a tranche. **6a (Pointer, 32) DONE 6 Nov 2026** - new TU
@@ -238,8 +238,22 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
       so the folder is **43 sources / 604 members / 507 bindings** and the backlog re-measures at **38** raw = **30** net (24 Misc
       + 6 held-open legacy). **6f (Misc, 24 names / 23 members) DONE 7 Nov 2026** - new TU `misc.cpp`, so the folder is **44
       sources / 627 members / 530 bindings** and the backlog re-measures at **14** raw = **6** net (the held-open legacy names;
-      7 superseded twins and 1 instrument artifact carry written exclusions). **Steps 1-6 are all in as of 7 Nov 2026**, so U18
-      waits only on that user decision over the 6 names - it stays OPEN until they are wrapped or excluded.
-  U18 closes when steps 1-5 are in and every one of the 109 backlog names is either wrapped or carries a written exclusion.
-  Do not mark it closed on any partial pass.
+      7 superseded twins and 1 instrument artifact carry written exclusions). **D19 (7 Nov 2026) answers that user question:
+      wrap all 6**, so the 6 held-open legacy names are **in scope** and the target stays **109** (the 103 branch is not taken); the final
+      tranche is **6g**, and U18 closes only when 6g wraps them. The decision touches no source/header/CMake - wrapping is 6g's
+      job: a new `legacy.cpp` TU + `user32.h` declarations + bindings, gated like 6a-6f (wsprintfA/W need a variadic-wrapper
+      shape the folder does not yet have). **6g (held-open legacy, 6 names / 5 members) DONE 7 Nov 2026** - new TU
+      `legacy.cpp` (4 definitions) plus the section at `user32.h:821-845`, so the folder is **45 sources / 632 members /
+      535 bindings** and the backlog re-measures at **8 raw = 0 net** (7 superseded twins + the `SetWindowsHookExAW`
+      artifact, all with written exclusions; coverage 751 -> **757 of 1,018**). `wsprintfA/W` was the hard half and is
+      decided by **D20** (`docs/agent/DECISIONS.md`): `library.h` gains `varCall` - variant (V), a `__cdecl` variadic
+      `fPtr` (`minwindef.h:129` spells `WINAPIV` as `__cdecl`) forwarding with `std::forward` - and `wsprintfT` is the
+      folder's one **header-inline** member, because a member template is instantiated only where its body is visible
+      (measured: out-of-line LNK2019/LNK1120, header-inline /W4 exit 0 and 0/3/6 through a 0-, 1- and 2-argument tail).
+      Gate: `legacy.cpp` standalone `/W4` exit 0, folder 45/45, all-libraries 112 -> 113 echoes at exit **2** both sides
+      with 0 new / 0 gone diagnostics, and `cl /EP` yields 5 binding literals (the four here plus `wsprintfW` from the
+      header-inline body). **Steps 1-6a-6g are all in: U18 and T8 are CLOSED 7 Nov 2026** - every one of the 109 backlog
+      names is wrapped or carries a written exclusion, so the close condition below is met rather than waited on.
+  ~~U18 closes when steps 1-5 are in and every one of the 109 backlog names is either wrapped or carries a written
+  exclusion. Do not mark it closed on any partial pass.~~ **Met 7 Nov 2026 at the 6g close - U18 and T8 closed.**
 

@@ -1,18 +1,20 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 7 Nov 2026 - **T8 step 6f is in: `misc.cpp` adds the Misc bucket (24 names / 23 wrappers), so the folder
-is 44 sources; the 38 review-queue TUs stay closed from session 37**. Reviewing
-`src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness, consistency, safety,
-UB and conformance to the api_layer conventions. One translation unit per session, and **commit at close**: a clean
-`git status` plus this file is all a session needs to resume after a context reset.
+Last updated 7 Nov 2026 - **T8 step 6g is in: `legacy.cpp` wraps the 6 held-open legacy names (5 members), so the folder
+is 45 sources / 632 members / 535 bindings and the coverage backlog is empty - **U18 and T8 are CLOSED** (D19 decided the
+6 names in scope, D20 fixed the variadic wrapper shape; `docs/agent/DECISIONS.md`). The 38 review-queue TUs stay closed from
+session 37**. Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
+consistency, safety, UB and conformance to the api_layer conventions. One translation unit per session, and **commit at
+close**: a clean `git status` plus this file is all a session needs to resume after a context reset.
 
 **Purpose (authoritative: `purpose.md`, added 5 Nov 2026; policy D18 + same-day scope addendum in
 `docs/agent/DECISIONS.md`): the library intends a full set of wrapper functions for the exports of `user32.dll` - scoped to
 the exports `winuser.h` declares, superseded families excluded.** A wrapper is judged against the export it binds, and an
-unwrapped declared export is a gap (**14 names** remain raw after T8 steps 5 and 6a-6f, listed in
-`registers/u18-coverage.md`; **step 6 is complete** and 14 = 7 excluded superseded twins + 1 instrument artifact + 6 held-open
-legacy names awaiting a user decision). The actionable lead is the **6 held-open legacy names** above
-(`registers/u18-coverage.md`), which a user decision closes; **T8** (`registers/tasks.md`) stays open only on it.
+unwrapped declared export is a gap (**8 names** remain raw after T8 steps 5 and 6a-6g, listed in
+`registers/u18-coverage.md`, and **all 8 carry written exclusions** - 7 superseded twins whose `*Ptr`/`Ex` replacement this
+library wraps and 1 instrument artifact with no prototype). **The backlog is complete: every one of the 109 names is wrapped
+or excluded, so U18 and T8 are CLOSED and there is no actionable T8 lead left (D19 put the last 6 names in scope, D20 gave
+`wsprintfA`/`wsprintfW` a variadic wrapper).**
 
 ## Record protocol v3 - a close is a commit (adopted 5 Nov 2026, after session 36)
 
@@ -51,8 +53,8 @@ re-derive everything. **No record content was deleted** - the superseded procedu
    such a citation is dead as it is written; name the instrument's script slug instead.
 9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
-   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file stays under 170 lines** - the
-   ceiling is structural, not a task at close: the queue holds one fixed row per source (44 rows since `misc.cpp`
+   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file is 172 lines** - the
+   ceiling is structural, not a task at close: the queue holds one fixed row per source (45 rows since `legacy.cpp`
    joined on 7 Nov 2026), the protocol and the gate are fixed text, and a close adds no prose. Growing this file breaks 4.
 
 ## Resuming after a context reset - ask git, not the record
@@ -62,12 +64,12 @@ re-derive everything. **No record content was deleted** - the superseded procedu
     git -C c:\RAID0\Develop\linuxQOR grep -n "=== api_layer conventions" -- src/platform/os/windows/api_layer/user
 
 An empty second command under a `close session N` head means session N is closed and there is nothing to re-derive. The
-third lists every TU that carries its own banner (measured 7 Nov 2026: **12 of 44** - `text.cpp`, `window.cpp`, `windowclass.cpp`,
-`windowprocedure.cpp`, `windowproperties.cpp`, `winqor_api_user.cpp` and the six coverage TUs `pointer.cpp`, `dpi.cpp`,
-`touch.cpp`, `displayconfig.cpp`, `powermanagement.cpp`, `misc.cpp`); every other closed TU is named in the queue column
+third lists every TU that carries its own banner (measured 7 Nov 2026: **13 of 45** - `text.cpp`, `window.cpp`, `windowclass.cpp`,
+`windowprocedure.cpp`, `windowproperties.cpp`, `winqor_api_user.cpp` and the seven coverage TUs `pointer.cpp`, `dpi.cpp`,
+`touch.cpp`, `displayconfig.cpp`, `powermanagement.cpp`, `misc.cpp`, `legacy.cpp`); every other closed TU is named in the queue column
 below. If `git status` is not empty, the unfinished close **is** the state - finish it, do not re-measure it.
 
-## Queue - all 44 sources, alphabetical (one row each; a close edits one `status` cell)
+## Queue - all 45 sources, alphabetical (one row each; a close edits one `status` cell)
 
 Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of `//=== api_layer conventions`, presence of
 `archive/tu/<name>.md`). Not regenerated - the queue is complete, so nothing can drift except the one cell being closed.
@@ -97,6 +99,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `icon.cpp` | 168 | `archive/session-log*.md` | closed |
 | `ime.cpp` | 54 | `archive/session-log*.md` | closed |
 | `keyboard.cpp` | 315 | `archive/session-log*.md` | closed |
+| `legacy.cpp` | 162 | banner `:12` | closed (T8 6g, added 7 Nov 2026) |
 | `mdi.cpp` | 111 | `archive/tu/mdi.md` | closed |
 | `menu.cpp` | 354 | `archive/tu/menu.md` | closed |
 | `message.cpp` | 273 | `archive/tu/message.md` | closed |
@@ -122,8 +125,8 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 
 **38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete (some
 sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). `pointer.cpp` (T8 step 6a),
-`dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e) and `misc.cpp` (6f) joined on 6-7 Nov
-2026 as coverage - **44 sources** - each narrative is its own banner, and those six are the only rows not from a review
+`dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f) and `legacy.cpp` (6g) joined on 6-7 Nov
+2026 as coverage - **45 sources** - each narrative is its own banner, and those seven are the only rows not from a review
 session. History is write-once and not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`. Append nothing.
 
 ## Open items - id to file (derivable; there is no index to maintain)
@@ -133,9 +136,10 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
 - Closed / frozen - append nothing: **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
   includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
-  four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image).
-- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U18, U19, U20, U21, U22, U23, U24, U25, U26, U27,
-  P3, P4, P6, T1-T6, **T8**. Open the file the map names for an id you are acting on, never the whole tree.
+  four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image), **U18** and **T8** (7 Nov 2026, D19 + D20:
+  the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions).
+- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19, U20, U21, U22, U23, U24, U25, U26, U27,
+  P3, P4, P6, T1-T6. Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -145,25 +149,24 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 44 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 45 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
 **The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
 `D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
 dating rule below cannot be read.
-Edited TU standalone at `/W4` exit 0, then the whole library **44/44** exit 0 with no diagnostics. Date the gate by
-`tmp/obj/<tu>.obj` being newer than the source - a clean 44-TU log **cannot** be dated by its hash, because clean runs are
+Edited TU standalone at `/W4` exit 0, then the whole library **45/45** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 45-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
-112-source all-libraries gate as a **diff** against a pre-fix run (112 since `misc.cpp`; baseline 1 `C1083` at
+113-source all-libraries gate as a **diff** against a pre-fix run (113 since `legacy.cpp`; baseline 1 `C1083` at
 `opengl/wgl.cpp:31`, 165 warning lines, exit **2** - the diff is the signal, never the exit code, which must be captured
 inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time and writes a false 0).
 
 ## There is no next TU - what a further session in this folder works from
 
-All 38 review-queue TUs are closed and `pointer.cpp` (6a), `dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d),
-`powermanagement.cpp` (6e) and `misc.cpp` (6f) with them, so `preflags.md` pre-flags no review TU: it carries the folder-level
-leads, whose lead is the **6 held-open legacy names** (the open question `registers/u18-coverage.md` records). A next session
-picks that, another open item the map above names (U1-U27 less the frozen ids,
-P3, P4, P6, T1-T6), or moves to another `api_layer` folder. Architecture is settled - Windows is 64-bit only (D17) - and
-the gate above applies to any edit here.
+All 38 review-queue TUs are closed, as are the seven coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), so `preflags.md`
+pre-flags no review TU and no tranche: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
+`wsprintfA`/`wsprintfW` a variadic wrapper) and the backlog is empty - the 8 raw gap names all carry written exclusions.
+A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T1-T6) or moves to
+another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

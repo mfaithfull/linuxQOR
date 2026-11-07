@@ -18,7 +18,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | Display config (`*DisplayConfig*`, `*DisplayAutoRotation*`) | 7 | **WRAPPED 6 Nov 2026** - T8 step 6d, new TU `displayconfig.cpp` |
 | Shutdown / power (`CancelShutdown`, `*SuspendResumeNotification`) | 3 | **In scope** - tranche 6e |
 | Misc (menu, clipboard, affinity, feedback, immersive, tooltip, timers, undocumented-but-declared) | 26 | **In scope** - tranche 6f; 2 of these are T8 step 5, below |
-| Legacy / utility with no wrapped replacement (`GetWindowWord`, `SetWindowWord`, `SetMessageQueue`, `DragObject`, `wsprintfA/W`) | 6 | **Open question** - counted in until decided |
+| Legacy / utility with no wrapped replacement (`GetWindowWord`, `SetWindowWord`, `SetMessageQueue`, `DragObject`, `wsprintfA/W`) | 6 | **WRAPPED 7 Nov 2026** - T8 step 6g, new TU `legacy.cpp` + the header-inline `wsprintfT` member (D20) |
 | Superseded twins whose replacement the library **already wraps** (`GetClassLongA/W`, `SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`) | 7 | **Excluded** by the scope rule |
 | Instrument artifact (`SetWindowsHookExAW`) | 1 | **Removed** |
 | **Backlog to add** | **109** | 32+21+14+7+3+26+6 |
@@ -26,6 +26,8 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | **— re-measured 6 Nov 2026, after 6b** | **54** | the DPI / awareness row is empty too: 14+7+3+24+6 |
 | **— re-measured 6 Nov 2026, after 6c** | **40** | the Touch / gesture row is empty too: 7+3+24+6 (raw gap 62 -> 48) |
 | **— re-measured 6 Nov 2026, after 6d** | **33** | the Display config row is empty too: 3+24+6 (raw gap 48 -> 41) |
+| **— re-measured 7 Nov 2026, after 6e / 6f + D19** | **6** | Misc and Shutdown / power empty too; the 6 held-open legacy names are the whole net backlog - tranche **6g** (D19: decided in scope, to wrap) |
+| **— re-measured 7 Nov 2026, after 6g** | **0** | raw gap 8, every one excluded: 7 superseded twins + the `SetWindowsHookExAW` artifact. Coverage 751 -> **757 of 1,018**; the buckets instrument prints 0 for `Other` and for all six family rows, leaving only `4: Legacy hook family` and `4: Legacy word / class-long family`, both all-exclusions |
 
 **Excluded - superseded twins (measured, not assumed).** `GetClassLongA`/`GetClassLongW` and `SetClassLongA`/`SetClassLongW`
 are exported (12C/12F, 323/326) but their `*Ptr` replacements are exports too (12D/12E, 324/325) and are wrapped at
@@ -36,10 +38,12 @@ than a gap. The DDE family and `keybd_event`/`mouse_event` are **already fully w
 exports, every A/W pair behind a `T` member), so the exclusions the user named remove **nothing** from the backlog: they
 protect existing wrappers from deletion and keep the 253 undocumented exports out, which is where their effect is.
 
-**Held open - 6 names, one question.** `GetWindowWord`, `SetWindowWord` (the 16-bit word twins of the wrapped
+**Decided - 6 names, in scope (D19, 7 Nov 2026: the user decided to wrap all 6).** `GetWindowWord`, `SetWindowWord` (the 16-bit word twins of the wrapped
 `Get/SetWindowLong*`), `SetMessageQueue`, `DragObject`, `wsprintfA`, `wsprintfW`. These are legacy or utility but have no
-wrapped replacement, so the "superseded twin" test does not decide them. They are counted **in** the 109 until a decision
-says otherwise; excluding them takes it to 103.
+wrapped replacement, so the "superseded twin" test does not decide them - the **user decision** does, and it lands them **in**:
+the target stays **109** (the "excluding them takes it to 103" branch is **not** taken), and they are the last tranche, **6g**.
+U18 closes only once 6g wraps them; the decision touches no source, header or CMake file. The measured shape 6g must solve
+is in the "The 6 measured again for the decision" block at the foot of this file.
 
 **Artifact removed.** `SetWindowsHookExAW` (38B) is a real export that **no header declares** (`hook.cpp:31`); it entered
 the "declared" bucket only because the classifier credits an export whose name ends `A`/`W` with its base stem's
@@ -256,3 +260,16 @@ half of that mismatch is immaterial here (D17: Windows is x64-only, one calling 
 obstacle. `GetWindowWord`/`SetWindowWord` (`WORD` returns) are the 16-bit twins of `GetWindowLongT` (`user32.h:723`) and
 `SetWindowLongT` (`:728`), which **are** wrapped, so the twin test nearly decides them and what keeps them open is the width
 change. Only `SetMessageQueue` and `DragObject` have neither a replacement nor a wrapped cousin.
+
+**6g landed - the 6 are wrapped, and the two measured halves of that decision (7 Nov 2026, `legacy.cpp` banner).** The four
+ordinary names copy their `winuser.h` prototype verbatim and bind bare `qor_pp_useswinapi` (DragObject CC / `:8145`,
+SetMessageQueue 351 / `:3500`, GetWindowWord 1FB / `:9837`, SetWindowWord 388 / `:9844`); `wsprintfA`/`wsprintfW` collapse
+to the one `wsprintfT` member over `qor_pp_useswinapiAW`, which under `qor_pp_unicode` 1 binds `wsprintfW` (3F7). The
+`WINAPIV` half is answered in `library.h`: `varCall` (variant (V)) synthesizes `ret(__cdecl *fPtr)(MethodArgs..., ...)`,
+because `minwindef.h:128`/`:129` spell `WINAPI` `__stdcall` and `WINAPIV` `__cdecl` and the SDK states no tail arity. The
+placement half is answered by measurement, not by style: a member template declared in `user32.h` and defined in one TU
+gives **LNK2019 per tail shape / LNK1120 on the link**, so `wsprintfT` is the folder's one header-inline member and
+`user32.h` gains the `../library.h` include its body needs. Two consequences are recorded rather than hidden - the binding
+inside a template body is a function-local static (one `pFunc` per instantiation), and the body carries no `qor_pp_fcontext`
+because the published header does not include the interception flyer. Consumers: 0 LAYER / 0 INDIRECT / 0 BYPASS / 0 MEMBER
+over the eight stem spellings, so no caller above the layer had to change. The bucket is drained with nothing unaccounted.

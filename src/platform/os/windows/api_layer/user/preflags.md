@@ -1,49 +1,30 @@
-# Folder-level leads - the review queue and all of T8 step 6 are closed (7 Nov 2026)
+# Folder-level leads - the review queue and all of T8 (steps 1-6g) are closed (7 Nov 2026)
 
-Written wholesale at the T8 step 6f close. All 38 review-queue sources are `closed` and the six coverage TUs `pointer.cpp` (6a),
-`dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e) and `misc.cpp` (6f) are closed with them,
-so there is no next review TU and no family tranche left: this file lists what a further session in this folder picks up, and
-its lead is the **6 held-open legacy names** - the one open question `registers/u18-coverage.md` records, which a **user decision**
-closes. **Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
+Written wholesale at the T8 step 6g close. All 38 review-queue sources are `closed` and the seven coverage TUs `pointer.cpp` (6a),
+`dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f) and `legacy.cpp` (6g) are closed with them,
+so there is **no next review TU and no family tranche left**: U18 and T8 are CLOSED (D19 put the last 6 names in scope,
+D20 gave `wsprintfA`/`wsprintfW` a variadic wrapper). This file lists what a further session in this folder picks up.
+**Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
 
-## Current folder figures (re-measured 7 Nov 2026 with `_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`)
+## Current folder figures (re-measured 7 Nov 2026 with `_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`, run in sequence)
 
-**44 sources / 627 members / 530 bindings / 1,018 export names / 751 covered / 14 declared-and-unwrapped raw / 253 with no
-prototype.** Raw 14 minus the 7 excluded superseded twins (`Get/SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`) and
-the 1 instrument artifact (`SetWindowsHookExAW`, which no header declares) = **6 net backlog**, all of it the held-open legacy
-names. The buckets instrument prints six drained families - `Other` is the Misc bucket and is now 0 - and two rows:
-`4: Legacy hook family` (all excluded) and `10: Legacy word / class-long family` (4 excluded twins, the artifact, and the 6).
+**45 sources / 632 members / 535 bindings / 1,018 export names / 757 covered / 8 declared-and-unwrapped raw / 253 with no
+prototype.** The raw 8 is the whole remaining gap and every one of the 8 carries a written exclusion: the 7 superseded twins
+(`Get/SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`, whose `*Ptr`/`Ex` replacement this library already wraps) and
+the classifier artifact `SetWindowsHookExAW`, which no header declares. The buckets instrument prints **0 for every family
+except those two all-exclusion rows** - `Other` is 0 and the 6 legacy names are out of the gap - so the backlog is empty and
+there is no coverage lead to pick up.
 
-## Step 0 - re-derive the gap list before measuring anything
+## What is left to work on in this folder
 
-Every tranche pre-scan filters `tmp/_tmp_u18_gap_sdk.txt`, which `tmp/_tmp_u18_coverage4.ps1` writes, so **run that first** -
-a stale gap list feeds the previous family's names back to you. Then run `tmp/_tmp_t8_6g_pre.ps1` (written at the 6f close: the
-6f instrument with its bucket filter changed to "the gap list less the 7 excluded twins less the artifact", so the bucket is
-derived, not typed). Per name it prints the export-table row, the declaring header and line, the prototype, the guard stack open
-at that line (forward pass, never a backward pop), the macro count and whether a replacement stem is already declared in
-`user32.h`. Its name patterns are `\bName\s*\(`, not `\bName\(` - the SDK writes some prototypes with a space before the paren
-(see `gotchas/instrument-flags.md`).
-
-## T8 step 6f - the 24 Misc names, with the SDK facts measured 7 Nov 2026 (`tmp/_tmp_t8_6f_pre.txt`)
-
-All 24 are **exported and declared**, all carry **0** function-like macros, **0** A/W-sibling rows and **0** rows already in
-`user32.h`, so all 24 bind **bare `qor_pp_useswinapi`** under D13 and `user32.h:9-17` gains **no new `#undef`**. Ordinal /
-`winuser.h` line per name: `CalculatePopupWindowPosition` 1B / :7798, `ChangeMenuA` 2A / :7519, `ChangeMenuW` 2B / :7528,
-`ChangeWindowMessageFilterEx` 2D / :15665, `EvaluateProximityToPolygon` 10C / :6764, `EvaluateProximityToRect` 10D / :6756,
-`GetAutoRotationState` 122 / :16057, `GetCIMSSM` 124 / :15993, `GetClipboardMetadata` 139 / :5490,
-`GetCurrentInputMessageSource` 13E / :15987, `GetUnpredictedMessagePos` 1D5 / :3671, `GetWindowDisplayAffinity` 1E3 / :4788,
-`GetWindowFeedbackSetting` 1E6 / :6800, `InheritWindowMonitor` 20D / :14529, `IsImmersiveProcess` 238 / :16094,
-`IsWindowArranged` 249 / :16403, `RegisterForTooltipDismissNotification` 2E8 / :16382,
-`SetAdditionalForegroundBoostProcesses` 31F / :16359, `SetCoalescableTimer` 32A / :7106, `SetDebugErrorLevel` 32F / :13541,
-`SetProcessRestrictionExemption` 35B / :16100, `SetThreadCursorCreationScaling` 36D / :10874,
-`SetWindowDisplayAffinity` 37B / :4795, `SetWindowFeedbackSetting` 37C / :6810.
-
-
-### Guards (measured, forward pass over the declaring header)
-
-Three guard stacks matter: 12 names sit inside `#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)` only, 11 additionally
-inside `#if(WINVER >= 0x0600)` / `0x0601` / `0x0602` / `0x0603`, and `GetUnpredictedMessagePos` sits behind
-`#if defined(WINNT)`. `WINVER` defaults to `0x0A00` from `sdkddkver.h` and **0** files under `src`, `cmake`, `examples` or
-`test` define `WINVER`, `_WIN32_WINNT`, `NTDDI_VERSION`, `NOUSER` or `NOGDI` (measured over 3,557 files), so all 24 are live
-in this build and the layer adds no `#if` - but a caller that pins `WINVER` below the block loses that name, and
-`GetUnpredictedMessagePos` is the one that also needs `WINNT`.
+- Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19-U27 less the frozen ids,
+  P3, P4, P6, T1-T6. None of them is a coverage gap; U17 (the A/W suffix question) is unaffected by 6g, which kept
+  `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over `qor_pp_useswinapiAW`.
+- The one shape this folder now carries that no other folder does: `wsprintfT` at `user32.h:835-840` is the only
+  header-inline member and `library.h`'s `varCall` (variant (V), `__cdecl` variadic `fPtr`) its only variadic call form.
+  A session that adds another `WINAPIV` export or edits that section has to keep the body in the header - a body defined
+  in one TU leaves consumers unresolved (measured LNK2019/LNK1120) - and keep the `__cdecl` spelling, which is what a
+  32-bit build would need even though this tree is x64-only (D17).
+- Gate for any edit here: 45/45 folder at `/W4`, and because `library.h` and `user32.h` are shared, a library-header edit
+  needs the all-libraries run as a **diff** against a pre-fix run (113 sources since `legacy.cpp`; standing baseline exit
+  **2**, 1 `C1083` at `opengl/wgl.cpp:31`, 165 warning lines - the diff is the signal, never the exit code).
