@@ -89,11 +89,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hWnd, lpPaint);
     }
 
-    BOOL User32::DrawAnimatedRects(HWND hwnd, int idAni, CONST::RECT* lprcFrom, CONST::RECT* lprcTo)
+    BOOL User32::DrawAnimatedRects(HWND hwnd, int idAni, const::RECT* lprcFrom, const::RECT* lprcTo)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, DrawAnimatedRects);
-        return Library::Call<BOOL, HWND, int, CONST ::RECT*, CONST ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
+        return Library::Call<BOOL, HWND, int, const ::RECT*, const ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
     }
 
     BOOL User32::DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprect, UINT flags)
@@ -110,11 +110,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, qrc, edge, grfFlags);
     }
 
-    BOOL User32::DrawFocusRect(HDC hDC, CONST::RECT* lprc)
+    BOOL User32::DrawFocusRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, DrawFocusRect);
-        return Library::Call<BOOL, HDC, CONST ::RECT*>(pFunc, hDC, lprc);
+        return Library::Call<BOOL, HDC, const ::RECT*>(pFunc, hDC, lprc);
     }
 
     BOOL User32::DrawFrameControl(HDC hdc, ::LPRECT lprc, UINT uType, UINT uState)
@@ -131,11 +131,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbrFore, qfnCallBack, lData, wData, x, y, cx, cy, uFlags);
     }
 
-    BOOL User32::EndPaint(HWND hWnd, CONST::PAINTSTRUCT* lpPaint)
+    BOOL User32::EndPaint(HWND hWnd, const::PAINTSTRUCT* lpPaint)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, EndPaint);
-        return Library::Call<BOOL, HWND, CONST ::PAINTSTRUCT*>(pFunc, hWnd, lpPaint);
+        return Library::Call<BOOL, HWND, const ::PAINTSTRUCT*>(pFunc, hWnd, lpPaint);
     }
 
     int User32::ExcludeUpdateRgn(HDC hDC, HWND hWnd)
@@ -187,11 +187,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC, HBRUSH, GRAYSTRINGPROC, LPARAM, int, int, int, int, int>(pFunc, hDC, hBrush, lpOutputFunc, lpData, nCount, X, Y, nWidth, nHeight);
     }
 
-    BOOL User32::InvalidateRect(HWND hWnd, CONST::RECT* lpRect, BOOL bErase)
+    BOOL User32::InvalidateRect(HWND hWnd, const::RECT* lpRect, BOOL bErase)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, InvalidateRect);
-        return Library::Call<BOOL, HWND, CONST ::RECT*, BOOL>(pFunc, hWnd, lpRect, bErase);
+        return Library::Call<BOOL, HWND, const ::RECT*, BOOL>(pFunc, hWnd, lpRect, bErase);
     }
 
     BOOL User32::InvalidateRgn(HWND hWnd, HRGN hRgn, BOOL bErase)
@@ -215,11 +215,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC>(pFunc, hdc);
     }
 
-    BOOL User32::RedrawWindow(HWND hWnd, CONST::RECT* lprcUpdate, HRGN hrgnUpdate, UINT flags)
+    BOOL User32::RedrawWindow(HWND hWnd, const::RECT* lprcUpdate, HRGN hrgnUpdate, UINT flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, RedrawWindow);
-        return Library::Call<BOOL, HWND, CONST ::RECT*, HRGN, UINT>(pFunc, hWnd, lprcUpdate, hrgnUpdate, flags);
+        return Library::Call<BOOL, HWND, const ::RECT*, HRGN, UINT>(pFunc, hWnd, lprcUpdate, hrgnUpdate, flags);
     }
 
     int User32::SetWindowRgn(HWND hWnd, HRGN hRgn, BOOL bRedraw)
@@ -236,11 +236,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
 
-    BOOL User32::ValidateRect(HWND hWnd, CONST::RECT* lpRect)
+    BOOL User32::ValidateRect(HWND hWnd, const::RECT* lpRect)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, ValidateRect);
-        return Library::Call<BOOL, HWND, CONST ::RECT*>(pFunc, hWnd, lpRect);
+        return Library::Call<BOOL, HWND, const ::RECT*>(pFunc, hWnd, lpRect);
     }
 
     BOOL User32::ValidateRgn(HWND hWnd, HRGN hRgn)

@@ -152,11 +152,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT, WORD>(pFunc, hWnd, lpText, lpCaption, uType, wLanguageId);
     }
 
-    int User32::MessageBoxIndirectT(const ::LPMSGBOXPARAMS lpmbp)
+    int User32::MessageBoxIndirectT(const ::MSGBOXPARAMS* lpmbp)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, MessageBoxIndirect);
-        return Library::Call<int, const ::LPMSGBOXPARAMS>(pFunc, lpmbp);
+        return Library::Call<int, const ::MSGBOXPARAMS*>(pFunc, lpmbp);
     }
 
     //NOTE: Thanks to CPian Maurizio Pisano

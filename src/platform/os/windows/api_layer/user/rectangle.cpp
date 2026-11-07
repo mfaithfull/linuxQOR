@@ -93,18 +93,18 @@ namespace qor { namespace win { namespace api {
     //163 / 265 by user decision. Its ../returncheck.h include (then :11) used nothing from it: one of T7's 35 dead
     //includes, removed 5 Nov 2026 when the folder-wide decision behind T7 was taken.
 
-    BOOL User32::CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc)
+    BOOL User32::CopyRect(::LPRECT lprcDst, const::RECT* lprcSrc)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CopyRect);
-        return Library::Call<BOOL, ::LPRECT, CONST ::RECT*>(pFunc, lprcDst, lprcSrc);
+        return Library::Call<BOOL, ::LPRECT, const ::RECT*>(pFunc, lprcDst, lprcSrc);
     }
 
-    BOOL User32::EqualRect(CONST::RECT* lprc1, CONST::RECT* lprc2)
+    BOOL User32::EqualRect(const::RECT* lprc1, const::RECT* lprc2)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, EqualRect);
-        return Library::Call<BOOL, CONST ::RECT*, CONST RECT*>(pFunc, lprc1, lprc2);
+        return Library::Call<BOOL, const ::RECT*, const RECT*>(pFunc, lprc1, lprc2);
     }
 
     BOOL User32::InflateRect(::LPRECT lprc, int dx, int dy)
@@ -114,18 +114,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
     }
 
-    BOOL User32::IntersectRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2)
+    BOOL User32::IntersectRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, IntersectRect);
-        return Library::Call<BOOL, ::LPRECT, CONST ::RECT*, CONST ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
+        return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
-    BOOL User32::IsRectEmpty(CONST::RECT* lprc)
+    BOOL User32::IsRectEmpty(const::RECT* lprc)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, IsRectEmpty);
-        return Library::Call<BOOL, CONST ::RECT*>(pFunc, lprc);
+        return Library::Call<BOOL, const ::RECT*>(pFunc, lprc);
     }
 
     BOOL User32::OffsetRect(::LPRECT lprc, int dx, int dy)
@@ -135,11 +135,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
     }
 
-    BOOL User32::PtInRect(CONST::RECT* lprc, POINT pt)
+    BOOL User32::PtInRect(const::RECT* lprc, POINT pt)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, PtInRect);
-        return Library::Call<BOOL, CONST ::RECT*, POINT>(pFunc, lprc, pt);
+        return Library::Call<BOOL, const ::RECT*, POINT>(pFunc, lprc, pt);
     }
 
     BOOL User32::SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom)
@@ -156,18 +156,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, ::LPRECT>(pFunc, lprc);
     }
 
-    BOOL User32::SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2)
+    BOOL User32::SubtractRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, SubtractRect);
-        return Library::Call<BOOL, ::LPRECT, CONST ::RECT*, CONST ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
+        return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
-    BOOL User32::UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2)
+    BOOL User32::UnionRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, UnionRect);
-        return Library::Call<BOOL, ::LPRECT, CONST ::RECT*, CONST RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
+        return Library::Call<BOOL, ::LPRECT, const ::RECT*, const RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
 }}}//qor::win::api

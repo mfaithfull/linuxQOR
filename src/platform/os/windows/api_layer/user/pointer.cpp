@@ -233,11 +233,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, UINT32, UINT32, UINT32, POINTER_DEVICE_PROPERTY*, LONG* >(pFunc, pointerId, historyCount, propertiesCount, pProperties, pValues);
     }
 
-    BOOL User32::InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE device, CONST POINTER_TYPE_INFO* pointerInfo, UINT32 count)
+    BOOL User32::InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE device, const POINTER_TYPE_INFO* pointerInfo, UINT32 count)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, InjectSyntheticPointerInput);
-        return Library::Call< BOOL, HSYNTHETICPOINTERDEVICE, CONST POINTER_TYPE_INFO*, UINT32 >(pFunc, device, pointerInfo, count);
+        return Library::Call< BOOL, HSYNTHETICPOINTERDEVICE, const POINTER_TYPE_INFO*, UINT32 >(pFunc, device, pointerInfo, count);
     }
 
     BOOL User32::IsMouseInPointerEnabled(void)

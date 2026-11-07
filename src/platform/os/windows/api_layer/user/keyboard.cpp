@@ -271,18 +271,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, UINT, UINT, PBYTE, LPWORD, UINT, HKL >(pFunc, uVirtKey, uScanCode, lpKeyState, lpChar, uFlags, dwhkl);
     }
 
-    int User32::ToUnicode(UINT wVirtKey, UINT wScanCode, const PBYTE lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags)
+    int User32::ToUnicode(UINT wVirtKey, UINT wScanCode, const BYTE* lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, ToUnicode);
-        return Library::Call< int, UINT, UINT, const PBYTE, LPWSTR, int, UINT >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags);
+        return Library::Call< int, UINT, UINT, const BYTE*, LPWSTR, int, UINT >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags);
     }
 
-    int User32::ToUnicodeEx(UINT wVirtKey, UINT wScanCode, const PBYTE lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags, HKL dwhkl)
+    int User32::ToUnicodeEx(UINT wVirtKey, UINT wScanCode, const BYTE* lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags, HKL dwhkl)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, ToUnicodeEx);
-        return Library::Call< int, UINT, UINT, const PBYTE, LPWSTR, int, UINT, HKL >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags, dwhkl);
+        return Library::Call< int, UINT, UINT, const BYTE*, LPWSTR, int, UINT, HKL >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags, dwhkl);
     }
 
     BOOL User32::UnloadKeyboardLayout(HKL hkl)

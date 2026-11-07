@@ -74,25 +74,25 @@ namespace qor { namespace win { namespace api {
     //COMBOBOXINFO/MSGBOXPARAMS sites noted under U15/U23. It remains a reinterpret_cast between unrelated types rather
     //than a conversion, which is a winqor_gui observation, not a defect in this layer.
 
-    int User32::FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr)
+    int User32::FillRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, FillRect);
-        return Library::Call< int, HDC, CONST ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
     }
 
-    int User32::FrameRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr)
+    int User32::FrameRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, FrameRect);
-        return Library::Call< int, HDC, CONST ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
     }
 
-    BOOL User32::InvertRect(HDC hDC, CONST::RECT* lprc)
+    BOOL User32::InvertRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, InvertRect);
-        return Library::Call< BOOL, HDC, CONST ::RECT* >(pFunc, hDC, lprc);
+        return Library::Call< BOOL, HDC, const ::RECT* >(pFunc, hDC, lprc);
     }
 
 }}}//qor::win::api

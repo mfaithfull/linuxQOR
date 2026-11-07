@@ -101,18 +101,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call< LONG, HWND, int >(pFunc, hWnd, nIndex);
     }
 
-    ATOM User32::RegisterClassT(CONST WNDCLASS* lpWndClass)
+    ATOM User32::RegisterClassT(const WNDCLASS* lpWndClass)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, RegisterClass);
-        return Library::Call< ATOM, CONST WNDCLASS* >(pFunc, lpWndClass);
+        return Library::Call< ATOM, const WNDCLASS* >(pFunc, lpWndClass);
     }
 
-    ATOM User32::RegisterClassExT(CONST WNDCLASSEX* lpwcx)
+    ATOM User32::RegisterClassExT(const WNDCLASSEX* lpwcx)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, RegisterClassEx);
-        return Library::Call< ATOM, CONST WNDCLASSEX* >(pFunc, lpwcx);
+        return Library::Call< ATOM, const WNDCLASSEX* >(pFunc, lpwcx);
     }
 
     ULONG_PTR User32::SetClassLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong)

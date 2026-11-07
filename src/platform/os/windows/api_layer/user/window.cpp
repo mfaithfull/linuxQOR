@@ -154,7 +154,7 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, CascadeWindows);
-        return Library::Call<WORD, HWND, UINT, CONST ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
+        return Library::Call<WORD, HWND, UINT, const ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
     }
 
     BOOL User32::ChangeWindowMessageFilter(UINT message, DWORD dwFlag)

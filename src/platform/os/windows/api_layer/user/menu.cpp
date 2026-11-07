@@ -278,11 +278,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HMENU, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpMenuName);
     }
 
-    HMENU User32::LoadMenuIndirectT(CONST MENUTEMPLATE* lpMenuTemplate)
+    HMENU User32::LoadMenuIndirectT(const MENUTEMPLATE* lpMenuTemplate)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, LoadMenuIndirect);
-        return Library::Call<HMENU, CONST MENUTEMPLATE*>(pFunc, lpMenuTemplate);
+        return Library::Call<HMENU, const MENUTEMPLATE*>(pFunc, lpMenuTemplate);
     }
 
     int User32::MenuItemFromPoint(HWND hWnd, HMENU hMenu, POINT ptScreen)

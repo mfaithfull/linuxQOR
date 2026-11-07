@@ -3,7 +3,10 @@
 Last updated 7 Nov 2026 - **T8 step 6g is in: `legacy.cpp` wraps the 6 held-open legacy names (5 members), so the folder
 is 45 sources / 632 members / 535 bindings and the coverage backlog is empty - **U18 and T8 are CLOSED** (D19 decided the
 6 names in scope, D20 fixed the variadic wrapper shape; `docs/agent/DECISIONS.md`). The 38 review-queue TUs stay closed from
-session 37**. Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
+session 37**; **U25 and U23 are both in on the code lines** (7 Nov 2026: `CONST` normalised to lowercase `const`
+folder-wide - **0** `CONST` tokens on code lines, the 24 that remain are comment lines in 10 TUs - and the 5 class-A
+const-on-pointer sites rewritten to `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`, which moves 5 mangled
+names `QE..` -> `PE..`). Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
 consistency, safety, UB and conformance to the api_layer conventions. One translation unit per session, and **commit at
 close**: a clean `git status` plus this file is all a session needs to resume after a context reset.
 
@@ -90,7 +93,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `devicecontext.cpp` | 114 | `archive/tu/devicecontext.md` | closed |
 | `devicemanagement.cpp` | 86 | `archive/tu/devicemanagement.md` | closed |
 | `dialog.cpp` | 191 | `archive/tu/dialog.md` | closed |
-| `displayconfig.cpp` | 194 | banner `:9` | closed (T8 6d, added 6 Nov 2026) |
+| `displayconfig.cpp` | 195 | banner `:9` | closed (T8 6d, added 6 Nov 2026) |
 | `dpi.cpp` | 271 | banner `:9` | closed (T8 6b, added 6 Nov 2026) |
 | `errorhandling.cpp` | 92 | `archive/tu/errorhandling.md` | closed |
 | `filledshapes.cpp` | 98 | `archive/tu/filledshapes.md` | closed |
@@ -98,10 +101,10 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `hook.cpp` | 107 | `archive/session-log*.md` | closed |
 | `icon.cpp` | 168 | `archive/session-log*.md` | closed |
 | `ime.cpp` | 54 | `archive/session-log*.md` | closed |
-| `keyboard.cpp` | 315 | `archive/session-log*.md` | closed |
+| `keyboard.cpp` | 316 | `archive/session-log*.md` | closed |
 | `legacy.cpp` | 162 | banner `:12` | closed (T8 6g, added 7 Nov 2026) |
 | `mdi.cpp` | 111 | `archive/tu/mdi.md` | closed |
-| `menu.cpp` | 354 | `archive/tu/menu.md` | closed |
+| `menu.cpp` | 358 | `archive/tu/menu.md` | closed |
 | `message.cpp` | 273 | `archive/tu/message.md` | closed |
 | `misc.cpp` | 255 | banner `:12` | closed (T8 6f, added 7 Nov 2026) |
 | `monitor.cpp` | 161 | `archive/tu/monitor.md` | closed |
@@ -113,12 +116,12 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `rectangle.cpp` | 173 | `archive/tu/rectangle.md` | closed |
 | `resource.cpp` | 40 | `archive/tu/resource.md` | closed |
 | `scrollbar.cpp` | 155 | `archive/tu/scrollbar.md` | closed |
-| `systemshutdown.cpp` | 101 | `archive/tu/systemshutdown.md` | closed |
-| `text.cpp` | 124 | banner `:16` | closed |
+| `systemshutdown.cpp` | 124 | `archive/tu/systemshutdown.md` | closed |
+| `text.cpp` | 125 | banner `:16` | closed |
 | `timer.cpp` | 32 | `archive/tu/accessibility-timer.md` | closed |
 | `touch.cpp` | 249 | banner `:9` | closed (T8 6c, added 6 Nov 2026) |
-| `window.cpp` | 691 | banner `:16` | closed |
-| `windowclass.cpp` | 157 | banner `:16` | closed |
+| `window.cpp` | 705 | banner `:16` | closed |
+| `windowclass.cpp` | 160 | banner `:16` | closed |
 | `windowprocedure.cpp` | 89 | banner `:16` | closed |
 | `windowproperties.cpp` | 113 | banner `:16` | closed |
 | `winqor_api_user.cpp` | 83 | banner `:4` | closed |
@@ -137,8 +140,12 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
   includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
   four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image), **U18** and **T8** (7 Nov 2026, D19 + D20:
-  the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions).
-- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19, U20, U21, U22, U23, U24, U25, U26, U27,
+  the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions), **U23** (7 Nov 2026:
+  the 5 class-A const-on-pointer sites fixed on the code lines - `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`
+  over declaration + definition + `Library::Call<>` list = 15 sites in `user32.h`, `keyboard.cpp`, `dialog.cpp`, `text.cpp`;
+  the fix is **not** symbol-neutral, all 5 mangled names move `QE..` -> `PE..`; two cross-library follow-ups recorded not
+  done, and the negative control now rejects write-through with 2 x `C3892`).
+- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19, U20, U21, U22, U24, U25, U26, U27,
   P3, P4, P6, T1-T6. Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 

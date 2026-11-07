@@ -179,11 +179,11 @@ namespace qor { namespace win { namespace api {
     //The array element type is POINTER_TOUCH_INFO, the same structure pointer.cpp wraps the GetPointerTouchInfo*
     //accessors for - this is where the 6a and 6c families meet, and it is why the Touch-named pointer members were
     //not wrapped twice. count is the caller's, and the SDK reads (does not write) the array.
-    BOOL User32::InjectTouchInput(UINT32 count, CONST POINTER_TOUCH_INFO *contacts)
+    BOOL User32::InjectTouchInput(UINT32 count, const POINTER_TOUCH_INFO *contacts)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, InjectTouchInput);
-        return Library::Call< BOOL, UINT32, CONST POINTER_TOUCH_INFO * >(pFunc, count, contacts);
+        return Library::Call< BOOL, UINT32, const POINTER_TOUCH_INFO * >(pFunc, count, contacts);
     }
 
 

@@ -108,18 +108,18 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HDC, LPTSTR, int, ::LPRECT, UINT, ::LPDRAWTEXTPARAMS >(pFunc, hdc, lpchText, cchText, lprc, format, lpdtp);
     }
 
-    DWORD User32::GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, CONST LPINT lpnTabStopPositions)
+    DWORD User32::GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetTabbedTextExtent);
-        return Library::Call< DWORD, HDC, LPCTSTR, int, int, CONST LPINT >(pFunc, hdc, lpString, chCount, nTabPositions, lpnTabStopPositions);
+        return Library::Call< DWORD, HDC, LPCTSTR, int, int, const INT* >(pFunc, hdc, lpString, chCount, nTabPositions, lpnTabStopPositions);
     }
 
-    LONG User32::TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin)
+    LONG User32::TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions, int nTabOrigin)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, TabbedTextOut);
-        return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, CONST ::LPINT, int >(pFunc, hdc, x, y, lpString, chCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
+        return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, const INT*, int >(pFunc, hdc, x, y, lpString, chCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
     }
 
 }}}//qor::win::api
