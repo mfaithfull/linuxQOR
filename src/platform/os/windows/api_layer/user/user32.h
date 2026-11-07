@@ -697,6 +697,7 @@ namespace qor { namespace win { namespace api {
 
         //System Shutdwown functions
         static BOOL ExitWindowsEx(UINT uFlags, DWORD dwReason);
+        static BOOL CancelShutdown(void);
         static BOOL LockWorkStation(void);
         static BOOL ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason);
         static BOOL ShutdownBlockReasonDestroy(HWND hWnd);
@@ -782,6 +783,8 @@ namespace qor { namespace win { namespace api {
         //Power Management functions
         HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);
         BOOL UnregisterPowerSettingNotification(HPOWERNOTIFY Handle);
+        static HPOWERNOTIFY RegisterSuspendResumeNotification(HANDLE hRecipient, DWORD Flags);
+        static BOOL UnregisterSuspendResumeNotification(HPOWERNOTIFY Handle);
 
         //Console functions
         static NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD ConsoleInformationLength);

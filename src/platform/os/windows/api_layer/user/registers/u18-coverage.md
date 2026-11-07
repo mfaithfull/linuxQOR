@@ -210,3 +210,22 @@ are the pre-existing `CopyCursorT -> CopyIcon` and `CreateWindowT -> CreateWindo
 `examples` and `test` (`_tmp_t8_6d_consumers.ps1`), which is worth recording because the pre-flags expected the opposite:
 display enumeration was likelier than touch to have a live in-tree SDK call, and it has none. U19 stays FROZEN at session 34.
 
+
+**6e (Shutdown / power, 3) DONE 7 Nov 2026** - the bucket drained: `CancelShutdown` (ordinal 22) joined the existing
+`//System Shutdwown functions` section and `RegisterSuspendResumeNotification` (2F6) / `UnregisterSuspendResumeNotification`
+(3CD) joined the existing `//Power Management functions` section, so the header grew 792 -> 795 lines with **no new section**;
+`powermanagement.cpp` is the new TU (2 members / 2 bindings) and `systemshutdown.cpp` gained `CancelShutdown` (6 / 6). All 3
+bind bare `qor_pp_useswinapi` - 0 function-like macros and 0 A/W-sibling rows, so `user32.h:9-17` gained no `#undef`. The
+handle type is `HPOWERNOTIFY` = `PVOID`, declared at winuser.h:3985 behind `#if !defined(_HPOWERNOTIFY_DEF_)` inside
+`#if(_WIN32_WINNT >= 0x0502)`, and the SDK writes the suspend/resume prototypes with a **space** before the paren, which is
+why every name pattern in these scans allows `\s*(`. Gate: probe exit 0, both touched TUs standalone at /W4 exit 0, folder
+43/43 exit 0, all-libraries PRE 110 -> POST 111 .cpp echoes at exit 2 both sides (standing fatal C1083 at opengl/wgl.cpp:31)
+with a diagnostics set-difference of 0 new / 0 gone, and the `cl /EP` digests print 6 + 2 binding literals, all module literal
+"user32", all byte-equal to export names, 0 duplicates. Counts (comment-stripped): **43 sources / 604 members / 507 bindings**.
+Coverage re-measure: **727 of 1,018** export names covered, **38** declared-and-unwrapped raw, 253 no-prototype; the buckets
+instrument prints `0: Shutdown / power notification []`, and the raw 38 = Misc **24** + legacy hook 4 + legacy word / class-long
+10, of which 7 are excluded superseded twins and 1 is the instrument artifact, so the net backlog is **30** = Misc 24 + held-open
+legacy 6. U19 stays FROZEN at session 34 (0 raw consumer hits for all 3 names over 3,228 sources). Next tranche is **6f - Misc,
+24 names**, whose measured SDK facts are written into `preflags.md` (replaced wholesale); `tmp/_tmp_t8_6f_pre.ps1` derives the
+bucket from `tmp/_tmp_u18_gap_sdk.txt`, so run `tmp/_tmp_u18_coverage4.ps1` first or a stale gap list feeds the previous family
+back to you.

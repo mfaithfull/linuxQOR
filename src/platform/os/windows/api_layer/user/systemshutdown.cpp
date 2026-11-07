@@ -62,12 +62,35 @@ namespace qor { namespace win { namespace api {
     //(winnt.h:21939-:21963), and that single line makes 93 of the 106 api_layer TUs fail with C2061 on x86
     //(tmp/_tmp_s31_x86_apiall_s31.txt) - recorded in registers/u6.md's session-31 addendum. It also hid the C2373 pair
     //above from every check until this session compiled for x86.
+    //
+    //Addendum, 7 Nov 2026 (T8 step 6e, tranche 6 part 6): the section gained a SIXTH member, so the counts above are
+    //session 31's and stand superseded - CancelShutdown (winuser.h:13587 BOOL WINAPI CancelShutdown(VOID);, export
+    //ordinal 22 / RVA 000530E0 in tmp/_tmp_user32_exports.txt) is declared at user32.h:700 and defined here at :89-:94,
+    //between ExitWindowsEx and LockWorkStation, so the section's six declarations at user32.h:699-:704 now pair 6/6 with
+    //definitions in header order, and this TU contributes 6 qor_pp_useswinapi sites, 6 qor_pp_fcontext and 6 Library::Call.
+    //It binds bare: tmp/_tmp_t8_6e_pre.ps1 measures 0 function-like macros and 0 A/W siblings for the name, and cl /EP
+    //over this TU emits 6 binding literals against L"user32", each byte-equal to an export name with 0 duplicates
+    //(_tmp_t8_6c_ppclass.ps1 over tmp/_tmp_t8_6e_pp_systemshutdown.txt). Unlike the five above it is NOT inside #ifndef
+    //NOUSER and carries no version floor - its guard stack is #ifndef _WINUSER_ ;; #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP),
+    //so its declaration and wrapper are unconditional, same shape as the 6c gesture five. Same return convention: BOOL,
+    //no _Check_return_ in the SDK, 0 Win32ErrorHandler / 0 CheckReturn here.
 
     BOOL User32::ExitWindowsEx(UINT uFlags, DWORD dwReason)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, ExitWindowsEx);
         return Library::Call< BOOL, UINT, DWORD >(pFunc, uFlags, dwReason);
+    }
+
+    //BOOL, and FALSE means the shutdown abort did not take - the SDK carries no _Check_return_ here, so a discarded
+    //return leaves no trace on either side (U1/U2: no Win32ErrorHandler, no CheckReturn; the value is the caller's to read).
+    //CancelShutdown aborts a shutdown already in progress - it is the counterpart of the ExitWindowsEx above, not of the
+    //ShutdownBlockReason trio - and takes no argument, so the wrapper is a bare Library::Call< BOOL >(pFunc).
+    BOOL User32::CancelShutdown(void)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, CancelShutdown);
+        return Library::Call< BOOL >(pFunc);
     }
 
     BOOL User32::LockWorkStation(void)

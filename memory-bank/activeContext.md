@@ -1,12 +1,13 @@
 # Active Context
 
 Last updated: 7 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`), 6b
-(DPI / awareness, 21 names, `dpi.cpp`), 6c (Touch / gesture, 14 names, `touch.cpp`) and 6d (Display configuration,
-7 names, `displayconfig.cpp`) are in, so that folder is now 42 sources / 601 members / 504 bindings.** Step 6
-continues one family per session; the next tranche is **6e - Shutdown / power, 3 names** (pre-flags in
-`.../api_layer/user/preflags.md`), and the remaining backlog re-measures at **33 names** (dispositions in
+(DPI / awareness, 21 names, `dpi.cpp`), 6c (Touch / gesture, 14 names, `touch.cpp`), 6d (Display configuration,
+7 names, `displayconfig.cpp`) and 6e (Shutdown / power, 3 names, `powermanagement.cpp` + `CancelShutdown` into
+`systemshutdown.cpp`) are in, so that folder is now 43 sources / 604 members / 507 bindings.** Step 6
+continues one family per session; the next tranche is **6f - Misc, 24 names** (pre-flags in
+`.../api_layer/user/preflags.md`), and the remaining backlog re-measures at **38 raw = 30 net** names (dispositions in
 `.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed: all 38 review sources
-were reviewed by session 37, so no review banner is owed - the four coverage TUs carry their own.
+were reviewed by session 37, so no review banner is owed - the five coverage TUs carry their own.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.
@@ -20,7 +21,7 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - TU review complete, T8 step 6e (Shutdown / power, 3 names) is next
+## Current focus: winqor_api_user - TU review complete, T8 step 6f (Misc, 24 names) is next
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
