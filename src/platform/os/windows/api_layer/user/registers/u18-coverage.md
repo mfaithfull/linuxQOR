@@ -15,7 +15,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | Pointer (`GetPointer*`, `Register*PointerInputTarget*`, synthetic-pointer, mouse-in-pointer) | 32 | **WRAPPED 6 Nov 2026** - T8 step 6a, new TU `pointer.cpp` |
 | DPI / awareness (`*Dpi*`, `*Awareness*`, `*Hosting*`, `EnableNonClientDpiScaling`) | 21 | **WRAPPED 6 Nov 2026** - T8 step 6b, new TU `dpi.cpp` |
 | Touch / gesture (`*Touch*`, `*Gesture*`) | 14 | **WRAPPED 6 Nov 2026** - T8 step 6c, new TU `touch.cpp` |
-| Display config (`*DisplayConfig*`, `*DisplayAutoRotation*`) | 7 | **In scope** - tranche 6d |
+| Display config (`*DisplayConfig*`, `*DisplayAutoRotation*`) | 7 | **WRAPPED 6 Nov 2026** - T8 step 6d, new TU `displayconfig.cpp` |
 | Shutdown / power (`CancelShutdown`, `*SuspendResumeNotification`) | 3 | **In scope** - tranche 6e |
 | Misc (menu, clipboard, affinity, feedback, immersive, tooltip, timers, undocumented-but-declared) | 26 | **In scope** - tranche 6f; 2 of these are T8 step 5, below |
 | Legacy / utility with no wrapped replacement (`GetWindowWord`, `SetWindowWord`, `SetMessageQueue`, `DragObject`, `wsprintfA/W`) | 6 | **Open question** - counted in until decided |
@@ -25,6 +25,7 @@ as declared-and-unwrapped. That 117 reduces as follows, and the reduced list is 
 | **— re-measured 6 Nov 2026, after steps 5 and 6a** | **75** | the Pointer row (32) and the step-5 pair (2) are gone: 21+14+7+3+24+6 |
 | **— re-measured 6 Nov 2026, after 6b** | **54** | the DPI / awareness row is empty too: 14+7+3+24+6 |
 | **— re-measured 6 Nov 2026, after 6c** | **40** | the Touch / gesture row is empty too: 7+3+24+6 (raw gap 62 -> 48) |
+| **— re-measured 6 Nov 2026, after 6d** | **33** | the Display config row is empty too: 3+24+6 (raw gap 48 -> 41) |
 
 **Excluded - superseded twins (measured, not assumed).** `GetClassLongA`/`GetClassLongW` and `SetClassLongA`/`SetClassLongW`
 are exported (12C/12F, 323/326) but their `*Ptr` replacements are exports too (12D/12E, 324/325) and are wrapped at
@@ -164,4 +165,48 @@ reports are the pre-existing `CopyCursorT -> CopyIcon` and `CreateWindowT -> Cre
 **U19 for this family: 0 LAYER, 0 BYPASS** - 0 raw hits for all 14 names over the 3,228 `.h`/`.hpp`/`.cpp`/`.cxx` of
 `src`, `examples` and `test` (`_tmp_t8_6c_consumers.ps1`), so unlike 6b there is no split to book. U19 stays FROZEN at
 session 34.
+
+
+## Tranche 6d closed - the Display configuration family, 6 Nov 2026
+
+All 7 names in the Display config row are now wrapped: new TU `displayconfig.cpp`, 7 definitions, 7 declarations in a new
+`//Display configuration functions` section at `user32.h:648-662`. **Nothing shed**: all 7 are exported with ordinals
+(`BE`, `BF`, `14B`, `14C`, `2BA`, `334`, `335`), all 7 are declared in an SDK header, and `_tmp_t8_6d_pre.ps1` measures 0
+function-like macros, 0 `A`/`W` siblings and 0 already declared - 7 in, 7 wrapped. It is the first tranche whose bucket
+filter needs no judgement call: unlike 6a/6c, no second family re-matches a name in the gap list.
+
+Guard stacks (`_tmp_t8_6d_pre.ps1`, forward pass): **5** innermost `#if(WINVER >= 0x0601)` inside
+`#ifdef _WINGDI_ ;; #ifndef NOGDI` (the WINVER block runs `winuser.h:13198`-`:13243`, inside the enclosing NOGDI /
+`_WINGDI_` pair that closes at `:13246` / `:13247`), **2** innermost `#if(WINVER >= 0x0602)`
+with no `_WINGDI_` test (block closes `:16083`); all 7 additionally inside the desktop partition. `WINVER` defaults to
+`0x0A00`, so all 7 are live and the layer adds no `#if`. `_tmp_t8_6d_protos.cpp` (7 function-pointer typedefs initialised
+with `&<SDK name>`, `/W4`, no QOR define, no version macro, exit 0) settles liveness and signature conformance at once.
+
+**Two pre-flag claims were wrong, and one of them is a new instrument limit.** The 6c-close pre-flags stated every
+`DISPLAYCONFIG_*` type is declared in `winuser.h` itself, citing `:13213`, `:13215`, `:13229` - those lines are the
+**parameter use sites** inside `SetDisplayConfig` and `QueryDisplayConfig`, which is exactly what a first-hit name search
+finds. A definition scan over all 1,798 `um` + `shared` headers of SDK 10.0.26100.0 (`_tmp_t8_6d_types.ps1`) puts the types
+in **`wingdi.h`**: `DISPLAYCONFIG_MODE_INFO` `:2931`, `PATH_SOURCE_INFO` `:2950`, `PATH_TARGET_INFO` `:2973`,
+`PATH_INFO` `:3005`, `TOPOLOGY_ID` `:3022`, `DEVICE_INFO_TYPE` `:3053`, `DEVICE_INFO_HEADER` `:3062`. The same file holds
+the `QDC_*` (`:3330`-`:3335`) and `SDC_*` (`:3341`-`:3360`) groups the `flags` parameters take, so those two parameter
+lists cannot be read from `winuser.h` alone - the pre-flags quoted `SDC_SAVE`, which does not exist: the name is
+`SDC_SAVE_TO_DATABASE` (`:3352`). And **`windisp.h` does not exist in this SDK** at all (absent from the tree, 0 `um`
+headers include it) although the online documentation names it as this family's header. The guard consequence: `NOGDI`
+removes the types and the five prototypes together, while `user32.h` declares them unconditionally, so a consumer that
+defines `NOGDI` would not compile this header - 0 in-tree sources define `NOGDI` or `NOUSER` (measured over `src`,
+`cmake`, `examples`, `test`). The published signatures were taken from the `winuser.h` declaration block, not from the
+digest, for the reason 6c recorded: the `proto=` line truncates on the first `;`, and these parameter lists carry inline
+SAL comments.
+
+Folder figures re-measured the same day (`_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`): **601 members** / 1,018
+export names / **724 covered** / **41** declared-and-unwrapped / 253 no-prototype; 594 -> 601 and 717 -> 724 are both
+exactly +7. The buckets instrument prints `0: Display config family []` alongside the three already-empty rows, so four
+families are drained. 41 raw = **33 net backlog** (Shutdown / power 3, Misc 24, held-open legacy 6) + 7 excluded
+superseded twins + 1 instrument artifact. Binding sites over the 42 sources re-count at **504**
+(`_tmp_wrong_stem_scan.ps1`: 42 files, 504 `User32::` definitions, 504 bindings, 1-to-1; the 2 mismatches it still reports
+are the pre-existing `CopyCursorT -> CopyIcon` and `CreateWindowT -> CreateWindowEx` - `displayconfig.cpp` contributes 0).
+
+**U19 for this family: 0 LAYER, 0 BYPASS** - 0 raw hits for all 7 names over the 3,228 `.h`/`.hpp`/`.cpp`/`.cxx` of `src`,
+`examples` and `test` (`_tmp_t8_6d_consumers.ps1`), which is worth recording because the pre-flags expected the opposite:
+display enumeration was likelier than touch to have a live in-tree SDK call, and it has none. U19 stays FROZEN at session 34.
 

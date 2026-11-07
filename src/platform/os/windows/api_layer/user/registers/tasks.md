@@ -231,8 +231,10 @@ P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
       2026** - new TU `dpi.cpp`, so the folder is **40 sources / 580 members / 483 bindings** and the backlog re-measures at
       **54** (14 Touch/gesture + 7 Display config + 3 Shutdown/power + 24 Misc + 6 held-open legacy). **6c (Touch /
       gesture, 14) DONE 6 Nov 2026** - new TU `touch.cpp`, so the folder is **41 sources / 594 members / 497 bindings**
-      and the backlog re-measures at **40** (7 Display config + 3 Shutdown/power + 24 Misc + 6 held-open legacy). Next
-      tranche is **6d - Display configuration, 7 names**, whose pre-flags are in `preflags.md`. **Steps 1-5 are all in
+      and the backlog re-measures at **40** (7 Display config + 3 Shutdown/power + 24 Misc + 6 held-open legacy). **6d
+      (Display configuration, 7) DONE 6 Nov 2026** - new TU `displayconfig.cpp`, so the folder is **42 sources / 601
+      members / 504 bindings** and the backlog re-measures at **33** (3 Shutdown/power + 24 Misc + 6 held-open legacy).
+      Next tranche is **6e - Shutdown / power, 3 names**, whose pre-flags are in `preflags.md`. **Steps 1-5 are all in
       as of 6 Nov 2026**, so U18 now waits only on step 6.
   U18 closes when steps 1-5 are in and every one of the 109 backlog names is either wrapped or carries a written exclusion.
   Do not mark it closed on any partial pass.

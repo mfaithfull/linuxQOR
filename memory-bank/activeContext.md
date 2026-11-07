@@ -1,11 +1,12 @@
 # Active Context
 
-Last updated: 6 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`), 6b
-(DPI / awareness, 21 names, `dpi.cpp`) and 6c (Touch / gesture, 14 names, `touch.cpp`) are in, so that folder is now
-41 sources / 594 members / 497 bindings.** Step 6 continues one family per session; the next tranche is **6d - Display
-configuration, 7 names** (pre-flags in `.../api_layer/user/preflags.md`), and the remaining backlog re-measures at
-**40 names** (dispositions in `.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed:
-all 38 review sources were reviewed by session 37, so no review banner is owed - the three coverage TUs carry their own.
+Last updated: 7 Nov 2026 - **T8 steps 1-5 are done and steps 6a (Pointer, 32 names, `pointer.cpp`), 6b
+(DPI / awareness, 21 names, `dpi.cpp`), 6c (Touch / gesture, 14 names, `touch.cpp`) and 6d (Display configuration,
+7 names, `displayconfig.cpp`) are in, so that folder is now 42 sources / 601 members / 504 bindings.** Step 6
+continues one family per session; the next tranche is **6e - Shutdown / power, 3 names** (pre-flags in
+`.../api_layer/user/preflags.md`), and the remaining backlog re-measures at **33 names** (dispositions in
+`.../api_layer/user/registers/u18-coverage.md`). The TU queue that preceded it is closed: all 38 review sources
+were reviewed by session 37, so no review banner is owed - the four coverage TUs carry their own.
 Session 37 fixed nothing - the TU is the library's module glue (0 wrappers, 0 bindings) and measured clean - and its
 durable findings, including one measured build-system hazard left deliberately unregistered, are in its own review
 banner at `winqor_api_user.cpp:4-72`.
@@ -19,7 +20,7 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - TU review complete, the T8 conformance pass is next
+## Current focus: winqor_api_user - TU review complete, T8 step 6e (Shutdown / power, 3 names) is next
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
@@ -35,9 +36,9 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   1 return type, 4 parameter types, **102** parameter names (not the 16 the per-TU records added up to), 2 unwrapped
   `*ForPerMonitorDPI` exports, then a **109-name** coverage backlog. Steps 1-5 are in as of 6 Nov 2026 - the names pass
   renamed 101 of the 102 across header and definition together, and step 2's consumer fix only landed when that rename
-  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Steps **6a** (Pointer, 32) and **6b**
-  (DPI / awareness, 21) are in too, so
-  the backlog is **54** names. (scope decided 5 Nov: documented
+  made the `UINT_PTR` change fail to compile in `ui/gui/controllers/i_m/menu.cpp`. Steps **6a** (Pointer, 32), **6b**
+  (DPI / awareness, 21), **6c** (Touch / gesture, 14) and **6d** (Display configuration, 7) are in too, so
+  the backlog is **33** names. (scope decided 5 Nov: documented
   exports only, superseded families excluded - the 253 prototype-less exports are out; per-name dispositions in
   `.../registers/u18-coverage.md`). Other leads - open items, the
   T1-T6

@@ -51,3 +51,32 @@ Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1`
   re-introduces the divergence the scan is meant to remove (`tmp/_tmp_t8_rename.ps1` therefore edits both, scoped to one
   member's extent so a common name like `uFlags` in other declarations is untouched, and uses `-creplace` so `hmenu` ->
   `hMenu` cannot touch the type `HMENU`).
+- **A first-hit name search reports the USE site, not the DEFINITION - so it cannot answer "where is this type
+  declared".** Measured 6 Nov 2026 on the T8 6d pre-flags: the claim that `DISPLAYCONFIG_PATH_INFO` /
+  `DISPLAYCONFIG_MODE_INFO` / `DISPLAYCONFIG_TOPOLOGY_ID` are declared in `winuser.h` at `:13213`, `:13215`, `:13229` came
+  from a first-hit scan, and all three lines are parameter slots inside the `SetDisplayConfig` / `QueryDisplayConfig`
+  prototypes. The types are defined in `wingdi.h` (`:2931`, `:3005`, `:3022`), together with the `QDC_*` / `SDC_*` groups
+  the `flags` parameters take (`:3330`, `:3341`) - which is what makes the family's `_WINGDI_` / `NOGDI` guard pair
+  legible. Ask the question with a definition pattern (`typedef[^;]*\bType\b`) over every `um` + `shared` header
+  (`tmp/_tmp_t8_6d_types.ps1`, 1,798 files). The same run also settled a documentation claim: **`windisp.h` does not exist
+  in this SDK** even though the online page for these functions names it.
+- **The SDK writes some prototypes as `Name (`, with a space before the parenthesis.** Measured 6 Nov 2026 on the T8 6e
+  pre-scan: `winuser.h:4009` `RegisterSuspendResumeNotification (` and `:4017` `UnregisterSuspendResumeNotification (`. A
+  `'\b' + $name + '\('` pattern therefore reports **no declaration at all** for a name that is exported and declared - the
+  first run found 0 hits for both and the tranche looked out of scope. Every name-matching pattern in a pre-scan must be
+  `\bName\s*\(` (the instruments `tmp/_tmp_t8_6e_pre.ps1` and its clones now are).
+- **A citation auditor that resolves a bare `:NNNN` to the header named nearest above it reports true numbers as
+  OUT-OF-RANGE.** Measured 7 Nov 2026 on the T8 6d banner (`tmp/_tmp_t8_6d_selfcite.ps1`): the audit tracks one
+  running header per line and tests `wingdi.h` **before** `winuser.h`, so a line like `(block closes :16083)`
+  whose nearest header mention above is `wingdi.h` gets checked against a 6,493-line file and fails - while
+  `winuser.h` has 16,475 lines. Four rows were flagged and every number in them was correct. The fix belongs in
+  the cited text, not the instrument: put the header on the same line as the number (`(winuser.h block closes
+  :16083)`, `(winuser.h:13213, :13215)`), after which the audit prints **0 OUT-OF-RANGE over all 55 citations**
+  and quotes the SDK line for each one (`:16083` -> `#endif /* WINVER >= 0x0602 */`, `:13240` ->
+  `DisplayConfigSetDeviceInfo(`, `:13213`/`:13215` -> the two `_In_reads_opt_` array parameters).
+- **A `define X` scan over the tree can match the prose of the very TU it is checking.** Measured 7 Nov 2026 on
+  the same run: the 6d banner claims 0 in-tree sources define `NOGDI`, and the scan over 2,855 `src` files
+  reported exactly **1** hit - `displayconfig.cpp:40`, the sentence "a consumer that defines NOGDI would not
+  compile this header". A claim of 0 is therefore only true once the file under audit is excluded from its own
+  scan; otherwise the count lies by exactly that self-match.
+

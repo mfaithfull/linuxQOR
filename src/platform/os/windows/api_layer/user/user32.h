@@ -645,6 +645,22 @@ namespace qor { namespace win { namespace api {
         static BOOL SetGestureConfig(HWND hwnd, DWORD dwReserved, UINT cIDs, PGESTURECONFIG pGestureConfig, UINT cbSize);
         static BOOL UnregisterTouchWindow(HWND hwnd);
 
+        //Display configuration functions
+        //Five of these return LONG - a Win32 error code, ERROR_SUCCESS on success - rather than a BOOL, so no member
+        //here takes a CheckReturn: non-zero IS the failure. Their DISPLAYCONFIG_* types are defined in wingdi.h
+        //(:2931 MODE_INFO, :3005 PATH_INFO, :3022 TOPOLOGY_ID, :3062 DEVICE_INFO_HEADER), which is why winuser.h
+        //declares those five only inside #ifdef _WINGDI_ + #ifndef NOGDI; the QDC_* / SDC_* flag groups the flags
+        //parameters take are in wingdi.h too (:3330, :3341), not in winuser.h. QueryDisplayConfig's two count
+        //parameters are in/out (capacity in, used count out) - GetDisplayConfigBufferSizes exists to fill them
+        //first. SetDisplayConfig is the only member of this library that changes machine state.
+        static LONG DisplayConfigGetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* requestPacket);
+        static LONG DisplayConfigSetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* setPacket);
+        static BOOL GetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE* pOrientation);
+        static LONG GetDisplayConfigBufferSizes(UINT32 flags, UINT32* numPathArrayElements, UINT32* numModeInfoArrayElements);
+        static LONG QueryDisplayConfig(UINT32 flags, UINT32* numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32* numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, DISPLAYCONFIG_TOPOLOGY_ID* currentTopologyId);
+        static BOOL SetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE orientation);
+        static LONG SetDisplayConfig(UINT32 numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32 numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, UINT32 flags);
+
         //Font and Text functions
         static int DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format);
         static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp);
