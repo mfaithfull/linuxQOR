@@ -42,7 +42,8 @@ pointer.cpp
 dpi.cpp
 touch.cpp
 displayconfig.cpp
-powermanagement.cpp)
+powermanagement.cpp
+misc.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

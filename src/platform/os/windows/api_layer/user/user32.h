@@ -786,6 +786,34 @@ namespace qor { namespace win { namespace api {
         static HPOWERNOTIFY RegisterSuspendResumeNotification(HANDLE hRecipient, DWORD Flags);
         static BOOL UnregisterSuspendResumeNotification(HPOWERNOTIFY Handle);
 
+        //Misc functions (T8 step 6f, added 7 Nov 2026) - the bucket the coverage instrument prints as "Other": the
+        //declared-and-unwrapped user32.dll exports that belong to no family tranche. Signatures are the winuser.h
+        //prototypes verbatim, parameter names included (D18). ChangeMenuT is the only member of this section not bound
+        //bare: ChangeMenuA/W is an A/W pair, so it is one T-suffixed member over qor_pp_useswinapiAW.
+        static BOOL CalculatePopupWindowPosition(const ::POINT *anchorPoint, const ::SIZE *windowSize, UINT flags, ::RECT *excludeRect, ::RECT *popupWindowPosition);
+        static BOOL ChangeMenuT(HMENU hMenu, UINT cmd, LPCWSTR lpszNewItem, UINT cmdInsert, UINT flags);
+        static BOOL ChangeWindowMessageFilterEx(HWND hwnd, UINT message, DWORD action, PCHANGEFILTERSTRUCT pChangeFilterStruct);
+        static BOOL EvaluateProximityToPolygon(UINT32 numVertices, const ::POINT *controlPolygon, const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval);
+        static BOOL EvaluateProximityToRect(const ::RECT *controlBoundingBox, const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval);
+        static BOOL GetAutoRotationState(PAR_STATE pState);
+        static BOOL GetCIMSSM(INPUT_MESSAGE_SOURCE *inputMessageSource);
+        static BOOL GetClipboardMetadata(UINT format, PGETCLIPBMETADATA metadata);
+        static BOOL GetCurrentInputMessageSource(INPUT_MESSAGE_SOURCE *inputMessageSource);
+        static DWORD GetUnpredictedMessagePos(void);
+        static BOOL GetWindowDisplayAffinity(HWND hWnd, DWORD* pdwAffinity);
+        static BOOL GetWindowFeedbackSetting(HWND hwnd, FEEDBACK_TYPE feedback, DWORD dwFlags, UINT32* pSize, VOID* config);
+        static BOOL InheritWindowMonitor(HWND hwnd, HWND hwndInherit);
+        static BOOL IsImmersiveProcess(HANDLE hProcess);
+        static BOOL IsWindowArranged(HWND hwnd);
+        static BOOL RegisterForTooltipDismissNotification(HWND hWnd, TOOLTIP_DISMISS_FLAGS tdFlags);
+        static BOOL SetAdditionalForegroundBoostProcesses(HWND topLevelWindow, DWORD processHandleCount, HANDLE *processHandleArray);
+        static UINT_PTR SetCoalescableTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc, ULONG uToleranceDelay);
+        static void SetDebugErrorLevel(DWORD dwLevel);
+        static BOOL SetProcessRestrictionExemption(BOOL fEnableExemption);
+        static UINT SetThreadCursorCreationScaling(UINT cursorDpi);
+        static BOOL SetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity);
+        static BOOL SetWindowFeedbackSetting(HWND hwnd, FEEDBACK_TYPE feedback, DWORD dwFlags, UINT32 size, const VOID* configuration);
+
         //Console functions
         static NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD ConsoleInformationLength);
     };

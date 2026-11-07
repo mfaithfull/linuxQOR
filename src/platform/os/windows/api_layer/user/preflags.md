@@ -1,26 +1,28 @@
-# Folder-level leads - the queue is closed, T8 step 6f is next (7 Nov 2026)
+# Folder-level leads - the review queue and all of T8 step 6 are closed (7 Nov 2026)
 
-Written wholesale at the T8 step 6e close. All 38 review-queue sources are `closed` and `pointer.cpp` (6a), `dpi.cpp` (6b),
-`touch.cpp` (6c), `displayconfig.cpp` (6d) and `powermanagement.cpp` (6e) are closed with them, so there is no next review TU:
-this file lists what a further session in this folder picks up, and its lead is **T8 step 6f - the Misc bucket, 24 names**.
-**Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
+Written wholesale at the T8 step 6f close. All 38 review-queue sources are `closed` and the six coverage TUs `pointer.cpp` (6a),
+`dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e) and `misc.cpp` (6f) are closed with them,
+so there is no next review TU and no family tranche left: this file lists what a further session in this folder picks up, and
+its lead is the **6 held-open legacy names** - the one open question `registers/u18-coverage.md` records, which a **user decision**
+closes. **Write-once**: read it once at boot, edit it never, replace it wholesale if the focus changes.
 
 ## Current folder figures (re-measured 7 Nov 2026 with `_tmp_u18_coverage4.ps1` + `_tmp_u18_buckets.ps1`)
 
-**43 sources / 604 members / 507 bindings / 1,018 export names / 727 covered / 38 declared-and-unwrapped raw / 253 with no
-prototype.** Raw 38 minus the 7 excluded superseded twins (`Get/SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`)
-and the 1 instrument artifact (`SetWindowsHookExAW`, no prototype) = **30 net backlog**: Misc **24**, held-open legacy 6.
-The buckets instrument now prints five drained families, the fifth being `0: Shutdown / power notification []`.
+**44 sources / 627 members / 530 bindings / 1,018 export names / 751 covered / 14 declared-and-unwrapped raw / 253 with no
+prototype.** Raw 14 minus the 7 excluded superseded twins (`Get/SetClassLongA/W`, `SetWindowsHookA/W`, `UnhookWindowsHook`) and
+the 1 instrument artifact (`SetWindowsHookExAW`, which no header declares) = **6 net backlog**, all of it the held-open legacy
+names. The buckets instrument prints six drained families - `Other` is the Misc bucket and is now 0 - and two rows:
+`4: Legacy hook family` (all excluded) and `10: Legacy word / class-long family` (4 excluded twins, the artifact, and the 6).
 
 ## Step 0 - re-derive the gap list before measuring anything
 
 Every tranche pre-scan filters `tmp/_tmp_u18_gap_sdk.txt`, which `tmp/_tmp_u18_coverage4.ps1` writes, so **run that first** -
-a stale gap list feeds the previous family's names back to you. Then run `tmp/_tmp_t8_6f_pre.ps1` (written this session by
-`tmp/_tmp_t8_6f_mk.ps1`: the 6e instrument with its bucket filter changed to "the 38-name gap list minus the legacy hook and
-legacy word / class-long families", so the bucket is derived, not typed). Per name it prints the export-table row, the
-declaring header and line, the prototype text, the guard stack open at that line (forward pass, never a backward pop), the
-macro count and the A/W siblings. Its name patterns are `\bName\s*\(`, not `\bName\(` - the SDK writes some prototypes with
-a space before the paren (see `gotchas/instrument-flags.md`).
+a stale gap list feeds the previous family's names back to you. Then run `tmp/_tmp_t8_6g_pre.ps1` (written at the 6f close: the
+6f instrument with its bucket filter changed to "the gap list less the 7 excluded twins less the artifact", so the bucket is
+derived, not typed). Per name it prints the export-table row, the declaring header and line, the prototype, the guard stack open
+at that line (forward pass, never a backward pop), the macro count and whether a replacement stem is already declared in
+`user32.h`. Its name patterns are `\bName\s*\(`, not `\bName\(` - the SDK writes some prototypes with a space before the paren
+(see `gotchas/instrument-flags.md`).
 
 ## T8 step 6f - the 24 Misc names, with the SDK facts measured 7 Nov 2026 (`tmp/_tmp_t8_6f_pre.txt`)
 

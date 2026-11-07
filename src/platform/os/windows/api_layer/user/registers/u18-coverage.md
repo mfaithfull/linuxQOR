@@ -229,3 +229,30 @@ legacy 6. U19 stays FROZEN at session 34 (0 raw consumer hits for all 3 names ov
 24 names**, whose measured SDK facts are written into `preflags.md` (replaced wholesale); `tmp/_tmp_t8_6f_pre.ps1` derives the
 bucket from `tmp/_tmp_u18_gap_sdk.txt`, so run `tmp/_tmp_u18_coverage4.ps1` first or a stale gap list feeds the previous family
 back to you.
+
+## Tranche 6f closed - the Misc bucket (the `Other` row), 7 Nov 2026
+
+All 24 Misc names are now wrapped: new TU `misc.cpp` (23 members / 23 bindings, banner `:12`) plus one new `//Misc functions`
+section at `user32.h:789-816`, so the header is **823** lines and the folder is **44 sources / 627 members / 530 bindings**.
+24 names over 23 members because `ChangeMenuA`/`ChangeMenuW` (2A/2B) is the only A/W pair left in the bucket and has **no bare
+export** (`ChangeMenu=0` measured), so the T-suffix convention collapses it to one `ChangeMenuT` member bound over
+`qor_pp_useswinapiAW` - and `qor_pp_unicode` is 1 (`configuration.h:13`), so this build binds the W form and the A form stays
+unresolved at runtime, which is what keeps U17's A/W question one wrapper rather than dozens. `user32.h:9-17` gained no `#undef`
+(0 function-like macros over the 24). Coverage re-measure: **751 of 1,018** covered, **14** declared-and-unwrapped raw, 253 with
+no prototype; the buckets instrument prints `Other` 0 beside five other drained families, and the 14 = legacy hook **4** +
+legacy word / class-long **10**, of which 7 carry the superseded-twin exclusion and 1 (`SetWindowsHookExAW`) is the classifier
+artifact, so the **net backlog is 6** - the held-open names above, and they are now the folder lead.
+
+**The 6 measured again for the decision (`tmp/_tmp_t8_6g_pre.ps1`, forward pass).** Ordinal / `winuser.h` line / innermost
+guards: `DragObject` CC / `:8145` / `NOUSER`, `WINVER >= 0x0400`, DESKTOP · `GetWindowWord` 1FB / `:9837` / `NOUSER`,
+`NOWINOFFSETS`, DESKTOP · `SetMessageQueue` 351 / `:3500` / `NOUSER`, `NOMSG`, DESKTOP · `SetWindowWord` 388 / `:9844` /
+same · `wsprintfA` 3F6 / `:326` / `NOUSER`, DESKTOP · `wsprintfW` 3F7 / `:333` / same. All 6 are exported, declared, carry 0
+function-like macros and 0 rows in `user32.h`. The decision has a **technical** side, measured not assumed: `wsprintfA`/`wsprintfW`
+are `WINAPIV` (i.e. `__cdecl` **variadic**: `_Out_ LPSTR, _In_ _Printf_format_string_ LPCSTR, ...`) and the folder has **0**
+variadic members. `Library::Call` (`library.h:43-46`) is a variadic template, but it synthesizes a **fixed-arity**
+`ret(__stdcall *fPtr)(MethodArgs...)` from the argument list at the call site, so binding these would assert an arity the SDK
+never states - the wrapper would have to be variadic itself, a shape no wrapper in this library has. The `__stdcall` vs `__cdecl`
+half of that mismatch is immaterial here (D17: Windows is x64-only, one calling convention), so the undeclared arity is the
+obstacle. `GetWindowWord`/`SetWindowWord` (`WORD` returns) are the 16-bit twins of `GetWindowLongT` (`user32.h:723`) and
+`SetWindowLongT` (`:728`), which **are** wrapped, so the twin test nearly decides them and what keeps them open is the width
+change. Only `SetMessageQueue` and `DragObject` have neither a replacement nor a wrapped cousin.

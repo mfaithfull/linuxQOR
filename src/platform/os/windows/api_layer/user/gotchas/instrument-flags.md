@@ -79,4 +79,15 @@ Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1`
   reported exactly **1** hit - `displayconfig.cpp:40`, the sentence "a consumer that defines NOGDI would not
   compile this header". A claim of 0 is therefore only true once the file under audit is excluded from its own
   scan; otherwise the count lies by exactly that self-match.
+- **A scan whose per-hit work re-slices the whole text is quadratic, and its output grows with it.** Measured 7 Nov 2026:
+  `_tmp_t8_6f_sdk.ps1` looped `$T.Substring($pos)` over `WinUser.h` as one `ReadAllText` string and recomputed the line number
+  with `($T.Substring(0,$abs) -split "\n").Count` per hit; `_tmp_t8_6f_ppdig2.ps1` read the 6.9 MB `cl /EP` text with
+  `ReadAllLines` and walked every line - the SAL-annotated ones are huge - with `AllMatches`. Both ran past their output files
+  (688 MB and 415 MB at 2,157 s and 11,378 s CPU) and had to be killed. Working clones: `WinUser.h` as a **line array** with
+  fixed windows around a known line (`_tmp_t8_6f_sdk2.ps1`, 8.8 KB of output) and **`Select-String` streaming** for the digest
+  (`_tmp_t8_6f_ppdig3.ps1`), which bound memory and finished in seconds. A scan that prints one row per hit must not do
+  whole-file work per hit.
+- **A case-insensitive `[AW]$` test calls any name ending in lowercase `a`/`w` an A/W form.** The 6f digest printed
+  `AW: GetClipboardMetadata` (the name ends `a`) beside the one real `AW: ChangeMenuW`, so a tranche's A/W-sibling count read
+  one too many. Use `-cmatch 'A$|W$'` when the suffix decides a count - same class as the `-cmatch '^(.+)T$'` stem caveat above.
 
