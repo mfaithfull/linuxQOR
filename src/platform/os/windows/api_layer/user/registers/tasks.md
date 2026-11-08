@@ -1,4 +1,4 @@
-# T1-T8 deferred tasks - T2, T6 open, each needing a decision; T1, T3, T4, T5, T7 and T8 are CLOSED
+# T1-T8 deferred tasks - T2 open, each needing a decision; T1, T3, T4, T5, T6, T7 and T8 are CLOSED
 
 - **T1 - two declared-but-undefined members in the "Authorization functions" section.** CLOSED 8 Nov 2026 (D22).
 
@@ -22,8 +22,8 @@ Note - the 38-TU review queue that these tasks were tracked against closed in fu
 
 - **T5 - the IME/WINNLS block in the unlabelled `user32.h` run is declared and defined nowhere.** CLOSED 8 Nov 2026 (D23).
 
-- **T6 - the whole "//List Box functions" section is declared and defined nowhere - there is no owning TU.** Opened
-  2 Nov 2026 by the session-24 (`monitor.cpp`) U21 region scan. `user32.h:545` opens the section with **three**
+- **T6 - the whole "//List Box functions" section is declared and defined nowhere - there is no owning TU.** CLOSED
+  8 Nov 2026 (D24), opened 2 Nov 2026 by the session-24 (`monitor.cpp`) U21 region scan. `user32.h:545` opens the section with **three**
   declarations (`:546 DlgDirList`, `:547 DlgDirSelectEx`, `:548 GetListBoxInfo`), **all three non-static**, and **no
   `.cpp` in the folder defines any of them** (measured: 0 `User32::` definitions over all 38 TUs, and there is no
   `listbox.cpp` in the folder at all), so the published class carries three members that fail at link time with
@@ -39,6 +39,14 @@ Note - the 38-TU review queue that these tasks were tracked against closed in fu
   `DWORD` and 0 on error (U7-shaped: a legitimate 0 and a swallowed SEH fault are indistinguishable). Deciding T6 means
   either writing the TU (a three-wrapper file) or deleting the three declarations; both move the published surface, so
   it belongs with the `U4`/`U13` sweep and the T1/T3/T4/T5 decision set, not with a TU review.
+  **Resolution (8 Nov 2026, D24):** the TU was written. A new `listbox.cpp` defines all three - `DlgDirList` and
+  `DlgDirSelectEx` bound `qor_pp_useswinapiAW` (their bare stems are not exported and `user32.h:17-18` `#undef`s both, so
+  a bare binding is impossible there) and `GetListBoxInfo` bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains
+  `static` on all three, with the `DlgDirSelectEx` declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox`
+  per D18. U4's and U18's instances for the trio are gone; U17 takes no action (2 of the 11 A/W members that carry no `T`
+  suffix, deferred until one folder-wide pass); coverage does not move, because all three were already declared and already
+  counted covered. The measured shape (bindings, prototypes and guards, the U7 no-failure-signal contract, the gate) is in
+  D24 and in the `listbox.cpp` banner.
 
 - **T7 - the dead `#include "../returncheck.h"` includes across the folder.** CLOSED 5 Nov 2026 (D16).
 

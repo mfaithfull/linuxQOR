@@ -549,9 +549,9 @@ namespace qor { namespace win { namespace api {
         BOOL RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
 
         //List Box functions
-        int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
-        BOOL DlgDirSelectEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDListBox);
-        DWORD GetListBoxInfo(HWND hwnd);
+        static int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
+        static BOOL DlgDirSelectEx(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox);
+        static DWORD GetListBoxInfo(HWND hwnd);
 
         //Combo Box functions
         static int DlgDirListComboBoxT(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
