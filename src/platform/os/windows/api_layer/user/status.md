@@ -167,7 +167,7 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
   recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6. **No open task remains** - T1-T8 are all CLOSED (T2 closed 8 Nov 2026, D25). Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6. **One open task: T9** (D26 - U4's remaining 86 declared-but-undefined members as a tranche queue; next step 9a `strings.cpp`. T1-T8 all CLOSED, T2 closed 8 Nov 2026, D25). Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -194,8 +194,8 @@ inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time an
 ## There is no next TU - what a further session in this folder works from
 
 All 38 review-queue TUs are closed, as are the nine coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), `security.cpp` (T1) and `listbox.cpp` (T6), so `preflags.md`
-pre-flags no review TU and no tranche: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
-`wsprintfA`/`wsprintfW` a variadic wrapper) and the backlog is empty - the 8 raw gap names all carry written exclusions.
-A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6 - **no task remains open**,
-all of T1-T8 CLOSED with T2 closed 8 Nov 2026 by D25) or moves to
+pre-flags the T9 tranche 9a and no review TU: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
+`wsprintfA`/`wsprintfW` a variadic wrapper) and the coverage backlog is empty - the 8 raw gap names all carry written exclusions.
+A next session takes **T9 step 9a** (`strings.cpp` over `user32.h:342-375`, D26) or picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6 -
+**T1-T8 all CLOSED with T2 closed 8 Nov 2026 by D25, T9 open**) or moves to
 another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

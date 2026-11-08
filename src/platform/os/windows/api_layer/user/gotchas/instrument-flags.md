@@ -6,6 +6,17 @@ Description: "Instrument blind spots - what a flag named in tooling.md does not 
 Moved verbatim out of `gotchas.md` on 4 Nov 2026 by `tmp/_tmp_gotchas_split.ps1` - snapshot `tmp/_tmp_gotchas_presplit.md`, verbatim rejoin proven by `tmp/_tmp_gotchas_verify.ps1`.
 
 ## Instrument caveats - read a flag before acting on it
+- **`_tmp_decl_no_def_repo_scan.ps1` cannot see a declaration that ends `) const;`** - its regex anchors on `);`. Measured
+  8 Nov 2026 on the D26 pass: it reads **52** declared-and-undefined names while `_tmp_static_census.ps1` prints **86**
+  non-static ones, and the 34-name difference is exactly the DDE block at `user32.h:507-540`, whose 34 declaration lines end
+  `) const;` (the header has exactly 34 such lines). **52 + 34 = 86** - one population, two instruments. Quote the instrument
+  with the count; the record's older 97 / 64 / 65 readings are the same population under different instruments and an older
+  header, not three different defects.
+- **`Where-Object { _ -match ... }` is not an implicit-`_` form in pwsh** - the block runs `_` as a command and the scan dies
+  with `The term '_' is not recognized` thousands of times **while still printing its totals line**. Measured 8 Nov 2026: that
+  run claimed `exact export: 0 / no export row: 86` for names that all carry export rows. Use the array operator instead -
+  `@( $E -match ('^\s*\d+\s+[0-9A-Fa-f]+\s+[0-9A-Fa-f]+\s+' + $name + '\s*$') )` and test its `.Count` - which returned the
+  true 80 / 5 / 1 split. A totals line beside error lines is not a clean scan (same class as the `-Stems` caveat above).
 - `pwsh -NoProfile -File script.ps1 -Stems A,B -Roots x,y` **does not deliver arrays** - each comma list arrives as one
   literal string. `_tmp_bypass_scan.ps1` then reports `stems: 1` and can die at `:12` with a misleading
   `Get-ChildItem: A parameter cannot be found ...` **while still printing a totals line of 0 BYPASS from an empty file

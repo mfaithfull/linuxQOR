@@ -808,7 +808,20 @@ Counts unchanged by the edit: 47 sources / 634 member-declaration lines (548 sta
 Record: the 6 parameter sites and the corrected callback paragraph in `desktop.cpp`; this D25; the T2 closed row in
 `status.md`, its open-item list and its closed-id list; the T2 resolution note in `registers/tasks.md`; the header and
 open-item lines in `preflags.md`; the T2 instrument rows in `tooling.md`. No `CMakeLists.txt`, no export table, no
-consumer changes.
+
+## D26: U4's remaining 86 declared-but-undefined members land as a tranche queue (T9) — POLICY (8 Nov 2026)
+Rule: the 86 non-static `user32.h` members with no definition are landed one section / one new TU / one gate diff per
+session — 9a `strings.cpp` (34) → 9b `rawinput.cpp` (7) → 9c `systeminfo.cpp` (4) → 9d `buttoncontrol.cpp` (3) → 9e
+`synchronization.cpp` (2) → 9f `bitmap.cpp` (1) → 9g `printing.cpp` (1); **9h (the 34-member DDE block) is blocked on a
+wrap-or-delete user decision** because D18 excludes the DDE family by name and 0 of its 34 are declared in `um\WinUser.h`.
+Each step puts `static` on the declaration with the definition in the new TU, copies the export's prototype (D18) and binds
+`qor_pp_useswinapiAW` for the `#undef`'d stems `SystemParametersInfo`/`GetRawInputDeviceInfo`/`LoadBitmap` (G2 + G5). Coverage
+stays 759 of 1,018 — these close `LNK2019` link gaps, never coverage gaps. Instruments: `_tmp_static_census.ps1` 634 decls /
+548 static / 86 non-static / 0 defined-but-not-static; `_tmp_decl_no_def_repo_scan.ps1` 599 / 547 / 52 (it misses the DDE
+block's 34 `) const;` lines). Full text: `docs/agent/decisions/D26.md`. Record: this D26; the T9 open row in `registers/tasks.md`;
+the open-task and further-session lines in `status.md`; the wholesale rewrite of `preflags.md` naming 9a as the lead. No
+source, header or CMake file is touched.
+
 
 
 
