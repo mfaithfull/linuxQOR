@@ -1,11 +1,11 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 8 Nov 2026 - **T1 is CLOSED: a new `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and
+Last updated 8 Nov 2026 - **T3 is CLOSED: `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification` (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and
 `SetUserObjectSecurity` (export 375), bound bare `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both - so
-the folder is 46 sources / 633 members (536 static, 97 non-static) / 537 bindings, and both halves of T1's defect are gone
-(U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 536 / non-static 99 -> 97
-and bindings 535 -> 537). Coverage stays **757 of 1,018** - the instrument counts a member declaration and the pair were
-already declared, so they were already covered. The shared-header `user32.h` edit was gated as a diff against the standing
+the folder is 46 sources / 633 members (538 static, 95 non-static) / 539 bindings, and T1's and T3's declared-but-undefined + non-static halves are gone
+(U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 538 / non-static 99 -> 95
+and bindings 535 -> 539). Coverage stays **757 of 1,018** - the instrument counts member declarations and the pairs were
+already declared, so they were already covered. The T1 shared-header `user32.h` edit was gated as a diff against the standing
 113-source all-libraries baseline: 113 -> 114 cpp echoes, 165 warnings = 165, exit 2 both sides, set-difference 0 new / 0
 gone.** The prior close stands: **T8 step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names), U18 and T8 are CLOSED**
 (D19 decided the 6 names in scope, D20 fixed the variadic wrapper shape; `docs/agent/DECISIONS.md`). The 38 review-queue TUs stay closed from
@@ -158,7 +158,7 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
   recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6, T2-T6. Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6, T2, T4-T6. Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -187,5 +187,5 @@ inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time an
 All 38 review-queue TUs are closed, as are the seven coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), so `preflags.md`
 pre-flags no review TU and no tranche: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
 `wsprintfA`/`wsprintfW` a variadic wrapper) and the backlog is empty - the 8 raw gap names all carry written exclusions.
-A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T2-T6) or moves to
+A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T2, T4-T6) or moves to
 another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

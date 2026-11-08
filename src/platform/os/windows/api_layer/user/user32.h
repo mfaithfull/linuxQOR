@@ -785,8 +785,8 @@ namespace qor { namespace win { namespace api {
         static BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
 
         //Power Management functions
-        HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);
-        BOOL UnregisterPowerSettingNotification(HPOWERNOTIFY Handle);
+        static HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);
+        static BOOL UnregisterPowerSettingNotification(HPOWERNOTIFY Handle);
         static HPOWERNOTIFY RegisterSuspendResumeNotification(HANDLE hRecipient, DWORD Flags);
         static BOOL UnregisterSuspendResumeNotification(HPOWERNOTIFY Handle);
 

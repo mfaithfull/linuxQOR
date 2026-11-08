@@ -18,8 +18,8 @@ there is no coverage lead to pick up.
 ## What is left to work on in this folder
 
 - Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19-U27 less the frozen ids,
-  P3, P4, P6, T2-T6. **T1 is CLOSED** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
-  `user32.h:760-761`; U4's and U18's instance for the pair is gone, the ids stay open for the rest of the folder). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
+  P3, P4, P6, T2, T4-T6. **T1 and T3 are CLOSED** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
+  `user32.h:760-761`; `powermanagement.cpp` defines the Power Management pair + `static` at `user32.h:788-789`; U4's and U18's instances for both pairs are gone, the ids stay open for the rest of the folder). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
   question) is unaffected by 6g, which kept `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over
   `qor_pp_useswinapiAW`.
 - What D21 changed under every session's feet: `kernel32.h:22-30` now pins `_WIN32_WINNT`/`WINVER` `0x0A00` and

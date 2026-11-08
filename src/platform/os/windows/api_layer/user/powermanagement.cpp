@@ -7,7 +7,7 @@
 #include "src/qor/flyers/error/error.h"
 
 //=== api_layer conventions ========================================= Reviewed 7 Nov 2026
-//   (T8 step 6, tranche 6e part 2: Shutdown / power notification - the suspend/resume pair, new TU)
+//   (T3 + T8 step 6e: Power Management functions - the power-settings pair and the suspend/resume pair, new TU)
 //
 //This TU is coverage added under D18 (docs/agent/DECISIONS.md): purpose.md states the library intends a full set of
 //wrappers over the user32.dll exports, and registers/u18-coverage.md buckets the gap by family. The Shutdown / power
@@ -113,6 +113,23 @@
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
+    //Power-settings pair - the two declarations the header has held since the folder review; they are now static and
+    //defined here. Both bind bare: no A/W spelling and no user32.h #undef for either stem.
+    HPOWERNOTIFY User32::RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, RegisterPowerSettingNotification);
+        return Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, PowerSettingGuid, Flags);
+    }
+
+    //BOOL success flag: FALSE means the registration was not withdrawn. Handle is the HPOWERNOTIFY returned by the call above.
+    BOOL User32::UnregisterPowerSettingNotification(HPOWERNOTIFY Handle)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, UnregisterPowerSettingNotification);
+        return Library::Call< BOOL >(pFunc, Handle);
+    }
+
     //HPOWERNOTIFY, not a numeric: the SDK typedefs it PVOID at winuser.h:3985, so the answer is a handle or NULL and
     //NULL is not an error code - pass it through unchanged, and the U2 return-check idiom has nothing to add (U1/U2).
     //hRecipient must match Flags (DEVICE_NOTIFY_WINDOW_HANDLE 0x00000000 winuser.h:3946 for a window, DEVICE_NOTIFY_SERVICE_HANDLE
