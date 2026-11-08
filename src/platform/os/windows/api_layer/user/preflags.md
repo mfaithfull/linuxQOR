@@ -1,4 +1,4 @@
-# Folder-level leads - the review queue and all of T8 (steps 1-6g) are closed; T1 closed 8 Nov 2026
+# Folder-level leads - the review queue and all of T8 (steps 1-6g) are closed; T1, T3 and T4 closed 8 Nov 2026
 
 Written wholesale at the T8 step 6g close. All 38 review-queue sources are `closed` and the seven coverage TUs `pointer.cpp` (6a),
 `dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f) and `legacy.cpp` (6g) are closed with them,
@@ -18,8 +18,11 @@ there is no coverage lead to pick up.
 ## What is left to work on in this folder
 
 - Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19-U27 less the frozen ids,
-  P3, P4, P6, T2, T4-T6. **T1 and T3 are CLOSED** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
-  `user32.h:760-761`; `powermanagement.cpp` defines the Power Management pair + `static` at `user32.h:788-789`; U4's and U18's instances for both pairs are gone, the ids stay open for the rest of the folder). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
+  P3, P4, P6, T2, T5, T6. **T1, T3 and T4 are CLOSED** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
+  `user32.h:760-761`; `powermanagement.cpp` defines the Power Management pair + `static` at `user32.h:788-789`; `help.cpp`
+  defines the menu context-help-id pair + `static` at `user32.h:744-745`; U4's and U18's instances for all three pairs are
+  gone, the ids stay open for the rest of the folder, and the folder is now 46 sources / 633 members (540 static, 93
+  non-static) / 541 bindings). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
   question) is unaffected by 6g, which kept `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over
   `qor_pp_useswinapiAW`.
 - What D21 changed under every session's feet: `kernel32.h:22-30` now pins `_WIN32_WINNT`/`WINVER` `0x0A00` and

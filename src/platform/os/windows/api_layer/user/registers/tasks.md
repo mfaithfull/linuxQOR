@@ -1,4 +1,4 @@
-# T1-T8 deferred tasks - T2, T4-T6 open, each needing a decision; T1, T3, T7 and T8 are CLOSED
+# T1-T8 deferred tasks - T2, T5, T6 open, each needing a decision; T1, T3, T4, T7 and T8 are CLOSED
 
 - **T1 - two declared-but-undefined members in the "Authorization functions" section.** CLOSED 8 Nov 2026 (D22).
 
@@ -16,27 +16,26 @@
 - **T3 - the "Power Management functions" pair is declared but has no owning TU at all.** CLOSED 8 Nov 2026;
 
 
-- **T4 - the menu half of the context-help-id family is declared and defined nowhere.** Opened 31 Oct 2026 (session 16)
-  from the `//Shell functions` block: `user32.h:642` `SetMenuContextHelpId(HMENU, DWORD)` and `user32.h:643`
-  `GetMenuContextHelpId(HMENU)` are declared **without `static`** (the only 2 of that block's 5 members so declared) and
-  **no `.cpp` in the folder defines either** - the only hits for both names outside the header are session 16's own TU
-  comment in `help.cpp`. Confirmed at the binary level, not just by source search: `dumpbin /linkermember:1` on the built
-  `cmakebuild/.../Debug/winqor_api_user.lib` lists exactly three help-family members
-  (`?SetWindowContextHelpId@User32@api@win@qor@@SAHPEAUHWND__@@K@Z`,
-  `?GetWindowContextHelpId@User32@api@win@qor@@SAKPEAUHWND__@@@Z`,
-  `?WinHelp@User32@api@win@qor@@SAHPEAUHWND__@@PEB_WI_K@Z`) and **no menu pair**
-  (`tmp/_tmp_help_linkermember.txt`). Both entry points are real single exports - `SetMenuContextHelpId` 34A,
-  `GetMenuContextHelpId` 17C, both **RESOLVED** by the live probe - and the SDK declares both at
-  `winuser.h:9138-9140` and `:9145-9146` (re-measured 2 Nov 2026 with `tmp/_tmp_s22_chelpid.ps1`; session 16 recorded
-  `:9135`/`:9142`, which are the lines above each declaration - the window pair they share a block with is `:9125-9127` and
-  `:9132-9133`), all four in the same `WINVER >= 0x0400` + Desktop block as the window pair that **is**
-  wrapped, so nothing external argues against the wrappers. A caller today is ill-formed (`C2352`: a non-static member
-  cannot be qualified through the class name) rather than facing `LNK2019`, which is the only way this pair differs from
-  T1/T3. Fix is symmetric: add the two definitions to `help.cpp` (with `static`, matching `:644-645`) or delete
-  `user32.h:642-643`. Neither touches an ABI, both move the published surface, so it belongs with the U4/U13 sweep.
-  Contract for whoever adds them: the id is a plain `DWORD` property of the menu (0 clears it), no handle is acquired, and
-  `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
-  window pair gets no `CheckReturn`.
+- **T4 - the menu half of the context-help-id family is declared and defined nowhere.** CLOSED 8 Nov 2026 (user
+  decision: add the two definitions, do not delete the declarations). `user32.h:744` `SetMenuContextHelpId(HMENU, DWORD)`
+  and `user32.h:745` `GetMenuContextHelpId(HMENU)` gain `static`, and `help.cpp` gains both definitions ahead of the
+  window pair, in the header's order, each bound bare `qor_pp_useswinapi` (single-stem exports 34A / 17C, no A/W sibling
+  of any of the four context-help-id names in `tmp/_tmp_user32_exports.txt`, and neither stem is in `user32.h:13-21`'s
+  nine `#undef`s, so the bare form is the D13 spelling for both per G1/G2). Both halves of the defect close together:
+  U4 declared-but-undefined -> defined, and the U18 non-static shape -> static, matching the three static members the
+  section already had. Contract as recorded when the task opened, and honoured by the definitions: the id is a plain
+  `DWORD` property of the menu (0 clears it), no handle is acquired, and `GetMenuContextHelpId`'s `DWORD` return makes a
+  rejected menu indistinguishable from a menu that legitimately carries no context id - the same reason the window pair
+  gets no `CheckReturn` (U1/U2 over the section: 5 call sites, 0 handlers, 0 checks). Measured at the close: `help.cpp`
+  standalone at /W4 exit 0, folder 46/46 at /W4 exit 0 clean, `cl /EP` resolves all five binding literals against module
+  literal "user32", `_tmp_sigcmp.ps1` over `user32.h:744-748` gives 5/5 decl==def ok and 5/5 Call ok, and the wrong-stem
+  scan flags nothing in this TU (its 2 folder-wide hits are the pre-existing `CopyCursorT`/`CopyIcon` and `CreateWindowT`/`CreateWindowEx`
+  pairings). Census moves static 538 -> 540 / non-static 95 -> 93 and bindings 539 -> 541 (the `.cpp`-only scan reads
+  538 -> 540; the folder-wide count adds the header-inline `wsprintfT` binding at `user32.h:838`); members stay 633 and coverage
+  stays **757 of 1,018** unchanged, because the coverage instrument counts a member declaration in `user32.h` and the pair
+  were already declared. The shared-header `user32.h` edit was gated as a diff against the standing 114-source all-libraries
+  baseline: 114 -> 114 cpp echoes, 165 warnings = 165, 1 `C1083` both sides, exit **2** both sides, set-difference 0 new /
+  0 gone. Narrative is the banner at `help.cpp:15-97`; the opening prose survives verbatim in `archive/prescan-help.md`.
 
 Note - the 38-TU review queue that these tasks were tracked against closed in full at session 37 (5 Nov 2026), so its queue arithmetic and its per-TU hand-offs are dropped: the folder is now 46 sources with no next review TU, and every hand-off lives in the register that names it.
 

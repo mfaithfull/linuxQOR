@@ -741,8 +741,8 @@ namespace qor { namespace win { namespace api {
         static UINT GetDpiForWindow(HWND hwnd);
 
         //Shell functions
-        BOOL SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId);
-        DWORD GetMenuContextHelpId(HMENU hmenu);
+        static BOOL SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId);
+        static DWORD GetMenuContextHelpId(HMENU hmenu);
         static BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
         static DWORD GetWindowContextHelpId(HWND hwnd);
         static BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);

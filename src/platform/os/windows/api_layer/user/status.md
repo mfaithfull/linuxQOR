@@ -1,13 +1,18 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 8 Nov 2026 - **T3 is CLOSED: `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification` (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and
-`SetUserObjectSecurity` (export 375), bound bare `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both - so
-the folder is 46 sources / 633 members (538 static, 95 non-static) / 539 bindings, and T1's and T3's declared-but-undefined + non-static halves are gone
-(U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 538 / non-static 99 -> 95
-and bindings 535 -> 539). Coverage stays **757 of 1,018** - the instrument counts member declarations and the pairs were
-already declared, so they were already covered. The T1 shared-header `user32.h` edit was gated as a diff against the standing
-113-source all-libraries baseline: 113 -> 114 cpp echoes, 165 warnings = 165, exit 2 both sides, set-difference 0 new / 0
-gone.** The prior close stands: **T8 step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names), U18 and T8 are CLOSED**
+Last updated 8 Nov 2026 - **T4 is CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
+ (export 17C), bound bare `qor_pp_useswinapi`, and `user32.h:744-745` gains `static` on both.** T3 is also CLOSED:
+ `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification`
+ (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new
+ `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and `SetUserObjectSecurity` (export 375), bound bare
+ `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both - so the folder is 46 sources / 633 members (540
+ static, 93 non-static) / 541 bindings, and T1's, T3's and T4's declared-but-undefined + non-static halves are gone
+ (U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 540 / non-static 99 ->
+ 93 and bindings 535 -> 541). Coverage stays **757 of 1,018** - the instrument counts member declarations and all three
+ pairs were already declared, so they were already covered. The T4 shared-header `user32.h` edit was gated as a diff
+ against the standing 114-source all-libraries baseline: 114 -> 114 cpp echoes, 165 warnings = 165, 1 `C1083` both sides,
+ exit 2 both sides, set-difference 0 new / 0 gone (T1's was diffed the same way against the 113 -> 114 baseline).** The
+ prior close stands: **T8 step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names), U18 and T8 are CLOSED**
 (D19 decided the 6 names in scope, D20 fixed the variadic wrapper shape; `docs/agent/DECISIONS.md`). The 38 review-queue TUs stay closed from
 session 37**; **U25 and U23 are both in on the code lines** (7 Nov 2026: `CONST` normalised to lowercase `const`
 folder-wide - **0** `CONST` tokens on code lines, the 24 that remain are comment lines in 10 TUs - and the 5 class-A
@@ -103,7 +108,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `dpi.cpp` | 271 | banner `:9` | closed (T8 6b, added 6 Nov 2026) |
 | `errorhandling.cpp` | 92 | `archive/tu/errorhandling.md` | closed |
 | `filledshapes.cpp` | 98 | `archive/tu/filledshapes.md` | closed |
-| `help.cpp` | 107 | `archive/session-log*.md` | closed |
+| `help.cpp` | 143 | `archive/session-log*.md` + banner `:15` | closed (T4, 8 Nov 2026) |
 | `hook.cpp` | 107 | `archive/session-log*.md` | closed |
 | `icon.cpp` | 168 | `archive/session-log*.md` | closed |
 | `ime.cpp` | 54 | `archive/session-log*.md` | closed |
@@ -143,7 +148,9 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
 - `U<n>` -> `registers/u<n>.md` | `P1`-`P5` -> `registers/prescan.md` | `P6`, `U27` -> `registers/p6-u27.md` |
   `G1`-`G6` -> `registers/ground-rules.md` | `T1`-`T8` -> `registers/tasks.md` | folder totals -> `registers/census.md`.
 - Closed / frozen - append nothing: **T1** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
-  `user32.h:760-761`), **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
+  `user32.h:760-761`), **T3** (8 Nov 2026: `powermanagement.cpp` defines the Power Management pair + `static` at
+  `user32.h:788-789`) and **T4** (8 Nov 2026: `help.cpp` defines the menu context-help-id pair + `static` at
+  `user32.h:744-745`), **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
   includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
   four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image), **U18** and **T8** (7 Nov 2026, D19 + D20:
@@ -158,7 +165,7 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
   recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6, T2, T4-T6. Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6, T2, T5, T6. Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
