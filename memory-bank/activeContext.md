@@ -20,8 +20,15 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - review queue, T8 step 6 and U18 all closed; the backlog is empty
+## Current focus: winqor_api_user - review queue, T8, U18 all closed and T1 CLOSED 8 Nov 2026; the backlog is empty
 
+- **T1 CLOSED 8 Nov 2026:** a new `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and `SetUserObjectSecurity`
+  (export 375), bound bare `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both - closing both halves of the
+  pair's defect (U4 declared-but-undefined -> defined, U18 non-static -> static). Folder is now 46 sources / 633 members
+  (536 static, 97 non-static) / 537 bindings; coverage unchanged at 757 of 1,018 (the pair were already declared, so already
+  covered). Gate: `security.cpp` standalone /W4 exit 0, folder 46/46 exit 0, and the shared-header `user32.h` edit diffed 0
+  new / 0 gone against the standing 113 -> 114-source all-libraries baseline (exit 2 both sides). Narrative is the banner at
+  `security.cpp:9-36`; per-name disposition in `registers/tasks.md` T1.
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.

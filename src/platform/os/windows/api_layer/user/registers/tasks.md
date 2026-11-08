@@ -15,6 +15,16 @@
   `processthread.cpp:41`), a U12-style placement fact for that session. Deciding T1 means either adding the two
   definitions (natural home: `desktop.cpp`, which owns the rest of the user-object family) or deleting the declarations -
   both move the published surface, so it is a user decision and belongs with the `U4`/`U13` sweep, not with a TU review.
+  - **Resolved 8 Nov 2026 (T1 CLOSED) - user decision: add the two definitions, do not delete the declarations.** They go
+    in a NEW `security.cpp` TU (not `desktop.cpp`), each bound bare `qor_pp_useswinapi` (single-stem exports 1DB / 375, no
+    A/W sibling), and `user32.h:760-761` gains `static` on both declarations. This closes both halves of the defect for
+    the pair: U4 (declared-but-undefined -> now defined) and the U18 non-static shape -> static. Measured: standalone
+    `security.cpp` at /W4 exit 0, folder 46/46 at /W4 exit 0 clean, and `cl /EP` resolves exactly the two binding literals
+    against module literal "user32". The census moves static 534 -> 536 / non-static 99 -> 97 and bindings 535 -> 537
+    (`tmp/_tmp_u18_coverage4.ps1` + `tmp/_tmp_t8_6g_counts.ps1`). Coverage stays **757 of 1,018** unchanged - the coverage
+    instrument counts a member declaration in `user32.h`, and the pair were already declared, so they were already covered;
+    the shared-header `user32.h` edit was run against the 113-source all-libraries baseline as a diff (113 -> 114 cpp
+    echoes, 165 warnings = 165, exit 2 both sides, set-difference 0 new / 0 gone).
 - **T2 - the whole Window Station / Desktop surface is dead exported API, and its conventions are therefore untestable
   against a caller.** All 18 `desktop.cpp` wrappers have **zero** in-tree callers (searched `src`, `examples`, `test`
   for `User32::<name>` across all 18 - only the definitions match), and a comment-stripped search for direct SDK calls
