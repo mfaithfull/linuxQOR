@@ -6,7 +6,7 @@ is 45 sources / 632 members / 535 bindings and the coverage backlog is empty - *
 session 37**; **U25 and U23 are both in on the code lines** (7 Nov 2026: `CONST` normalised to lowercase `const`
 folder-wide - **0** `CONST` tokens on code lines, the 24 that remain are comment lines in 10 TUs - and the 5 class-A
 const-on-pointer sites rewritten to `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`, which moves 5 mangled
-names `QE..` -> `PE..`). Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
+names `QE..` -> `PE..`**; **U16 is CLOSED (D21: the SDK version triple is pinned in `kernel32.h`, floor asserted)**. Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
 consistency, safety, UB and conformance to the api_layer conventions. One translation unit per session, and **commit at
 close**: a clean `git status` plus this file is all a session needs to resume after a context reset.
 
@@ -56,7 +56,7 @@ re-derive everything. **No record content was deleted** - the superseded procedu
    such a citation is dead as it is written; name the instrument's script slug instead.
 9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
-   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file is 172 lines** - the
+   open `archive/` or `gotchas/sessions-*.md` only for a named TU or session. **This file is 184 lines** - the
    ceiling is structural, not a task at close: the queue holds one fixed row per source (45 rows since `legacy.cpp`
    joined on 7 Nov 2026), the protocol and the gate are fixed text, and a close adds no prose. Growing this file breaks 4.
 
@@ -144,8 +144,13 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   the 5 class-A const-on-pointer sites fixed on the code lines - `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`
   over declaration + definition + `Library::Call<>` list = 15 sites in `user32.h`, `keyboard.cpp`, `dialog.cpp`, `text.cpp`;
   the fix is **not** symbol-neutral, all 5 mangled names move `QE..` -> `PE..`; two cross-library follow-ups recorded not
-  done, and the negative control now rejects write-through with 2 x `C3892`).
-- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19, U20, U21, U22, U24, U25, U26, U27,
+  done, and the negative control now rejects write-through with 2 x `C3892`), **U16** (7 Nov 2026, D21: the SDK version
+  triple is pinned in `kernel32.h:22-30` at the values the unpinned build measured - `_WIN32_WINNT`/`WINVER 0x0A00`,
+  `NTDDI_VERSION 0x0A000010 = NTDDI_WIN11_GE` - guarded `#ifndef` so an already-pinned consumer cannot re-define them,
+  with a floor `#error` at `:33-35`; folder gate 45/45 exit 0 clean and the 113-source all-libraries log byte-identical
+  to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
+  recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
+- Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
   P3, P4, P6, T1-T6. Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 

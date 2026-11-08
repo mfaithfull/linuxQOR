@@ -17,6 +17,7 @@
 - `<Windows.h>` and related Windows API headers resolve from Windows Kits 10 include directories supplied through the environment; CMake does not normally add a `/I` for them.
 - Windows SDK `FORCEINLINE` definitions are visible in api_layer translation units, enabling header-inline wrappers.
 - `WINAPI_FAMILY_PARTITION` and `_WIN32_WINNT` decide which SDK definitions exist; threadpool callback variants may be APP/partition, WIN7-gated, or DESKTOP-only.
+- **The api_layer pins the SDK version triple in `kernel32.h`** (decision D21, 7 Nov 2026): `_WIN32_WINNT`/`WINVER` `0x0A00` and `NTDDI_VERSION` `0x0A000010` (`NTDDI_WIN11_GE`), each `#ifndef`-guarded, with a floor `#error` if a consumer pins lower. The values are what the unpinned build measured from `sdkddkver.h` on Windows Kits 10.0.26100, so the pin preserves the surface this tree already used and closes U16 for anything that reaches the api_layer through QOR headers. The shrink macros (`NOGDI`, `NOUSER`, `NOCTLMGR`, `NOMB`, `NOMSG`, `NOSYSPARAMSINFO`, `WINAPI_FAMILY`) are **not** pinned and still decide the SDK surface.
 - **Windows targets are 64-bit (amd64) only - no 32-bit x86** (decision D17, `docs/agent/DECISIONS.md`; in-tree note `src/platform/os/windows/purpose.md:3`). `CMakeSettings.json` has the single `x64-Debug` profile, the tree does not compile for x86, and no agent gate or verification pass runs an x86 compile.
 
 ## Build system and verification

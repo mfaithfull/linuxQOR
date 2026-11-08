@@ -17,9 +17,19 @@ there is no coverage lead to pick up.
 
 ## What is left to work on in this folder
 
-- Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U16, U17, U19-U27 less the frozen ids,
-  P3, P4, P6, T1-T6. None of them is a coverage gap; U17 (the A/W suffix question) is unaffected by 6g, which kept
-  `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over `qor_pp_useswinapiAW`.
+- Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19-U27 less the frozen ids,
+  P3, P4, P6, T1-T6. **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen
+  provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
+  question) is unaffected by 6g, which kept `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over
+  `qor_pp_useswinapiAW`.
+- What D21 changed under every session's feet: `kernel32.h:22-30` now pins `_WIN32_WINNT`/`WINVER` `0x0A00` and
+  `NTDDI_VERSION` `0x0A000010` (`NTDDI_WIN11_GE`) before `<Windows.h>`, guarded `#ifndef`, with a floor `#error` at
+  `:33-35`. Two consequences for any edit here: do not lower those macros and do not re-`#define` them - a consumer
+  that pins a lower floor before `kernel32.h` now fails with one `C1189` rather than with a batch of `C2039`/`C2061`;
+  and because the pin is in a shared header, any edit that touches `kernel32.h` needs the 113-source all-libraries
+  gate as a diff. The version triple is pinned, so an SDK prototype that vanished behind a `WINVER`/`NTDDI` guard is
+  no longer a U16 finding - the shrink macros (`NOGDI`, `NOSYSPARAMSINFO`, `NOUSER`, `NOCTLMGR`, `NOMB`, `NOMSG`,
+  `WINAPI_FAMILY`) are **not** pinned and remain findings if a consumer sets them.
 - The one shape this folder now carries that no other folder does: `wsprintfT` at `user32.h:835-840` is the only
   header-inline member and `library.h`'s `varCall` (variant (V), `__cdecl` variadic `fPtr`) its only variadic call form.
   A session that adds another `WINAPIV` export or edits that section has to keep the body in the header - a body defined

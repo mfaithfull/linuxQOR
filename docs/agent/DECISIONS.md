@@ -593,3 +593,66 @@ U17 (the A/W suffix question) is unaffected: `wsprintfA`/`wsprintfW` remain **on
 Record: the variant-(V) block in `library.h`, the section comment at `user32.h`, the banner of `legacy.cpp`, the D20 status
 lines in `registers/u18.md` and `registers/tasks.md`, and the close figures in `status.md` and `preflags.md`.
 
+## D21: U16 is closed by pinning the SDK version macros in kernel32.h - RULE (7 Nov 2026)
+
+Decision (user, 7 Nov 2026): U16's deferred pin is taken **in source, not in build flags** - `_WIN32_WINNT`,
+`WINVER` and `NTDDI_VERSION` are defined before `<Windows.h>` is included, at `kernel32.h:22-30`, the QOR include
+every `api_layer` header already sits behind (`user32.h:7` includes `kernel32.h` first, per G1). No `cmake/` file
+changes, and the pin stays out of `cmake/flags.cmake`.
+
+**The values are measured, and the first value the pin was written with was wrong on this SDK.** Pinning
+`NTDDI_VERSION` to the Win10 base `0x0A000000` broke **45/45** user TUs: `kernel32.h:169 AllocConsoleWithOptions`
+names `PALLOC_CONSOLE_OPTIONS`, which `consoleapi.h:46`/`:50` declare only inside `consoleapi.h:38 #if (NTDDI_VERSION
+>= NTDDI_WIN11_GE)` (that TU failed `C2061`), and `user32.h:574 CreateSyntheticPointerDevice` names `POINTER_INPUT_TYPE`
+(`WinUser.h:6312`), declared only inside `WinUser.h:6672 #if (NTDDI_VERSION >= NTDDI_WIN10_RS5)` (that header failed
+`C3646`/`C2275`/`C2146`). The pin instead states what the **unpinned** build measured over the include path the
+gate actually resolves (`Windows Kits 10.0.26100`, confirmed by `/showIncludes`): `_WIN32_WINNT 0x0A00` from
+`sdkddkver.h:228`, `WINVER = _WIN32_WINNT` from `:249`, `NTDDI_VERSION = WDK_NTDDI_VERSION` from `:238` with
+`:166 WDK_NTDDI_VERSION = NTDDI_WIN11_GE` and `:164 NTDDI_WIN11_GE = 0x0A000010`. So the pin is
+surface-preserving: it does not add or remove a prototype this folder already relied on, it only makes that surface
+independent of the consumer.
+
+**Guarded defines, not bare defines.** Two `api_layer/winsock2` TUs reach `<winsock2.h>` (hence `sdkddkver.h`)
+before `kernel32.h`, so bare defines collide with `sdkddkver.h`'s `WINVER`/`NTDDI_VERSION` spellings and add **4
+`C4005` macro-redefinition lines** to the `/W4` all-libraries log. Wrapping each pin in `#ifndef` keeps the same
+values for those consumers and adds **0** diagnostics - the gate convention (set-difference against a pre-fix run)
+is what forced this spelling.
+
+**A floor assertion, not an assumption.** `kernel32.h:33-35` `#error`s when any of the three macros is below the
+floor the unconditional declarations below need. Measured both ways with a consumer that pins `_WIN32_WINNT`/`WINVER
+0x0400` before the header: without the assertion the unconditional declarations break at **8 sites** - `kernel32.h:188`
+/`:195`/`:199`/`:221`/`:228`/`:291`/`:292`/`:315`, a `C2039` + `C2061` pair each (**16 diagnostic lines**) over
+`PCONSOLE_HISTORY_INFO`, `PCONSOLE_SELECTION_INFO`, `PCONSOLE_FONT_INFOEX`, `STREAM_INFO_LEVELS`,
+`LPFILE_ID_DESCRIPTOR`; with it the same TU stops at **one `C1189`** stating the required floor. The guard alone would
+have let a lower consumer pin silently change this header's meaning - measured, the `#ifndef` form leaves the
+consumer's `0x0400` in force (`WINVER`/`_WIN32_WINNT` stay low) and only the assertion catches it.
+
+Evidence (7 Nov 2026), instruments `tmp/_tmp_u16_close_probe.cpp` (+ `_nopin`, `_consumer`, run by
+`tmp/_tmp_u16_probe_run.bat`), `tmp/_tmp_u16_close_folder.bat`, `tmp/_tmp_u16_apiall_pin.bat`, diffed by
+`tmp/_tmp_u16_apialldiff.ps1`, and the two assertion legs `tmp/_tmp_u16_assert_off.bat` / `tmp/_tmp_u16_assert_on.bat`
+(the OFF leg was taken against a temporary commented-out copy of `kernel32.h:33-35`, restored byte-identically -
+SHA-256 `21CAB103...718E` before and after):
+- folder gate **45/45** at `/W4`, exit **0**, zero diagnostics, 45 `.cpp` echoes, and all 45 `tmp/obj/<tu>.obj`
+  newer than their source (the dating rule, since a clean log is byte-identical and undatable by hash).
+- all-libraries 113-source gate read as a **diff** against the pre-pin run: the two logs are **byte-identical**
+  (same SHA-256), 307 lines / 113 echoes / 165 warning lines / 1 `C1083` at `opengl/wgl.cpp:31` / exit **2** both
+  sides, set-difference **0 new / 0 gone**.
+- the positive probe: a TU that includes `kernel32.h` and takes the address of **28** SDK names the review's U16
+  instances pair with (the floors `0x0400`, `0x0500`, `0x0501`, `0x0600`, `0x0605`, the `_WIN32_WINNT` variants and
+  the whole multimonitor block) compiles clean at `/W4` exit 0, and its `#if` on the three macros confirms the
+  effective values are the measured ones.
+- the negative control still reproduces U16's divergence for a consumer that **bypasses** `kernel32.h` (pins
+  `WINVER 0x0400` and includes `<Windows.h>` directly: 3 `C2065` undeclared for `GetUpdatedClipboardFormats`,
+  `MonitorFromPoint`, `GetWindowRgnBox`). The pin is library-side, so it does not constrain third-party consumers;
+  that residual is recorded, not fixed, and is exactly why the pin did not move into `cmake/`.
+
+What it settles: `u16.md`'s rule ("nothing in the build pins those version macros, so the same header compiles
+differently per consumer") now has a decided answer for anything that reaches the api_layer through QOR headers.
+What it does not settle: the shrink macros U16's sibling cases name (`NOGDI`, `NOSYSPARAMSINFO`, `NOUSER`,
+`NOCTLMGR`, `NOMB`, `NOMSG`, `WINAPI_FAMILY`) are still unpinned and unasserted - the floor assertion covers the
+version triple only.
+
+Record: the pin block and the floor assertion in `kernel32.h`; this D21; the U16 closed row in `status.md`; the
+open-item line in `preflags.md`. `registers/u16.md` stays frozen as provenance (protocol 7 - registers are never
+appended to).
+

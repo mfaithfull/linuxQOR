@@ -9,6 +9,31 @@
 #	define _UNICODE 1
 #endif
 
+//U16 - pin the SDK version macros before <Windows.h> is included. The api_layer declarations (kernel32.h,
+//gdi.h, shell32.h, user32.h ...) are unconditional, so an unpinned build took its SDK prototype surface
+//from sdkddkver.h's defaults and could compile differently per consumer. Pinned to the values the unpinned
+//build measured on Windows Kits 10.0.26100: sdkddkver.h:228 _WIN32_WINNT 0x0A00, :249/:251 WINVER =
+//_WIN32_WINNT, :238 NTDDI_VERSION = WDK_NTDDI_VERSION = NTDDI_WIN11_GE 0x0A000010. NTDDI must not go below
+//that: kernel32.h:169 AllocConsoleWithOptions needs consoleapi.h:38 (NTDDI_VERSION >= NTDDI_WIN11_GE) and
+//the pointer-input family needs winuser.h:6672 (NTDDI_VERSION >= NTDDI_WIN10_RS5); pinning NTDDI to the
+//0x0A000000 base broke 45/45 user TUs (C2061 PALLOC_CONSOLE_OPTIONS, C3646 POINTER_INPUT_TYPE).
+//Each guard keeps an already-pinned consumer (e.g. the winsock2 TUs that include <winsock2.h> before this
+//header) from re-defining the same macro and emitting C4005 at /W4.
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0A00
+#endif
+#ifndef WINVER
+#define WINVER 0x0A00
+#endif
+#ifndef NTDDI_VERSION
+#define NTDDI_VERSION 0x0A000010
+#endif
+//A consumer that pins a lower floor before this header would silently lose the types the unconditional
+//declarations below name, so the floor is asserted rather than assumed.
+#if (_WIN32_WINNT < 0x0A00) || (WINVER < 0x0A00) || (NTDDI_VERSION < 0x0A000010)
+#error "QOR Windows api_layer requires _WIN32_WINNT/WINVER 0x0A00 and NTDDI_VERSION >= 0x0A000010 (NTDDI_WIN11_GE); pin these before including kernel32.h"
+#endif
+
 #include <Windows.h>
 #include <synchapi.h>
 #undef min
