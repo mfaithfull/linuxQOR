@@ -1,6 +1,6 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 8 Nov 2026 - **T6 is CLOSED (D24): a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList` (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox` per D18.** T5 is CLOSED: `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.** T4 is also CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
+Last updated 8 Nov 2026 - **T2 is CLOSED (D25): `desktop.cpp`'s two `Enum*` callbacks now take the SDK's **W** spellings `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` - at `user32.h:410`/`:413`, at the `desktop.cpp:86`/`:107` definition heads and in the two `Library::Call<>` argument lists at `desktop.cpp:90`/`:111` - because both wrappers bind `qor_pp_useswinapiAW` and the exports they bind (`EnumDesktopsW` `WinUser.h:1480`, `EnumWindowStationsW` `:1610`) spell their callback parameter that way per D18. The edit moves no type and no mangled name (`tmp/_tmp_t2_probe_id.cpp` exit 0 on four `static_assert`s: `is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>`=1 etc.), and the parameter stays type-checked (`tmp/_tmp_t2_probe_neg.cpp` exit 2 rejecting an A-shaped callback, `tmp/_tmp_t2_probe_farproc.cpp` exit 2 rejecting the `!STRICT` FARPROC shape). U17 took no action (this section was already 9/9 compliant) and the section's 18/18 deadness stays D14's territory. Folder gate 47/47 exit 0 and the 115-source all-libraries logs SHA-256 identical pre/post, so **all eight deferred tasks T1-T8 are now CLOSED.** T6 is CLOSED (D24): a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList` (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox` per D18.** T5 is CLOSED: `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.** T4 is also CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
  (export 17C), bound bare `qor_pp_useswinapi`, and `user32.h:744-745` gains `static` on both.** T3 is also CLOSED:
  `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification`
  (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new
@@ -153,7 +153,8 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   `user32.h:788-789`) and **T4** (8 Nov 2026: `help.cpp` defines the menu context-help-id pair + `static` at
   `user32.h:744-745`), **T5** (8 Nov 2026, D23: `ime.cpp` defines the IME/WINNLS pair + `static` and adds the two WINNLS siblings), **T6** (8 Nov 2026, D24: a new `listbox.cpp` defines the List Box trio + `static` at `user32.h:552-554`), **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29,
   3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h`
-  includes are gone, the scan now reads 2 includes / 0 without use), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
+  includes are gone, the scan now reads 2 includes / 0 without use), **T2** (8 Nov 2026, D25: `EnumDesktopsT`/`EnumWindowStationsT`
+  take the SDK's `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` at `user32.h:410`/`:413` - type- and symbol-neutral), **U28** (5 Nov 2026, D17: Windows is x64-only, so the
   four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image), **U18** and **T8** (7 Nov 2026, D19 + D20:
   the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions), **U23** (7 Nov 2026:
   the 5 class-A const-on-pointer sites fixed on the code lines - `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`
@@ -166,7 +167,7 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
   recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6, T2. Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6. **No open task remains** - T1-T8 are all CLOSED (T2 closed 8 Nov 2026, D25). Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -195,5 +196,6 @@ inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time an
 All 38 review-queue TUs are closed, as are the nine coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), `security.cpp` (T1) and `listbox.cpp` (T6), so `preflags.md`
 pre-flags no review TU and no tranche: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
 `wsprintfA`/`wsprintfW` a variadic wrapper) and the backlog is empty - the 8 raw gap names all carry written exclusions.
-A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6, T2) or moves to
+A next session picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6 - **no task remains open**,
+all of T1-T8 CLOSED with T2 closed 8 Nov 2026 by D25) or moves to
 another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

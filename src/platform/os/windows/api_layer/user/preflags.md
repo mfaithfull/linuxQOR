@@ -1,4 +1,4 @@
-# Folder-level leads - the review queue, all of T8 and T1-T6 are closed; T2 is the only open task
+# Folder-level leads - the review queue and all of T1-T8 are closed; no task remains open
 
 Written wholesale at the T6 close (8 Nov 2026) and replaced wholesale at every later close. All 38 review-queue sources are `closed` and the nine coverage TUs `pointer.cpp` (6a),
 `dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f), `legacy.cpp` (6g), `security.cpp` (T1) and `listbox.cpp` (T6) are closed with them,
@@ -14,17 +14,20 @@ prototype.** `_tmp_static_census.ps1` also prints 0 defined-but-not-static, 0 de
 the classifier artifact `SetWindowsHookExAW`, which no header declares. The buckets instrument prints **0 for every family
 except those two all-exclusion rows** - `Other` is 0 and the 6 legacy names are out of the gap - so the backlog is empty and
 there is no coverage lead to pick up.
+The D25 edit (T2, 8 Nov 2026) renamed a callback **parameter type** only - `DESKTOPENUMPROC`/`WINSTAENUMPROC` ->
+`DESKTOPENUMPROCW`/`WINSTAENUMPROCW` at `user32.h:410`/`:413` and the four `desktop.cpp` sites - so it added no
+declaration, no definition and no binding, and every figure above is unchanged by it.
 
 ## What is left to work on in this folder
 
 - Open items the `status.md` map names: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19-U27 less the frozen ids,
-  P3, P4, P6 and T2. **T1, T3, T4, T5, T6, T7 and T8 are CLOSED** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
+  P3, P4 and P6 - **no task remains open**: T1, T3, T4, T5, T6, T7 and T8 are CLOSED (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at
   `user32.h:760-761`; `powermanagement.cpp` defines the Power Management pair + `static` at `user32.h:788-789`; `help.cpp`
   defines the menu context-help-id pair + `static` at `user32.h:744-745`; U4's and U18's instances for all three pairs are
   gone, the ids stay open for the rest of the folder - the DDE section and the four System Information members are still declared and defined nowhere - and
   `ime.cpp` closed T5 by wrapping the IME/WINNLS block, and a new `listbox.cpp` closed T6 by
   defining `DlgDirList` (exports C1/C4, bound AW), `DlgDirSelectEx` (C7/C8, bound AW) and `GetListBoxInfo` (174, bound
-  bare) with `static` at `user32.h:552-554` and the SDK's parameter names on the `DlgDirSelectEx` declaration). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
+  bare) with `static` at `user32.h:552-554` and the SDK's parameter names on the `DlgDirSelectEx` declaration). **T2 is CLOSED** (8 Nov 2026, D25: `EnumDesktopsT`/`EnumWindowStationsT` take the SDK's `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` at `user32.h:410`/`:413` plus the `desktop.cpp:86`/`:107` definition heads and the `Library::Call<>` lists at `:90`/`:111` - a type- and symbol-neutral edit, so U17's 11 no-suffix members and the 2 mirror cases stay untouched and the section's 18/18 deadness stays a `winqor_gui` question). **U16 is CLOSED** (7 Nov 2026, D21) - it is no longer on that list, and `registers/u16.md` is frozen provenance, so do not open it at session start. None of the remaining ids is a coverage gap; U17 (the A/W suffix
   question) is unaffected by 6g, which kept `wsprintfA`/`wsprintfW` as **one** `wsprintfT` member over
   `qor_pp_useswinapiAW`.
 - What D21 changed under every session's feet: `kernel32.h:22-30` now pins `_WIN32_WINNT`/`WINVER` `0x0A00` and

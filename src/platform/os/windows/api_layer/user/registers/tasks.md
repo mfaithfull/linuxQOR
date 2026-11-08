@@ -1,9 +1,10 @@
-# T1-T8 deferred tasks - T2 open, each needing a decision; T1, T3, T4, T5, T6, T7 and T8 are CLOSED
+# T1-T8 deferred tasks - all eight CLOSED; T2 closed 8 Nov 2026 (D25)
 
 - **T1 - two declared-but-undefined members in the "Authorization functions" section.** CLOSED 8 Nov 2026 (D22).
 
 - **T2 - the whole Window Station / Desktop surface is dead exported API, and its conventions are therefore untestable
-  against a caller.** All 18 `desktop.cpp` wrappers have **zero** in-tree callers (searched `src`, `examples`, `test`
+  against a caller.** **CLOSED 8 Nov 2026 (D25)** - the resolution is the paragraph at the end of this bullet; the
+  description below stays as written. All 18 `desktop.cpp` wrappers have **zero** in-tree callers (searched `src`, `examples`, `test`
   for `User32::<name>` across all 18 - only the definitions match), and a comment-stripped search for direct SDK calls
   (`OpenWindowStation|OpenDesktop|SwitchDesktop|GetUserObjectInformation(W|A)?\(` excluding `User32::`) finds **zero
   bypass sites** - the single hit is the declaration at `user32.h:416`. So this section is 18/18 U15 instances (U15 is
@@ -13,6 +14,20 @@
   callback should be typed as the SDK's `DESKTOPENUMPROC` or as a `LPCWSTR`-taking callback now that the binding is
   always the `W` form) pure taste calls with no call site to inform them. Recorded for the folder-wide pass; nothing in
   this section is exercised by `examples/mainwindow`, so no session can observe a behaviour change here.
+  **Resolution (8 Nov 2026, D25):** the callback question is settled in favour of the SDK's **W** spellings. `EnumDesktopsT`
+and `EnumWindowStationsT` now take `DESKTOPENUMPROCW` / `WINSTAENUMPROCW` - at `user32.h:410` and `:413`, at the `desktop.cpp:86`
+and `:107` definition heads, and in the two `Library::Call<>` argument lists at `desktop.cpp:90` and `:111` - because both
+wrappers bind `qor_pp_useswinapiAW` and the prototype parameters of the exports they bind are spelled that way (`WinUser.h:1480`,
+`:1610`), which is what D18's "copy the prototype of the export it binds" asks for; the generic names reach the same shape only
+through the `#ifdef UNICODE` alias at `WinUser.h:202`/`:201`, whose `#else` arm swaps in the A shape. The edit moves no type and
+no mangled name - `tmp/_tmp_t2_probe_id.cpp` compiles at exit 0 behind four `static_assert`s (`is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>`,
+`is_same<WINSTAENUMPROC,WINSTAENUMPROCW>`, both equal to `BOOL(__stdcall*)(LPWSTR,LPARAM)`), and it is not a move to an untyped
+parameter: `tmp/_tmp_t2_probe_neg.cpp` exits 2 (an A-shaped callback is still rejected) and `tmp/_tmp_t2_probe_farproc.cpp` exits
+2 (none of the four names is `FARPROC` in this `STRICT`/`UNICODE` build). The other two conventions T2 named take no action here:
+U17 measured 9/9 compliant in this section (`EnumDesktopWindows` correctly bare) and P3 found no mirror case, so both stay where
+they are until the folder-wide pass. The deadness stays D14's territory - re-measured 8 Nov 2026, 0 `User32::<name>` hits for all
+18 names across `src`/`examples`/`test` outside `desktop.cpp` and `user32.h`. Gate: `desktop.cpp` standalone `/W4` exit 0, folder
+47/47 exit 0 with 0 diagnostics, and the 115-source all-libraries logs SHA-256 identical pre/post (`D286F848...D6EAF`).
 
 - **T3 - the "Power Management functions" pair is declared but has no owning TU at all.** CLOSED 8 Nov 2026.
 

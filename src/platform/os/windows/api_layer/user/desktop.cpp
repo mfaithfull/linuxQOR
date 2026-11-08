@@ -31,9 +31,20 @@ namespace qor { namespace win { namespace api {
     //Thread contracts: GetThreadDesktop/SetThreadDesktop/SwitchDesktop/OpenInputDesktop act on the calling thread or the
     //process window station. SetThreadDesktop fails if the calling thread has already created a window on that
     //desktop or installed a hook there, and SwitchDesktop is per-process, not per-thread.
-    //Callbacks: EnumDesktopsT/EnumWindowStationsT take the SDK's generic DESKTOPENUMPROC/WINSTAENUMPROC (winuser.h:220-227),
-    //which are CALLBACK (stdcall) pointers. Because the bindings here are always the W form, the name the callback
-    //receives is always a wide LPWSTR whatever the caller's TCHAR setting is.
+    //Callbacks: EnumDesktopsT/EnumWindowStationsT take the SDK's **W** spellings DESKTOPENUMPROCW/WINSTAENUMPROCW (winuser.h:185
+    //and :184, which alias NAMEENUMPROCW at :180 = BOOL(CALLBACK*)(LPWSTR,LPARAM)), matching the prototype parameters the
+    //entry points actually take at winuser.h:1480 and :1610 - NOT the generic DESKTOPENUMPROC/WINSTAENUMPROC, which reach
+    //the W shape only through the alias at winuser.h:202/:201 and whose !UNICODE arm at :207/:206 swaps in the A shape, so
+    //the generic spelling hides which callback a caller has to supply while this section always binds "EnumDesktopsW"/
+    //EnumWindowStationsW. Task T2, decision D25: the W spelling went into the declaration (user32.h:410, :413), the
+    //definition (:86, :107) and both Library::Call argument lists (:90, :111). It moves no type and no mangled name -
+    //tmp/_tmp_t2_probe_id.cpp compiles at exit 0 with is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>=1, is_same<WINSTAENUMPROC,
+    //WINSTAENUMPROCW>=1 and both equal to BOOL(__stdcall*)(LPWSTR,LPARAM), so a caller hands the same function pointer
+    //either way - and it is not an untyped parameter: tmp/_tmp_t2_probe_neg.cpp exits 2, an A-shaped BOOL(__stdcall*)
+    //(LPSTR,LPARAM) is still rejected. Caveat already recorded in windowproperties.cpp:33-39: under !STRICT winuser.h:195
+    //and :194 make these four names FARPROC and the parameter stops being type-checked; this build defines STRICT and
+    //qor_pp_unicode 1, so that arm is not the case here. The :220-227 citation this block carried before the edit was
+    //stale - the typedefs measure at :179-:207 in this WinUser.h.
     //Section coverage: within this section every SDK entry point in the winuser.h NODESKTOP / NOWINDOWSTATION regions
     //(:1391-1448, :1456-1546, :1548-1661) is wrapped. The two user-object security calls the SDK declares next to
     //GetUserObjectInformation/SetUserObjectInformation - SetUserObjectSecurity (:1671-1674) and GetUserObjectSecurity
@@ -72,11 +83,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HDESK, LPCTSTR, LPCTSTR, ::LPDEVMODE, DWORD, ACCESS_MASK, ::LPSECURITY_ATTRIBUTES, ULONG, PVOID >(pFunc, lpszDesktop, lpszDevice, pDevmode, dwFlags, dwDesiredAccess, lpsa, ulHeapSize, pvoid);
     }
 
-    BOOL User32::EnumDesktopsT(HWINSTA hwinsta, DESKTOPENUMPROC lpEnumFunc, LPARAM lParam)
+    BOOL User32::EnumDesktopsT(HWINSTA hwinsta, DESKTOPENUMPROCW lpEnumFunc, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, EnumDesktops);
-        return Library::Call< BOOL, HWINSTA, DESKTOPENUMPROC, LPARAM >(pFunc, hwinsta, lpEnumFunc, lParam);
+        return Library::Call< BOOL, HWINSTA, DESKTOPENUMPROCW, LPARAM >(pFunc, hwinsta, lpEnumFunc, lParam);
     }
 
     HWINSTA User32::CreateWindowStationT(LPCTSTR lpwinsta, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa)
@@ -93,11 +104,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HWINSTA >(pFunc, hWinSta);
     }
 
-    BOOL User32::EnumWindowStationsT(WINSTAENUMPROC lpEnumFunc, LPARAM lParam)
+    BOOL User32::EnumWindowStationsT(WINSTAENUMPROCW lpEnumFunc, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, EnumWindowStations);
-        return Library::Call< BOOL, WINSTAENUMPROC, LPARAM >(pFunc, lpEnumFunc, lParam);
+        return Library::Call< BOOL, WINSTAENUMPROCW, LPARAM >(pFunc, lpEnumFunc, lParam);
     }
 
     HWINSTA User32::GetProcessWindowStation(void)

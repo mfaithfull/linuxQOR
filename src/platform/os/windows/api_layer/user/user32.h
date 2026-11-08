@@ -407,10 +407,10 @@ namespace qor { namespace win { namespace api {
         static BOOL CloseDesktop(HDESK hDesktop);
         static HDESK CreateDesktopT(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
         static HDESK CreateDesktopExT(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa, ULONG ulHeapSize, PVOID pvoid);
-        static BOOL EnumDesktopsT(HWINSTA hwinsta, DESKTOPENUMPROC lpEnumFunc, LPARAM lParam);
+        static BOOL EnumDesktopsT(HWINSTA hwinsta, DESKTOPENUMPROCW lpEnumFunc, LPARAM lParam);
         static HWINSTA CreateWindowStationT(LPCTSTR lpwinsta, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
         static BOOL CloseWindowStation(HWINSTA hWinSta);
-        static BOOL EnumWindowStationsT(WINSTAENUMPROC lpEnumFunc, LPARAM lParam);
+        static BOOL EnumWindowStationsT(WINSTAENUMPROCW lpEnumFunc, LPARAM lParam);
         static HWINSTA GetProcessWindowStation(void);
         static HDESK GetThreadDesktop(DWORD dwThreadId);
         static BOOL GetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength, LPDWORD lpnLengthNeeded);

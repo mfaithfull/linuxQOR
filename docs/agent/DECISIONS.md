@@ -754,3 +754,61 @@ resolution note in `registers/tasks.md`; the open-item line and folder figures i
 `registers/u17.md` and `registers/u18.md` stay untouched (protocol 7 - closed and frozen registers are never appended to;
 the trio's instances are named in this D24 and in the TU banner).
 
+## D25: T2 - type the Desktop / Window Station callback parameters as the SDK's W spellings - ACTION (8 Nov 2026)
+
+Rule (user decision, 8 Nov 2026): T2 closes by acting on the one convention question it owns. `EnumDesktopsT` and
+`EnumWindowStationsT` take the SDK's **W** callback spellings `DESKTOPENUMPROCW` / `WINSTAENUMPROCW` in place of the
+generic `DESKTOPENUMPROC` / `WINSTAENUMPROC`, so the published parameter agrees with the entry point the wrapper binds.
+
+Why this is the decision and not one of the alternatives offered for T2: the section's deadness is D14's territory and
+stays a consumer-side question, its U17 (`T`-suffix) and P3 (mirror-case) shapes measured **conformant** (9/9 A/W
+members carry the suffix, `EnumDesktopWindows` correctly bare), and its U2/U7 check sites, `GetUserObjectInformationT`'s
+unchecked `lpnLengthNeeded` and raw-handle leak contract stay recorded-not-acted under the policy that already settled
+them in `windowproperties.cpp:49-54`. The only question with no rule over it is the callback typedef, and the SDK itself
+answers it: both wrappers bind `qor_pp_useswinapiAW`, so the entry point is always `EnumDesktopsW` / `EnumWindowStationsW`,
+whose prototype parameters in this SDK header (`C:\Program Files\Microsoft Visual Studio\18\Community\SDK\ScopeCppSDK\vc15\SDK\include\um\WinUser.h`)
+are spelled `DESKTOPENUMPROCW` at `:1480` and `WINSTAENUMPROCW` at `:1610` - D18's "copy the prototype of the export it
+binds" therefore names the W spelling, and the generic spelling is one typedef hop away (`:202 DESKTOPENUMPROC =
+DESKTOPENUMPROCW`, `:201 WINSTAENUMPROC = WINSTAENUMPROCW`, both from the `#ifdef UNICODE` arm whose `#else` at `:207`/`:206`
+swaps in the A shape). The folder's `desktop.cpp` banner cited the typedefs at `winuser.h:220-227`; they measure at
+`:179-:207` in this header, so the citation in that paragraph is stale and the replacement paragraph corrects it.
+
+The edit is type-neutral and symbol-neutral: `WinUser.h:180` is `typedef BOOL (CALLBACK* NAMEENUMPROCW)(LPWSTR, LPARAM);`,
+`:184`/`:185` alias it to `WINSTAENUMPROCW`/`DESKTOPENUMPROCW`, and `:201`/`:202` alias those to the generic names, so the
+two spellings are one type in this build. Measured with `tmp/_tmp_t2_probe_id.cpp` (compile-only, exit **0** behind four
+`static_assert`s: `is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>` = 1, `is_same<WINSTAENUMPROC,WINSTAENUMPROCW>` = 1, and both
+equal to `BOOL(__stdcall*)(LPWSTR,LPARAM)`), so a caller hands the same function pointer either way and no mangled name
+moves. The parameter is not untyped either: `tmp/_tmp_t2_probe_neg.cpp` exits **2**, an A-shaped `BOOL(__stdcall*)(LPSTR,LPARAM)`
+is rejected, and `tmp/_tmp_t2_probe_farproc.cpp` exits **2**, so none of the four names is `FARPROC` here. The caveat that
+`!STRICT` makes them `FARPROC` (`WinUser.h:194`/`:195`) is already recorded in `windowproperties.cpp:33-39` and is not the
+case in this build (`STRICT` defined, `UNICODE` defined, `qor_pp_unicode=1`).
+
+Sites: `user32.h:410` (`EnumDesktopsT`) and `:413` (`EnumWindowStationsT`) declarations; `desktop.cpp:86` and `:107`
+definition heads; `desktop.cpp:90` and `:111` `Library::Call<>` argument lists - 6 sites, no other file names either
+typedef on a code line (the folder-wide search found the generic spellings only in this TU and this header).
+
+Gate: `desktop.cpp` standalone at `/W4` exit **0**; the 47-source folder gate exit **0** with 47 `.cpp` echoes and 0 real
+diagnostics, dated by `tmp/obj/desktop.obj` newer than `desktop.cpp`; `cl /EP` on the edited TU (`tmp/_tmp_t2_pp_desktop_post.txt`)
+spells the W typedefs in both declarations, both definition heads and both `Library::Call<>` lists while the two binding
+literals stay `"EnumDesktopsW"` and `"EnumWindowStationsW"` against the module literal `L"user32"`; and because `user32.h`
+is shared, the 115-source all-libraries run was gated as a diff against a pre-fix run - 115 -> 115 `.cpp` echoes, 165 warning
+lines = 165, exit **2** both sides, the single `C1083` at `opengl/wgl.cpp:31` on both sides, and the two logs are
+**SHA-256 identical** (`D286F848D07A7AF6031DB65DA884ADE0B28FADF586F462E999D021C4096D6EAF`), which is stronger than a set-difference
+and is what the `U16` pin record calls it.
+
+What it does **not** decide: U17's 11 A/W members that carry no `T` suffix and the 2 mirror cases (`CreateWindowT`,
+`CopyCursorT`) stay deferred until one folder-wide pass - this section was already 9/9 compliant, so T2 takes no U17 action;
+the published **names** are untouched, so this is not a rename and no consumer is affected; and the section's 18/18 deadness
+stays a `winqor_gui` question (D14), re-measured 8 Nov 2026 as 0 `User32::<name>` hits for all 18 names across
+`src`/`examples`/`test` outside `desktop.cpp` and `user32.h`.
+
+Counts unchanged by the edit: 47 sources / 634 member-declaration lines (548 static, 86 non-static) / 547 binding lines /
+1,018 export names / 759 covered / 8 declared-and-unwrapped / 251 with no prototype.
+
+Record: the 6 parameter sites and the corrected callback paragraph in `desktop.cpp`; this D25; the T2 closed row in
+`status.md`, its open-item list and its closed-id list; the T2 resolution note in `registers/tasks.md`; the header and
+open-item lines in `preflags.md`; the T2 instrument rows in `tooling.md`. No `CMakeLists.txt`, no export table, no
+consumer changes.
+
+
+
