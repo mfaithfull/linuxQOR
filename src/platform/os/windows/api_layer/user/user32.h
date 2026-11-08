@@ -734,10 +734,12 @@ namespace qor { namespace win { namespace api {
         static LONG_PTR GetWindowLongPtrT(HWND hWnd, int nIndex);
         static BOOL UnregisterClassT(LPCTSTR lpClassName, HINSTANCE hInstance);
 
-        void DisableProcessWindowsGhosting(void);
+        static void DisableProcessWindowsGhosting(void);
         static LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
-        BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);
+        static UINT WINNLSGetIMEHotkey(HWND hwnd);
+        static BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);
         //WINNLSEnableIME is obsolete - do not use
+        static BOOL WINNLSGetEnableStatus(HWND hwnd);
         static UINT GetDpiForWindow(HWND hwnd);
 
         //Shell functions

@@ -1,4 +1,4 @@
-# T1-T8 deferred tasks - T2, T5, T6 open, each needing a decision; T1, T3, T4, T7 and T8 are CLOSED
+# T1-T8 deferred tasks - T2, T6 open, each needing a decision; T1, T3, T4, T5, T7 and T8 are CLOSED
 
 - **T1 - two declared-but-undefined members in the "Authorization functions" section.** CLOSED 8 Nov 2026 (D22).
 
@@ -39,20 +39,29 @@
 
 Note - the 38-TU review queue that these tasks were tracked against closed in full at session 37 (5 Nov 2026), so its queue arithmetic and its per-TU hand-offs are dropped: the folder is now 46 sources with no next review TU, and every hand-off lives in the register that names it.
 
-- **T5 - the IME/WINNLS pair in the unlabelled `user32.h:635-639` block is declared and defined nowhere.** Opened
-  1 Nov 2026 (session 19, `ime.cpp`). `user32.h:635` `void DisableProcessWindowsGhosting(void)` and `user32.h:637`
-  `BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag)` are the block's two non-static members; no `.cpp` in the folder defines
-  either, and `dumpbin /linkermember:1` on the built `winqor_api_user.lib` publishes neither. Both entry points are real
-  single exports - `WINNLSEnableIME` **RESOLVED** (ordinal 3E6, `A`/`W` MISSING), `DisableProcessWindowsGhosting`
-  **RESOLVED** (`tmp/_tmp_name_resolve_s19b.txt`) - and the SDK declares `WINNLSEnableIME` at `um\WinNls32.h:88` in the
-  same Desktop block as `WINNLSGetEnableStatus` (`:89`) and `WINNLSGetIMEHotkey` (`:87`), none of which `user32.h` declares.
-  Same shape as T1/T3/T4: the fix is symmetric (make the pair `static` + write the TU, or delete `:635`/`:637`), no ABI is
-  touched, and both moves change the published surface, so it belongs with the U4/U13 sweep. Contract for whoever wraps
-  them: `DisableProcessWindowsGhosting` takes nothing and returns nothing (fire-and-forget, no failure signal);
-  `WINNLSEnableIME` returns `BOOL` and the SDK header itself says it is obsolete - `user32.h:638` carries the same
-  warning as of session 19 - so the honest options are "wrap it and mark it obsolete" or "do not wrap it at all", not
-  silently exposing it through this layer. Note also that `WINNLSEnableIME` is a **bare single export** (no `A`/`W`
-  spelling exists), so per D13 it would need the bare `qor_pp_useswinapi`, unlike `SendIMEMessageEx` next door.
+- **T5 - the IME/WINNLS block in the unlabelled `user32.h` run is declared and defined nowhere.** CLOSED 8 Nov 2026
+  (D23 - the "wrap it and mark it obsolete" option the task named). `ime.cpp` now owns the whole IME/WINNLS block. The
+  block's two non-static members `DisableProcessWindowsGhosting` (export BB) and `WINNLSEnableIME` (export 3E6) gain
+  `static` and both get definitions bound bare `qor_pp_useswinapi` - both are single-stem exports (`tmp/_tmp_name_resolve_s19b.txt`:
+  both RESOLVED, `WINNLSEnableIME`'s `A`/`W` spellings MISSING), so the bare form is the D13 spelling, unlike `SendIMEMessageEx`
+  next door which stays `qor_pp_useswinapiAW`. The SDK's two sibling WINNLS entry points that `user32.h` declared nowhere -
+  `WINNLSGetIMEHotkey` (export 3E8) and `WINNLSGetEnableStatus` (3E7) - are added as `static` declarations plus bare-bound
+  definitions in the header's order. `WINNLSEnableIME` keeps the SDK's obsolete warning as a one-line comment above its
+  declaration and **remains on the published interface**; `GetDpiForWindow` stays in `window.cpp`. The block is now `ime.cpp`'s
+  five members in header order (DisableProcessWindowsGhosting, SendIMEMessageEx, WINNLSGetIMEHotkey, WINNLSEnableIME,
+  WINNLSGetEnableStatus). Both halves of the original defect close together (U4 declared-but-undefined -> defined, U18
+  non-static -> static), no ABI is touched, and contracts pass through: `DisableProcessWindowsGhosting` is void/void (fire-and-forget,
+  `Library::voidCall`, no failure signal), the three WINNLS members return their SDK types raw with no `CheckReturn` (a hotkey code,
+  the enable state, and a BOOL whose fault/legitimate-FALSE are indistinguishable per U7), matching the block's U1/U2 policy.
+  Measured at the close: `ime.cpp` standalone `/W4` exit 0 and folder 46/46 `/W4` exit 0 clean; `cl /EP` emits five binding
+  literals against module literal "user32" (`"SendIMEMessageExW"`, `"DisableProcessWindowsGhosting"`, `"WINNLSGetIMEHotkey"`,
+  `"WINNLSEnableIME"`, `"WINNLSGetEnableStatus"`). The shared-header `user32.h` edit was gated against the 58 external consumers
+  that `#include user32.h` outside the folder (the `ui/gui`/`ui/gl` targets): the only diagnostics there are pre-existing missing-include
+  `C1083` artifacts on the two commented-out-of-build targets and pre-existing `C4100` unreferenced-parameter warnings in `ui/gui`
+  headers, and a scan of that log for the new/changed member names or `user32.h` returns 0 hits. Census moves static 540 -> 544 /
+  non-static 93 -> 91 and bindings 540 -> 544 (`tmp/_tmp_t4_census.ps1`); members 633 -> 635 and coverage 757 -> 759 of 1,018
+  (`tmp/_tmp_pt_coverage_s27.ps1` - the two new WINNLS members were undeclared before and are real exports, so they add 2; the pair
+  were already declared and already covered).
 
 - **T6 - the whole "//List Box functions" section is declared and defined nowhere - there is no owning TU.** Opened
   2 Nov 2026 by the session-24 (`monitor.cpp`) U21 region scan. `user32.h:545` opens the section with **three**

@@ -1,15 +1,15 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 8 Nov 2026 - **T4 is CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
+Last updated 8 Nov 2026 - **T5 is CLOSED: `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.** T4 is also CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
  (export 17C), bound bare `qor_pp_useswinapi`, and `user32.h:744-745` gains `static` on both.** T3 is also CLOSED:
  `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification`
  (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new
  `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and `SetUserObjectSecurity` (export 375), bound bare
- `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both - so the folder is 46 sources / 633 members (540
- static, 93 non-static) / 541 bindings, and T1's, T3's and T4's declared-but-undefined + non-static halves are gone
- (U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 540 / non-static 99 ->
- 93 and bindings 535 -> 541). Coverage stays **757 of 1,018** - the instrument counts member declarations and all three
- pairs were already declared, so they were already covered. The T4 shared-header `user32.h` edit was gated as a diff
+ `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both, and T5 wraps the IME/WINNLS block in `ime.cpp` - so the folder is 46 sources / 635 members (544
+ static, 91 non-static) / 545 bindings, and T1's, T3's, T4's and T5's declared-but-undefined + non-static halves are gone
+ (U4 declared-but-undefined -> defined, U18 non-static -> static; the census moves static 534 -> 544 / non-static 99 ->
+ 91 and bindings 535 -> 545). Coverage moves **757 -> 759 of 1,018** - T1/T3/T4's pairs were already declared and already covered;
+ T5 additionally declares the two WINNLS entry points `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` that were declared nowhere, and both are real exports. The T4 shared-header `user32.h` edit was gated as a diff
  against the standing 114-source all-libraries baseline: 114 -> 114 cpp echoes, 165 warnings = 165, 1 `C1083` both sides,
  exit 2 both sides, set-difference 0 new / 0 gone (T1's was diffed the same way against the 113 -> 114 baseline).** The
  prior close stands: **T8 step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names), U18 and T8 are CLOSED**

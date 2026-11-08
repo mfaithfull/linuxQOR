@@ -682,3 +682,31 @@ Record: the new `security.cpp` TU and its banner; the `static` at `user32.h:760-
 this D22; the T1 closed row in `status.md`; the T1 resolution note in `registers/tasks.md`; the open-item line in `preflags.md`.
 `desktop.cpp`'s TU comment about the pair stays as frozen history (protocol 7 - closed TUs are not reopened).
 
+## D23: T5 - wrap the IME/WINNLS block in `ime.cpp`, make the pair `static`, keep the obsolete member on the interface - ACTION (8 Nov 2026)
+
+T5 (`registers/tasks.md`) is the unlabelled `user32.h` run between `//Window-Class functions` and `//Shell functions`:
+`DisableProcessWindowsGhosting` and `WINNLSEnableIME` are declared non-static and defined in no TU (the U4 declared-but-undefined
+shape plus the U18 non-static shape), and the SDK's two WINNLS siblings `WINNLSGetIMEHotkey` and `WINNLSGetEnableStatus`
+(`um\WinNls32.h:87`/`:89`) are declared nowhere. The task offered two honest options - "wrap it and mark it obsolete" or "do not
+wrap it at all".
+
+The user decision: **wrap the block and mark the obsolete member.** The two declared members gain `static` and get definitions
+bound bare `qor_pp_useswinapi` (both single-stem exports BB / 3E6, `WINNLSEnableIME`'s `A`/`W` spellings MISSING), and the two
+WINNLS siblings are added as `static` declarations plus bare-bound definitions in the header's order, so `ime.cpp` owns all five
+IME/WINNLS members. `WINNLSEnableIME` keeps the SDK's obsolete warning as a one-line comment above its declaration and **remains on
+the published interface** - it is not deleted. `GetDpiForWindow` stays in `window.cpp`.
+
+What it settles: for the pair U4 is gone (defined, so a caller links) and the U18 non-static shape is gone (static); the two
+siblings go from undeclared to declared-and-defined. Coverage moves 757 -> 759 of 1,018 (the two new WINNLS members were undeclared
+before and are real exports, so they add 2 to the count; the pair were already declared and already covered). The census moves static
+540 -> 544 / non-static 93 -> 91 and bindings 540 -> 544. Gate: `ime.cpp` standalone at /W4 exit 0, folder 46/46 at /W4 exit 0 clean,
+`cl /EP` emits five binding literals against module literal "user32" (`"SendIMEMessageExW"`, `"DisableProcessWindowsGhosting"`,
+`"WINNLSGetIMEHotkey"`, `"WINNLSEnableIME"`, `"WINNLSGetEnableStatus"`), and the shared-header `user32.h` edit is diagnostic-neutral
+against the 58 external `user32.h` consumers - the only diagnostics there are pre-existing `C1083`/`C4100` on the two commented-out
+targets and their headers, with 0 hits for the new/changed member names or `user32.h`.
+
+Record: `ime.cpp`'s four new definitions and its banner; the `static` and the two new declarations at `user32.h`'s IME/WINNLS run
+with the one-line obsolete comment; this D23; the T5 closed row in `status.md` and the T5 resolution note in `registers/tasks.md`;
+the `ime.cpp` pair reference in `registers/u4.md`.
+
+
