@@ -1,0 +1,53 @@
+# winqor_api_user - completed work (read-only reference)
+
+Moved out of `status.md` on 9 Nov 2026 so the per-session boot brief carries live state only. **Not boot material.**
+This file holds the close detail of finished tasks and of the review phase that has already ended; a session opens it
+only to research a named closed task or TU - never at session start. Live state is `status.md` + `preflags.md`; the
+per-TU narrative is the review banner in the `.cpp`; session history is `archive/`. A close moves its own outgoing
+detail here in one write and rewrites nothing that is already here.
+
+## Closed tasks T1-T8 - the deferred task queue (closed 5-9 Nov 2026)
+
+- **T1** (8 Nov 2026): a new `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and `SetUserObjectSecurity` (export 375), bound bare `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both. Its header edit was diffed the same way as T4's against the 113 -> 114 source all-libraries baseline.
+- **T2** (8 Nov 2026, D25): `desktop.cpp`'s two `Enum*` callbacks now take the SDK's **W** spellings `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` - at `user32.h:410`/`:413`, at the `desktop.cpp:86`/`:107` definition heads and in the two `Library::Call<>` argument lists at `desktop.cpp:90`/`:111` - because both wrappers bind `qor_pp_useswinapiAW` and the exports they bind (`EnumDesktopsW` `WinUser.h:1480`, `EnumWindowStationsW` `:1610`) spell their callback parameter that way per D18. The edit moves no type and no mangled name (`tmp/_tmp_t2_probe_id.cpp` exit 0 on four `static_assert`s: `is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>`=1 etc.), and the parameter stays type-checked (`tmp/_tmp_t2_probe_neg.cpp` exit 2 rejecting an A-shaped callback, `tmp/_tmp_t2_probe_farproc.cpp` exit 2 rejecting the `!STRICT` FARPROC shape). U17 took no action (this section was already 9/9 compliant) and the section's 18/18 deadness stays D14's territory.
+- **T3** (8 Nov 2026): `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification` (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both.
+- **T4** (8 Nov 2026): `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId` (export 17C), bound bare `qor_pp_useswinapi`, and `user32.h:744-745` gains `static` on both.
+- **T5** (8 Nov 2026, D23): `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.
+- **T6** (8 Nov 2026, D24): a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList` (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox` per D18.
+- **T7** (5 Nov 2026, D16): the 35 dead `../returncheck.h` includes are gone, the scan now reads 2 includes / 0 without use.
+- **T8** (7 Nov 2026, D19 + D20): the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions - 7 superseded twins whose `*Ptr`/`Ex` replacement this library wraps and 1 instrument artifact with no prototype. Step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names); D19 put the last 6 names in scope and D20 gave `wsprintfA`/`wsprintfW` a variadic wrapper. **U18 and T8 are CLOSED and there is no actionable T8 lead left.**
+- **All eight deferred tasks T1-T8 are now CLOSED** - measured at the 9 Nov 2026 T9 step 9a close: folder gate 47/47 exit 0 and the 115-source all-libraries logs SHA-256 identical pre/post.
+
+## T9 - the open tranche queue: the steps that have closed
+
+- **9a CLOSED (D27)**: a new `strings.cpp` TU defines all 34 `//String functions` members of `user32.h:342-375` with 34 x bare `qor_pp_useswinapi` bindings and 0 x `qor_pp_useswinapiAW` (the members already carry the A/W variant suffix, so D13's binding literal **is** the exported name), and `user32.h:342-375` gains `static` on all 34 declarations - no type and no parameter name moves, so no mangled name moves.
+- **9b (`rawinput.cpp`, D28) is IN, not closed** - its state lives in `status.md` until the close moves it here.
+
+## The source history behind the queue - 38 review TUs + 11 coverage TUs = 49 sources
+
+- **38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete (some sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows).
+- Coverage TUs that joined outside the review queue: `pointer.cpp` (T8 step 6a), `dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f) and `legacy.cpp` (6g) joined on 6-7 Nov 2026; `security.cpp` (T1) and `listbox.cpp` (T6) joined 8 Nov 2026; `strings.cpp` (T9 9a) and `rawinput.cpp` (T9 9b) joined 9 Nov 2026. Those eleven are the only queue rows not from a review session, and each one's narrative is its own banner.
+
+## Census and gate records taken at the closed closes
+
+- Census re-run post-9b with `_tmp_static_census.ps1`: 634 member-declaration lines / 589 static / 45 non-static over 49 sources and 0 defined-but-not-static, 0 defined-without-a-declaration - the same instrument read 545 static / 89 non-static on the pre-edit header, and the folder's binding lines move 544 -> 588 over 46 -> 49 sources. T1's, T3's, T4's, T5's, T6's, T9 9a's and T9 9b's declared-but-undefined + non-static halves are gone (U4 declared-but-undefined -> defined, U18 non-static -> static).
+- Coverage stays **759 of 1,018**: T6's trio were already declared and so already covered; T5's close moved it 757 -> 759 by additionally declaring the two WINNLS entry points `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` that were declared nowhere, and both are real exports.
+- The T4 shared-header `user32.h` edit was gated as a diff against the standing 114-source all-libraries baseline: 114 -> 114 cpp echoes, 165 warnings = 165, 1 `C1083` both sides, exit 2 both sides, set-difference 0 new / 0 gone (T1's was diffed the same way against the 113 -> 114 baseline).
+- The T2 close: folder gate 47/47 exit 0 and the 115-source all-libraries logs SHA-256 identical pre/post.
+- The U16 pin (7 Nov 2026, D21): folder gate 45/45 exit 0 clean and the 113-source all-libraries log byte-identical to the pre-pin run.
+
+## The prior close stands - the review phase that ended 7 Nov 2026
+
+**T8 step 6g is in (`legacy.cpp` wraps the 6 held-open legacy names), U18 and T8 are CLOSED** (D19 decided the 6 names in scope, D20 fixed the variadic wrapper shape; `docs/agent/DECISIONS.md`). The 38 review-queue TUs stay closed from session 37. **U25 and U23 are both in on the code lines** (7 Nov 2026: `CONST` normalised to lowercase `const` folder-wide - **0** `CONST` tokens on code lines, the 24 that remain are comment lines in 10 TUs - and the 5 class-A const-on-pointer sites rewritten to `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*`, which moves 5 mangled names `QE..` -> `PE..`). **U16 is CLOSED (D21: the SDK version triple is pinned in `kernel32.h`, floor asserted)**.
+
+## Closed / frozen ids - append nothing, never open at session start
+
+The ids that `status.md`'s "Open" list excludes, with the record each one closed on: **T1** (8 Nov 2026: `security.cpp` defines the Authorization pair + `static` at `user32.h:760-761`), **T3** (8 Nov 2026: `powermanagement.cpp` defines the Power Management pair + `static` at `user32.h:788-789`), **T4** (8 Nov 2026: `help.cpp` defines the menu context-help-id pair + `static` at `user32.h:744-745`), **T5** (8 Nov 2026, D23: `ime.cpp` defines the IME/WINNLS pair + `static` and adds the two WINNLS siblings), **T6** (8 Nov 2026, D24: a new `listbox.cpp` defines the List Box trio + `static` at `user32.h:552-554`), **P1, P2, P5** (4 Nov 2026: 428 bindings, 0 unresolvable), **U11** (session 29, 3 Nov 2026), **U14** (D15), **U15** (D14), **U6**, **U3**, **T7** (5 Nov 2026, D16: the 35 dead `../returncheck.h` includes are gone, the scan now reads 2 includes / 0 without use), **T2** (8 Nov 2026, D25: `EnumDesktopsT`/`EnumWindowStationsT` take the SDK's `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` at `user32.h:410`/`:413` - type- and symbol-neutral), **U28** (5 Nov 2026, D17: Windows is x64-only, so the four `*Ptr` bindings in `windowclass.cpp` are correct for the supported image), **U18** and **T8** (7 Nov 2026, D19 + D20: the 109-name backlog is wrapped or excluded, and the 8 raw gap names all carry written exclusions), **U23** (7 Nov 2026: the 5 class-A const-on-pointer sites fixed on the code lines - `const BYTE*` / `const INT*` / `const ::MSGBOXPARAMS*` over declaration + definition + `Library::Call<>` list = 15 sites in `user32.h`, `keyboard.cpp`, `dialog.cpp`, `text.cpp`; the fix is **not** symbol-neutral, all 5 mangled names move `QE..` -> `PE..`; two cross-library follow-ups recorded not done, and the negative control now rejects write-through with 2 x `C3892`), **U16** (7 Nov 2026, D21: the SDK version triple is pinned in `kernel32.h:22-30` at the values the unpinned build measured - `_WIN32_WINNT`/`WINVER 0x0A00`, `NTDDI_VERSION 0x0A000010 = NTDDI_WIN11_GE` - guarded `#ifndef` so an already-pinned consumer cannot re-define them, with a floor `#error` at `:33-35`; the pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence - recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
+
+## How to keep this file
+
+- A close moves the outgoing session's close detail here in **one** write and leaves a pointer in `status.md`; nothing
+  already written here is reworded, re-measured or re-read (protocol 2, 4).
+- Never write live state here - `status.md` and `preflags.md` own it. If a statement here and a statement in `status.md`
+  disagree, `status.md` is right and this file is stale history: leave it.
+

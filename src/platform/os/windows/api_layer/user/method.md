@@ -58,8 +58,10 @@ the instrument caveats moved out of this file into `tooling.md` / `gotchas.md`; 
 
 - `tooling.md` - the `tmp/` instrument index: what each scan prints, when it was added, which TU it was built for.
 - `gotchas.md` (index) + `gotchas/` - referenced from `tooling.md`: the instrument caveats and the traps in editing these records from PowerShell, one file per kind, routed by the trigger block in the index.
-- `status.md` - the per-session boot brief: the record protocol, the queue of all 38 sources, the open-item map and the
-  gate definition.
+- `status.md` - the per-session boot brief: the record protocol, the queue of all 49 sources, the open-item map and the
+  gate definition. Live state only - closed-work detail is not in it.
+- `completed_work.md` - read-only reference: the close detail of finished tasks and of the review phase that is over.
+  Never boot material - open it only to research a named closed task or TU, and never edit what it already holds.
 - `preflags.md` - the next TU's pre-flags: written wholesale at the previous close, read once at boot, replaced wholesale,
   never edited in place.
 ## Reading cost - the four rules that still hold (5 Nov 2026)
@@ -76,8 +78,8 @@ These four survive; the rest of the old "Session start-up cost" section (registe
   prototypes, hygiene, U19 spellings, T7 include). Do not run five instruments and read five outputs.
 - **A register is opened for one id at a time and only its entry head is read.** Registers are never appended to and a
   closed or frozen one is never opened at session start.
-- **The boot read-set is `status.md` + `method.md` + `preflags.md` + the current TU.** `archive/` and
-  `gotchas/sessions-*.md` are opened only for a named TU or session.
+- **The boot read-set is `status.md` + `method.md` + `preflags.md` + the current TU.** `archive/`, `completed_work.md` and
+  `gotchas/sessions-*.md` are opened only to research a named TU, session or closed task.
 
 ## Closing a session under protocol v3 - the close ends with the commit (5 Nov 2026)
 
