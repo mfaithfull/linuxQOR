@@ -50,7 +50,8 @@ listbox.cpp
 strings.cpp
 rawinput.cpp
 systeminfo.cpp
-buttoncontrol.cpp)
+buttoncontrol.cpp
+synchronization.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

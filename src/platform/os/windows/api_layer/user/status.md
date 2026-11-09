@@ -1,8 +1,8 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 9 Nov 2026 - **T9 step 9d is IN (D30): a new `buttoncontrol.cpp` TU defines all 3 `//Button Control functions` members of `user32.h:378-380` with 3 x bare `qor_pp_useswinapi` and 0 x `qor_pp_useswinapiAW` (none of the three stems is an SDK A/W switch - the switch probe reads 0 lines for them, while `um\WinUser.h:5190`-`:5194` and `:5214`-`:5218` spell one for the `SetDlgItemText`/`GetDlgItemText` pair just above - and the export table has no `A`/`W` row for any of them, the rows being bare at hints 42/47/234), and `user32.h:378-380` gains `static` on all 3 declarations - no type and no parameter name moves, so no mangled name moves.** 9c is CLOSED (D29), 9b is CLOSED (D28), 9a is CLOSED (D27) and **all eight deferred tasks T1-T8 are CLOSED**; the 38 review-queue TUs stay closed from session 37. Their close detail - and the prior review phase that ended 7 Nov 2026 - lives read-only in `completed_work.md`, never here. Next step: **9e `synchronization.cpp`** over `user32.h:779-780` (2 members, D26).
+Last updated 9 Nov 2026 - **T9 step 9e is IN (D31): a new `synchronization.cpp` TU defines all 2 `//Synchronization functions` members of `user32.h:779-780` with 2 x bare `qor_pp_useswinapi` and 0 x `qor_pp_useswinapiAW` (no stem macro switch - the switch probe reads 0 `#define` lines for the two stems, while `um\WinUser.h:5190`-`:5194` and `:5214`-`:5218` spell one for the `SetDlgItemText`/`GetDlgItemText` pair just above - and the export table has no `A`/`W`/`T` row for either of these two, the rows being bare at hints 292/293 and all eight `A`/`W`/`T` spellings reading MISSING in a live probe), and `user32.h:779-780` gains `static` on both declarations plus the SDK's parameter name `fWaitAll` in place of the header's `bWaitAll` per D18 - a parameter name, so no mangled name moves.** 9d is CLOSED (D30), 9c is CLOSED (D29), 9b is CLOSED (D28), 9a is CLOSED (D27) and **all eight deferred tasks T1-T8 are CLOSED**; the 38 review-queue TUs stay closed from session 37. Their close detail - and the prior review phase that ended 7 Nov 2026 - lives read-only in `completed_work.md`, never here. Next step: **9f `bitmap.cpp`** over `user32.h:776` (1 member, D26).
 
-**Current folder figures (measured 9 Nov 2026 post-9d with `_tmp_static_census.ps1`):** 51 sources / 634 member-declaration lines (596 static, 38 non-static) / 595 binding lines; coverage **759 of 1,018**; 0 defined-but-not-static, 0 defined-without-a-declaration. The census, the gate diffs and the prior-close state recorded at the closed closes are in `completed_work.md`.
+**Current folder figures (measured 9 Nov 2026 post-9e with `_tmp_static_census.ps1`):** 52 sources / 634 member-declaration lines (598 static, 36 non-static) / 597 binding lines; coverage **759 of 1,018**; 0 defined-but-not-static, 0 defined-without-a-declaration. The census, the gate diffs and the prior-close state recorded at the closed closes are in `completed_work.md`.
 
 Reviewing `src/platform/os/windows/api_layer/user` (the `User32` wrappers over `user32.dll`) for correctness,
 consistency, safety, UB and conformance to the api_layer conventions. One translation unit per session, and **commit at
@@ -54,8 +54,8 @@ re-derive everything. **No record content was deleted** - the superseded procedu
    such a citation is dead as it is written; name the instrument's script slug instead.
 9. **Boot read-set = `purpose.md` + this file + `method.md` + `preflags.md` + the TU in hand** (about 30 KB of the folder's 91 markdown
    files / 788 KB, measured 5 Nov 2026). Never open an `/EP` capture or `tmp/_tmp_*_pp_*.txt`; never read a whole register;
-   open `archive/`, `gotchas/sessions-*.md` or the read-only `completed_work.md` only to research a named TU, session or closed task. **This file is 174 lines** - the
-   ceiling is structural, not a task at close: the queue holds one fixed row per source (50 rows since `systeminfo.cpp`
+   open `archive/`, `gotchas/sessions-*.md` or the read-only `completed_work.md` only to research a named TU, session or closed task. **This file is 176 lines** - the
+   ceiling is structural, not a task at close: the queue holds one fixed row per source (52 rows since `synchronization.cpp`
    joined on 9 Nov 2026), the protocol and the gate are fixed text, a close adds no prose and moves closed-work prose to `completed_work.md`. Growing this file breaks 4.
 
 ## Resuming after a context reset - ask git, not the record
@@ -119,6 +119,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `scrollbar.cpp` | 155 | `archive/tu/scrollbar.md` | closed |
 | `security.cpp` | 66 | banner `:9` | closed (T1, added 8 Nov 2026) |
 | `strings.cpp` | 328 | banner `:13` | closed (T9 9a, added 9 Nov 2026) |
+| `synchronization.cpp` | 133 | banner `:9` | closed (T9 9e, added 9 Nov 2026) |
 | `systeminfo.cpp` | 132 | banner `:9` | closed (T9 9c, added 9 Nov 2026) |
 
 | `systemshutdown.cpp` | 124 | `archive/tu/systemshutdown.md` | closed |
@@ -132,7 +133,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `winqor_api_user.cpp` | 83 | banner `:4` | closed |
 
 **38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete, and the
-folder is **51 sources**: the thirteen coverage rows are the only ones not from a review session, and their step labels
+folder is **52 sources**: the fourteen coverage rows are the only ones not from a review session, and their step labels
 and join dates are in `completed_work.md`. Each coverage TU's narrative is its own banner. History is write-once and
 not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`, `completed_work.md`. Append nothing.
 
@@ -143,7 +144,7 @@ not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`, `completed_w
 - Closed / frozen - append nothing, and their close records are not here: the id list with the record each closure left
   lives read-only in `completed_work.md`. A closed or frozen id is never opened at session start (protocol 7).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6. **One open task: T9** (D26 - U4's remaining declared-but-undefined members as a tranche queue; **9d `buttoncontrol.cpp` IN (D30)**, next step 9e `synchronization.cpp`). Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6. **One open task: T9** (D26 - U4's remaining declared-but-undefined members as a tranche queue; **9e `synchronization.cpp` IN (D31)**, next step 9f `bitmap.cpp`). Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -153,23 +154,23 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 51 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 52 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
 **The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
 `D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
 dating rule below cannot be read.
-Edited TU standalone at `/W4` exit 0, then the whole library **51/51** exit 0 with no diagnostics. Date the gate by
-`tmp/obj/<tu>.obj` being newer than the source - a clean 51-TU log **cannot** be dated by its hash, because clean runs are
+Edited TU standalone at `/W4` exit 0, then the whole library **52/52** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 52-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
-119-source all-libraries gate as a **diff** against a pre-fix run (119 since `legacy.cpp` + `security.cpp` + `listbox.cpp` + `strings.cpp` + `rawinput.cpp` + `systeminfo.cpp` + `buttoncontrol.cpp`; baseline 1 `C1083` at
+120-source all-libraries gate as a **diff** against a pre-fix run (120 since `legacy.cpp` + `security.cpp` + `listbox.cpp` + `strings.cpp` + `rawinput.cpp` + `systeminfo.cpp` + `buttoncontrol.cpp` + `synchronization.cpp`; baseline 1 `C1083` at
 `opengl/wgl.cpp:31`, 165 warning lines, exit **2** - the diff is the signal, never the exit code, which must be captured
 inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time and writes a false 0).
 
 ## There is no next TU - what a further session in this folder works from
 
-All 38 review-queue TUs and the thirteen coverage TUs are closed (the TU list and its step labels: `completed_work.md`), so `preflags.md`
-pre-flags the T9 tranche 9e and no review TU. The coverage backlog is empty - every raw gap name carries a written exclusion.
-A next session takes **T9 step 9e** (`synchronization.cpp` over `user32.h:779-780`, D26) or picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6) or moves to
+All 38 review-queue TUs and the fourteen coverage TUs are closed (the TU list and its step labels: `completed_work.md`), so `preflags.md`
+pre-flags the T9 tranche 9f and no review TU. The coverage backlog is empty - every raw gap name carries a written exclusion.
+A next session takes **T9 step 9f** (`bitmap.cpp` over `user32.h:776`, D26) or picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6) or moves to
 another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

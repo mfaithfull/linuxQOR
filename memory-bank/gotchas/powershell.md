@@ -39,3 +39,13 @@ Type: Context
   `tmp/obj/<tu>.obj` newer-than-source check silently compares nothing (`-gt` on two `$null`s is false, which reads as
   "not dated" and costs a re-run). Read the dating with `cmd /c dir /T W <file>` instead, which prints the timestamp
   (`9 Nov 2026`, dating the `buttoncontrol.cpp` gate: source 17:14, `tmp/obj/buttoncontrol.obj` 17:17).
+- **`Get-ChildItem -Include <pattern>` is silently dropped when `-Path` is a plain directory - the scan returns NOTHING**
+  `Get-ChildItem -Path $dir -Include *.cpp -File` over the 51-source `api_layer/user` folder counts **0** and raises no error,
+  so a per-folder lookup reads "this TU defines none of the five neighbours" and the section-boundary argument it feeds is
+  unfalsified. Put the wildcard in `-Path` (`Get-ChildItem -Path (Join-Path $dir '*.cpp') -File` -> 52) or add `-Recurse`
+  (`-Recurse -Depth 0` with `-Include` -> 52); both return the same tails. Measured by `tmp/_tmp_t9_9e_gchild.ps1`
+  (`tmp/_tmp_t9_9e_gchild.txt`: A=0, B=52, C=52, F=61 files and G=3 dirs over the 64 entries the bare `-Path` lists).
+  The bug that hid it: `_tmp_t9_9e_guards.ps1:46` printed `folder_sources=0` and `DEFINES ... count=0` for all seven names
+  over a 51-TU folder, and the same scan done right (`_tmp_t9_9e_definers.ps1`) read `folder_sources=51` with 1 hit per
+  name - a 0 on a folder you know is populated is this bug, not a finding. `-Include` only filters when `-Path` carries a
+  wildcard or `-Recurse` is on.

@@ -61,4 +61,6 @@ Decisions:
     File: ./decisions/D29.md
   - D30: T9 step 9d - wrap the 3 //Button Control functions members in a new buttoncontrol.cpp TU and put static on all 3 declarations - ACTION (9 Nov 2026)
     File: ./decisions/D30.md
+  - D31: T9 step 9e - wrap the 2 //Synchronization functions members in a new synchronization.cpp TU, put static on both declarations and move bWaitAll to the SDK's fWaitAll - ACTION (9 Nov 2026)
+    File: ./decisions/D31.md
 ---

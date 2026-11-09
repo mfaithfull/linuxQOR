@@ -776,8 +776,8 @@ namespace qor { namespace win { namespace api {
         HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
 
         //Synchronization functions
-        DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL bWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);
-        DWORD MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags);
+        static DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL fWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);
+        static DWORD MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags);
 
         //Printing functions
         BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
