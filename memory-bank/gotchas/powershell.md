@@ -65,3 +65,18 @@ Type: Context
   line range) rather than trusting the `File created successfully` line - a chunked write can silently drop its tail.
   Measured landing `bitmap.cpp` at the 9f close (9 Nov 2026): the create-then-extend sequence and a read-back of
   `:96-136` confirming the banner, the includes and the one definition all landed.
+- **`Get-ChildItem -Filter` takes ONE string - a comma list is an array and the call dies, silently scoping the scan to NOTHING**
+  `Get-ChildItem -Path $tmp -Filter '*wrong_stem_scan*','*bypass_scan*','*sdk_guard_scan*','*user32_exports*'` fails with
+  `Cannot convert 'System.Object[]' to the type 'System.String' required by parameter 'Filter'. Specified method is not
+  supported.` (exit 1), and the temptation on a failed lookup is to conclude "those artefacts do not exist". `-Filter` accepts
+  a single pattern only; for several names either repeat the call, put the alternatives in one pattern (`'*t9_9f*(scan|exports)*'`)
+  or filter afterwards on `$_.Name`. Hit once while listing the 9f artefacts before writing the 9g instruments (9 Nov 2026);
+  `cmd /c dir /T W <file1> <file2>` is the alternative that also prints the timestamps the dating rule needs.
+- **A command-subscripted path in a command-argument position is parsed as an array, not as one string**
+  `cmd /c 'dir /T W c:\...\a.ps1 c:\...\b.ps1'` works, but `(Get-Content -LiteralPath 'x')[23..31] | ForEach-Object { ... }`
+  passed as the FIRST element of the tool's `commands` array came back `ParserError: Missing type name after '['` - the range
+  subscript at the start of a command line is not a valid statement head. Lead the statement with an assignment
+  (`$all = Get-Content ...; $all[23..31]`) or with a cmdlet (`Get-Content ... | Select-Object -Skip 23 -First 9`). Same class
+  as the earlier `For-Each` typo: the parse dies before the scan runs, so the "empty result" you see next is not a finding
+  (9 Nov 2026, reading `memory-bank/activeContext.md` at the 9g close).
+

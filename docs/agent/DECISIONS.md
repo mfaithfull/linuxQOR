@@ -65,4 +65,6 @@ Decisions:
     File: ./decisions/D31.md
   - D32: T9 step 9f - wrap the 1 //Bitmap functions member in a new bitmap.cpp TU, put static on it and bind qor_pp_useswinapiAW (the bare stem is not exported and the SDK puts a stem switch on it) - ACTION (9 Nov 2026)
     File: ./decisions/D32.md
+  - D33: T9 step 9g - wrap the 1 //Printing functions member in a new printing.cpp TU, put static on it and bind qor_pp_useswinapi bare (the bare stem IS the export and the SDK puts no switch on it) - ACTION (9 Nov 2026)
+    File: ./decisions/D33.md
 ---

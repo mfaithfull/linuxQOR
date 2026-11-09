@@ -780,7 +780,7 @@ namespace qor { namespace win { namespace api {
         static DWORD MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags);
 
         //Printing functions
-        BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
+        static BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
 
         //Device Management functions
         static HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
