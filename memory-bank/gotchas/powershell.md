@@ -11,3 +11,5 @@ Type: Context
   and treat an unexpected `0`/`not found` count as a bug in the instrument until a direct grep proves otherwise. The same
   pattern in `_tmp_sdk_param_name_scan.ps1:242` is harmless only because that script tries the unstripped stem first and
   keeps the stripped arm last (`:238`-`:241`), so a false strip just adds candidates.
+- **Don't use single character variable names**
+  Single character variable names risk clashes with builtin PowerShell aliases like $h

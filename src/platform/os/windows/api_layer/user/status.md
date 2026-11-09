@@ -1,14 +1,14 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 8 Nov 2026 - **T2 is CLOSED (D25): `desktop.cpp`'s two `Enum*` callbacks now take the SDK's **W** spellings `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` - at `user32.h:410`/`:413`, at the `desktop.cpp:86`/`:107` definition heads and in the two `Library::Call<>` argument lists at `desktop.cpp:90`/`:111` - because both wrappers bind `qor_pp_useswinapiAW` and the exports they bind (`EnumDesktopsW` `WinUser.h:1480`, `EnumWindowStationsW` `:1610`) spell their callback parameter that way per D18. The edit moves no type and no mangled name (`tmp/_tmp_t2_probe_id.cpp` exit 0 on four `static_assert`s: `is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>`=1 etc.), and the parameter stays type-checked (`tmp/_tmp_t2_probe_neg.cpp` exit 2 rejecting an A-shaped callback, `tmp/_tmp_t2_probe_farproc.cpp` exit 2 rejecting the `!STRICT` FARPROC shape). U17 took no action (this section was already 9/9 compliant) and the section's 18/18 deadness stays D14's territory. Folder gate 47/47 exit 0 and the 115-source all-libraries logs SHA-256 identical pre/post, so **all eight deferred tasks T1-T8 are now CLOSED.** T6 is CLOSED (D24): a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList` (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox` per D18.** T5 is CLOSED: `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.** T4 is also CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
+Last updated 9 Nov 2026 - **T9 step 9a is IN (D27): a new `strings.cpp` TU defines all 34 `//String functions` members of `user32.h:342-375` with 34 x bare `qor_pp_useswinapi` bindings and 0 x `qor_pp_useswinapiAW` (the members already carry the A/W variant suffix, so D13's binding literal **is** the exported name), and `user32.h:342-375` gains `static` on all 34 declarations - no type and no parameter name moves, so no mangled name moves.** T2 is CLOSED (D25): `desktop.cpp`'s two `Enum*` callbacks now take the SDK's **W** spellings `DESKTOPENUMPROCW`/`WINSTAENUMPROCW` - at `user32.h:410`/`:413`, at the `desktop.cpp:86`/`:107` definition heads and in the two `Library::Call<>` argument lists at `desktop.cpp:90`/`:111` - because both wrappers bind `qor_pp_useswinapiAW` and the exports they bind (`EnumDesktopsW` `WinUser.h:1480`, `EnumWindowStationsW` `:1610`) spell their callback parameter that way per D18. The edit moves no type and no mangled name (`tmp/_tmp_t2_probe_id.cpp` exit 0 on four `static_assert`s: `is_same<DESKTOPENUMPROC,DESKTOPENUMPROCW>`=1 etc.), and the parameter stays type-checked (`tmp/_tmp_t2_probe_neg.cpp` exit 2 rejecting an A-shaped callback, `tmp/_tmp_t2_probe_farproc.cpp` exit 2 rejecting the `!STRICT` FARPROC shape). U17 took no action (this section was already 9/9 compliant) and the section's 18/18 deadness stays D14's territory. Folder gate 47/47 exit 0 and the 115-source all-libraries logs SHA-256 identical pre/post, so **all eight deferred tasks T1-T8 are now CLOSED.** T6 is CLOSED (D24): a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList` (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare `qor_pp_useswinapi` - and `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names `hwndDlg`/`chCount`/`idListBox` per D18.** T5 is CLOSED: `ime.cpp` now owns the IME/WINNLS block - `DisableProcessWindowsGhosting` and `WINNLSEnableIME` gain `static` with bare `qor_pp_useswinapi` definitions, and the two WINNLS siblings `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` are added as `static` declarations plus definitions; `WINNLSEnableIME` keeps a one-line obsolete comment and stays on the interface.** T4 is also CLOSED: `help.cpp` gains `SetMenuContextHelpId` (export 34A) and `GetMenuContextHelpId`
  (export 17C), bound bare `qor_pp_useswinapi`, and `user32.h:744-745` gains `static` on both.** T3 is also CLOSED:
  `powermanagement.cpp` defines `RegisterPowerSettingNotification` (export 2F1) and `UnregisterPowerSettingNotification`
  (export 3CB), bound bare `qor_pp_useswinapi`, and `user32.h:788-789` gains `static` on both. T1 is also CLOSED: a new
  `security.cpp` TU defines `GetUserObjectSecurity` (export 1DB) and `SetUserObjectSecurity` (export 375), bound bare
- `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both, and T5 wraps the IME/WINNLS block in `ime.cpp`, and T6 wraps the List Box trio in a new `listbox.cpp` - so the folder is 47 sources / 634 member-declaration lines (548
- static, 86 non-static) / 547 binding lines, and T1's, T3's, T4's, T5's and T6's declared-but-undefined + non-static halves are gone
- (U4 declared-but-undefined -> defined, U18 non-static -> static; `_tmp_static_census.ps1` re-run post-edit reads 634 member-declaration lines / 548 static /
- 86 non-static over 47 sources and 0 defined-but-not-static, 0 defined-without-a-declaration - the same instrument read 545 static / 89 non-static on the pre-edit header, and the folder's binding lines move 544 -> 547 over 46 -> 47 sources. Coverage stays **759 of 1,018** - T6's trio were already declared and so already covered;
+ `qor_pp_useswinapi`, and `user32.h:760-761` gains `static` on both, and T5 wraps the IME/WINNLS block in `ime.cpp`, and T6 wraps the List Box trio in a new `listbox.cpp`, and T9 step 9a wraps the String section in a new `strings.cpp` - so the folder is 48 sources / 634 member-declaration lines (582
+ static, 52 non-static) / 581 binding lines, and T1's, T3's, T4's, T5's, T6's and T9 9a's declared-but-undefined + non-static halves are gone
+ (U4 declared-but-undefined -> defined, U18 non-static -> static; `_tmp_static_census.ps1` re-run post-edit reads 634 member-declaration lines / 582 static /
+ 52 non-static over 48 sources and 0 defined-but-not-static, 0 defined-without-a-declaration - the same instrument read 545 static / 89 non-static on the pre-edit header, and the folder's binding lines move 544 -> 581 over 46 -> 48 sources. Coverage stays **759 of 1,018** - T6's trio were already declared and so already covered;
  T5's close moved it 757 -> 759 by additionally declaring the two WINNLS entry points `WINNLSGetIMEHotkey`/`WINNLSGetEnableStatus` that were declared nowhere, and both are real exports. The T4 shared-header `user32.h` edit was gated as a diff
  against the standing 114-source all-libraries baseline: 114 -> 114 cpp echoes, 165 warnings = 165, 1 `C1083` both sides,
  exit 2 both sides, set-difference 0 new / 0 gone (T1's was diffed the same way against the 113 -> 114 baseline).** The
@@ -128,6 +128,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 | `rectangle.cpp` | 173 | `archive/tu/rectangle.md` | closed |
 | `resource.cpp` | 40 | `archive/tu/resource.md` | closed |
 | `scrollbar.cpp` | 155 | `archive/tu/scrollbar.md` | closed |
+| `strings.cpp` | 328 | banner `:13` | closed (T9 9a, added 9 Nov 2026) |
 | `systemshutdown.cpp` | 124 | `archive/tu/systemshutdown.md` | closed |
 | `text.cpp` | 125 | banner `:16` | closed |
 | `timer.cpp` | 32 | `archive/tu/accessibility-timer.md` | closed |
@@ -141,7 +142,7 @@ Generated once 5 Nov 2026 by a file scan (line count of the `.cpp`, presence of 
 **38 of 38 review-queue sources closed** in sessions 1-37 - the queue is empty, the folder review is complete (some
 sessions covered two TUs; sessions 16-20 exist nowhere outside the session-log rows). `pointer.cpp` (T8 step 6a),
 `dpi.cpp` (6b), `touch.cpp` (6c), `displayconfig.cpp` (6d), `powermanagement.cpp` (6e), `misc.cpp` (6f) and `legacy.cpp` (6g) joined on 6-7 Nov
-2026 as coverage - **47 sources** (`security.cpp` for T1 and `listbox.cpp` for T6 joined 8 Nov 2026) - each narrative is its own banner, and those nine are the only rows not from a review
+2026 as coverage - **48 sources** (`security.cpp` for T1 and `listbox.cpp` for T6 joined 8 Nov 2026, `strings.cpp` for T9 9a joined 9 Nov 2026) - each narrative is its own banner, and those ten are the only rows not from a review
 session. History is write-once and not boot material: `archive/session-log*.md`, `archive/tu/<tu>.md`. Append nothing.
 
 ## Open items - id to file (derivable; there is no index to maintain)
@@ -167,7 +168,7 @@ session. History is write-once and not boot material: `archive/session-log*.md`,
   to the pre-pin run. The pin is library-side, so a consumer that bypasses `kernel32.h` still shows U16's divergence -
   recorded, not fixed; the shrink macros U16's sibling cases name stay unpinned).
 - Open: U1, U2, U4, U5, U7, U8, U9, U10, U12, U13, U17, U19, U20, U21, U22, U24, U25, U26, U27,
-  P3, P4, P6. **One open task: T9** (D26 - U4's remaining 86 declared-but-undefined members as a tranche queue; next step 9a `strings.cpp`. T1-T8 all CLOSED, T2 closed 8 Nov 2026, D25). Open the file the map names for an id you are acting on, never the whole tree.
+  P3, P4, P6. **One open task: T9** (D26 - U4's remaining 86 declared-but-undefined members as a tranche queue; **9a `strings.cpp` IN (D27)**, next step 9b `rawinput.cpp`. T1-T8 all CLOSED, T2 closed 8 Nov 2026, D25). Open the file the map names for an id you are acting on, never the whole tree.
 - Decisions in force (D13-D18, incl. D17 x64-only and D18 purpose = full wrapper set) are in `docs/agent/DECISIONS.md`.
 
 ## Gate (identical every session)
@@ -177,25 +178,25 @@ wrapper by slug if it is missing. Compile the whole folder with:
 
     cl /nologo /c /std:c++20 /EHsc /GR /utf-8 /W4 /DQOR_WINAPIUSER `
        /Dqor_pp_ver_major=0 /Dqor_pp_ver_minor=5 /Dqor_pp_ver_patch=0 `
-       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 47 .cpp>
+       /I c:\RAID0\Develop\linuxQOR /Foc:\RAID0\Develop\linuxQOR\tmp\obj\ <all 48 .cpp>
 
 after `call vcvars64.bat` (`C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat`).
 **The `/Fo` path must be attached to the switch** - measured 5 Nov 2026, the spaced form `/Fo c:\...\tmp\obj\` prints
 `D9024` + `D9027` and writes every `.obj` into the **current directory** instead, so the run is no longer clean and the
 dating rule below cannot be read.
-Edited TU standalone at `/W4` exit 0, then the whole library **47/47** exit 0 with no diagnostics. Date the gate by
-`tmp/obj/<tu>.obj` being newer than the source - a clean 47-TU log **cannot** be dated by its hash, because clean runs are
+Edited TU standalone at `/W4` exit 0, then the whole library **48/48** exit 0 with no diagnostics. Date the gate by
+`tmp/obj/<tu>.obj` being newer than the source - a clean 48-TU log **cannot** be dated by its hash, because clean runs are
 byte-identical (this cost a re-run in sessions 31 and 34). `cl /EP` after the last edit must still yield the expected
 binding literals. `user32.h` untouched unless the session says otherwise; a library-header edit additionally needs the
-115-source all-libraries gate as a **diff** against a pre-fix run (115 since `legacy.cpp` + `security.cpp` + `listbox.cpp`; baseline 1 `C1083` at
+116-source all-libraries gate as a **diff** against a pre-fix run (116 since `legacy.cpp` + `security.cpp` + `listbox.cpp` + `strings.cpp`; baseline 1 `C1083` at
 `opengl/wgl.cpp:31`, 165 warning lines, exit **2** - the diff is the signal, never the exit code, which must be captured
 inside a `.bat` because an inline `& echo %ERRORLEVEL%` expands at parse time and writes a false 0).
 
 ## There is no next TU - what a further session in this folder works from
 
-All 38 review-queue TUs are closed, as are the nine coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), `security.cpp` (T1) and `listbox.cpp` (T6), so `preflags.md`
-pre-flags the T9 tranche 9a and no review TU: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
+All 38 review-queue TUs are closed, as are the ten coverage TUs `pointer.cpp` (6a) through `legacy.cpp` (6g), `security.cpp` (T1), `listbox.cpp` (T6) and `strings.cpp` (T9 9a), so `preflags.md`
+pre-flags the T9 tranche 9b and no review TU: **U18 and T8 are CLOSED** (D19 put the last 6 names in scope, D20 gave
 `wsprintfA`/`wsprintfW` a variadic wrapper) and the coverage backlog is empty - the 8 raw gap names all carry written exclusions.
-A next session takes **T9 step 9a** (`strings.cpp` over `user32.h:342-375`, D26) or picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6 -
-**T1-T8 all CLOSED with T2 closed 8 Nov 2026 by D25, T9 open**) or moves to
+A next session takes **T9 step 9b** (`rawinput.cpp` over `user32.h:543-549`, D26) or picks another open item the map above names (U1-U27 less the frozen ids, P3, P4, P6 -
+**T1-T8 all CLOSED with T2 closed 8 Nov 2026 by D25, T9 open with 9a IN by D27**) or moves to
 another `api_layer` folder. Architecture is settled - Windows is x64-only (D17) - and the gate above applies to any edit here.

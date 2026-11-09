@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 8 Nov 2026 - **T1-T8 are CLOSED and T9 is OPEN (D26: U4's remaining 86 declared-but-undefined members deferred as a tranche queue, next step 9a `strings.cpp`); the folder is 47 sources / 634 member-declaration lines (548 static, 86 non-static) / 547 bindings, covered 759 of 1,018.** The entry below is the 6g close (7 Nov 2026) and its figures are as they stood then.
+Last updated: 9 Nov 2026 - **T1-T8 are CLOSED and T9 is OPEN with 9a IN (D27: a new `strings.cpp` TU defines all 34 `//String functions` members of `user32.h:342-375` with 34 bare `qor_pp_useswinapi` bindings and 0 `qor_pp_useswinapiAW`, and `user32.h:342-375` gains `static` on all 34 declarations); next step 9b `rawinput.cpp` over `user32.h:543-549` (7 members)**; the folder is 48 sources / 634 member-declaration lines (582 static, 52 non-static) / 581 bindings, covered 759 of 1,018.** The entry below is the 6g close (7 Nov 2026) and its figures are as they stood then.
 **T8 steps 1-6 are done, including the last tranche 6g: 6a `pointer.cpp` (32), 6b `dpi.cpp` (21),
 6c `touch.cpp` (14), 6d `displayconfig.cpp` (7), 6e `powermanagement.cpp` + `CancelShutdown` (3), 6f `misc.cpp` (24 names / 23
 members) and 6g `legacy.cpp` (6 names / 5 members), so `src/platform/os/windows/api_layer/user` was 45 sources / 632 members /
@@ -21,15 +21,17 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - review queue, T8, U18 all closed, T1-T8 CLOSED and **T9 open** 8 Nov 2026; the coverage backlog is empty, U4's link gap is not
+## Current focus: winqor_api_user - review queue, T8, U18 all closed, T1-T8 CLOSED and **T9 open with 9a IN** 9 Nov 2026; the coverage backlog is empty, U4's link gap is not
 
-- **T9 OPEN 8 Nov 2026 (D26 - user decision: defer U4 as a tranche queue):** U4's remaining population is **86 non-static
-  member declarations with no definition** (`_tmp_static_census.ps1`: 634 decls / 548 static / 86 non-static / 0 defined-but-not-static;
-  `_tmp_decl_no_def_repo_scan.ps1` reads **52** of them, missing the DDE block's 34 `) const;` lines). **52 are in D18 scope**
-  and all 52 name real exports - steps 9a `strings.cpp` (34) -> 9g `printing.cpp` (1), next step **9a**; **9h is the DDE block
-  (34) and is blocked on a wrap-or-delete user decision** (D18 excludes the family by name and 0 of its 34 are declared in
-  `um\WinUser.h`). Coverage stays 759 of 1,018 throughout - these close `LNK2019` link gaps, never coverage gaps. No source
-  or header file is touched by D26; the queue lives in `registers/tasks.md` T9 and `preflags.md`.
+- **T9 OPEN, 9a IN (D26 opened the queue 8 Nov 2026; D27 landed 9a 9 Nov 2026):** U4's remaining population is **52 non-static
+  member declarations with no definition** (`_tmp_static_census.ps1` post-9a: 634 decls / 582 static / 52 non-static / 0 defined-but-not-static;
+  `_tmp_decl_no_def_repo_scan.ps1` reads **18** of them, missing the DDE block's 34 `) const;` lines). **18 are in D18 scope**
+  and all 18 name real exports - steps 9b `rawinput.cpp` (7) -> 9g `printing.cpp` (1), next step **9b `rawinput.cpp` over
+  `user32.h:543-549`**; **9h is the DDE block (34) and is blocked on a wrap-or-delete user decision** (D18 excludes the family by name
+  and 0 of its 34 are declared in `um\WinUser.h`). Coverage stays 759 of 1,018 throughout - these close `LNK2019` link gaps,
+  never coverage gaps. 9a put `static` on `user32.h:342-375` and defined all 34 in `strings.cpp` with 34 bare
+  `qor_pp_useswinapi` bindings and 0 `qor_pp_useswinapiAW` (the members already carry the A/W suffix, so D13's binding literal
+  is the exported name); the queue and its pre-flags live in `registers/tasks.md` T9 and `preflags.md`.
 - **T6 CLOSED 8 Nov 2026 (D24):** a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList`
   (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare - and
   `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names

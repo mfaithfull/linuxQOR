@@ -53,4 +53,6 @@ Decisions:
     File: ./decisions/D25.md
   - D26: U4's remaining 86 declared-but-undefined members land as a tranche queue (T9) — POLICY (8 Nov 2026)
     File: ./decisions/D26.md
+  - D27: T9 step 9a - wrap the 34 //String functions members in a new strings.cpp TU and make all 34 static - ACTION (9 Nov 2026)
+    File: ./decisions/D27.md
 ---
