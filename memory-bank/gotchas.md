@@ -6,4 +6,6 @@ index:
     File: "gotchas/powershell.md"
   - Trigger: "Read this when working on Windows specific code, e.g. anything in src/platform/os/windows"
     File: "gotchas/windows.md"
+  - Trigger: "Read this before using Git"
+    File: "gotchas/git.md"
 ---

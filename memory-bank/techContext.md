@@ -36,7 +36,7 @@
 
 - Agent commands run through `pwsh.exe`, where nested quotes, backticks and here-strings break easily. When a command needs non-trivial quoting, regex, embedded string literals, or multi-line logic, **write the script to a `.ps1` file under the ignored `tmp/` directory and execute the file** instead of issuing a long inline one-liner.
 - Scratch goes in `tmp/` at the repository root, which is git-ignored (`.gitignore:41` `/tmp`) — never in the repository root itself. Transient build/run logs belong there too.
-- **Clean up `tmp/` at the end of the task.** Scratch scripts and logs are not durable artifacts; delete them once the work is verified rather than leaving them behind.
+- **Clean up `tmp/` when the open task set is empty.** Scratch scripts and logs are not durable artifacts; delete them once the work is verified rather than leaving them behind.
 - Anti-pattern to avoid: loose `tmp_review_*.cmd` / `tmp_review_check*.ps1` files left at the repository root are neither ignored nor durable — they must live in `tmp/` and be deleted.
 
 ## Repo conventions
