@@ -49,3 +49,19 @@ Type: Context
   over a 51-TU folder, and the same scan done right (`_tmp_t9_9e_definers.ps1`) read `folder_sources=51` with 1 hit per
   name - a 0 on a folder you know is populated is this bug, not a finding. `-Include` only filters when `-Path` carries a
   wildcard or `-Recurse` is on.
+- **`For-Each` is not a cmdlet - the pipe verb is `ForEach-Object`, and a hyphen inside the verb name parses as a command**
+  `Select-String ... | For-Each { $_.LineNumber.ToString() + '|' + $_.Line.Trim() }` fails with
+  `For-Each: The term 'For-Each' is not recognized as a name of a cmdlet, function, script file, or executable program`
+  (exit 1, and the suggestion it offers is `foreach`, the STATEMENT keyword, not the pipe verb). Write
+  `ForEach-Object`, or the `%` alias. Hit twice while reading the SDK's `LoadBitmap` context out of
+  `um\WinUser.h` at the 9f close (9 Nov 2026), and the cost is one re-run of the same `Select-String` - the search
+  itself is fine, only the formatting pipe stage dies.
+- **`editor` with `insert_line` does not create a missing file, and a big payload can fail as unparseable JSON**
+  An `editor` call that carries `insert_line` against a path that does not exist dies with
+  `ENOENT: no such file or directory` - creation needs `new_text` with NO `insert_line`; the insert form only edits an
+  existing file. Separately, one very large `new_text` (a whole ~100-line TU banner in a single call) came back as
+  `Tool call arguments could not be parsed as JSON`. The working shape is: create with the first chunk, then extend with
+  `old_text`/`new_text` pairs at a known tail, a few dozen lines at a time, and read the file back (`read_files` on the
+  line range) rather than trusting the `File created successfully` line - a chunked write can silently drop its tail.
+  Measured landing `bitmap.cpp` at the 9f close (9 Nov 2026): the create-then-extend sequence and a read-back of
+  `:96-136` confirming the banner, the includes and the one definition all landed.

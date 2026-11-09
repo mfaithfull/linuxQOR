@@ -773,7 +773,7 @@ namespace qor { namespace win { namespace api {
         static UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
         //Bitmap functions
-        HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
+        static HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
 
         //Synchronization functions
         static DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL fWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);

@@ -51,7 +51,8 @@ strings.cpp
 rawinput.cpp
 systeminfo.cpp
 buttoncontrol.cpp
-synchronization.cpp)
+synchronization.cpp
+bitmap.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

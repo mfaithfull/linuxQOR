@@ -63,4 +63,6 @@ Decisions:
     File: ./decisions/D30.md
   - D31: T9 step 9e - wrap the 2 //Synchronization functions members in a new synchronization.cpp TU, put static on both declarations and move bWaitAll to the SDK's fWaitAll - ACTION (9 Nov 2026)
     File: ./decisions/D31.md
+  - D32: T9 step 9f - wrap the 1 //Bitmap functions member in a new bitmap.cpp TU, put static on it and bind qor_pp_useswinapiAW (the bare stem is not exported and the SDK puts a stem switch on it) - ACTION (9 Nov 2026)
+    File: ./decisions/D32.md
 ---
