@@ -375,9 +375,9 @@ namespace qor { namespace win { namespace api {
         static int wvsprintfW(LPWSTR lpOutput, LPCWSTR lpFmt, va_list arglist);
 
         //Button Control functions
-        BOOL CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck);
-        BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton);
-        UINT IsDlgButtonChecked(HWND hDlg, int nIDButton);
+        static BOOL CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck);
+        static BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton);
+        static UINT IsDlgButtonChecked(HWND hDlg, int nIDButton);
 
         //Coordinate Transform functions
         static BOOL ClientToScreen(HWND hWnd, ::LPPOINT lpPoint);

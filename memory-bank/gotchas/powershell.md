@@ -33,3 +33,9 @@ Type: Context
 - **`Select-Object -ExpandProperty Path` on a file list finds nothing** - a FileInfo has no `Path` member, so the listing
   dies with `Property "Path" cannot be found` and a repo-wide lookup silently returns no candidates. Use
   `ForEach-Object { $_.FullName }` (finding `completed_work.md`, 9 Nov 2026).
+- **`Get-ChildItem`/`Get-Item` here return an EMPTY `LastModifyDate` - the compile-gate dating rule cannot be read from pwsh**
+  on this tree: `Select-Object Name, Length, LastModifyDate` prints a blank column for every file, and
+  `Select-Object -ExpandProperty DateTimeLastModified` dies with `Property "DateTimeLastModified" cannot be found`, so a
+  `tmp/obj/<tu>.obj` newer-than-source check silently compares nothing (`-gt` on two `$null`s is false, which reads as
+  "not dated" and costs a re-run). Read the dating with `cmd /c dir /T W <file>` instead, which prints the timestamp
+  (`9 Nov 2026`, dating the `buttoncontrol.cpp` gate: source 17:14, `tmp/obj/buttoncontrol.obj` 17:17).

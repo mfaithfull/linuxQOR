@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 9 Nov 2026 - **T1-T8 are CLOSED and T9 is OPEN with 9c IN (D29: a new `systeminfo.cpp` TU defines all 4 `//System Information functions` members of `user32.h:753-756` with 3 bare `qor_pp_useswinapi` bindings and 1 `qor_pp_useswinapiAW` (`SystemParametersInfo`'s bare stem is `#undef`'d at `user32.h:15` and is not exported, its exports being the pair `SystemParametersInfoA`/`W` at hints 3A8/3AA), and `user32.h:753-756` gains `static` on all 4 declarations); next step 9d `buttoncontrol.cpp` over `user32.h:378-380` (3 members)**; the folder is 50 sources / 634 member-declaration lines (593 static, 41 non-static) / 592 bindings, covered 759 of 1,018.** The entry below is the 6g close (7 Nov 2026) and its figures are as they stood then.
+Last updated: 9 Nov 2026 - **T1-T8 are CLOSED and T9 is OPEN with 9d IN (D30: a new `buttoncontrol.cpp` TU defines all 3 `//Button Control functions` members of `user32.h:378-380` with 3 bare `qor_pp_useswinapi` bindings and 0 `qor_pp_useswinapiAW` (none of the three stems is an SDK A/W switch - the switch probe reads 0 lines, while `um\WinUser.h:5190`-`:5194`/`:5214`-`:5218` spell one for the `SetDlgItemText`/`GetDlgItemText` pair just above - and the export table has no A/W row for any of them, the rows being bare at hints 42/47/234 and all six A/W spellings read MISSING in a live probe), and `user32.h:378-380` gains `static` on all 3 declarations); next step 9e `synchronization.cpp` over `user32.h:779-780` (2 members)**; the folder is 51 sources / 634 member-declaration lines (596 static, 38 non-static) / 595 bindings, covered 759 of 1,018.** The entry below is the 6g close (7 Nov 2026) and its figures are as they stood then.
 **T8 steps 1-6 are done, including the last tranche 6g: 6a `pointer.cpp` (32), 6b `dpi.cpp` (21),
 6c `touch.cpp` (14), 6d `displayconfig.cpp` (7), 6e `powermanagement.cpp` + `CancelShutdown` (3), 6f `misc.cpp` (24 names / 23
 members) and 6g `legacy.cpp` (6 names / 5 members), so `src/platform/os/windows/api_layer/user` was 45 sources / 632 members /
@@ -21,13 +21,13 @@ an uncommitted close. v3 fixes all four - the close **is** the commit, every art
 procedure text is verbatim at `src/platform/os/windows/api_layer/user/archive/protocol-v1-2026-11-05.md`.
 Per-session narrative belongs nowhere in the memory bank: it is the review banner at the top of each reviewed `.cpp`.
 
-## Current focus: winqor_api_user - review queue, T8, U18 all closed, T1-T8 CLOSED and **T9 open with 9c IN** 9 Nov 2026; the coverage backlog is empty, U4's link gap is not
+## Current focus: winqor_api_user - review queue, T8, U18 all closed, T1-T8 CLOSED and **T9 open with 9d IN** 9 Nov 2026; the coverage backlog is empty, U4's link gap is not
 
-- **T9 OPEN, 9c IN (D26 opened the queue 8 Nov 2026; D27 landed 9a, D28 landed 9b and D29 landed 9c on 9 Nov 2026):** U4's remaining population is **41 non-static
-  member declarations with no definition** (`_tmp_static_census.ps1` post-9c: 634 decls / 593 static / 41 non-static / 0 defined-but-not-static;
-  `_tmp_decl_no_def_repo_scan.ps1` reads **7** of them, missing the DDE block's 34 `) const;` lines). **7 are in D18 scope**
-  and all 7 name real exports - steps 9d `buttoncontrol.cpp` (3) -> 9g `printing.cpp` (1), next step **9d `buttoncontrol.cpp` over
-  `user32.h:378-380`**; **9h is the DDE block (34) and is blocked on a wrap-or-delete user decision** (D18 excludes the family by name
+- **T9 OPEN, 9d IN (D26 opened the queue 8 Nov 2026; D27 landed 9a, D28 landed 9b, D29 landed 9c and D30 landed 9d on 9 Nov 2026):** U4's remaining population is **38 non-static
+  member declarations with no definition** (`_tmp_static_census.ps1` post-9d: 634 decls / 596 static / 38 non-static / 0 defined-but-not-static;
+  `_tmp_decl_no_def_repo_scan.ps1` reads **4** of them, missing the DDE block's 34 `) const;` lines). **4 are in D18 scope**
+  and all 4 name real exports - steps 9e `synchronization.cpp` (2) -> 9g `printing.cpp` (1), next step **9e `synchronization.cpp` over
+  `user32.h:779-780`**; **9h is the DDE block (34) and is blocked on a wrap-or-delete user decision** (D18 excludes the family by name
   and 0 of its 34 are declared in `um\WinUser.h`). Coverage stays 759 of 1,018 throughout - these close `LNK2019` link gaps,
   never coverage gaps. 9a put `static` on `user32.h:342-375` and defined all 34 in `strings.cpp` with 34 bare
   `qor_pp_useswinapi` bindings and 0 `qor_pp_useswinapiAW` (the members already carry the A/W suffix, so D13's binding literal
@@ -35,7 +35,10 @@ Per-session narrative belongs nowhere in the memory bank: it is the review banne
   `qor_pp_useswinapi` bindings and 1 `qor_pp_useswinapiAW` (`GetRawInputDeviceInfo` - bare stem `#undef`'d at `user32.h:16`,
   not exported, exports 1B7/1B8); 9c put `static` on `user32.h:753-756` and defined all 4 in `systeminfo.cpp` with 3 bare
   `qor_pp_useswinapi` bindings and 1 `qor_pp_useswinapiAW` (`SystemParametersInfo` - bare stem `#undef`'d at `user32.h:15`,
-  not exported, exports 3A8/3AA); the queue and its pre-flags live in `registers/tasks.md` T9 and `preflags.md`.
+  not exported, exports 3A8/3AA); 9d put `static` on `user32.h:378-380` and defined all 3 in `buttoncontrol.cpp` with 3 bare
+  `qor_pp_useswinapi` bindings and 0 `qor_pp_useswinapiAW` (none of the three stems is an SDK A/W switch - the switch probe
+  reads 0 lines - and the table has no A/W row for any of them, the rows being bare at hints 42/47/234 and all six A/W
+  spellings read MISSING in a live probe); the queue and its pre-flags live in `registers/tasks.md` T9 and `preflags.md`.
 - **T6 CLOSED 8 Nov 2026 (D24):** a new `listbox.cpp` TU defines the three `//List Box functions` members - `DlgDirList`
   (exports C1/C4) and `DlgDirSelectEx` (C7/C8) bound `qor_pp_useswinapiAW`, `GetListBoxInfo` (export 174) bound bare - and
   `user32.h:552-554` gains `static` on all three, with `DlgDirSelectEx`'s declaration moved to the SDK's parameter names

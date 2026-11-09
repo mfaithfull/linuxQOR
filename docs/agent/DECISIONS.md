@@ -59,4 +59,6 @@ Decisions:
     File: ./decisions/D28.md
   - D29: T9 step 9c - wrap the 4 //System Information functions members in a new systeminfo.cpp TU and put static on all 4 declarations - ACTION (9 Nov 2026)
     File: ./decisions/D29.md
+  - D30: T9 step 9d - wrap the 3 //Button Control functions members in a new buttoncontrol.cpp TU and put static on all 3 declarations - ACTION (9 Nov 2026)
+    File: ./decisions/D30.md
 ---
