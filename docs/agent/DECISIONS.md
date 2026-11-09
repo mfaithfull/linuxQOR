@@ -55,4 +55,6 @@ Decisions:
     File: ./decisions/D26.md
   - D27: T9 step 9a - wrap the 34 //String functions members in a new strings.cpp TU and make all 34 static - ACTION (9 Nov 2026)
     File: ./decisions/D27.md
+  - D28: T9 step 9b - wrap the 7 //Raw Input functions members in a new rawinput.cpp TU and make all 7 static - ACTION (9 Nov 2026)
+    File: ./decisions/D28.md
 ---

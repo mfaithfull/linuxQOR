@@ -13,3 +13,9 @@ Type: Context
   keeps the stripped arm last (`:238`-`:241`), so a false strip just adds candidates.
 - **Don't use single character variable names**
   Single character variable names risk clashes with builtin PowerShell aliases like $h
+- **An `if` is a statement, not an expression: it cannot sit inside a string concatenation**
+  `Write-Output ('first_quote_at=' + $at + '  prev_char=' + (if($at -gt 0){ $s[$at-1] }else{ '' }))` fails with
+  `The term 'if' is not recognized as a name of a cmdlet` - the parser treats the `(` as the start of a command. Pre-compute
+  the value into a variable, or use the ternary `? :` (9 Nov 2026, `_tmp_t9_9b_probe.ps1:14`, which lost the probe's whole
+  output line to that parse error). Same class of bug as the `$want = {}` hashtable initialiser, which makes `$want[$n] = 1`
+  an "index into a string" and silently corrupts the counts: initialise hashtable-valued lookups with `@{}`, never `{}`.

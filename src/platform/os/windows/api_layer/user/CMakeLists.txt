@@ -47,7 +47,8 @@ misc.cpp
 legacy.cpp
 security.cpp
 listbox.cpp
-strings.cpp)
+strings.cpp
+rawinput.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
