@@ -21,7 +21,11 @@ detail here in one write and rewrites nothing that is already here.
 ## T9 - the open tranche queue: the steps that have closed
 
 - **9a CLOSED (D27)**: a new `strings.cpp` TU defines all 34 `//String functions` members of `user32.h:342-375` with 34 x bare `qor_pp_useswinapi` bindings and 0 x `qor_pp_useswinapiAW` (the members already carry the A/W variant suffix, so D13's binding literal **is** the exported name), and `user32.h:342-375` gains `static` on all 34 declarations - no type and no parameter name moves, so no mangled name moves.
-- **9b (`rawinput.cpp`, D28) is IN, not closed** - its state lives in `status.md` until the close moves it here.
+- **9b CLOSED (D28)**: a new `rawinput.cpp` TU defines all 7 `//Raw Input functions` members of `user32.h:543-549` with 6 x
+  bare `qor_pp_useswinapi` and 1 x `qor_pp_useswinapiAW` (`GetRawInputDeviceInfo`'s bare stem is `#undef`'d at `user32.h:16`
+  and is not an export - its exports are the pair at hints 1B7/1B8), and `user32.h:543-549` gains `static` on all 7
+  declarations - no type and no parameter name moves, so no mangled name moves.
+- **9c (`systeminfo.cpp`, D29) is IN, not closed** - its state lives in `status.md` until the close moves it here.
 
 ## The source history behind the queue - 38 review TUs + 11 coverage TUs = 49 sources
 

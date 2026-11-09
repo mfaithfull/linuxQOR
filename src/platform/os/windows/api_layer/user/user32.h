@@ -750,10 +750,10 @@ namespace qor { namespace win { namespace api {
         static BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
 
         //System Information functions
-        DWORD GetSysColor(int nIndex);
-        int GetSystemMetrics(int nIndex);
-        BOOL SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues);
-        BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
+        static DWORD GetSysColor(int nIndex);
+        static int GetSystemMetrics(int nIndex);
+        static BOOL SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues);
+        static BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
 
         //Brush functions
         static HBRUSH GetSysColorBrush(int nIndex);

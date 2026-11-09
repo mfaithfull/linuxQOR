@@ -57,4 +57,6 @@ Decisions:
     File: ./decisions/D27.md
   - D28: T9 step 9b - wrap the 7 //Raw Input functions members in a new rawinput.cpp TU and make all 7 static - ACTION (9 Nov 2026)
     File: ./decisions/D28.md
+  - D29: T9 step 9c - wrap the 4 //System Information functions members in a new systeminfo.cpp TU and put static on all 4 declarations - ACTION (9 Nov 2026)
+    File: ./decisions/D29.md
 ---

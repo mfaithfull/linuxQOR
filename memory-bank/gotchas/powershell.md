@@ -19,3 +19,17 @@ Type: Context
   the value into a variable, or use the ternary `? :` (9 Nov 2026, `_tmp_t9_9b_probe.ps1:14`, which lost the probe's whole
   output line to that parse error). Same class of bug as the `$want = {}` hashtable initialiser, which makes `$want[$n] = 1`
   an "index into a string" and silently corrupts the counts: initialise hashtable-valued lookups with `@{}`, never `{}`.
+- **A pwsh `[regex]::Matches()` match object has no usable `.Text`** - `$names += $m.Text` appends an empty string, so a
+  folder rsp built from a CMake source list comes out with the right line **count** and empty paths (the tails are the bare
+  directory). `9 Nov 2026`, `_tmp_t9_9c_folder_mk.ps1`: `sources=50` printed correctly while `has_rawinput=0` and every
+  tail was `...\api_layer\user\`. Use `.Value` or `$m.Groups.Item(0)`, or skip the regex and tokenise with
+  `-replace '\)',' ' -split '\s+'`. A count that looks right and content that is empty is the signature of this bug -
+  always print the tail of what you built, not just its length.
+- **Bare `true`/`false` are not value literals on an assignment RHS** - `$started = false` fails with
+  `The term 'false' is not recognized as the name of a cmdlet`; write `$true`/`$false` (`_tmp_t9_9c_folder_mk.ps1:5`/`:7`).
+- **`+` is left-associative, so an int on the left coerces the right operand** - `($n) + '|' + $sk[$n-1]` in a line dump
+  fails with `Cannot convert value "|" to type "System.Int32"` once per dumped line and prints nothing useful. Lead the
+  concatenation with a string - `($n).ToString() + '|' + ...` - or use `-join` (`_tmp_t9_9c_sdkctx.ps1`).
+- **`Select-Object -ExpandProperty Path` on a file list finds nothing** - a FileInfo has no `Path` member, so the listing
+  dies with `Property "Path" cannot be found` and a repo-wide lookup silently returns no candidates. Use
+  `ForEach-Object { $_.FullName }` (finding `completed_work.md`, 9 Nov 2026).
