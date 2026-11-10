@@ -87,5 +87,7 @@ Decisions:
     File: ./decisions/D42.md
   - D43: U22 - the DeviceContext release route feeds ReleaseDC a NULL HWND (m_hWnd is set only by the two FromWindow factories, so a context built by PerThread::DeviceContextFromHandle releases as ReleaseDC(NULL, hdc) and the DC leaks): U22's deliverable is a note at the Release() member of ui/gui/gdiobjects/devicecontext.cpp, the source where the error actually is, and U22 closes as cannot be fixed within winqor_api_user (the wrapper is a faithful ReleaseDC pass-through; the HWND/DC pairing is wrong at the winqor_gui callers, another library's behaviour change - the U20 rule) - POLICY (11 Nov 2026), CLOSES U22, NO CODE CHANGE (comment-only note, no fact re-verified, no gate run)
     File: ./decisions/D43.md
+  - D44: U24 - the one in-tree FlashWindow caller reads its BOOL as a success flag (FlashWindow returns the window's prior active state, not a success flag): fixed by hand in the winqor_gui layer, WindowController::Flash switched to User32::FlashWindowEx with FLASHW_ALL | FLASHW_TIMERNOFG (FLASHW_STOP when invert is false, way-out #3, returns a genuine success BOOL) - a single-point exception to the U20 rule (the rule stays in force elsewhere; U24 is the one gui-side defect the user fixed directly) - POLICY (11 Nov 2026), CLOSES U24 (gui-layer manual fix, no api_user code change, no gate run)
+    File: ./decisions/D44.md
 
 ---
