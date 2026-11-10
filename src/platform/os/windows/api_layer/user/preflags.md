@@ -6,7 +6,7 @@ Written wholesale at the T9 step 9h close (9 Nov 2026) and replaced wholesale at
 
 **54 sources / 600 member-declaration lines (600 static, 0 non-static) / 599 binding lines / 1,018 export names / 724 covered / 8 declared-and-unwrapped raw with written exclusions / 286 with no prototype.** `_tmp_static_census.ps1` also prints 0 defined-but-not-static, 0 defined-without-a-declaration and 599 distinct defined member names; the coverage instrument counts **601** members (its regex sees 1 more than the census's 600 declaration lines - the standing +3 phantom D33 recorded against 637/634), and **3** member names match no export name (`CopyCursorT`, `CreateWindowT`, `qor_pp_useswinapiAW`). `user32.h` is **819 lines** - 9h deleted 36 (the 34 members, the section banner and the trailing blank); the header now carries **0** `Dde`/`DDE` lines and **0** `) const;` member lines.
 
-**U4's remaining declared-but-undefined population is 0, and its non-static population is 0.** The queue's arithmetic: 9a closed 34, 9b 7, 9c 4, 9d 3, 9e 2, 9f 1, 9g 1 and 9h deleted the last 34. It splits exactly on D18's scope line:
+**U4 is CLOSED (10 Nov 2026 - D26's T9 queue closed at D34): its remaining declared-but-undefined population is 0 and its non-static population is 0.** The queue's arithmetic: 9a closed 34, 9b 7, 9c 4, 9d 3, 9e 2, 9f 1, 9g 1 and 9h deleted the last 34. It splits exactly on D18's scope line:
 
 | T9 step | Section (`user32.h`) | Members | Resolution |
 |---|---|--:|---|
