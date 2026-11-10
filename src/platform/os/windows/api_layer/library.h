@@ -27,6 +27,11 @@ namespace qor { namespace win { namespace api {
 			return EXCEPTION_EXECUTE_HANDLER;
 		}
 
+		static void ReportMissingLibraryFunction()
+		{
+			serious("Missing library function.");
+		}
+
 		//Every entry point reached through DefProc is a WINAPI (__stdcall) export of a Win32 system DLL -
 		//the 1638 qor_pp_useswinapi/AW bindings in this tree name user32, kernel32, gdi32, ole32, ws2_32,
 		//shell32, comctl32, uxtheme, opengl32, dwmapi, Xinput1_4 and shcore only. The pointer the call is
@@ -49,7 +54,9 @@ namespace qor { namespace win { namespace api {
 
 			if (FP == nullptr)
 			{
-				throw("Missing library function.");
+				ReportMissingLibraryFunction();
+				ret _{};
+				return _;
 			}
 			__try
 			{
@@ -81,7 +88,7 @@ namespace qor { namespace win { namespace api {
 			}
 			else
 			{
-				throw("Missing library function.");
+				ReportMissingLibraryFunction();
 			}
 		}
 
@@ -114,7 +121,9 @@ namespace qor { namespace win { namespace api {
 
 			if (FP == nullptr)
 			{
-				throw("Missing library function.");
+				ReportMissingLibraryFunction();
+				ret _{};
+				return _;
 			}
 			__try
 			{

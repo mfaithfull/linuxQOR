@@ -73,5 +73,9 @@ Decisions:
     File: ./decisions/D35.md
   - D36: U5 - the run-time binding cached in a function-local `static const` (a failed resolution included) is accepted as by design (the cache is the design; a null binding re-throws on every later call, so the verdict is deterministic and observable) - POLICY (10 Nov 2026)
     File: ./decisions/D36.md
+  - D37: U8 - report a null binding through the QOR issue facility instead of `throw(const char*)` - ACTION (10 Nov 2026) - MEASURED: C2712, the tree does not build (62 in the 54-source folder gate, 126 in the 122-source all-libraries gate, 2 new C1003 fatals); U8 NOT closed, the constraint is U29
+    File: ./decisions/D37.md
+  - D38: U8 - move the null-binding report out of line (`ReportMissingLibraryFunction`) and return the default explicitly: C2712 gone, gates at zero diff, a null pointer never called through - ACTION (10 Nov 2026), CLOSES U8 AND U29
+    File: ./decisions/D38.md
 
 ---

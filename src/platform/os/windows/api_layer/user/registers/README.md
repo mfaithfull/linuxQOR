@@ -9,9 +9,9 @@ the shape is `u28.md`.
 The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
 generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
-Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u9` (10 Nov 2026: `purpose.md`), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
+Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
-`u26.md`.
+`u26.md` - U19 and U26 are **open** as leads; only their register files are frozen, so a session acting on either opens a new `registers/u<n>.md`. **U8 and U29 CLOSED 10 Nov 2026 (D38)** - the out-of-line null-binding report, gates at zero diff.
 
 | File | Lines | Register ids | Was registers.md |
 |---|--:|---|---|
@@ -43,10 +43,11 @@ Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u9` 
 | `u24.md` | 23 | U24 | 868-888 |
 | `u25.md` | 98 | U25, U25 | 889-916 |
 | `u26.md` | 175 | U26, U26 | 917-957 |
+| `u29.md` | 14 | U29 | - (new item, 10 Nov 2026; CLOSED D38) |
 | `u3.md` | 9 | U3 | 143-149 |
 | `u4.md` | 78 | U4 | 150-186 |
 | `u5.md` | 5 | U5 | 187-189 |
 | `u6.md` | 64 | U6, U6 | 190-199 |
 | `u7.md` | 7 | U7 | 200-202 |
-| `u8.md` | 5 | U8 | 203-205 |
+| `u8.md` | 7 | U8 | 203-205 |
 | `u9.md` | 5 | U9 | 206-208 |
