@@ -1,0 +1,41 @@
+#Deep planning describes a method for planning large pieces of work
+
+1. Create a plan from the user's request into the /docs/future/ folder under a new subfolder 
+   e.g. from a user request `Plan how to write a 3D game' you would create /docs/future/WriteA3DGame/plan.md which might look like the below example. Use your native intelligence to create the best plan that you can. 
+
+```YAML
+---
+Type: Plan
+Parent:
+Level: 0
+Items:
+  - Title: Write the game engine
+    Status: Planning
+    Content:
+  - Title: Write the game logic
+    Status: Planning
+    Content:
+  - Title: Extensive testing
+    Status: Planning
+    Content:
+---
+```
+
+2. Take the first item of the plan which requires refinement (see `The key decision` below for how do determine this)
+ a. Turn the title into a sub folder name. e.g. `Write the game engine` -> `./WriteGameEngine`
+ b. Create the new sub folder if it doesn't exist. 
+ c. Use the sub folder to place the item's Content 
+      e.g. Content: `./WriteGameEngine/plan.md` 
+ d. The subfolder plan.md needs to be created with the current plan as it's Parent e.g. Parent: '../plan.md'. Level must be set to Parent level + 1
+ c. use deep-planning to plan the Item in the new subfolder/plan.md from the Title in the current plan as if you had a user request to do so e.g. `Plan how to: "write the game engine"'
+ d. When the plan contains no steps which require refinement return to the parent plan. The parent  becomes the current plan (step up the tree). Ensure the plan is coherent and mark the item that was refined as Status: Refined
+ e. Return to step 1 iff any item in the plan requires refinement
+
+**The key decision that prevents endless recursion and drives refinement**
+Does an item require refinement?
+	If the item Status is Refined -> No
+	If the item makes a single edit, creates a single file or makes a single tool call -> No
+	If the item makes one request from the user -> No
+	If the item is itself a planning step i.e. an instruction to plan -> No
+	If the current level (recursion depth) is > 5 -> No
+	In all other cases -> Yes
