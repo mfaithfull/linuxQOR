@@ -30,6 +30,15 @@
 
 namespace qor{ namespace platform { namespace win{ 
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - the layout is sound, the initialization is not. Measured against
+    //the SDK SCROLLINFO (winuser.h:12037-:12046) with sizeof/offsetof on x64 and x86: 28 bytes, all seven offsets
+    //identical on both arches, and this struct has no character field at all, so there is no TCHAR-width axis here and
+    //the reinterpret_cast at scrollbarcontroller.cpp:57 (GetScrollInfo) and :72 (SetScrollInfo) into user32.h:641/:647
+    //is safe. The defect is initialization: cbSize, fMask, nMin, nMax and nPage are brace-initialized, nPos and
+    //nTrackPos are not, so a default-constructed ScrollInfo carries an indeterminate int into the layer. GetScrollInfo
+    //is _Inout_ and overwrites both only for the mask bits it fills, while SetScrollInfo READS both - reading an
+    //indeterminate int is UB, and that value is the scroll position the call sets. The fix is this published header
+    // (int nPos{0}; int nTrackPos{0};); it is winqor_gui surface, so the U20 rule records it rather than performing it.
     struct ScrollInfo
     {
         unsigned int    cbSize{sizeof(ScrollInfo)};

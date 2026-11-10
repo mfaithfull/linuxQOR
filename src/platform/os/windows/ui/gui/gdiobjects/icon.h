@@ -24,6 +24,20 @@ namespace qor{ namespace platform { namespace win{
         void*           hbmColor;
     };
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - which ICONINFOEX this means is an include-order property.
+    //winuser.h declares the SDK type twice: an A shape of 560 bytes in one arm and a W shape of 1,080 bytes in the
+    //other, and the arm is picked by UNICODE/_UNICODE, which in this tree is defined only at kernel32.h:7-10 under
+    //qor_pp_unicode (src/configuration/configuration.h:13 = 1). The layer publishes ::PICONINFOEX at
+    //src/platform/os/windows/api_layer/user/user32.h:442 and qor_pp_useswinapiAW pastes GetIconInfoExW unconditionally,
+    //so a TU that reaches <windows.h> before kernel32.h compiles the 560-byte A shape against a 1,080-byte write:
+    //no compile error, no link error, 520 bytes written past the end of this struct at icon.cpp:94, where
+    //GetInfoExT hands this mirror to the layer as reinterpret_cast<PICONINFOEX>(&iconinfoex). This mirror is always
+    //the W shape because its TCHAR comes from common/structures.h:57-65 (qor_pp_unicode), not from _UNICODE, so the
+    //fork is on the layer's parameter type rather than on this struct - which is why closing the published-signature
+    //half of U26 does not close this instance: the published header has to say which ICONINFOEX it means. Recorded,
+    //not fixed: the wrapper's signature is the SDK prototype of the export it binds (D18), so the fix belongs to
+    //this published header - spell szModName/szResName wchar_t, or pin the shape with
+    //static_assert(sizeof(IconInfoEx) == 1080) - and this is winqor_gui surface, hence the U20 rule.
     struct IconInfoEx
     {
         unsigned long   cbSize;

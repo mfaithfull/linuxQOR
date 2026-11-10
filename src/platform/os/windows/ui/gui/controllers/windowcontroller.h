@@ -81,6 +81,16 @@ namespace qor{ namespace platform { namespace win{
         unsigned short wCreatorVersion;
     };
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - the layout is verified, the contract is not enforced. Measured
+    //field-by-field against the SDK WINDOWPLACEMENT: 44 bytes, every offset identical on both arches, so the
+    //reinterpret_cast at windowcontroller.cpp:252 (GetPlacement) and :382 (SetPlacement) into the layer's
+    //user32.h:176 GetWindowPlacement / :206 SetWindowPlacement is sound. What is unsound is the SDK precondition:
+    //both entry points require lpwndpl->length == sizeof(WINDOWPLACEMENT) (winuser.h:4768, :4775), and length here
+    //has no initializer - the same uninitialization as ScrollInfo::nPos in controllers/s_s/scrollbarcontroller.h - so a default-constructed placement asks the layer
+    //to act on an indeterminate length. Latent: WindowController::GetPlacement (this header :186) and SetPlacement
+    //(:210) have 0 in-tree callers anywhere in src, examples or test. The fix is this published header: initialize
+    //length{sizeof(WindowPlacement)} and pin the mirror with static_assert(sizeof(WindowPlacement) == sizeof(WINDOWPLACEMENT)).
+    //winqor_gui surface, so the U20 rule records it rather than performing it.
     struct qor_pp_module_interface(QOR_WINGUI) WindowPlacement 
     {
         unsigned int  length;

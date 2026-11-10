@@ -30,6 +30,18 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace win{ 
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - this mirror is ABI-correct on x64 only. Measured against the
+    //SDK MSG (winuser.h:1877-:1887) with sizeof/offsetof on both arches: x64 identical, 48 bytes each, with
+    //hwnd/message/wParam/lParam/time/pt at 0/8/16/24/32/36 (and pt.x/pt.y at 36/40). x86 divergent from lParam on -
+    //MSG is 28 bytes (lParam@12 time@16 pt@20) while this mirror is 40 (lParam@16 time@24 pt@28), because wParam/lParam
+    //are spelled as portable 8-byte integers where the SDK uses the 4-byte WPARAM/LPARAM and 8-byte alignment then
+    //pushes every later field. GetMessageT (user32.h:300) and PeekMessageT (:307) WRITE the caller's buffer, so on a
+    //32-bit target the export fills 28 bytes and the caller reads 40: wrong lParam, wrong time, wrong pt, and no
+    //compile error. The mirror feeds seven sites into six wrappers - messagehandler.cpp:136 (DispatchMessageT),
+    //:146 (GetMessageT), :181 (PeekMessageT), :236 (TranslateMessage), :241 (TranslateMDISysAccel),
+    //windowcontroller.cpp:658 and acceleratortable.cpp:83 (both TranslateAcceleratorT). Windows is 64-bit only
+    //(decision D17), so the exposure is latent, not live. The fix is this published header: spell wParam/lParam at
+    //the SDK widths and pin the mirror with static_assert(sizeof(Message) == sizeof(MSG)) - winqor_gui surface, so the U20 rule records it.
     struct Message
     {
         void*               hwnd;

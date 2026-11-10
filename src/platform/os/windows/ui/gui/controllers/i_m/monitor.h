@@ -35,6 +35,11 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace win{ 
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - this callback spells its fourth parameter long long where the
+    //SDK MONITORENUMPROC (winuser.h:13702) spells it LPARAM: 8 bytes against 4 on a 32-bit target, identical on x64.
+    //The cast that hides the difference is at monitor.cpp:187, the (MONITORENUMPROC)(&Monitor::CreateCallback) argument
+    //to EnumDisplayMonitors. Latent while Windows is 64-bit only (decision D17); the fix is this published header,
+    //which is winqor_gui surface, so the U20 rule records it.
     typedef int (__stdcall* MonitorEnumProc)(void*, void*, Rect*, long long);
 
     struct DisplayAdapter
@@ -52,6 +57,19 @@ namespace qor{ namespace platform { namespace win{
         unsigned long   flags{0};
     };
 
+    //U26 (api_layer/user, closed 11 Nov 2026 as D45) - the width fork lands on this mirror's size, not on the layer's
+    //signature. GetMonitorInfoT (user32.h:654) publishes ::LPMONITORINFO, the 40-byte MONITORINFO, and neither
+    //MONITORINFOEX nor LPMONITORINFOEX appears in that header, so the layer cannot propagate a TCHAR-width parameter
+    //type the way GetIconInfoExT (user32.h:442) does. The SDK instead carries one contract with two struct shapes
+    //picked by cbSize (winuser.h:13640-:13682), and there is no GetMonitorInfoEx export to bind, so qor_pp_useswinapiAW
+    //pastes the W name unconditionally. Measured for x64 and x86: MonitorInfo is 40 bytes, layout-identical to MONITORINFO
+    //on both arches (cbSize@0 rcMonitor@4 rcWork@20 flags@36), and this mirror is 104 bytes = the W shape, because
+    //szDevice is 32 wchar_t (DeviceNameSize 32 from common/constants.h:72) and this TCHAR comes from
+    //common/structures.h:57-65 via qor_pp_unicode rather than from _UNICODE - so in the built tree the mirror and the
+    //pasted W binding agree. The hazard is one switch wide: the same header compiled before UNICODE/_UNICODE is defined
+    //gives 72 bytes = MONITORINFOEXA while the entry point still fills the 104-byte W shape - the icon.cpp overrun with
+    //the roles reversed, caller under-sizes and callee over-writes. Pin the shape here with
+    //static_assert(sizeof(MonitorInfoEx) == sizeof(MONITORINFOEX)); that is winqor_gui published surface, so the U20 rule records it.
     struct MonitorInfoEx : MonitorInfo 
     {
         TCHAR szDevice[DeviceNameSize];
