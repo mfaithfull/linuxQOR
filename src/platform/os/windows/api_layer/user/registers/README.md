@@ -9,7 +9,7 @@ the shape is `u28.md`.
 The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
 generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
-Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u10` (D39: Microsoft-documented, verbatim block), `u17` (D40: Option A rename, 21 sites in 11 files), `u21` (D42: subsystem grouping by design, no code change), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P4, P5** in `prescan.md` (P4 CLOSED 11 Nov 2026 (D49); P1, P2, P5 at 4 Nov 2026:
+Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u10` (D39: Microsoft-documented, verbatim block), `u17` (D40: Option A rename, 21 sites in 11 files), `u21` (D42: subsystem grouping by design, no code change), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P3, P4, P5** in `prescan.md` (P3 CLOSED 12 Nov 2026 (Option 4 - delete both kind-5 mirror members, census bucket 5 -> 0, no D entry); P4 CLOSED 11 Nov 2026 (D49); P1, P2, P5 at 4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
 `u26.md` - U26 is now **CLOSED 11 Nov 2026 (D45)**: the register file stays frozen provenance and gained only a head
 closure line, because the close's deliverable is six comment blocks in five published `winqor_gui` headers
@@ -27,7 +27,7 @@ residual for a consumer that sees `<windows.h>` first stays recorded as D21's re
 | `open-items.md` | 4 | - | 127-128 |
 | `p6-u27.md` | 19 | P6, U27 | 77-85 |
 | `preamble.md` | 9 | - | 1-7 |
-| `prescan.md` | 152 | P1, P2, P3, P4, P5, P5, P1, P5, P1, P5 | 8-76 |
+| `prescan.md` | 157 | P1, P2, P3, P4, P5, P5, P1, P5, P1, P5 | 13-81 |
 | `README.md` | 45 | - | - |
 | `tasks.md` | 161 | T1, T2, T3, T4, T5, T6, T7, T8 | 958-1031 |
 | `u1.md` | 10 | U1 | 129-136 |

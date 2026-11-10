@@ -22,17 +22,17 @@ namespace qor { namespace win { namespace api {
     //(tmp/_tmp_cursor_probe.cpp), and none of the sixteen is one of the nine stems user32.h:9-17 #undef's (G2). No wrapper
     //here can call the SDK by name: inside this class an unqualified bare stem resolves to the wrapper itself, which MSVC
     //diagnoses as "recursive on all control paths" (measured, tmp/_tmp_recursion_probe.cpp - warning C4717 at /W4).
-    //CopyCursorT is the folder's one wrapper whose member name is not its export: the SDK has no CopyCursor entry point,
-    //it is a cast macro (winuser.h:10681 "#define CopyCursor(pcur) ((HCURSOR)CopyIcon((HICON)(pcur)))", live probe
-    //CopyCursor MISSING / CopyIcon RESOLVED), so the binding is right and only the name is indirect - the U17/P3 mirror
-    //case. The name implies no type conversion in this build: windef.h:88 is DECLARE_HANDLE(HICON) and :131 is
+    //P3 CLOSED 12 Nov 2026: CopyCursorT is deleted from user32.h and this TU, and ui/gui/gdiobjects/cursor.cpp Clone()
+    //calls User32::CopyIcon directly. The mirror case it carried is measured: CopyCursor has 0 export rows, winuser.h:10681
+    //is the cast macro "#define CopyCursor(pcur) ((HCURSOR)CopyIcon((HICON)(pcur)))", and CopyIcon (59) is wrapped here.
+    //HCURSOR and HICON are one type in this build: windef.h:88 is DECLARE_HANDLE(HICON) and :131 is
     //"typedef HICON HCURSOR" (with the header's own note "HICONs & HCURSORs are polymorphic"); the separate
     //DECLARE_HANDLE(HCURSOR) at :133 is the "_MAC"-only arm of that same #ifndef and is not what this TU gets - /EP of
     //cursor.cpp has exactly one HCURSOR typedef, "typedef HICON HCURSOR;" (tmp/_tmp_cursor_pp.txt:174186). So HCURSOR and
     //HICON are one type here and Call< HCURSOR, HCURSOR > against the HICON WINAPI(HICON) export is type-identical; the
     //only calling risk in that path was the U6 __stdcall-vs-__cdecl fPtr mismatch, which every wrapper in the folder
     //shared until it was closed on 1 Nov 2026 (library.h:46/:68 now spell fPtr __stdcall, like DefProc at :16).
-    //Ownership: CreateCursor, LoadCursorFromFileT and CopyCursorT each return a handle the caller must DestroyCursor,
+    //Ownership: CreateCursor and LoadCursorFromFileT (and CopyIcon, whose result a caller clones) return a handle the caller must DestroyCursor,
     //while LoadCursorT and GetCursor return shared system handles that must not be destroyed. SetSystemCursor takes no
     //ownership of hcur (winuser.h:10728-10730 carries no ownership SAL and documents no transfer), and it and
     //ShowSystemCursor remain exports - 36A, 399 - although Microsoft documents both as unsupported from Windows 8 up
@@ -55,13 +55,6 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, ClipCursor);
         return Library::Call<BOOL, const RECT*>(pFunc, lpRect);
-    }
-
-    HCURSOR User32::CopyCursorT(HCURSOR hIcon)
-    {
-        qor_pp_fcontext;
-        qor_pp_useswinapi(user32, CopyIcon);
-        return Library::Call< HCURSOR, HCURSOR >(pFunc, hIcon);
     }
 
     HCURSOR User32::CreateCursor(HINSTANCE hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const VOID* pvANDPlane, const VOID* pvXORPlane)

@@ -185,19 +185,9 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
 
-    HWND User32::CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
-    {
-        qor_pp_fcontext;
-        //CreateWindow is not a user32.dll export at all: winuser.h:4468 defines CreateWindowW (and :4464 CreateWindowA)
-        //as function-like macros that forward to CreateWindowExW/A with a zero extended style, and qor_pp_useswinapiAW
-        //stringizes the pasted name before any macro can expand, so binding "CreateWindowW" could only ever give a null
-        //DefProc and Library::Call would throw "Missing library function." on every call. Bind the export the SDK macro
-        //itself calls and pass the same zero dwExStyle.
-        qor_pp_useswinapiAW(user32, CreateWindowEx);
-        return Library::Call<HWND, DWORD, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HMENU, HINSTANCE, LPVOID>(
-            pFunc, 0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
-    }
-
+    //P3 CLOSED 12 Nov 2026: the CreateWindowT member is deleted, not rebound - CreateWindow/A/W are winuser.h function-like
+    //macros with 0 export rows and CreateWindowExT above already wraps the export they forward to, so the twin had no caller
+    //and no export to mirror.
     HWND User32::CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
     {
         qor_pp_fcontext;

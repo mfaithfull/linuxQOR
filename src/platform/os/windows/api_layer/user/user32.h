@@ -145,7 +145,6 @@ namespace qor { namespace win { namespace api {
         static HWND ChildWindowFromPoint(HWND hWndParent, ::POINT Point);
         static HWND ChildWindowFromPointEx(HWND hwnd, ::POINT pt, UINT flags);
         static BOOL CloseWindow(HWND hWnd);
-        static HWND CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
         static HWND CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
         static HDWP DeferWindowPos(HDWP hWinPosInfo, HWND hWnd, HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags);
         static BOOL DeregisterShellHookWindow(HWND hwnd);
@@ -386,7 +385,6 @@ namespace qor { namespace win { namespace api {
 
         //Cursor functions
         static BOOL ClipCursor(const RECT* lpRect);
-        static HCURSOR CopyCursorT(HCURSOR hIcon);
         static HCURSOR CreateCursor(HINSTANCE hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const VOID* pvANDPlane, const VOID* pvXORPlane);
         static BOOL DestroyCursor(HCURSOR hCursor);
         static BOOL GetClipCursor(LPRECT lpRect);

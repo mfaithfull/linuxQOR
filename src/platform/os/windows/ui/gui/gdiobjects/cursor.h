@@ -45,7 +45,7 @@ namespace qor{ namespace platform { namespace win{
         //LoadCursorFromFile ctors below, which set m_owning = true themselves, wrong for the two LoadCursorT ctors,
         //which set it false (cursor.cpp:35-41, :49-53), and wrong for GetCurrent(), which takes GetCursor's shared
         //handle and sets it false too (cursor.cpp:91-96). The handle ctor is the one that cannot be right for both of
-        //its callers: Clone() feeds it a CopyCursorT result it owns, while a caller feeding it a GetCursor or
+        //its callers: Clone() feeds it a User32::CopyIcon result it owns, while a caller feeding it a GetCursor or
         //LoadCursorT result owns nothing.
         //Recorded, not fixed: the default sits on this class's published interface (qor_pp_module_interface(QOR_WINGUI)
         //at cursor.h:25), so moving it moves what every winqor_gui caller relies on - a behaviour change in another

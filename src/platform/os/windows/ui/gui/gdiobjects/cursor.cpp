@@ -58,8 +58,8 @@ namespace qor{ namespace platform { namespace win{
     //entry's, carried as written - nothing in this file was re-audited for them.)
     //m_owning is whatever the caller asserted - cursor.h:29's own = true - and a handle carries no ownership of its own;
     //see the ownership paragraph at cursor.h. Two consequences of that, both measured:
-    //Clone() (:64-69) feeds PrimitiveHandle(User32::CopyCursorT(...)) straight into Cursor(handle, true). CopyCursorT
-    //binds the SDK's CopyIcon (there is no CopyCursor export - winuser.h:10681 is a cast macro), and Library::Call
+    //Clone() (:64-69) feeds PrimitiveHandle(User32::CopyIcon(...)) straight into Cursor(handle, true). CopyCursorT was
+    //deleted at the P3 close (12 Nov 2026) and this site now calls User32::CopyIcon, which binds CopyIcon (59) directly;
     //returns nullptr when the call yields nothing, so a failed copy still runs DestroyCursor(nullptr) - there is no
     //null or invalid-handle guard on this path.
     //m_handle is never cleared, and PrimitiveHandle has no release or reset API (common/handles/handle.h:9-47), so the
@@ -70,7 +70,7 @@ namespace qor{ namespace platform { namespace win{
     //(windowClass->SetCursor(Cursor(IDC_ARROW))) builds a non-owning temporary - IDC_ARROW reaches the
     //(const wchar_t* id) ctor at :49-53, so no DestroyCursor runs - and raises that warning once per AddWindowClass call.
     //For the audit, the wrappers this class feeds already make the distinction the callers miss: CreateCursor,
-    //LoadCursorFromFileT and CopyCursorT return handles the caller must DestroyCursor, while LoadCursorT and GetCursor
+    //LoadCursorFromFileT and CopyIcon return handles the caller must DestroyCursor, while LoadCursorT and GetCursor
     //return shared system handles that must not be destroyed (src/platform/os/windows/api_layer/user/cursor.cpp:35-41).
     //Recorded, not fixed: m_owning is this class's ownership contract and the class is winqor_gui published surface -
     //changing who destroys a handle is a behaviour change in another library, which the review records rather than
@@ -88,8 +88,8 @@ namespace qor{ namespace platform { namespace win{
 
     Cursor Cursor::Clone()
     {
-        Cursor c(PrimitiveHandle(User32::CopyCursorT(
-            reinterpret_cast<HCURSOR>(m_handle.Use()))), true);
+        Cursor c(PrimitiveHandle(User32::CopyIcon(
+            reinterpret_cast<HICON>(m_handle.Use()))), true);
         return c;
     }
 
