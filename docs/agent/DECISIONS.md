@@ -81,5 +81,7 @@ Decisions:
     File: ./decisions/D39.md
   - D40: U17 - rename the 9 A/W-family members declared without the folder's T suffix to SDK stem + T (Option A) - 21 sites in 11 files, binding literals and the #undef block untouched, gates at zero diff, census 600 / 119 / 479 / 0 / 2 - ACTION (10 Nov 2026), CLOSES U17
     File: ./decisions/D40.md
+  - D41: U19 - the bypass call-site census lands as doc/winqor_api_user_bypasses.txt (114 sites in 13 files, from a folder-wide census over 3,230 files reading LAYER 466 / INDIRECT 165 / MEMBER 207 / BYPASS 124 raw with 10 shadowed by same-named member declarations) and U19 is closed as cannot be fixed within this library (a bypass call site is another library's source to change; 112 of the 114 rows sit in trees that are not in the build at all) - POLICY (11 Nov 2026), CLOSES U19, NO CODE CHANGE
+    File: ./decisions/D41.md
 
 ---

@@ -1,0 +1,114 @@
+AdjustWindowRectEx  src/platform/os/windows/ui/gl/windowimpl.cpp:1675  AdjustWindowRectEx(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32());
+AdjustWindowRectEx  src/platform/os/windows/ui/gl/windowimpl.cpp:1764  ::AdjustWindowRectEx(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32());
+AdjustWindowRectEx  src/platform/os/windows/ui/gl/windowimpl.cpp:1869  ::AdjustWindowRectEx(&rect, GetWindowStyleWin32(),
+AdjustWindowRectEx  src/platform/os/windows/ui/gl/windowimpl.cpp:1926  ::AdjustWindowRectEx(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32());
+AdjustWindowRectEx  src/platform/os/windows/ui/gl/windowimpl.cpp:225  AdjustWindowRectEx(&frame, style, FALSE, exStyle);
+AdjustWindowRectExForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:1671  AdjustWindowRectExForDpi(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32(), WindowController::GetDPI());
+AdjustWindowRectExForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:1760  ::AdjustWindowRectExForDpi(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32(), WindowController::GetDPI());
+AdjustWindowRectExForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:1863  ::AdjustWindowRectExForDpi(&rect, GetWindowStyleWin32(),
+AdjustWindowRectExForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:1922  ::AdjustWindowRectExForDpi(&rect, GetWindowStyleWin32(), FALSE, GetWindowExStyleWin32(), WindowController::GetDPI());
+AdjustWindowRectExForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:221  AdjustWindowRectExForDpi(&frame, style, FALSE, exStyle, WindowController::GetDPI());
+BeginPaint  src/platform/os/windows/ui/gui/painting/paintsession.cpp:41  HDC hdc = BeginPaint((HWND)(m_window->GetHandle().Use()), reinterpret_cast<LPPAINTSTRUCT>(&m_paint));
+CheckMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:703  CheckMenuItem(menu, IDM_FORMAT_WORD_WRAP, MF_BYCOMMAND | wrapState);
+CheckMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:704  CheckMenuItem(menu, IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | statusState);
+ClipCursor  src/platform/os/windows/ui/gl/windowimpl.cpp:272  ::ClipCursor(nullptr);
+CloseClipboard  src/platform/os/windows/ui/gl/platform.cpp:158  CloseClipboard();
+CloseClipboard  src/platform/os/windows/ui/gl/platform.cpp:186  CloseClipboard();
+CloseClipboard  src/platform/os/windows/ui/gl/platform.cpp:194  CloseClipboard();
+CloseClipboard  src/platform/os/windows/ui/gl/platform.cpp:202  CloseClipboard();
+CreateIconIndirect  src/platform/os/windows/ui/gl/windowimpl.cpp:191  handle = CreateIconIndirect(&ii);
+DestroyIcon  src/platform/os/windows/ui/gl/windowimpl.cpp:1603  ::DestroyIcon((HICON)(m_bigIcon));
+DestroyIcon  src/platform/os/windows/ui/gl/windowimpl.cpp:1608  ::DestroyIcon((HICON)(m_smallIcon));
+DestroyIcon  src/platform/os/windows/ui/gl/windowimpl.cpp:1642  DestroyIcon(bigIcon);
+DestroyIcon  src/platform/os/windows/ui/gl/windowimpl.cpp:1645  ::DestroyIcon(smallIcon);
+DestroyWindow  examples/experimental/osspecific/windows/retropad/controller.cpp:317  DestroyWindow(hwnd);
+DestroyWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:275  DestroyWindow(g_app.hwndEdit);
+DestroyWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:883  DestroyWindow(hwnd);
+EmptyClipboard  src/platform/os/windows/ui/gl/platform.cpp:156  EmptyClipboard();
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:457  EnableMenuItem(GetMenu(hwnd), IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_GRAYED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:458  EnableMenuItem(GetMenu(hwnd), IDM_EDIT_GOTO, MF_BYCOMMAND | MF_GRAYED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:461  EnableMenuItem(GetMenu(hwnd), IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_ENABLED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:462  EnableMenuItem(GetMenu(hwnd), IDM_EDIT_GOTO, MF_BYCOMMAND | MF_ENABLED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:707  EnableMenuItem(menu, IDM_EDIT_GOTO, MF_BYCOMMAND | (canGoTo ? MF_ENABLED : MF_GRAYED));
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:710  EnableMenuItem(menu, IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_GRAYED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:714  EnableMenuItem(menu, IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_ENABLED);
+EnableMenuItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:718  EnableMenuItem(menu, IDM_FILE_SAVE, MF_BYCOMMAND | (modified ? MF_ENABLED : MF_GRAYED));
+EndDialog  examples/experimental/osspecific/windows/retropad/controller.cpp:113  EndDialog(dlg, IDOK);
+EndDialog  examples/experimental/osspecific/windows/retropad/controller.cpp:117  EndDialog(dlg, IDCANCEL);
+EndDialog  examples/experimental/osspecific/windows/retropad/controller.cpp:133  EndDialog(dlg, LOWORD(wParam));
+EndDialog  examples/experimental/osspecific/windows/retropad/gotodlg.h:36  EndDialog(dlg, IDOK);
+EndDialog  examples/experimental/osspecific/windows/retropad/gotodlg.h:40  EndDialog(dlg, IDCANCEL);
+EndDialog  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:119  EndDialog((HWND)(dlg), LOWORD(wParam));
+EndDialog  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:160  EndDialog((HWND)(dlg), IDOK);
+EndDialog  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:164  EndDialog((HWND)(dlg), IDCANCEL);
+EndDialog  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:261  EndDialog((HWND)(dlg), LOWORD(wParam));
+EndDialog  examples/experimental/osspecific/windows/retropad/retropad.cpp:577  EndDialog(dlg, IDOK);
+EndDialog  examples/experimental/osspecific/windows/retropad/retropad.cpp:581  EndDialog(dlg, IDCANCEL);
+EndDialog  examples/experimental/osspecific/windows/retropad/retropad.cpp:812  EndDialog(dlg, LOWORD(wParam));
+EndPaint  src/platform/os/windows/ui/gui/painting/paintsession.cpp:47  EndPaint((HWND)(m_window->GetHandle().Use()), reinterpret_cast<LPPAINTSTRUCT>(&m_paint));
+GetClientRect  examples/experimental/osspecific/windows/retropad/retropad.cpp:315  GetClientRect(hwnd, &rc);
+GetClipboardData  src/platform/os/windows/ui/gl/platform.cpp:182  object = GetClipboardData(CF_UNICODETEXT);
+GetDC  src/platform/os/windows/ui/gl/monitorimpl.cpp:263  const HDC dc = ::GetDC(NULL);
+GetDC  src/platform/os/windows/ui/gl/wglcontextimpl.cpp:36  dc = GetDC(_glfw.win32.helperWindowHandle);
+GetDC  src/platform/os/windows/ui/gl/windowimpl.cpp:151  dc = GetDC(NULL);
+GetDlgItem  examples/experimental/osspecific/windows/retropad/controller.cpp:89  HWND edit = GetDlgItem(dlg, IDC_GOTO_EDIT);
+GetDlgItem  examples/experimental/osspecific/windows/retropad/gotodlg.h:12  HWND edit = GetDlgItem(dlg, IDC_GOTO_EDIT);
+GetDlgItem  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:136  HWND edit = GetDlgItem((HWND)(dlg), IDC_GOTO_EDIT);
+GetDlgItem  examples/experimental/osspecific/windows/retropad/retropad.cpp:553  HWND edit = GetDlgItem(dlg, IDC_GOTO_EDIT);
+GetDlgItemInt  examples/experimental/osspecific/windows/retropad/controller.cpp:99  UINT line = GetDlgItemInt(dlg, IDC_GOTO_EDIT, &ok, FALSE);
+GetDlgItemInt  examples/experimental/osspecific/windows/retropad/gotodlg.h:22  UINT line = GetDlgItemInt(dlg, IDC_GOTO_EDIT, &ok, FALSE);
+GetDlgItemInt  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:146  UINT line = GetDlgItemInt((HWND)(dlg), IDC_GOTO_EDIT, &ok, FALSE);
+GetDlgItemInt  examples/experimental/osspecific/windows/retropad/retropad.cpp:563  UINT line = GetDlgItemInt(dlg, IDC_GOTO_EDIT, &ok, FALSE);
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:414  if (GetKeyState(VK_SHIFT) & 0x8000)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:416  if (GetKeyState(VK_CONTROL) & 0x8000)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:418  if (GetKeyState(VK_MENU) & 0x8000)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:420  if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:420  if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:422  if (GetKeyState(VK_CAPITAL) & 1)
+GetKeyState  src/platform/os/windows/ui/gl/windowimpl.cpp:424  if (GetKeyState(VK_NUMLOCK) & 1)
+GetMenu  examples/experimental/osspecific/windows/retropad/retropad.cpp:457  EnableMenuItem(GetMenu(hwnd), IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_GRAYED);
+GetMenu  examples/experimental/osspecific/windows/retropad/retropad.cpp:458  EnableMenuItem(GetMenu(hwnd), IDM_EDIT_GOTO, MF_BYCOMMAND | MF_GRAYED);
+GetMenu  examples/experimental/osspecific/windows/retropad/retropad.cpp:461  EnableMenuItem(GetMenu(hwnd), IDM_VIEW_STATUS_BAR, MF_BYCOMMAND | MF_ENABLED);
+GetMenu  examples/experimental/osspecific/windows/retropad/retropad.cpp:462  EnableMenuItem(GetMenu(hwnd), IDM_EDIT_GOTO, MF_BYCOMMAND | MF_ENABLED);
+GetMenu  examples/experimental/osspecific/windows/retropad/retropad.cpp:698  HMENU menu = GetMenu(hwnd);
+GetSystemMetrics  src/platform/os/windows/ui/gl/windowimpl.cpp:1626  const qor::gl::Image* bigImage = ChooseImage(count, images, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON));
+GetSystemMetrics  src/platform/os/windows/ui/gl/windowimpl.cpp:1626  const qor::gl::Image* bigImage = ChooseImage(count, images, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON));
+GetSystemMetrics  src/platform/os/windows/ui/gl/windowimpl.cpp:1627  const qor::gl::Image* smallImage = ChooseImage(count, images, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON));
+GetSystemMetrics  src/platform/os/windows/ui/gl/windowimpl.cpp:1627  const qor::gl::Image* smallImage = ChooseImage(count, images, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON));
+GetSystemMetrics  src/platform/os/windows/ui/gl/windowimpl.cpp:521  OffsetRect(reinterpret_cast<LPRECT>(&rect), 0, GetSystemMetrics(SM_CYCAPTION));
+GetSystemMetricsForDpi  src/platform/os/windows/ui/gl/windowimpl.cpp:516  OffsetRect(reinterpret_cast<LPRECT>(&rect), 0, GetSystemMetricsForDpi(SM_CYCAPTION, dpi));
+GetWindowRect  examples/experimental/osspecific/windows/retropad/retropad.cpp:322  GetWindowRect(g_app.hwndStatus, &sbrc);
+MoveWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:324  MoveWindow(g_app.hwndStatus, 0, rc.bottom - statusHeight, rc.right, statusHeight, TRUE);
+MoveWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:328  MoveWindow(g_app.hwndEdit, 0, 0, rc.right, rc.bottom - statusHeight, TRUE);
+MsgWaitForMultipleObjects  src/platform/os/windows/ui/gl/platform.cpp:630  ::MsgWaitForMultipleObjects(0, NULL, FALSE, (DWORD) (timeout * 1e3), QS_ALLINPUT);
+OffsetRect  src/platform/os/windows/ui/gl/windowimpl.cpp:516  OffsetRect(reinterpret_cast<LPRECT>(&rect), 0, GetSystemMetricsForDpi(SM_CYCAPTION, dpi));
+OffsetRect  src/platform/os/windows/ui/gl/windowimpl.cpp:521  OffsetRect(reinterpret_cast<LPRECT>(&rect), 0, GetSystemMetrics(SM_CYCAPTION));
+OpenClipboard  src/platform/os/windows/ui/gl/platform.cpp:143  while (!OpenClipboard(TheSession().helperWindowHandle))
+OpenClipboard  src/platform/os/windows/ui/gl/platform.cpp:170  while (!OpenClipboard(TheSession().helperWindowHandle))
+PostQuitMessage  examples/experimental/osspecific/windows/retropad/controller.cpp:321  PostQuitMessage(0);
+PostQuitMessage  examples/experimental/osspecific/windows/retropad/controller.h:44  PostQuitMessage(0);
+PostQuitMessage  examples/experimental/osspecific/windows/retropad/retropad.cpp:887  PostQuitMessage(0);
+RegisterRawInputDevices  src/platform/os/windows/ui/gl/windowimpl.cpp:291  if (!RegisterRawInputDevices(&rid, 1, sizeof(rid)))
+ReleaseDC  src/platform/os/windows/ui/gl/monitorimpl.cpp:266  ::ReleaseDC(NULL, dc);
+ReleaseDC  src/platform/os/windows/ui/gl/windowimpl.cpp:158  ReleaseDC(NULL, dc);
+SetClipboardData  src/platform/os/windows/ui/gl/platform.cpp:157  SetClipboardData(CF_UNICODETEXT, object);
+SetCursor  src/platform/os/windows/ui/gl/windowimpl.cpp:247  SetCursor((HCURSOR)(m_pOuter->GetCursor() ? GetCursorWin32()->GetHandle() : LoadCursorW(NULL, (WCHAR*)IDC_ARROW)));
+SetCursor  src/platform/os/windows/ui/gl/windowimpl.cpp:254  SetCursor(TheSession().blankCursor);
+SetCursorPos  src/platform/os/windows/ui/gl/windowimpl.cpp:2219  ::SetCursorPos(pos.m_x, pos.m_y);
+SetDlgItemInt  examples/experimental/osspecific/windows/retropad/controller.cpp:88  SetDlgItemInt(dlg, IDC_GOTO_EDIT, 1, FALSE);
+SetDlgItemInt  examples/experimental/osspecific/windows/retropad/gotodlg.h:11  SetDlgItemInt(dlg, IDC_GOTO_EDIT, 1, FALSE);
+SetDlgItemInt  examples/experimental/osspecific/windows/retropad/mainwindowinstancecontroller.cpp:135  SetDlgItemInt((HWND)(dlg), IDC_GOTO_EDIT, 1, FALSE);
+SetDlgItemInt  examples/experimental/osspecific/windows/retropad/retropad.cpp:552  SetDlgItemInt(dlg, IDC_GOTO_EDIT, 1, FALSE);
+SetFocus  examples/experimental/osspecific/windows/retropad/retropad.cpp:842  if (g_app.hwndEdit) SetFocus(g_app.hwndEdit);
+SetForegroundWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:486  SetForegroundWindow(g_app.hFindDlg);
+SetForegroundWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:503  SetForegroundWindow(g_app.hReplaceDlg);
+SetRect  src/platform/os/windows/ui/gl/windowimpl.cpp:1756  ::SetRect(&rect, 0, 0, width, height);
+ShowWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:302  ShowWindow(g_app.hwndStatus, SW_SHOW);
+ShowWindow  examples/experimental/osspecific/windows/retropad/retropad.cpp:306  ShowWindow(g_app.hwndStatus, SW_HIDE);
+ShowWindow  src/platform/os/windows/ui/gl/helperwindow.cpp:75  ::ShowWindow(_glfw.win32.helperWindowHandle, SW_HIDE);
+ToUnicode  src/platform/os/windows/ui/gl/session.cpp:154  length = ToUnicode(vk, scancode, state,
+ToUnicode  src/platform/os/windows/ui/gl/session.cpp:162  length = ToUnicode(vk, scancode, state,
+TranslateMessage  examples/experimental/osspecific/windows/retropad/retropad.cpp:969  TranslateMessage((MSG*)&msg);
+TranslateMessage  examples/experimental/osspecific/windows/retropad/viewmodel.cpp:500  TranslateMessage((MSG*)&msg);
+TranslateMessage  src/platform/os/windows/ui/gl/helperwindow.cpp:90  ::TranslateMessage(&msg);
+WaitMessage  src/platform/os/windows/ui/gl/platform.cpp:623  ::WaitMessage();
