@@ -9,9 +9,9 @@ the shape is `u28.md`.
 The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
 generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
-Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
+Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u10` (D39: Microsoft-documented, verbatim block), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
-`u26.md` - U19 and U26 are **open** as leads; only their register files are frozen, so a session acting on either opens a new `registers/u<n>.md`. **U8 and U29 CLOSED 10 Nov 2026 (D38)** - the out-of-line null-binding report, gates at zero diff.
+`u26.md` - U19 and U26 are **open** as leads; only their register files are frozen, so a session acting on either opens a new `registers/u<n>.md`. **U8 and U29 CLOSED 10 Nov 2026 (D38)** - the out-of-line null-binding report, gates at zero diff. **U10 CLOSED 10 Nov 2026 (D39)** - the console-internal types are Microsoft-documented and the block is verbatim, no code change.
 
 | File | Lines | Register ids | Was registers.md |
 |---|--:|---|---|

@@ -77,5 +77,7 @@ Decisions:
     File: ./decisions/D37.md
   - D38: U8 - move the null-binding report out of line (`ReportMissingLibraryFunction`) and return the default explicitly: C2712 gone, gates at zero diff, a null pointer never called through - ACTION (10 Nov 2026), CLOSES U8 AND U29
     File: ./decisions/D38.md
+  - D39: U10 - the console-internal types are Microsoft-documented (learn.microsoft.com/console consolecontrol; verbatim-identical block, no-import-library note authorises the GetProcAddress binding) - POLICY (10 Nov 2026), CLOSES U10, NO CODE CHANGE
+    File: ./decisions/D39.md
 
 ---
