@@ -71,5 +71,7 @@ Decisions:
     File: ./decisions/D34.md
   - D35: U7 - swallowing a caught SEH fault to a default return is accepted as-is (serious(...) already resolves it through the caller's handler or terminates before the default value is observed) - POLICY (10 Nov 2026)
     File: ./decisions/D35.md
+  - D36: U5 - the run-time binding cached in a function-local `static const` (a failed resolution included) is accepted as by design (the cache is the design; a null binding re-throws on every later call, so the verdict is deterministic and observable) - POLICY (10 Nov 2026)
+    File: ./decisions/D36.md
 
 ---
