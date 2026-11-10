@@ -120,6 +120,24 @@ namespace qor{ namespace platform { namespace win{
         m_hInstance = hInstance;
     }
 
+    //U20 - these three store a raw handle copy of an object whose lifetime ends at the call.
+    //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+    //opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The cites are that entry's,
+    //carried as written - nothing in this file was re-audited for them.)
+    //m_hIcon, m_hIconSm and m_hCursor are PrimitiveHandle copies of the argument's handle, with no refcount and no
+    //reset - PrimitiveHandle has no release API (common/handles/handle.h:9-47) - while the argument at each call site
+    //is a temporary: windowfactory.cpp:89/90/92 pass Icon(IDI_APPLICATION), Cursor(IDC_ARROW) and Icon(nullptr), whose
+    //~Icon/~Cursor run DestroyIcon/DestroyCursor at the end of that full-expression. So the stored handle outlives the
+    //owner that destroyed it. WindowClass then feeds the stored values to RegisterClassExT at
+    //windowclassregistration.cpp:44 (wndClassEx.hIcon) and :49 (wndClassEx.hIconSm), with the stored cursor taken at
+    //:45 - a handle that was destroyed, or that was never ours to destroy, becomes part of a window-class description.
+    //The OS tolerance measured at icon.cpp (the predefined ids are not handle-table entries, and DestroyIcon on a
+    //shared handle is absorbed) is the only reason this is not visible today.
+    //Recorded, not fixed: making these members carry the object instead of the handle means editing this class's
+    //members and every consumer of them - a behaviour change in winqor_gui, which the api_layer review records rather
+    //than performs. That is the rule U20 states, and U20 closes on it at D47 with the notes left where the errors are.
+
+
     void WindowClass::SetIcon(const class Icon& icon)
     {
         m_hIcon = icon.GetHandle();

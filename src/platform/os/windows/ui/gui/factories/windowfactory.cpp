@@ -86,6 +86,34 @@ namespace qor{ namespace platform { namespace win{
             windowClass->SetInstance(PrimitiveHandle(m_instance));
             windowClass->SetClassExtra(0);
             windowClass->SetWindowExtra(0);
+            //U20 - the only path the ownership model runs today, and it hands out handles whose owners are already dead.
+            //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+            //opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The cites are that
+            //entry's, carried as written - nothing in this file was re-audited for them. The Icon half was measured,
+            //not inferred, on 1 Nov 2026 (session 18, icon.cpp).)
+            //Icon(IDI_APPLICATION) reaches Icon(const wchar_t*) at ui/gui/gdiobjects/icon.cpp:52-56, which sets
+            //m_owning = true for a LoadIconT result, so ~Icon runs DestroyIcon on a handle the OS owns at the end of
+            //this full-expression. Measured: LoadIconW(NULL, IDI_APPLICATION) -> 0x1002B, the same value every load,
+            //DestroyIcon on it returns 1 with GetLastError 1402 (ERROR_INVALID_HANDLE), a second DestroyIcon on the
+            //same value also returns 1, and GetIconInfo on it still succeeds - the predefined ids are not handle-table
+            //entries at all (the value sits in the low word), so the contract is violated and the OS absorbs it.
+            //Cursor(IDC_ARROW) is not owning - IDC_ARROW reaches Cursor(const wchar_t*) at cursor.cpp:49-53, which sets
+            //m_owning = false, so no DestroyCursor runs - but ~Cursor never clears m_handle and PrimitiveHandle has no
+            //release or reset API (common/handles/handle.h:9-47), so ~PrimitiveHandle (common/handles/handle.cpp:27-33)
+            //raises its "may indicate a resource leak" warning for this temporary on every AddWindowClass call.
+            //Icon(nullptr) also reaches Icon(const wchar_t*), not the handle ctor: PrimitiveHandle(void*) at
+            //handle.h:14 is not explicit, but the standard conversion nullptr -> const wchar_t* outranks the user-defined
+            //one. So this line asks the OS for an icon with a null name - LoadIconW(NULL, nullptr) -> NULL with
+            //GetLastError 1813 (ERROR_RESOURCE_NAME_NOT_FOUND) - and ~Icon then calls DestroyIcon(NULL) -> 0 with
+            //GetLastError 1402. The "no small icon" intent is served only by a failure path, and the layer reports no
+            //error on HICON returns (U2), so a caller cannot tell "no icon wanted" from "icon load failed"; m_handle is
+            //null either way. Selecting Icon(const wchar_t*) also means these two temporaries call a wrapper at all -
+            //in a narrow TU the same spelling would silently take the handle ctor and call none (the U26-shaped fork).
+            //All three temporaries end their lifetime on these lines, while windowclass.cpp:123-136 keeps their handles.
+            //Recorded, not fixed: which ctor and which flag this factory passes is winqor_gui behaviour - the rule U20
+            //states, closed by D47 as cannot be fixed within winqor_api_user.
+
+
             windowClass->SetIcon(Icon(IDI_APPLICATION));
             windowClass->SetCursor(Cursor(IDC_ARROW));
             windowClass->SetBackgroundBrush(Brush(COLOR_WINDOW));    

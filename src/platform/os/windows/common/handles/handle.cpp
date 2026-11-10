@@ -24,6 +24,26 @@ namespace qor { namespace platform { namespace win {
 	{
 	}
 
+	//U20 - this warning fires for handles a consumer already released through the family's own verb, and for ones it never owned.
+	//(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+	//opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The cites are that entry's,
+	//carried as written - nothing in this file was re-audited for them.)
+	//PrimitiveHandle stores a value; ownership is not this class's to know. There is no release or reset API
+	//(handle.h:9-47), so a consumer that released the handle cannot clear m_h before the member dies - and the release
+	//verb is per family, not Close: HCURSOR is DestroyCursor, HICON DestroyIcon, HWND DestroyWindow (user32.h:152),
+	//HDC ReleaseDC (:339), HMENU DestroyMenu (:227), HENHMETAFILE DeleteEnhMetaFile (gdi32.h:251) while CloseEnhMetaFile
+	//(gdi32.h:245) creates one, HIMAGELIST ImageList_Destroy, HHEAP HeapDestroy. "Must release", "may release" and
+	//"must not release" are three states, and this class cannot tell them apart - which is exactly the ambiguity the
+	//(bool own) on the Cursor/Icon ctors is trying to carry.
+	//The sites that do: ui/gui/gdiobjects/cursor.cpp:55-62 and ui/gui/gdiobjects/icon.cpp:58-64 release through the
+	//family verb and leave m_handle set, so this warning is raised both for an owning object whose handle was already
+	//destroyed and for a non-owning object whose handle was never its own to destroy. windowfactory.cpp:89/90/92 makes
+	//it happen on every WindowFactory::AddWindowClass call, the review's only live path for this pair of classes.
+	//Recorded, not fixed: giving this class a reset/release changes winqor_wincommon's published interface and the
+	//ownership contract of every PrimitiveHandle consumer - a behaviour change in another library, which the api_layer
+	//review records rather than performs (the rule U20 states, closed by D47).
+
+
 	PrimitiveHandle::~PrimitiveHandle()
 	{
 		if(m_h != nullptr)

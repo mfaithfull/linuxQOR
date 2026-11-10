@@ -55,6 +55,35 @@ namespace qor{ namespace platform { namespace win{
         m_owning = true;
     }
 
+    //U20 - the Icon half of the ownership model: it destroys on a flag set for a handle the OS owns.
+    //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+    //opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The Icon half below was
+    //measured rather than inferred on 1 Nov 2026 (session 18, icon.cpp). The cites are that entry's, carried as
+    //written - nothing in this file was re-audited for them.)
+    //This destructor destroys on m_owning, and the two LoadIconT ctors above set that flag for a handle they do not
+    //own: icon.cpp:46-50 (hInstance, name) and :52-56 (const wchar_t* id) both set m_owning = true, while the
+    //identical Cursor ctors set it false (cursor.cpp:35-41, :49-53). One of the two is wrong for the same SDK call.
+    //Measured against user32.dll: LoadIconW(NULL, IDI_APPLICATION) -> 0x1002B and a second load of the same id returns
+    //the same value, so it is one shared handle, not a fresh one; DestroyIcon on it returns 1 with GetLastError 1402
+    //(ERROR_INVALID_HANDLE), a second DestroyIcon on the same value also returns 1, and GetIconInfo on it still
+    //succeeds afterwards - the predefined ids are not handle-table entries at all, the value sits in the low word.
+    //The contract is violated and the OS absorbs it, which is why destroying a shared handle has never looked like a
+    //failure here.
+    //windowfactory.cpp:92's Icon(nullptr) reaches :52-56 and not the handle ctor - PrimitiveHandle(void*) at
+    //common/handles/handle.h:14 is not explicit, but the standard conversion nullptr -> const wchar_t* outranks the
+    //user-defined one - so this asks the OS for an icon with a null name: LoadIconW(NULL, nullptr) -> NULL with
+    //GetLastError 1813 (ERROR_RESOURCE_NAME_NOT_FOUND), and this destructor then runs DestroyIcon(NULL) -> 0 with
+    //GetLastError 1402. The "no small icon" intent is served only through a failure path, and the layer deliberately
+    //reports no error on HICON returns (U2), so a caller cannot tell "no icon wanted" from "icon load failed" -
+    //m_handle is null either way.
+    //Checked and not a defect: the six ctors that assign m_owning inside the body (:22-56) cannot leave a half-built
+    //object with an indeterminate flag, because if the wrapper call throws (Library::Call throws when the module or the
+    //name is missing) the ctor never completes and ~Icon is never run. Recorded so the item is not re-opened.
+    //Recorded, not fixed: m_owning is this class's ownership contract and the class is winqor_gui published surface -
+    //changing who destroys a handle is a behaviour change in another library, which the api_layer review records
+    //rather than performs. That is the rule U20 states, and U20 closes on it at D47 with these notes in place.
+
+
     Icon::~Icon()
     {
         if(m_owning)

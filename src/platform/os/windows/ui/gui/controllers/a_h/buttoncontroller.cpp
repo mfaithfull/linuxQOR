@@ -72,6 +72,25 @@ namespace qor{ namespace platform { namespace win{
         User32::SendMessageT(WINDOW_HANDLE, BM_SETCHECK, static_cast<WPARAM>(checkState), 0);
     }
 
+    //U20 - these four sites omit the ownership flag, so they take the ctor's default and own a handle they were not given.
+    //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+    //opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The cites are that entry's,
+    //carried as written - nothing in this file was re-audited for them.)
+    //GetBitmap() (:46) and SetBitmap() (:52) pass false. GetCursor() (:77), SetCursor() (:82), GetIcon() (:87) and
+    //SetIcon() (:92) pass nothing, so new_ref<Cursor>/new_ref<Icon> takes the ctor's own = true and the returned ref
+    //runs DestroyCursor/DestroyIcon on the handle when it dies. SendMessageT's BM_GETIMAGE returns the control's
+    //current image and BM_SETIMAGE the previous one, and neither transfers ownership to the sender, so what is
+    //returned here is a handle the window still uses: the ref destroys a live window resource. The sibling
+    //StaticController handles the same situation correctly - staticcontroller.cpp:58 (GetCursor) and :82 (SetCursor)
+    //both pass false - which is what makes the omission here a defect rather than a style choice.
+    //Liveness was measured: these four methods have no call site anywhere in src, examples or test (only the
+    //definitions), so the ownership bug is dormant and joins U15's dead set. The one ownership finding that does run
+    //today is the temporary at windowfactory.cpp:89/90/92 - see the note there.
+    //Recorded, not fixed: the flag is what these methods promise their callers, and this is winqor_gui - a behaviour
+    //change in another library, which the api_layer review records rather than performs (the rule U20 states, closed
+    //by D47; the one gui-side defect the user chose to fix by hand was U24 at D44, and this is not it).
+
+
     ref_of<Cursor>::type ButtonController::GetCursor() const
     {
         return new_ref<Cursor>(PrimitiveHandle(reinterpret_cast<void*>(User32::SendMessageT(WINDOW_HANDLE, BM_GETIMAGE, IMAGE_CURSOR, 0))));

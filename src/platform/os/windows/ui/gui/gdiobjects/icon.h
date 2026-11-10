@@ -55,6 +55,31 @@ namespace qor{ namespace platform { namespace win{
     {
     public:
 
+        //U20 - the same ownership default, and the Icon half of the model disagrees with the Cursor half about LoadIcon.
+        //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u20.md,
+        //opened 30 Oct 2026 (session 9, cursor.cpp) and closed 11 Nov 2026 by decision D47. The Icon half was measured
+        //rather than inferred on 1 Nov 2026 (session 18, icon.cpp). The cites below are that entry's, carried as
+        //written - nothing in this file was re-audited for them.)
+        //A handle carries no ownership; see the ownership paragraph at cursor.h above. The release verb is per family,
+        //and it is not Close for any of them: HICON releases as DestroyIcon (user32.h:438), HCURSOR as DestroyCursor
+        //(:391), HWND as DestroyWindow (:152), HDC as ReleaseDC (:339) with the hWnd/hDC pair required to match, an
+        //HENHMETAFILE as DeleteEnhMetaFile (gdi32.h:251) while CloseEnhMetaFile (gdi32.h:245) creates one.
+        //The six acquiring ctors below split the two ownership states, and they split them wrongly. CreateIcon
+        //(icon.cpp:24), CreateIconFromResource (:30), CreateIconFromResourceEx (:36) and CreateIconIndirect (:42)
+        //return handles this process owns and must DestroyIcon. The two LoadIconT ctors - icon.cpp:46-50
+        //(hInstance, name) and :52-56 (const wchar_t* id) - do not, yet both set m_owning = true, which is the Cursor
+        //family's answer to the same call inverted: the identical Cursor ctors set it false (cursor.cpp:35-41, :49-53).
+        //Measured against user32.dll, not inferred: LoadIconW(NULL, IDI_APPLICATION) -> 0x1002B and a second load of
+        //the same id returns the same value, so it is one shared handle rather than a fresh one; DestroyIcon on it
+        //returns 1 with GetLastError 1402 (ERROR_INVALID_HANDLE), a second DestroyIcon on the same value also returns
+        //1, and GetIconInfo on it still succeeds afterwards - the predefined ids are not handle-table entries at all,
+        //the value sits in the low word. The contract is violated and the OS absorbs it, which is why this has never
+        //shown up as a failure.
+        //Recorded, not fixed: the default is on this class's published interface, and moving it or moving m_owning in
+        //the two LoadIconT ctors changes what every winqor_gui caller sees - a behaviour change in another library,
+        //which the api_layer review records rather than performs (the rule U20 states, closed by D47).
+
+
         explicit Icon(const PrimitiveHandle& h, bool own = true);
         Icon(const Icon& src);
         Icon(void* hInstance, int nWidth, int nHeight, byte cPlanes, byte cBitsPixel, const byte* lpbANDbits, const byte* lpbXORbits);
