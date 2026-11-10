@@ -76,7 +76,7 @@ namespace qor { namespace win { namespace api {
     //The list box is addressed from inside its dialog: hDlg is the dialog window, nIDListBox the control's id inside it
     //and nIDStaticPath one of the DDL_* file-filter bits (winuser.h:11607-11616). lpPathSpec is both the pattern in and
     //the next entry out, so the caller owns it and the layer forwards it untouched. The count comes back as written.
-    int User32::DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType)
+    int User32::DlgDirListT(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DlgDirList);
@@ -86,7 +86,7 @@ namespace qor { namespace win { namespace api {
     //BOOL, but not a plain success flag: the SDK's own note is that FALSE means the selected control's text did not fit
     //into the chCount characters the caller supplied. lpString is _Out_writes_(chCount) and stays caller-owned; the
     //layer neither sizes nor inspects it.
-    BOOL User32::DlgDirSelectEx(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox)
+    BOOL User32::DlgDirSelectExT(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DlgDirSelectEx);

@@ -114,7 +114,7 @@ namespace qor { namespace win { namespace api {
     //so NULL names no device, and uiCommand selects which of the RID_DEVICE_INFO shapes (:15254-:15262, cbSize + dwType + a
     //union of the mouse/keyboard/HID variants) is read into pData; pcbSize is capacity-in/bytes-out. The UINT is the count and
     //comes back unchecked.
-    UINT User32::GetRawInputDeviceInfo(HANDLE hDevice, UINT uiCommand, LPVOID pData, PUINT pcbSize)
+    UINT User32::GetRawInputDeviceInfoT(HANDLE hDevice, UINT uiCommand, LPVOID pData, PUINT pcbSize)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, GetRawInputDeviceInfo);

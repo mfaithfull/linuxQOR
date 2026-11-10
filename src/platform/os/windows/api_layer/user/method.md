@@ -116,3 +116,15 @@ and the session is not closed until the tree is clean.** The v2 close is retired
 - A pre-flag is a lead, not a finding: re-measure anything you act on. The section retired at this close had a heading
   naming one TU over another TU's measurements.
 
+
+- **One gate run per arm per pass, and measuring a gate means reading its log, not re-invoking it.** The folder gate
+  (`_tmp_u8_gate54.bat`, 54 sources) is the cheap arm and may be re-run freely; the all-libraries gate
+  (`_tmp_u8_gate122.bat`) is a full sweep of every library and is **run once**, only when a shared header or a file
+  outside the folder changed. To find out whether it ran, read its log: line count, `error C\d{4}` / `warning C\d{4}`
+  counts, and the log's timestamp against the last edit. An aborted invocation writes **no** log - a missing or stale
+  log means "not run", never "run and clean", and a re-invocation to check costs a whole sweep (this session paid one).
+- **Tick the working record as each item is measured, not at the end of the pass.** A multi-item pass writes the tick and
+  the item's measured numbers the moment that item is verified, before moving to the next. Deferring the ticks to the
+  close is what let a compaction land mid-pass and force the whole pass to be re-derived (U17, 10 Nov 2026). The
+  checklist is the resumption record for a pass; the tree is not.
+

@@ -69,7 +69,7 @@ namespace qor { namespace win { namespace api {
     //is winqor_gl.cpp cursorimpl.cpp windowimpl.cpp wgl.cpp - and ui/CMakeLists.txt:4 comments add_subdirectory(gl)
     //out of the build, so the bypass is source debt rather than run-time behaviour (U19: 0 LAYER / 1 BYPASS).
 
-    HDEVNOTIFY User32::RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags)
+    HDEVNOTIFY User32::RegisterDeviceNotificationT(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, RegisterDeviceNotification);

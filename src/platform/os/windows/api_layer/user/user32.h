@@ -492,7 +492,7 @@ namespace qor { namespace win { namespace api {
         static int MessageBoxExT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId);
         static int MessageBoxIndirectT(const ::MSGBOXPARAMS* lpmbp);
         //NOTE: Thanks to CPian Maurizio Pisano
-        static int MessageBoxTimeout(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds);
+        static int MessageBoxTimeoutT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds);
         static LRESULT SendDlgItemMessageT(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
         static BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem, UINT uValue, BOOL bSigned);
         static BOOL SetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPCTSTR lpString);
@@ -507,14 +507,14 @@ namespace qor { namespace win { namespace api {
         static LRESULT DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader);
         static UINT GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);
         static UINT GetRawInputData(HRAWINPUT hRawInput, UINT uiCommand, LPVOID pData, PUINT pcbSize, UINT cbSizeHeader);
-        static UINT GetRawInputDeviceInfo(HANDLE hDevice, UINT uiCommand, LPVOID pData, PUINT pcbSize);
+        static UINT GetRawInputDeviceInfoT(HANDLE hDevice, UINT uiCommand, LPVOID pData, PUINT pcbSize);
         static UINT GetRawInputDeviceList(PRAWINPUTDEVICELIST pRawInputDeviceList, PUINT puiNumDevices, UINT cbSize);
         static UINT GetRegisteredRawInputDevices(PRAWINPUTDEVICE pRawInputDevices, PUINT puiNumDevices, UINT cbSize);
         static BOOL RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
 
         //List Box functions
-        static int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
-        static BOOL DlgDirSelectEx(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox);
+        static int DlgDirListT(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
+        static BOOL DlgDirSelectExT(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox);
         static DWORD GetListBoxInfo(HWND hwnd);
 
         //Combo Box functions
@@ -699,7 +699,7 @@ namespace qor { namespace win { namespace api {
         static BOOL UnregisterClassT(LPCTSTR lpClassName, HINSTANCE hInstance);
 
         static void DisableProcessWindowsGhosting(void);
-        static LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
+        static LRESULT SendIMEMessageExT(HWND hwnd, LPARAM lParam);
         static UINT WINNLSGetIMEHotkey(HWND hwnd);
         static BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);
         //WINNLSEnableIME is obsolete - do not use
@@ -711,13 +711,13 @@ namespace qor { namespace win { namespace api {
         static DWORD GetMenuContextHelpId(HMENU hmenu);
         static BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
         static DWORD GetWindowContextHelpId(HWND hwnd);
-        static BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
+        static BOOL WinHelpT(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
 
         //System Information functions
         static DWORD GetSysColor(int nIndex);
         static int GetSystemMetrics(int nIndex);
         static BOOL SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues);
-        static BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
+        static BOOL SystemParametersInfoT(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
 
         //Brush functions
         static HBRUSH GetSysColorBrush(int nIndex);
@@ -737,7 +737,7 @@ namespace qor { namespace win { namespace api {
         static UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
         //Bitmap functions
-        static HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
+        static HBITMAP LoadBitmapT(HINSTANCE hInstance, LPCTSTR lpBitmapName);
 
         //Synchronization functions
         static DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL fWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);
@@ -747,7 +747,7 @@ namespace qor { namespace win { namespace api {
         static BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
 
         //Device Management functions
-        static HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
+        static HDEVNOTIFY RegisterDeviceNotificationT(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
         static BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
 
         //Power Management functions

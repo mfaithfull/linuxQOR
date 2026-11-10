@@ -64,7 +64,7 @@ namespace qor { namespace win { namespace api {
         Library::voidCall<>(pFunc);
     }
 
-    LRESULT User32::SendIMEMessageEx(HWND hwnd, LPARAM lParam)
+    LRESULT User32::SendIMEMessageExT(HWND hwnd, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, SendIMEMessageEx);

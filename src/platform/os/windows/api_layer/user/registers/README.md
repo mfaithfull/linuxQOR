@@ -9,9 +9,9 @@ the shape is `u28.md`.
 The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
 generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
-Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u10` (D39: Microsoft-documented, verbatim block), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
+Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` (D38), `u9` (10 Nov 2026: `purpose.md`), `u10` (D39: Microsoft-documented, verbatim block), `u17` (D40: Option A rename, 21 sites in 11 files), `u12` (session 2), `u13` (session 7), `u14` (D15), `u15` (D14), `u25` (7 Nov 2026 `CONST`->`const` pass), `u29` (D38), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
-`u26.md` - U19 and U26 are **open** as leads; only their register files are frozen, so a session acting on either opens a new `registers/u<n>.md`. **U8 and U29 CLOSED 10 Nov 2026 (D38)** - the out-of-line null-binding report, gates at zero diff. **U10 CLOSED 10 Nov 2026 (D39)** - the console-internal types are Microsoft-documented and the block is verbatim, no code change.
+`u26.md` - U19 and U26 are **open** as leads; only their register files are frozen, so a session acting on either opens a new `registers/u<n>.md`. **U8 and U29 CLOSED 10 Nov 2026 (D38)** - the out-of-line null-binding report, gates at zero diff. **U10 CLOSED 10 Nov 2026 (D39)** - the console-internal types are Microsoft-documented and the block is verbatim, no code change. **U17 CLOSED 10 Nov 2026 (D40)** - Option A: the 9 A/W members declared without the folder's `T` renamed to SDK stem + `T`, 21 sites in 11 files, gates at zero diff, census 600 / 119 / 479 / 0 / 2.
 
 | File | Lines | Register ids | Was registers.md |
 |---|--:|---|---|
@@ -31,7 +31,7 @@ Closed / frozen - append nothing: `u4` (D26->D34), `u5` (D36), `u7` (D35), `u8` 
 | `u14.md` | 111 | U14, U14, U14, U14, U14, U14, U14 | 265-291 |
 | `u15.md` | 222 | U15 | 292-447 |
 | `u16.md` | 302 | U16, U16, U16, U16, U16, U16, U16, U16 | 448-574 |
-| `u17.md` | 56 | U17 | 575-616 |
+| `u17.md` | 235 | U17 | 575-616 |
 | `u18.md` | 105 | U18, U18, U18 | 617-630 |
 | `u18-coverage.md` | 49 | (U18 backlog disposition list, not a register id) | - |
 | `u19.md` | 284 | U19, U19, U19, U19, U19, U19, U19 | 631-741 |

@@ -79,5 +79,7 @@ Decisions:
     File: ./decisions/D38.md
   - D39: U10 - the console-internal types are Microsoft-documented (learn.microsoft.com/console consolecontrol; verbatim-identical block, no-import-library note authorises the GetProcAddress binding) - POLICY (10 Nov 2026), CLOSES U10, NO CODE CHANGE
     File: ./decisions/D39.md
+  - D40: U17 - rename the 9 A/W-family members declared without the folder's T suffix to SDK stem + T (Option A) - 21 sites in 11 files, binding literals and the #undef block untouched, gates at zero diff, census 600 / 119 / 479 / 0 / 2 - ACTION (10 Nov 2026), CLOSES U17
+    File: ./decisions/D40.md
 
 ---

@@ -121,7 +121,7 @@ namespace qor { namespace win { namespace api {
     //pvParam the payload the action reads or writes (_Pre_maybenull_ so NULL is legal for the actions that take none) and
     //fWinIni requests the INI write-back. This is the one BOOL here whose FALSE the SDK itself calls a failure
     //(_Success_(return != FALSE) at :13251/:13260) - and the one binding here that must be the AW spelling; see the banner.
-    BOOL User32::SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni)
+    BOOL User32::SystemParametersInfoT(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, SystemParametersInfo);

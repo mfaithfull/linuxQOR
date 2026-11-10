@@ -43,7 +43,7 @@ namespace qor{ namespace platform { namespace win{
         else
         {
             unsigned short languageId = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
-            m_result = User32::MessageBoxTimeout((HWND)(window.IsNotNull() ? window->GetHandle().Use() : nullptr), text.c_str(), caption.c_str(), type, languageId, milliseconds);
+            m_result = User32::MessageBoxTimeoutT((HWND)(window.IsNotNull() ? window->GetHandle().Use() : nullptr), text.c_str(), caption.c_str(), type, languageId, milliseconds);
         }
     }
 

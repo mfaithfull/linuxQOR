@@ -160,7 +160,7 @@ namespace qor { namespace win { namespace api {
     }
 
     //NOTE: Thanks to CPian Maurizio Pisano
-    int User32::MessageBoxTimeout(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds)
+    int User32::MessageBoxTimeoutT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, MessageBoxTimeout);

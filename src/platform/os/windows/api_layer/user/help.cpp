@@ -133,7 +133,7 @@ namespace qor { namespace win { namespace api {
         return Library::Call<DWORD, HWND>(pFunc, hwnd);
     }
 
-    BOOL User32::WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)
+    BOOL User32::WinHelpT(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, WinHelp);

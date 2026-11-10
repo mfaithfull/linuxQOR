@@ -125,7 +125,7 @@ namespace qor { namespace win { namespace api {
     //module; lpBitmapName is the resource name the caller owns. The stem is an A/W family and the bare spelling is not
     //an export of the loaded user32.dll, so the binding is the AW form - under qor_pp_unicode 1 that reaches LoadBitmapW
     //and the narrow LoadBitmapA stays unresolved at run time, the shape every other AW stem in this library has.
-    HBITMAP User32::LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName)
+    HBITMAP User32::LoadBitmapT(HINSTANCE hInstance, LPCTSTR lpBitmapName)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, LoadBitmap);

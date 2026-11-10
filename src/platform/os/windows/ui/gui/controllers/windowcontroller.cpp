@@ -772,7 +772,7 @@ namespace qor{ namespace platform { namespace win{
 
     long long WindowController::SendIMEMessageEx(long long param)
     {
-        return User32::SendIMEMessageEx(WINDOW_HANDLE, param);
+        return User32::SendIMEMessageExT(WINDOW_HANDLE, param);
     }
 
     unsigned int WindowController::GetDPI()
@@ -792,7 +792,7 @@ namespace qor{ namespace platform { namespace win{
 
     bool WindowController::Help(const tstring& help, unsigned int command, unsigned long long data)
     {
-        return User32::WinHelp(WINDOW_HANDLE, help.c_str(), command, data) ? true : false;
+        return User32::WinHelpT(WINDOW_HANDLE, help.c_str(), command, data) ? true : false;
     }
 
     void WindowController::NotifyEvent(unsigned long event, long object, long child)
