@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9c: the "//System Information functions" section declared 4 members non-static and no TU defined any of them - new TU)
@@ -90,6 +91,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetSysColor(int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSysColor);
         return Library::Call< DWORD, int >(pFunc, nIndex);
     }
@@ -101,6 +103,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetSystemMetrics(int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSystemMetrics);
         return Library::Call< int, int >(pFunc, nIndex);
     }
@@ -112,6 +115,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetSysColors);
         return Library::Call< BOOL, int, const INT *, const COLORREF * >(pFunc, cElements, lpaElements, lpaRgbValues);
     }
@@ -124,6 +128,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SystemParametersInfoT(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SystemParametersInfo);
         return Library::Call< BOOL, UINT, UINT, PVOID, UINT >(pFunc, uiAction, uiParam, pvParam, fWinIni);
     }

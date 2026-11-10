@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -21,6 +22,7 @@ namespace qor { namespace win { namespace api {
     HWINEVENTHOOK User32::SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC pfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWinEventHook);
         return Library::Call<HWINEVENTHOOK, UINT, UINT, HMODULE, WINEVENTPROC, DWORD, DWORD, UINT>(pFunc, eventMin, eventMax, hmodWinEventProc, pfnWinEventProc, idProcess, idThread, dwFlags);
     }
@@ -28,6 +30,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnhookWinEvent(HWINEVENTHOOK hWinEventHook)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnhookWinEvent);
         return Library::Call<BOOL, HWINEVENTHOOK>(pFunc, hWinEventHook);
     }
@@ -35,6 +38,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWinEventHookInstalled(DWORD event)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWinEventHookInstalled);
         return Library::Call<BOOL, DWORD>(pFunc, event);
     }
@@ -42,6 +46,7 @@ namespace qor { namespace win { namespace api {
     void User32::NotifyWinEvent(DWORD event, HWND hwnd, LONG idObject, LONG idChild)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, NotifyWinEvent);
         return Library::voidCall<DWORD, HWND, LONG, LONG>(pFunc, event, hwnd, idObject, idChild);
     }

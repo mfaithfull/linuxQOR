@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -105,6 +106,7 @@ namespace qor { namespace win { namespace api {
     long User32::BroadcastSystemMessageT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, BroadcastSystemMessage);
         return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM>(pFunc, flags, lpInfo, Msg, wParam, lParam);
     }
@@ -112,6 +114,7 @@ namespace qor { namespace win { namespace api {
     long User32::BroadcastSystemMessageExT(DWORD flags, LPDWORD lpInfo, UINT Msg, WPARAM wParam, LPARAM lParam, ::PBSMINFO pbsmInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, BroadcastSystemMessageEx);
         return Library::Call<long, DWORD, LPDWORD, UINT, WPARAM, LPARAM, ::PBSMINFO>(pFunc, flags, lpInfo, Msg, wParam, lParam, pbsmInfo);
     }
@@ -119,6 +122,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::DispatchMessageT(const MSG* lpMsg)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DispatchMessage);
         return Library::Call<LRESULT, const MSG*>(pFunc, lpMsg);
     }
@@ -126,6 +130,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetInputState(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetInputState);
         return Library::Call<BOOL>(pFunc);
     }
@@ -133,6 +138,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetMessageT(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMessage);
         return Library::Call<BOOL, LPMSG, HWND, UINT, UINT>(pFunc, lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax);
     }
@@ -140,6 +146,7 @@ namespace qor { namespace win { namespace api {
     LPARAM User32::GetMessageExtraInfo(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMessageExtraInfo);
         return Library::Call<LPARAM>(pFunc);
     }
@@ -147,6 +154,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetMessagePos(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMessagePos);
         return Library::Call<DWORD>(pFunc);
     }
@@ -154,6 +162,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::GetMessageTime(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMessageTime);
         return Library::Call<LONG>(pFunc);
     }
@@ -161,6 +170,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetQueueStatus(UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetQueueStatus);
         return Library::Call<DWORD, UINT>(pFunc, flags);
     }
@@ -168,6 +178,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InSendMessage(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InSendMessage);
         return Library::Call<BOOL>(pFunc);
     }
@@ -175,6 +186,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::InSendMessageEx(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InSendMessageEx);
         return Library::Call<DWORD, LPVOID>(pFunc, nullptr);
     }
@@ -182,6 +194,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PeekMessageT(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, PeekMessage);
         return Library::Call<BOOL, LPMSG, HWND, UINT, UINT, UINT>(pFunc, lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
     }
@@ -189,6 +202,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PostMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, PostMessage);
         return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM>(pFunc, hWnd, Msg, wParam, lParam);
     }
@@ -196,6 +210,7 @@ namespace qor { namespace win { namespace api {
     void User32::PostQuitMessage(int nExitCode)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PostQuitMessage);
         return Library::voidCall<int>(pFunc, nExitCode);
     }
@@ -203,6 +218,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PostThreadMessageT(DWORD idThread, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, PostThreadMessage);
         return Library::Call<BOOL, DWORD, UINT, WPARAM, LPARAM>(pFunc, idThread, Msg, wParam, lParam);
     }
@@ -210,6 +226,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::RegisterWindowMessageT(LPCTSTR lpString)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterWindowMessage);
         return Library::Call<UINT, LPCTSTR>(pFunc, lpString);
     }
@@ -217,6 +234,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ReplyMessage(LRESULT lResult)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ReplyMessage);
         return Library::Call<BOOL, LRESULT>(pFunc, lResult);
     }
@@ -224,6 +242,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SendMessageCallbackT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, ::SENDASYNCPROC lpResultCallBack, ULONG_PTR dwData)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendMessageCallback);
         return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM, ::SENDASYNCPROC, ULONG_PTR>(pFunc, hWnd, Msg, wParam, lParam, lpResultCallBack, dwData);
     }
@@ -231,6 +250,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::SendMessageTimeoutT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam, UINT fuFlags, UINT uTimeout, PDWORD_PTR lpdwResult)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendMessageTimeout);
         return Library::Call<LRESULT, HWND, UINT, WPARAM, LPARAM, UINT, UINT, PDWORD_PTR>(pFunc, hWnd, Msg, wParam, lParam, fuFlags, uTimeout, lpdwResult);
     }
@@ -238,6 +258,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::SendMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendMessage);
         return Library::Call<LRESULT, HWND, UINT, WPARAM, LPARAM>(pFunc, hWnd, Msg, wParam, lParam);
     }
@@ -245,6 +266,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SendNotifyMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendNotifyMessage);
         return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM>(pFunc, hWnd, Msg, wParam, lParam);
     }
@@ -252,6 +274,7 @@ namespace qor { namespace win { namespace api {
     LPARAM User32::SetMessageExtraInfo(LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMessageExtraInfo);
         return Library::Call<LPARAM, LPARAM>(pFunc, lParam);
     }
@@ -259,6 +282,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::TranslateMessage(const MSG* lpMsg)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TranslateMessage);
         return Library::Call<BOOL, const MSG*>(pFunc, lpMsg);
     }
@@ -266,6 +290,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::WaitMessage(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WaitMessage);
         return Library::Call<BOOL>(pFunc);
     }

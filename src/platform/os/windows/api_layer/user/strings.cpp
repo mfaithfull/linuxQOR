@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -71,6 +72,7 @@ namespace qor { namespace win { namespace api {
     LPSTR User32::CharLowerA(LPSTR lpsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharLowerA);
         return Library::Call<LPSTR, LPSTR>(pFunc, lpsz);
     }
@@ -78,6 +80,7 @@ namespace qor { namespace win { namespace api {
     LPWSTR User32::CharLowerW(LPWSTR lpwsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharLowerW);
         return Library::Call<LPWSTR, LPWSTR>(pFunc, lpwsz);
     }
@@ -85,6 +88,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::CharLowerBuffA(LPSTR lpsz, DWORD cchLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharLowerBuffA);
         return Library::Call<DWORD, LPSTR, DWORD>(pFunc, lpsz, cchLength);
     }
@@ -92,6 +96,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::CharLowerBuffW(LPWSTR lpwsz, DWORD cchLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharLowerBuffW);
         return Library::Call<DWORD, LPWSTR, DWORD>(pFunc, lpwsz, cchLength);
     }
@@ -101,6 +106,7 @@ namespace qor { namespace win { namespace api {
     LPSTR User32::CharNextA(LPCSTR lpsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharNextA);
         return Library::Call<LPSTR, LPCSTR>(pFunc, lpsz);
     }
@@ -108,6 +114,7 @@ namespace qor { namespace win { namespace api {
     LPWSTR User32::CharNextW(LPCWSTR lpwsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharNextW);
         return Library::Call<LPWSTR, LPCWSTR>(pFunc, lpwsz);
     }
@@ -116,6 +123,7 @@ namespace qor { namespace win { namespace api {
     LPSTR User32::CharNextExA(WORD CodePage, LPCSTR lpCurrentChar, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharNextExA);
         return Library::Call<LPSTR, WORD, LPCSTR, DWORD>(pFunc, CodePage, lpCurrentChar, dwFlags);
     }
@@ -123,6 +131,7 @@ namespace qor { namespace win { namespace api {
     LPSTR User32::CharPrevA(LPCSTR lpszStart, LPCSTR lpszCurrent)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharPrevA);
         return Library::Call<LPSTR, LPCSTR, LPCSTR>(pFunc, lpszStart, lpszCurrent);
     }
@@ -130,6 +139,7 @@ namespace qor { namespace win { namespace api {
     LPWSTR User32::CharPrevW(LPCWSTR lpwszStart, LPCWSTR lpwszCurrent)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharPrevW);
         return Library::Call<LPWSTR, LPCWSTR, LPCWSTR>(pFunc, lpwszStart, lpwszCurrent);
     }
@@ -137,6 +147,7 @@ namespace qor { namespace win { namespace api {
     LPSTR User32::CharPrevExA(WORD CodePage, LPCSTR lpStart, LPCSTR lpCurrentChar, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharPrevExA);
         return Library::Call<LPSTR, WORD, LPCSTR, LPCSTR, DWORD>(pFunc, CodePage, lpStart, lpCurrentChar, dwFlags);
     }
@@ -146,6 +157,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CharToOemA(LPCSTR lpszSrc, LPSTR lpszDst)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharToOemA);
         return Library::Call<BOOL, LPCSTR, LPSTR>(pFunc, lpszSrc, lpszDst);
     }
@@ -153,6 +165,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CharToOemW(LPCWSTR lpwszSrc, LPSTR lpszDst)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharToOemW);
         return Library::Call<BOOL, LPCWSTR, LPSTR>(pFunc, lpwszSrc, lpszDst);
     }
@@ -162,6 +175,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CharToOemBuffA(LPCSTR lpszSrc, LPSTR lpszDst, DWORD cchDstLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharToOemBuffA);
         return Library::Call<BOOL, LPCSTR, LPSTR, DWORD>(pFunc, lpszSrc, lpszDst, cchDstLength);
     }
@@ -169,12 +183,14 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CharToOemBuffW(LPCWSTR lpwszSrc, LPSTR lpszDst, DWORD cchDstLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharToOemBuffW);
         return Library::Call<BOOL, LPCWSTR, LPSTR, DWORD>(pFunc, lpwszSrc, lpszDst, cchDstLength);
     }
     LPSTR User32::CharUpperA(LPSTR lpsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharUpperA);
         return Library::Call<LPSTR, LPSTR>(pFunc, lpsz);
     }
@@ -182,6 +198,7 @@ namespace qor { namespace win { namespace api {
     LPWSTR User32::CharUpperW(LPWSTR lpwsz)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharUpperW);
         return Library::Call<LPWSTR, LPWSTR>(pFunc, lpwsz);
     }
@@ -189,6 +206,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::CharUpperBuffA(LPSTR lpsz, DWORD cchLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharUpperBuffA);
         return Library::Call<DWORD, LPSTR, DWORD>(pFunc, lpsz, cchLength);
     }
@@ -196,6 +214,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::CharUpperBuffW(LPWSTR lpwsz, DWORD cchLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CharUpperBuffW);
         return Library::Call<DWORD, LPWSTR, DWORD>(pFunc, lpwsz, cchLength);
     }
@@ -207,6 +226,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharAlphaA(char ch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharAlphaA);
         return Library::Call<BOOL, char>(pFunc, ch);
     }
@@ -214,6 +234,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharAlphaW(wchar_t wch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharAlphaW);
         return Library::Call<BOOL, wchar_t>(pFunc, wch);
     }
@@ -221,6 +242,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharAlphaNumericA(char ch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharAlphaNumericA);
         return Library::Call<BOOL, char>(pFunc, ch);
     }
@@ -228,6 +250,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharAlphaNumericW(wchar_t wch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharAlphaNumericW);
         return Library::Call<BOOL, wchar_t>(pFunc, wch);
     }
@@ -235,6 +258,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharLowerA(char ch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharLowerA);
         return Library::Call<BOOL, char>(pFunc, ch);
     }
@@ -242,6 +266,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharLowerW(wchar_t wch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharLowerW);
         return Library::Call<BOOL, wchar_t>(pFunc, wch);
     }
@@ -249,6 +274,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharUpperA(char ch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharUpperA);
         return Library::Call<BOOL, char>(pFunc, ch);
     }
@@ -256,6 +282,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsCharUpperW(wchar_t wch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsCharUpperW);
         return Library::Call<BOOL, wchar_t>(pFunc, wch);
     }
@@ -265,6 +292,7 @@ namespace qor { namespace win { namespace api {
     int User32::LoadStringA(HINSTANCE hInstance, UINT uID, LPSTR lpBuffer, int nBufferMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LoadStringA);
         return Library::Call<int, HINSTANCE, UINT, LPSTR, int>(pFunc, hInstance, uID, lpBuffer, nBufferMax);
     }
@@ -272,6 +300,7 @@ namespace qor { namespace win { namespace api {
     int User32::LoadStringW(HINSTANCE hInstance, UINT uID, LPWSTR lpBuffer, int nBufferMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LoadStringW);
         return Library::Call<int, HINSTANCE, UINT, LPWSTR, int>(pFunc, hInstance, uID, lpBuffer, nBufferMax);
     }
@@ -283,6 +312,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OemToCharA(LPCSTR lpszSrc, LPSTR lpszDst)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OemToCharA);
         return Library::Call<BOOL, LPCSTR, LPSTR>(pFunc, lpszSrc, lpszDst);
     }
@@ -290,6 +320,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OemToCharW(LPCSTR lpszSrc, LPWSTR lpwszDst)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OemToCharW);
         return Library::Call<BOOL, LPCSTR, LPWSTR>(pFunc, lpszSrc, lpwszDst);
     }
@@ -297,6 +328,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OemToCharBuffA(LPCSTR lpszSrc, LPSTR lpszDst, DWORD cchDstLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OemToCharBuffA);
         return Library::Call<BOOL, LPCSTR, LPSTR, DWORD>(pFunc, lpszSrc, lpszDst, cchDstLength);
     }
@@ -304,6 +336,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OemToCharBuffW(LPCWSTR lpwszSrc, LPWSTR lpwszDst, DWORD cchDstLength)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OemToCharBuffW);
         return Library::Call<BOOL, LPCWSTR, LPWSTR, DWORD>(pFunc, lpwszSrc, lpwszDst, cchDstLength);
     }
@@ -314,6 +347,7 @@ namespace qor { namespace win { namespace api {
     int User32::wvsprintfA(LPSTR lpOutput, LPCSTR lpFmt, va_list arglist)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, wvsprintfA);
         return Library::Call<int, LPSTR, LPCSTR, va_list>(pFunc, lpOutput, lpFmt, arglist);
     }
@@ -321,6 +355,7 @@ namespace qor { namespace win { namespace api {
     int User32::wvsprintfW(LPWSTR lpOutput, LPCWSTR lpFmt, va_list arglist)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, wvsprintfW);
         return Library::Call<int, LPWSTR, LPCWSTR, va_list>(pFunc, lpOutput, lpFmt, arglist);
     }

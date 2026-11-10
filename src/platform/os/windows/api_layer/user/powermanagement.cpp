@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Reviewed 7 Nov 2026
 //   (T3 + T8 step 6e: Power Management functions - the power-settings pair and the suspend/resume pair, new TU)
@@ -118,6 +119,7 @@ namespace qor { namespace win { namespace api {
     HPOWERNOTIFY User32::RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterPowerSettingNotification);
         return Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, PowerSettingGuid, Flags);
     }
@@ -126,6 +128,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterPowerSettingNotification(HPOWERNOTIFY Handle)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterPowerSettingNotification);
         return Library::Call< BOOL >(pFunc, Handle);
     }
@@ -138,6 +141,7 @@ namespace qor { namespace win { namespace api {
     HPOWERNOTIFY User32::RegisterSuspendResumeNotification(HANDLE hRecipient, DWORD Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterSuspendResumeNotification);
         return Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, Flags);
     }
@@ -148,6 +152,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterSuspendResumeNotification(HPOWERNOTIFY Handle)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterSuspendResumeNotification);
         return Library::Call< BOOL >(pFunc, Handle);
     }

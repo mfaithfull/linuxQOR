@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -79,6 +80,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CallMsgFilterT(LPMSG lpMsg, int nCode)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, CallMsgFilter);
         return Library::Call< BOOL, LPMSG, int >(pFunc, lpMsg, nCode);
     }
@@ -86,6 +88,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CallNextHookEx);
         return Library::Call< LRESULT, HHOOK, int, WPARAM, LPARAM >(pFunc, hhk, nCode, wParam, lParam);
     }
@@ -93,6 +96,7 @@ namespace qor { namespace win { namespace api {
     HHOOK User32::SetWindowsHookExT(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetWindowsHookEx);
         return Library::Call< HHOOK, int, HOOKPROC, HINSTANCE, DWORD >(pFunc, idHook, lpfn, hmod, dwThreadId);
     }
@@ -100,6 +104,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnhookWindowsHookEx(HHOOK hhk)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnhookWindowsHookEx);
         return Library::Call< BOOL, HHOOK >(pFunc, hhk);
     }

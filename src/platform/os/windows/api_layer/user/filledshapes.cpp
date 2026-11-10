@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -77,6 +78,7 @@ namespace qor { namespace win { namespace api {
     int User32::FillRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, FillRect);
         return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
     }
@@ -84,6 +86,7 @@ namespace qor { namespace win { namespace api {
     int User32::FrameRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, FrameRect);
         return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
     }
@@ -91,6 +94,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InvertRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InvertRect);
         return Library::Call< BOOL, HDC, const ::RECT* >(pFunc, hDC, lprc);
     }

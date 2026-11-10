@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -96,6 +97,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DragDetect(HWND hwnd, ::POINT pt)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DragDetect);
         return Library::Call< BOOL, HWND, ::POINT >(pFunc, hwnd, pt);
     }
@@ -103,6 +105,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetCapture(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCapture);
         return Library::Call< HWND >(pFunc);
     }
@@ -110,6 +113,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDoubleClickTime(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDoubleClickTime);
         return Library::Call< UINT >(pFunc);
     }
@@ -117,6 +121,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetMouseMovePointsEx(UINT cbSize, LPMOUSEMOVEPOINT lppt, LPMOUSEMOVEPOINT lpptBuf, int nBufPoints, DWORD resolution)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMouseMovePointsEx);
         return Library::Call< int, UINT, LPMOUSEMOVEPOINT, LPMOUSEMOVEPOINT, int, DWORD >(pFunc, cbSize, lppt, lpptBuf, nBufPoints, resolution);
     }
@@ -124,6 +129,7 @@ namespace qor { namespace win { namespace api {
     VOID User32::mouse_event(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR dwExtraInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, mouse_event);
         return Library::voidCall< DWORD, DWORD, DWORD, DWORD, ULONG_PTR >(pFunc, dwFlags, dx, dy, dwData, dwExtraInfo);
     }
@@ -131,6 +137,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ReleaseCapture(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ReleaseCapture);
         return Library::Call< BOOL >(pFunc);
     }
@@ -138,6 +145,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::SetCapture(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCapture);
         return Library::Call< HWND, HWND >(pFunc, hWnd);
     }
@@ -145,6 +153,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDoubleClickTime(UINT uInterval)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDoubleClickTime);
         return Library::Call< BOOL, UINT >(pFunc, uInterval);
     }
@@ -152,6 +161,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SwapMouseButton(BOOL fSwap)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SwapMouseButton);
         return Library::Call< BOOL, BOOL >(pFunc, fSwap);
     }
@@ -159,6 +169,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TrackMouseEvent);
         return Library::Call< BOOL, LPTRACKMOUSEEVENT >(pFunc, lpEventTrack);
     }

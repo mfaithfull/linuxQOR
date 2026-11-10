@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -78,6 +79,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ExitWindowsEx(UINT uFlags, DWORD dwReason)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ExitWindowsEx);
         return Library::Call< BOOL, UINT, DWORD >(pFunc, uFlags, dwReason);
     }
@@ -89,6 +91,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CancelShutdown(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CancelShutdown);
         return Library::Call< BOOL >(pFunc);
     }
@@ -96,6 +99,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::LockWorkStation(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LockWorkStation);
         return Library::Call< BOOL >(pFunc);
     }
@@ -103,6 +107,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonCreate);
         return Library::Call< BOOL, HWND, LPCWSTR >(pFunc, hWnd, pwszReason);
     }
@@ -110,6 +115,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShutdownBlockReasonDestroy(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonDestroy);
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }
@@ -117,6 +123,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonQuery);
         return Library::Call< BOOL, HWND, LPWSTR, DWORD* >(pFunc, hWnd, pwszBuff, pcchBuff);
     }

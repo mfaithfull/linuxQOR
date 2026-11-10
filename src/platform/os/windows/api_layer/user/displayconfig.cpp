@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Reviewed 6 Nov 2026
 //   (T8 step 6, tranche 6d: the Display configuration family - 7 wrappers, new TU)
@@ -113,6 +114,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::DisplayConfigGetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* requestPacket)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DisplayConfigGetDeviceInfo);
         return Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, requestPacket);
     }
@@ -124,6 +126,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::DisplayConfigSetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* setPacket)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DisplayConfigSetDeviceInfo);
         return Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, setPacket);
     }
@@ -135,6 +138,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE* pOrientation)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDisplayAutoRotationPreferences);
         return Library::Call< BOOL, ORIENTATION_PREFERENCE* >(pFunc, pOrientation);
     }
@@ -147,6 +151,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::GetDisplayConfigBufferSizes(UINT32 flags, UINT32* numPathArrayElements, UINT32* numModeInfoArrayElements)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDisplayConfigBufferSizes);
         return Library::Call< LONG, UINT32, UINT32*, UINT32* >(pFunc, flags, numPathArrayElements, numModeInfoArrayElements);
     }
@@ -162,6 +167,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::QueryDisplayConfig(UINT32 flags, UINT32* numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32* numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, DISPLAYCONFIG_TOPOLOGY_ID* currentTopologyId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, QueryDisplayConfig);
         return Library::Call< LONG, UINT32, UINT32*, DISPLAYCONFIG_PATH_INFO*, UINT32*, DISPLAYCONFIG_MODE_INFO*, DISPLAYCONFIG_TOPOLOGY_ID* >(pFunc, flags, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, currentTopologyId);
     }
@@ -172,6 +178,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE orientation)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDisplayAutoRotationPreferences);
         return Library::Call< BOOL, ORIENTATION_PREFERENCE >(pFunc, orientation);
     }
@@ -187,6 +194,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::SetDisplayConfig(UINT32 numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32 numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, UINT32 flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDisplayConfig);
         return Library::Call< LONG, UINT32, DISPLAYCONFIG_PATH_INFO*, UINT32, DISPLAYCONFIG_MODE_INFO*, UINT32 >(pFunc, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, flags);
     }

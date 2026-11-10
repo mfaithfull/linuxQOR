@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -97,6 +98,7 @@ namespace qor { namespace win { namespace api {
     int User32::DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DrawText);
         return Library::Call< int, HDC, LPCTSTR, int, ::LPRECT, UINT >(pFunc, hdc, lpchText, cchText, lprc, format);
     }
@@ -104,6 +106,7 @@ namespace qor { namespace win { namespace api {
     int User32::DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DrawTextEx);
         return Library::Call< int, HDC, LPTSTR, int, ::LPRECT, UINT, ::LPDRAWTEXTPARAMS >(pFunc, hdc, lpchText, cchText, lprc, format, lpdtp);
     }
@@ -111,6 +114,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetTabbedTextExtent);
         return Library::Call< DWORD, HDC, LPCTSTR, int, int, const INT* >(pFunc, hdc, lpString, chCount, nTabPositions, lpnTabStopPositions);
     }
@@ -118,6 +122,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions, int nTabOrigin)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, TabbedTextOut);
         return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, const INT*, int >(pFunc, hdc, x, y, lpString, chCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
     }

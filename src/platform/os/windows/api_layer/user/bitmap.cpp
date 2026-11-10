@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9f: the "//Bitmap functions" section declared 1 member non-static and no TU defined it - new TU)
@@ -128,6 +129,7 @@ namespace qor { namespace win { namespace api {
     HBITMAP User32::LoadBitmapT(HINSTANCE hInstance, LPCTSTR lpBitmapName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadBitmap);
         return Library::Call< HBITMAP, HINSTANCE, LPCTSTR >(pFunc, hInstance, lpBitmapName);
     }

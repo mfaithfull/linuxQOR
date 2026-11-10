@@ -58,6 +58,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -68,6 +69,7 @@ namespace qor { namespace win { namespace api {
     HSYNTHETICPOINTERDEVICE User32::CreateSyntheticPointerDevice(POINTER_INPUT_TYPE pointerType, ULONG maxCount, POINTER_FEEDBACK_MODE mode)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateSyntheticPointerDevice);
         return Library::Call< HSYNTHETICPOINTERDEVICE, POINTER_INPUT_TYPE, ULONG, POINTER_FEEDBACK_MODE >(pFunc, pointerType, maxCount, mode);
     }
@@ -75,6 +77,7 @@ namespace qor { namespace win { namespace api {
     void User32::DestroySyntheticPointerDevice(HSYNTHETICPOINTERDEVICE device)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroySyntheticPointerDevice);
         Library::voidCall< HSYNTHETICPOINTERDEVICE >(pFunc, device);
     }
@@ -82,6 +85,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnableMouseInPointer(BOOL fEnable)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnableMouseInPointer);
         return Library::Call< BOOL, BOOL >(pFunc, fEnable);
     }
@@ -89,6 +93,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerCursorId(UINT32 pointerId, UINT32* cursorId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerCursorId);
         return Library::Call< BOOL, UINT32, UINT32* >(pFunc, pointerId, cursorId);
     }
@@ -96,6 +101,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerDevice(HANDLE device, POINTER_DEVICE_INFO* pointerDevice)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerDevice);
         return Library::Call< BOOL, HANDLE, POINTER_DEVICE_INFO* >(pFunc, device, pointerDevice);
     }
@@ -103,6 +109,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerDeviceCursors(HANDLE device, UINT32* cursorCount, POINTER_DEVICE_CURSOR_INFO* deviceCursors)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerDeviceCursors);
         return Library::Call< BOOL, HANDLE, UINT32*, POINTER_DEVICE_CURSOR_INFO* >(pFunc, device, cursorCount, deviceCursors);
     }
@@ -110,6 +117,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerDeviceProperties(HANDLE device, UINT32* propertyCount, POINTER_DEVICE_PROPERTY* pointerProperties)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerDeviceProperties);
         return Library::Call< BOOL, HANDLE, UINT32*, POINTER_DEVICE_PROPERTY* >(pFunc, device, propertyCount, pointerProperties);
     }
@@ -117,6 +125,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerDeviceRects(HANDLE device, RECT* pointerDeviceRect, RECT* displayRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerDeviceRects);
         return Library::Call< BOOL, HANDLE, RECT*, RECT* >(pFunc, device, pointerDeviceRect, displayRect);
     }
@@ -124,6 +133,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerDevices(UINT32* deviceCount, POINTER_DEVICE_INFO* pointerDevices)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerDevices);
         return Library::Call< BOOL, UINT32*, POINTER_DEVICE_INFO* >(pFunc, deviceCount, pointerDevices);
     }
@@ -131,6 +141,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFrameInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_INFO* pointerInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFrameInfo);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_INFO* >(pFunc, pointerId, pointerCount, pointerInfo);
     }
@@ -138,6 +149,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFrameInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_INFO* pointerInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFrameInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, UINT32*, POINTER_INFO* >(pFunc, pointerId, entriesCount, pointerCount, pointerInfo);
     }
@@ -145,6 +157,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFramePenInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_PEN_INFO* penInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFramePenInfo);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_PEN_INFO* >(pFunc, pointerId, pointerCount, penInfo);
     }
@@ -152,6 +165,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFramePenInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_PEN_INFO* penInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFramePenInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, UINT32*, POINTER_PEN_INFO* >(pFunc, pointerId, entriesCount, pointerCount, penInfo);
     }
@@ -159,6 +173,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFrameTouchInfo(UINT32 pointerId, UINT32* pointerCount, POINTER_TOUCH_INFO* touchInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFrameTouchInfo);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_TOUCH_INFO* >(pFunc, pointerId, pointerCount, touchInfo);
     }
@@ -166,6 +181,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerFrameTouchInfoHistory(UINT32 pointerId, UINT32* entriesCount, UINT32* pointerCount, POINTER_TOUCH_INFO* touchInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerFrameTouchInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, UINT32*, POINTER_TOUCH_INFO* >(pFunc, pointerId, entriesCount, pointerCount, touchInfo);
     }
@@ -173,6 +189,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerInfo(UINT32 pointerId, POINTER_INFO* pointerInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerInfo);
         return Library::Call< BOOL, UINT32, POINTER_INFO* >(pFunc, pointerId, pointerInfo);
     }
@@ -180,6 +197,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_INFO* pointerInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_INFO* >(pFunc, pointerId, entriesCount, pointerInfo);
     }
@@ -187,6 +205,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerInputTransform(UINT32 pointerId, UINT32 historyCount, INPUT_TRANSFORM* inputTransform)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerInputTransform);
         return Library::Call< BOOL, UINT32, UINT32, INPUT_TRANSFORM* >(pFunc, pointerId, historyCount, inputTransform);
     }
@@ -194,6 +213,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerPenInfo(UINT32 pointerId, POINTER_PEN_INFO* penInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerPenInfo);
         return Library::Call< BOOL, UINT32, POINTER_PEN_INFO* >(pFunc, pointerId, penInfo);
     }
@@ -201,6 +221,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerPenInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_PEN_INFO* penInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerPenInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_PEN_INFO* >(pFunc, pointerId, entriesCount, penInfo);
     }
@@ -208,6 +229,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerTouchInfo(UINT32 pointerId, POINTER_TOUCH_INFO* touchInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerTouchInfo);
         return Library::Call< BOOL, UINT32, POINTER_TOUCH_INFO* >(pFunc, pointerId, touchInfo);
     }
@@ -215,6 +237,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerTouchInfoHistory(UINT32 pointerId, UINT32* entriesCount, POINTER_TOUCH_INFO* touchInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerTouchInfoHistory);
         return Library::Call< BOOL, UINT32, UINT32*, POINTER_TOUCH_INFO* >(pFunc, pointerId, entriesCount, touchInfo);
     }
@@ -222,6 +245,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPointerType(UINT32 pointerId, POINTER_INPUT_TYPE* pointerType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPointerType);
         return Library::Call< BOOL, UINT32, POINTER_INPUT_TYPE* >(pFunc, pointerId, pointerType);
     }
@@ -229,6 +253,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetRawPointerDeviceData(UINT32 pointerId, UINT32 historyCount, UINT32 propertiesCount, POINTER_DEVICE_PROPERTY* pProperties, LONG* pValues)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetRawPointerDeviceData);
         return Library::Call< BOOL, UINT32, UINT32, UINT32, POINTER_DEVICE_PROPERTY*, LONG* >(pFunc, pointerId, historyCount, propertiesCount, pProperties, pValues);
     }
@@ -236,6 +261,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE device, const POINTER_TYPE_INFO* pointerInfo, UINT32 count)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InjectSyntheticPointerInput);
         return Library::Call< BOOL, HSYNTHETICPOINTERDEVICE, const POINTER_TYPE_INFO*, UINT32 >(pFunc, device, pointerInfo, count);
     }
@@ -243,6 +269,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsMouseInPointerEnabled(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsMouseInPointerEnabled);
         return Library::Call< BOOL >(pFunc);
     }
@@ -250,6 +277,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterPointerDeviceNotifications(HWND window, BOOL notifyRange)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterPointerDeviceNotifications);
         return Library::Call< BOOL, HWND, BOOL >(pFunc, window, notifyRange);
     }
@@ -257,6 +285,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterPointerInputTarget(HWND hwnd, POINTER_INPUT_TYPE pointerType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterPointerInputTarget);
         return Library::Call< BOOL, HWND, POINTER_INPUT_TYPE >(pFunc, hwnd, pointerType);
     }
@@ -264,6 +293,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterPointerInputTargetEx(HWND hwnd, POINTER_INPUT_TYPE pointerType, BOOL fObserve)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterPointerInputTargetEx);
         return Library::Call< BOOL, HWND, POINTER_INPUT_TYPE, BOOL >(pFunc, hwnd, pointerType, fObserve);
     }
@@ -271,6 +301,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SkipPointerFrameMessages(UINT32 pointerId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SkipPointerFrameMessages);
         return Library::Call< BOOL, UINT32 >(pFunc, pointerId);
     }
@@ -278,6 +309,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterPointerInputTarget(HWND hwnd, POINTER_INPUT_TYPE pointerType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterPointerInputTarget);
         return Library::Call< BOOL, HWND, POINTER_INPUT_TYPE >(pFunc, hwnd, pointerType);
     }
@@ -285,6 +317,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterPointerInputTargetEx(HWND hwnd, POINTER_INPUT_TYPE pointerType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterPointerInputTargetEx);
         return Library::Call< BOOL, HWND, POINTER_INPUT_TYPE >(pFunc, hwnd, pointerType);
     }

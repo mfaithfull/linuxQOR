@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -60,6 +61,7 @@ namespace qor { namespace win { namespace api {
     void User32::DisableProcessWindowsGhosting(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DisableProcessWindowsGhosting);
         Library::voidCall<>(pFunc);
     }
@@ -67,6 +69,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::SendIMEMessageExT(HWND hwnd, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendIMEMessageEx);
         return Library::Call< LRESULT, HWND, LPARAM >(pFunc, hwnd, lParam);
     }
@@ -76,6 +79,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::WINNLSGetIMEHotkey(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WINNLSGetIMEHotkey);
         return Library::Call<UINT, HWND>(pFunc, hwnd);
     }
@@ -86,6 +90,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::WINNLSEnableIME(HWND hwnd, BOOL bFlag)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WINNLSEnableIME);
         return Library::Call<BOOL, HWND, BOOL>(pFunc, hwnd, bFlag);
     }
@@ -95,6 +100,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::WINNLSGetEnableStatus(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WINNLSGetEnableStatus);
         return Library::Call<BOOL, HWND>(pFunc, hwnd);
     }

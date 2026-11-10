@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -37,6 +38,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AddClipboardFormatListener(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AddClipboardFormatListener);
         return Library::Call< BOOL, HWND >(pFunc, hwnd);
     }
@@ -44,6 +46,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ChangeClipboardChain(HWND hWndRemove, HWND hWndNewNext)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ChangeClipboardChain);
         return Library::Call< BOOL, HWND, HWND >(pFunc, hWndRemove, hWndNewNext);
     }
@@ -51,6 +54,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CloseClipboard(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseClipboard);
         return Library::Call< BOOL >(pFunc);
     }
@@ -58,6 +62,7 @@ namespace qor { namespace win { namespace api {
     int User32::CountClipboardFormats(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CountClipboardFormats);
         return Library::Call< int >(pFunc);
     }
@@ -65,6 +70,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EmptyClipboard(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EmptyClipboard);
         return Library::Call< BOOL >(pFunc);
     }
@@ -72,6 +78,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::EnumClipboardFormats(UINT format)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnumClipboardFormats);
         return Library::Call< UINT, UINT >(pFunc, format);
     }
@@ -79,6 +86,7 @@ namespace qor { namespace win { namespace api {
     HANDLE User32::GetClipboardData(UINT uFormat)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipboardData);
         return Library::Call< HANDLE, UINT >(pFunc, uFormat);
     }
@@ -86,6 +94,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetClipboardFormatNameT(UINT format, LPTSTR lpszFormatName, int cchMaxCount)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClipboardFormatName);
         return Library::Call< int, UINT, LPTSTR, int >(pFunc, format, lpszFormatName, cchMaxCount);
     }
@@ -93,6 +102,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetClipboardOwner(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipboardOwner);
         return Library::Call< HWND >(pFunc);
     }
@@ -100,6 +110,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetClipboardSequenceNumber(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipboardSequenceNumber);
         return Library::Call< DWORD >(pFunc);
     }
@@ -107,6 +118,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetClipboardViewer(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipboardViewer);
         return Library::Call< HWND >(pFunc);
     }
@@ -114,6 +126,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetOpenClipboardWindow(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetOpenClipboardWindow);
         return Library::Call< HWND >(pFunc);
     }
@@ -121,6 +134,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetPriorityClipboardFormat(UINT* paFormatPriorityList, int cFormats)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPriorityClipboardFormat);
         return Library::Call< int, UINT*, int >(pFunc, paFormatPriorityList, cFormats);
     }
@@ -128,6 +142,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetUpdatedClipboardFormats(PUINT lpuiFormats, UINT cFormats, PUINT pcFormatsOut)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUpdatedClipboardFormats);
         return Library::Call< BOOL, PUINT, UINT, PUINT >(pFunc, lpuiFormats, cFormats, pcFormatsOut);
     }
@@ -135,6 +150,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsClipboardFormatAvailable(UINT format)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsClipboardFormatAvailable);
         return Library::Call< BOOL, UINT >(pFunc, format);
     }
@@ -142,6 +158,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OpenClipboard(HWND hWndNewOwner)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OpenClipboard);
         return Library::Call< BOOL, HWND >(pFunc, hWndNewOwner);
     }
@@ -149,6 +166,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::RegisterClipboardFormatT(LPCTSTR lpszFormat)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterClipboardFormat);
         return Library::Call< UINT, LPCTSTR >(pFunc, lpszFormat);
     }
@@ -156,6 +174,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RemoveClipboardFormatListener(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RemoveClipboardFormatListener);
         return Library::Call< BOOL, HWND >(pFunc, hwnd);
     }
@@ -163,6 +182,7 @@ namespace qor { namespace win { namespace api {
     HANDLE User32::SetClipboardData(UINT uFormat, HANDLE hMem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetClipboardData);
         return Library::Call< HANDLE, UINT, HANDLE >(pFunc, uFormat, hMem);
     }
@@ -170,6 +190,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::SetClipboardViewer(HWND hWndNewViewer)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetClipboardViewer);
         return Library::Call< HWND, HWND >(pFunc, hWndNewViewer);
     }

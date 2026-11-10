@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9b: the "//Raw Input functions" section declared 7 members non-static and no TU defined any of them - new TU)
@@ -85,6 +86,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DefRawInputProc);
         return Library::Call< LRESULT, PRAWINPUT *, INT, UINT >(pFunc, paRawInput, nInput, cbSizeHeader);
     }
@@ -95,6 +97,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetRawInputBuffer);
         return Library::Call< UINT, PRAWINPUT, PUINT, UINT >(pFunc, pData, pcbSize, cbSizeHeader);
     }
@@ -106,6 +109,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetRawInputData(HRAWINPUT hRawInput, UINT uiCommand, LPVOID pData, PUINT pcbSize, UINT cbSizeHeader)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetRawInputData);
         return Library::Call< UINT, HRAWINPUT, UINT, LPVOID, PUINT, UINT >(pFunc, hRawInput, uiCommand, pData, pcbSize, cbSizeHeader);
     }
@@ -117,6 +121,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetRawInputDeviceInfoT(HANDLE hDevice, UINT uiCommand, LPVOID pData, PUINT pcbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetRawInputDeviceInfo);
         return Library::Call< UINT, HANDLE, UINT, LPVOID, PUINT >(pFunc, hDevice, uiCommand, pData, pcbSize);
     }
@@ -127,6 +132,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetRawInputDeviceList(PRAWINPUTDEVICELIST pRawInputDeviceList, PUINT puiNumDevices, UINT cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetRawInputDeviceList);
         return Library::Call< UINT, PRAWINPUTDEVICELIST, PUINT, UINT >(pFunc, pRawInputDeviceList, puiNumDevices, cbSize);
     }
@@ -136,6 +142,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetRegisteredRawInputDevices(PRAWINPUTDEVICE pRawInputDevices, PUINT puiNumDevices, UINT cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetRegisteredRawInputDevices);
         return Library::Call< UINT, PRAWINPUTDEVICE, PUINT, UINT >(pFunc, pRawInputDevices, puiNumDevices, cbSize);
     }
@@ -149,6 +156,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterRawInputDevices);
         return Library::Call< BOOL, PCRAWINPUTDEVICE, UINT, UINT >(pFunc, pRawInputDevices, uiNumDevices, cbSize);
     }

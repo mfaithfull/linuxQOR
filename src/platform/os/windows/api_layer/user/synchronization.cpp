@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9e: the "//Synchronization functions" section declared 2 members non-static and no TU defined either of them - new TU)
@@ -114,6 +115,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL fWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MsgWaitForMultipleObjects);
         return Library::Call< DWORD, DWORD, const HANDLE *, BOOL, DWORD, DWORD >(pFunc, nCount, pHandles, fWaitAll, dwMilliseconds, dwWakeMask);
     }
@@ -126,6 +128,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MsgWaitForMultipleObjectsEx);
         return Library::Call< DWORD, DWORD, const HANDLE *, DWORD, DWORD, DWORD >(pFunc, nCount, pHandles, dwMilliseconds, dwWakeMask, dwFlags);
     }

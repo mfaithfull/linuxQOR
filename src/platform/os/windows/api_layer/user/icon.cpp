@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -70,6 +71,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::CopyIcon(HICON hIcon)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CopyIcon);
         return Library::Call<HICON, HICON>(pFunc, hIcon);
     }
@@ -77,6 +79,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::CreateIcon(HINSTANCE hInstance, int nWidth, int nHeight, BYTE cPlanes, BYTE cBitsPixel, const BYTE* lpbANDbits, const BYTE* lpbXORbits)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIcon);
         return Library::Call<HICON, HINSTANCE, int, int, BYTE, BYTE, const BYTE*, const BYTE*>(pFunc, hInstance, nWidth, nHeight, cPlanes, cBitsPixel, lpbANDbits, lpbXORbits);
     }
@@ -84,6 +87,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::CreateIconFromResource(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconFromResource);
         return Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD>(pFunc, presbits, dwResSize, fIcon, dwVer);
     }
@@ -91,6 +95,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::CreateIconFromResourceEx(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer, int cxDesired, int cyDesired, UINT Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconFromResourceEx);
         return Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD, int, int, UINT>(pFunc, presbits, dwResSize, fIcon, dwVer, cxDesired, cyDesired, Flags);
     }
@@ -98,6 +103,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::CreateIconIndirect(const ::ICONINFO* piconinfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconIndirect);
         return Library::Call<HICON, const ::ICONINFO*>(pFunc, piconinfo);
     }
@@ -105,6 +111,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DestroyIcon(HICON hIcon)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyIcon);
         return Library::Call<BOOL, HICON>(pFunc, hIcon);
     }
@@ -112,6 +119,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawIcon(HDC hDC, int X, int Y, HICON hIcon)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawIcon);
         return Library::Call<BOOL, HDC, int, int, HICON>(pFunc, hDC, X, Y, hIcon);
     }
@@ -119,6 +127,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawIconEx(HDC hdc, int xLeft, int yTop, HICON hIcon, int cxWidth, int cyWidth, UINT istepIfAniCur, HBRUSH hbrFlickerFreeDraw, UINT diFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawIconEx);
         return Library::Call<BOOL, HDC, int, int, HICON, int, int, UINT, HBRUSH, UINT>(pFunc, hdc, xLeft, yTop, hIcon, cxWidth, cyWidth, istepIfAniCur, hbrFlickerFreeDraw, diFlags);
     }
@@ -126,6 +135,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetIconInfo(HICON hIcon, ::PICONINFO piconinfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetIconInfo);
         return Library::Call<BOOL, HICON, ::PICONINFO>(pFunc, hIcon, piconinfo);
     }
@@ -133,6 +143,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetIconInfoExT(HICON hicon, ::PICONINFOEX piconinfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetIconInfoEx);
         return Library::Call<BOOL, HICON, ::PICONINFOEX>(pFunc, hicon, piconinfo);
     }
@@ -140,6 +151,7 @@ namespace qor { namespace win { namespace api {
     HICON User32::LoadIconT(HINSTANCE hInstance, LPCTSTR lpIconName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadIcon);
         return Library::Call<HICON, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpIconName);
     }
@@ -147,6 +159,7 @@ namespace qor { namespace win { namespace api {
     int User32::LookupIconIdFromDirectory(PBYTE presbits, BOOL fIcon)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LookupIconIdFromDirectory);
         return Library::Call<int, PBYTE, BOOL>(pFunc, presbits, fIcon);
     }
@@ -154,6 +167,7 @@ namespace qor { namespace win { namespace api {
     int User32::LookupIconIdFromDirectoryEx(PBYTE presbits, BOOL fIcon, int cxDesired, int cyDesired, UINT Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LookupIconIdFromDirectoryEx);
         return Library::Call<int, PBYTE, BOOL, int, int, UINT>(pFunc, presbits, fIcon, cxDesired, cyDesired, Flags);
     }
@@ -161,6 +175,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::PrivateExtractIconsT(LPCTSTR szFileName, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, PrivateExtractIcons);
         return Library::Call<UINT, LPCTSTR, int, int, int, HICON*, UINT*, UINT, UINT>(pFunc, szFileName, nIconIndex, cxIcon, cyIcon, phicon, piconid, nIcons, flags);
     }

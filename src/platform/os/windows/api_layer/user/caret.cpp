@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -21,6 +22,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateCaret);
         return Library::Call< BOOL, HWND, HBITMAP, int, int >(pFunc, hWnd, hBitmap, nWidth, nHeight);
     }
@@ -28,6 +30,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DestroyCaret(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyCaret);
         return Library::Call< BOOL >(pFunc);
     }
@@ -35,6 +38,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetCaretBlinkTime(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCaretBlinkTime);
         return Library::Call< UINT >(pFunc);
     }
@@ -42,6 +46,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetCaretPos(LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCaretPos);
         return Library::Call< BOOL, LPPOINT >(pFunc, lpPoint);
     }
@@ -49,6 +54,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::HideCaret(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, HideCaret);
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }
@@ -56,6 +62,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetCaretBlinkTime(UINT uMSeconds)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCaretBlinkTime);
         return Library::Call< BOOL, UINT >(pFunc, uMSeconds);
     }
@@ -63,6 +70,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetCaretPos(int X, int Y)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCaretPos);
         return Library::Call< BOOL, int, int >(pFunc, X, Y);
     }
@@ -70,6 +78,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShowCaret(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShowCaret);
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }

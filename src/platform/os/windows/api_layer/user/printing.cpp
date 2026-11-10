@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9g: the "//Printing functions" section declared 1 member non-static and no TU defined it - new TU)
@@ -117,6 +118,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PrintWindow);
         return Library::Call< BOOL, HWND, HDC, UINT >(pFunc, hwnd, hdcBlt, nFlags);
     }

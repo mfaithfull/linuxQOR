@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -62,6 +63,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassInfo);
         return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASS >(pFunc, hInstance, lpClassName, lpWndClass);
     }
@@ -69,6 +71,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetClassInfoExT(HINSTANCE hInstance, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassInfoEx);
         return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASSEX >(pFunc, hInstance, lpszClass, lpwcx);
     }
@@ -76,6 +79,7 @@ namespace qor { namespace win { namespace api {
     ULONG_PTR User32::GetClassLongPtrT(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassLongPtr);
         return Library::Call< ULONG_PTR, HWND, int >(pFunc, hWnd, nIndex);
     }
@@ -83,6 +87,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetClassNameT(HWND hWnd, LPTSTR lpClassName, int nMaxCount)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassName);
         return Library::Call< int, HWND, LPTSTR, int >(pFunc, hWnd, lpClassName, nMaxCount);
     }
@@ -90,6 +95,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::GetClassWord(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClassWord);
         return Library::Call< WORD, HWND, int >(pFunc, hWnd, nIndex);
     }
@@ -97,6 +103,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::GetWindowLongT(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetWindowLong);
         return Library::Call< LONG, HWND, int >(pFunc, hWnd, nIndex);
     }
@@ -104,6 +111,7 @@ namespace qor { namespace win { namespace api {
     ATOM User32::RegisterClassT(const WNDCLASS* lpWndClass)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterClass);
         return Library::Call< ATOM, const WNDCLASS* >(pFunc, lpWndClass);
     }
@@ -111,6 +119,7 @@ namespace qor { namespace win { namespace api {
     ATOM User32::RegisterClassExT(const WNDCLASSEX* lpwcx)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterClassEx);
         return Library::Call< ATOM, const WNDCLASSEX* >(pFunc, lpwcx);
     }
@@ -118,6 +127,7 @@ namespace qor { namespace win { namespace api {
     ULONG_PTR User32::SetClassLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetClassLongPtr);
         return Library::Call< ULONG_PTR, HWND, int, LONG_PTR >(pFunc, hWnd, nIndex, dwNewLong);
     }
@@ -125,6 +135,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::SetClassWord(HWND hWnd, int nIndex, WORD wNewWord)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetClassWord);
         return Library::Call< WORD, HWND, int, WORD >(pFunc, hWnd, nIndex, wNewWord);
     }
@@ -132,6 +143,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::SetWindowLongT(HWND hWnd, int nIndex, LONG dwNewLong)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetWindowLong);
         return Library::Call< LONG, HWND, int, LONG >(pFunc, hWnd, nIndex, dwNewLong);
     }
@@ -139,6 +151,7 @@ namespace qor { namespace win { namespace api {
     LONG_PTR User32::SetWindowLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetWindowLongPtr);
         return Library::Call< LONG_PTR, HWND, int, LONG_PTR >(pFunc, hWnd, nIndex, dwNewLong);
     }
@@ -146,6 +159,7 @@ namespace qor { namespace win { namespace api {
     LONG_PTR User32::GetWindowLongPtrT(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetWindowLongPtr);
         return Library::Call< LONG_PTR, HWND, int >(pFunc, hWnd, nIndex);
     }
@@ -153,6 +167,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterClassT(LPCTSTR lpClassName, HINSTANCE hInstance)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, UnregisterClass);
         return Library::Call< BOOL, LPCTSTR, HINSTANCE >(pFunc, lpClassName, hInstance);
     }

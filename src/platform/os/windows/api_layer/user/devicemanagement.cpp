@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -72,6 +73,7 @@ namespace qor { namespace win { namespace api {
     HDEVNOTIFY User32::RegisterDeviceNotificationT(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterDeviceNotification);
         return Library::Call< HDEVNOTIFY, HANDLE, LPVOID, DWORD >(pFunc, hRecipient, NotificationFilter, Flags);
     }
@@ -79,6 +81,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterDeviceNotification(HDEVNOTIFY Handle)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterDeviceNotification);
         return Library::Call< BOOL, HDEVNOTIFY >(pFunc, Handle);
     }

@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -108,6 +109,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuContextHelpId);
         return Library::Call<BOOL, HMENU, DWORD>(pFunc, hmenu, dwContextHelpId);
     }
@@ -115,6 +117,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetMenuContextHelpId(HMENU hmenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuContextHelpId);
         return Library::Call<DWORD, HMENU>(pFunc, hmenu);
     }
@@ -122,6 +125,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowContextHelpId);
         return Library::Call<BOOL, HWND, DWORD>(pFunc, hwnd, dwContextHelpId);
     }
@@ -129,6 +133,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetWindowContextHelpId(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowContextHelpId);
         return Library::Call<DWORD, HWND>(pFunc, hwnd);
     }
@@ -136,6 +141,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::WinHelpT(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, WinHelp);
         return Library::Call<BOOL, HWND, LPCTSTR, UINT, ULONG_PTR>(pFunc, hWndMain, lpszHelp, uCommand, dwData);
     }

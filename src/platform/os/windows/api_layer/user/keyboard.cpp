@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -78,6 +79,7 @@ namespace qor { namespace win { namespace api {
     HKL User32::ActivateKeyboardLayout(HKL hkl, UINT Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ActivateKeyboardLayout);
         return Library::Call< HKL, HKL, UINT >(pFunc, hkl, Flags);
     }
@@ -85,6 +87,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::BlockInput(BOOL fBlockIt)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, BlockInput);
         return Library::Call< BOOL, BOOL >(pFunc, fBlockIt);
     }
@@ -92,6 +95,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnableWindow(HWND hWnd, BOOL bEnable)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnableWindow);
         return Library::Call< BOOL, HWND, BOOL >(pFunc, hWnd, bEnable);
     }
@@ -99,6 +103,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetActiveWindow(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetActiveWindow);
         return Library::Call< HWND >(pFunc);
     }
@@ -106,6 +111,7 @@ namespace qor { namespace win { namespace api {
     SHORT User32::GetAsyncKeyState(int vKey)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetAsyncKeyState);
         return Library::Call< SHORT, int >(pFunc, vKey);
     }
@@ -113,6 +119,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetFocus(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetFocus);
         return Library::Call< HWND >(pFunc);
     }
@@ -120,6 +127,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetKBCodePage(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKBCodePage);
         return Library::Call< UINT >(pFunc);
     }
@@ -127,6 +135,7 @@ namespace qor { namespace win { namespace api {
     HKL User32::GetKeyboardLayout(DWORD idThread)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKeyboardLayout);
         return Library::Call< HKL, DWORD >(pFunc, idThread);
     }
@@ -134,6 +143,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetKeyboardLayoutList(int nBuff, HKL* lpList)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKeyboardLayoutList);
         return Library::Call< int, int, HKL* >(pFunc, nBuff, lpList);
     }
@@ -141,6 +151,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetKeyboardLayoutNameT(LPTSTR pwszKLID)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetKeyboardLayoutName);
         return Library::Call< BOOL, LPTSTR >(pFunc, pwszKLID);
     }
@@ -148,6 +159,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetKeyboardState(PBYTE lpKeyState)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKeyboardState);
         return Library::Call< BOOL, PBYTE >(pFunc, lpKeyState);
     }
@@ -155,6 +167,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetKeyboardType(int nTypeFlag)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKeyboardType);
         return Library::Call< int, int >(pFunc, nTypeFlag);
     }
@@ -162,6 +175,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetKeyNameTextT(LONG lParam, LPTSTR lpString, int cchSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetKeyNameText);
         return Library::Call< int, LONG, LPTSTR, int >(pFunc, lParam, lpString, cchSize);
     }
@@ -169,6 +183,7 @@ namespace qor { namespace win { namespace api {
     SHORT User32::GetKeyState(int nVirtKey)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetKeyState);
         return Library::Call< SHORT, int >(pFunc, nVirtKey);
     }
@@ -176,6 +191,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetLastInputInfo(PLASTINPUTINFO plii)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetLastInputInfo);
         return Library::Call< BOOL, PLASTINPUTINFO >(pFunc, plii);
     }
@@ -183,6 +199,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWindowEnabled(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWindowEnabled);
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }
@@ -190,6 +207,7 @@ namespace qor { namespace win { namespace api {
     VOID User32::keybd_event(BYTE bVk, BYTE bScan, DWORD dwFlags, ULONG_PTR dwExtraInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, keybd_event);
         return Library::voidCall< BYTE, BYTE, DWORD, ULONG_PTR >(pFunc, bVk, bScan, dwFlags, dwExtraInfo);
     }
@@ -197,6 +215,7 @@ namespace qor { namespace win { namespace api {
     HKL User32::LoadKeyboardLayoutT(LPCTSTR pwszKLID, UINT Flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadKeyboardLayout);
         return Library::Call< HKL, LPCTSTR, UINT >(pFunc, pwszKLID, Flags);
     }
@@ -204,6 +223,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::MapVirtualKeyT(UINT uCode, UINT uMapType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MapVirtualKey);
         return Library::Call< UINT, UINT, UINT >(pFunc, uCode, uMapType);
     }
@@ -211,6 +231,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::MapVirtualKeyExT(UINT uCode, UINT uMapType, HKL dwhkl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MapVirtualKeyEx);
         return Library::Call< UINT, UINT, UINT, HKL >(pFunc, uCode, uMapType, dwhkl);
     }
@@ -218,6 +239,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::OemKeyScan(WORD wOemChar)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OemKeyScan);
         return Library::Call< DWORD, WORD >(pFunc, wOemChar);
     }
@@ -225,6 +247,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterHotKey);
         return Library::Call< BOOL, HWND, int, UINT, UINT >(pFunc, hWnd, id, fsModifiers, vk);
     }
@@ -232,6 +255,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::SendInput(UINT cInputs, LPINPUT pInputs, int cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SendInput);
         return Library::Call< UINT, UINT, LPINPUT, int >(pFunc, cInputs, pInputs, cbSize);
     }
@@ -239,6 +263,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::SetActiveWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetActiveWindow);
         return Library::Call< HWND, HWND >(pFunc, hWnd);
     }
@@ -246,6 +271,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::SetFocus(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetFocus);
         return Library::Call< HWND, HWND >(pFunc, hWnd);
     }
@@ -253,6 +279,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetKeyboardState(LPBYTE lpKeyState)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetKeyboardState);
         return Library::Call< BOOL, LPBYTE >(pFunc, lpKeyState);
     }
@@ -260,6 +287,7 @@ namespace qor { namespace win { namespace api {
     int User32::ToAscii(UINT uVirtKey, UINT uScanCode, PBYTE lpKeyState, LPWORD lpChar, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ToAscii);
         return Library::Call< int, UINT, UINT, PBYTE, LPWORD, UINT >(pFunc, uVirtKey, uScanCode, lpKeyState, lpChar, uFlags);
     }
@@ -267,6 +295,7 @@ namespace qor { namespace win { namespace api {
     int User32::ToAsciiEx(UINT uVirtKey, UINT uScanCode, PBYTE lpKeyState, LPWORD lpChar, UINT uFlags, HKL dwhkl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ToAsciiEx);
         return Library::Call< int, UINT, UINT, PBYTE, LPWORD, UINT, HKL >(pFunc, uVirtKey, uScanCode, lpKeyState, lpChar, uFlags, dwhkl);
     }
@@ -274,6 +303,7 @@ namespace qor { namespace win { namespace api {
     int User32::ToUnicode(UINT wVirtKey, UINT wScanCode, const BYTE* lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ToUnicode);
         return Library::Call< int, UINT, UINT, const BYTE*, LPWSTR, int, UINT >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags);
     }
@@ -281,6 +311,7 @@ namespace qor { namespace win { namespace api {
     int User32::ToUnicodeEx(UINT wVirtKey, UINT wScanCode, const BYTE* lpKeyState, LPWSTR pwszBuff, int cchBuff, UINT wFlags, HKL dwhkl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ToUnicodeEx);
         return Library::Call< int, UINT, UINT, const BYTE*, LPWSTR, int, UINT, HKL >(pFunc, wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags, dwhkl);
     }
@@ -288,6 +319,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnloadKeyboardLayout(HKL hkl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnloadKeyboardLayout);
         return Library::Call< BOOL, HKL >(pFunc, hkl);
     }
@@ -295,6 +327,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterHotKey(HWND hWnd, int id)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterHotKey);
         return Library::Call< BOOL, HWND, int >(pFunc, hWnd, id);
     }
@@ -302,6 +335,7 @@ namespace qor { namespace win { namespace api {
     SHORT User32::VkKeyScanT(TCHAR ch)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, VkKeyScan);
         return Library::Call< SHORT, TCHAR >(pFunc, ch);
     }
@@ -309,6 +343,7 @@ namespace qor { namespace win { namespace api {
     SHORT User32::VkKeyScanExT(TCHAR ch, HKL dwhkl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, VkKeyScanEx);
         return Library::Call< SHORT, TCHAR, HKL >(pFunc, ch, dwhkl);
     }

@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -124,6 +125,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::DragObject(HWND hwndParent, HWND hwndFrom, UINT fmt, ULONG_PTR data, HCURSOR hcur)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DragObject);
         return Library::Call< DWORD, HWND, HWND, UINT, ULONG_PTR, HCURSOR >(pFunc, hwndParent, hwndFrom, fmt, data, hcur);
     }
@@ -134,6 +136,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMessageQueue(int cMessagesMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMessageQueue);
         return Library::Call< BOOL, int >(pFunc, cMessagesMax);
     }
@@ -144,6 +147,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::GetWindowWord(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowWord);
         return Library::Call< WORD, HWND, int >(pFunc, hWnd, nIndex);
     }
@@ -154,6 +158,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::SetWindowWord(HWND hWnd, int nIndex, WORD wNewWord)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowWord);
         return Library::Call< WORD, HWND, int, WORD >(pFunc, hWnd, nIndex, wNewWord);
     }

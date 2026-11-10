@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -36,6 +37,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, CreateDialogIndirectParam);
         return Library::Call<HWND, HINSTANCE, LPCDLGTEMPLATE, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplate, hWndParent, lpDialogFunc, dwInitParam);
     }
@@ -43,6 +45,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::CreateDialogParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, CreateDialogParam);
         return Library::Call<HWND, HINSTANCE, LPCTSTR, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
     }
@@ -50,6 +53,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::DefDlgProcT(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DefDlgProc);
         return Library::Call<LRESULT, HWND, UINT, WPARAM, LPARAM>(pFunc, hDlg, Msg, wParam, lParam);
     }
@@ -57,6 +61,7 @@ namespace qor { namespace win { namespace api {
     INT_PTR User32::DialogBoxIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE hDialogTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DialogBoxIndirectParam);
         return Library::Call<INT_PTR, HINSTANCE, LPCDLGTEMPLATE, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, hDialogTemplate, hWndParent, lpDialogFunc, dwInitParam);
     }
@@ -64,6 +69,7 @@ namespace qor { namespace win { namespace api {
     INT_PTR User32::DialogBoxParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DialogBoxParam);
         return Library::Call<INT_PTR, HINSTANCE, LPCTSTR, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
     }
@@ -71,6 +77,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EndDialog(HWND hDlg, INT_PTR nResult)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndDialog);
         return Library::Call<BOOL, HWND, INT_PTR>(pFunc, hDlg, nResult);
     }
@@ -78,6 +85,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::GetDialogBaseUnits(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDialogBaseUnits);
         return Library::Call<LONG>(pFunc);
     }
@@ -85,6 +93,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetDlgCtrlID(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDlgCtrlID);
         return Library::Call<int, HWND>(pFunc, hWnd);
     }
@@ -92,6 +101,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetDlgItem(HWND hDlg, int nIDDlgItem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDlgItem);
         return Library::Call<HWND, HWND, int>(pFunc, hDlg, nIDDlgItem);
     }
@@ -99,6 +109,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDlgItemInt(HWND hDlg, int nIDDlgItem, BOOL* lpTranslated, BOOL bSigned)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDlgItemInt);
         return Library::Call<UINT, HWND, int, BOOL*, BOOL>(pFunc, hDlg, nIDDlgItem, lpTranslated, bSigned);
     }
@@ -106,6 +117,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int cchMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetDlgItemText);
         return Library::Call<UINT, HWND, int, LPTSTR, int>(pFunc, hDlg, nIDDlgItem, lpString, cchMax);
     }
@@ -113,6 +125,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetNextDlgGroupItem(HWND hDlg, HWND hCtl, BOOL bPrevious)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetNextDlgGroupItem);
         return Library::Call<HWND, HWND, HWND, BOOL>(pFunc, hDlg, hCtl, bPrevious);
     }
@@ -120,6 +133,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetNextDlgTabItem(HWND hDlg, HWND hCtl, BOOL bPrevious)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetNextDlgTabItem);
         return Library::Call<HWND, HWND, HWND, BOOL>(pFunc, hDlg, hCtl, bPrevious);
     }
@@ -127,6 +141,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsDialogMessageT(HWND hDlg, LPMSG lpMsg)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, IsDialogMessage);
         return Library::Call<BOOL, HWND, LPMSG>(pFunc, hDlg, lpMsg);
     }
@@ -134,6 +149,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::MapDialogRect(HWND hDlg, LPRECT lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MapDialogRect);
         return Library::Call<BOOL, HWND, LPRECT>(pFunc, hDlg, lpRect);
     }
@@ -141,6 +157,7 @@ namespace qor { namespace win { namespace api {
     int User32::MessageBoxT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MessageBox);
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT>(pFunc, hWnd, lpText, lpCaption, uType);
     }
@@ -148,6 +165,7 @@ namespace qor { namespace win { namespace api {
     int User32::MessageBoxExT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MessageBoxEx);
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT, WORD>(pFunc, hWnd, lpText, lpCaption, uType, wLanguageId);
     }
@@ -155,6 +173,7 @@ namespace qor { namespace win { namespace api {
     int User32::MessageBoxIndirectT(const ::MSGBOXPARAMS* lpmbp)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MessageBoxIndirect);
         return Library::Call<int, const ::MSGBOXPARAMS*>(pFunc, lpmbp);
     }
@@ -163,6 +182,7 @@ namespace qor { namespace win { namespace api {
     int User32::MessageBoxTimeoutT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, MessageBoxTimeout);
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT, WORD, DWORD>(pFunc, hWnd, lpText, lpCaption, uType, wLanguageId, dwMilliseconds);
     }
@@ -170,6 +190,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::SendDlgItemMessageT(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SendDlgItemMessage);
         return Library::Call<LRESULT, HWND, int, UINT, WPARAM, LPARAM>(pFunc, hDlg, nIDDlgItem, Msg, wParam, lParam);
     }
@@ -177,6 +198,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDlgItemInt(HWND hDlg, int nIDDlgItem, UINT uValue, BOOL bSigned)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDlgItemInt);
         return Library::Call<BOOL, HWND, int, UINT, BOOL>(pFunc, hDlg, nIDDlgItem, uValue, bSigned);
     }
@@ -184,6 +206,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPCTSTR lpString)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetDlgItemText);
         return Library::Call<BOOL, HWND, int, LPCTSTR>(pFunc, hDlg, nIDDlgItem, lpString);
     }

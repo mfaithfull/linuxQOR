@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -96,6 +97,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CopyRect(::LPRECT lprcDst, const::RECT* lprcSrc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CopyRect);
         return Library::Call<BOOL, ::LPRECT, const ::RECT*>(pFunc, lprcDst, lprcSrc);
     }
@@ -103,6 +105,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EqualRect(const::RECT* lprc1, const::RECT* lprc2)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EqualRect);
         return Library::Call<BOOL, const ::RECT*, const RECT*>(pFunc, lprc1, lprc2);
     }
@@ -110,6 +113,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InflateRect(::LPRECT lprc, int dx, int dy)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InflateRect);
         return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
     }
@@ -117,6 +121,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IntersectRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IntersectRect);
         return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
@@ -124,6 +129,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsRectEmpty(const::RECT* lprc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsRectEmpty);
         return Library::Call<BOOL, const ::RECT*>(pFunc, lprc);
     }
@@ -131,6 +137,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OffsetRect(::LPRECT lprc, int dx, int dy)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OffsetRect);
         return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
     }
@@ -138,6 +145,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PtInRect(const::RECT* lprc, POINT pt)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PtInRect);
         return Library::Call<BOOL, const ::RECT*, POINT>(pFunc, lprc, pt);
     }
@@ -145,6 +153,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetRect);
         return Library::Call<BOOL, ::LPRECT, int, int, int, int>(pFunc, lprc, xLeft, yTop, xRight, yBottom);
     }
@@ -152,6 +161,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetRectEmpty(::LPRECT lprc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetRectEmpty);
         return Library::Call<BOOL, ::LPRECT>(pFunc, lprc);
     }
@@ -159,6 +169,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SubtractRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SubtractRect);
         return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
@@ -166,6 +177,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnionRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnionRect);
         return Library::Call<BOOL, ::LPRECT, const ::RECT*, const RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }

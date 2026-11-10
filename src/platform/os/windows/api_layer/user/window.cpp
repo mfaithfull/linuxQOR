@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -83,6 +84,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AdjustWindowRect(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AdjustWindowRect);
         return Library::Call<BOOL, ::LPRECT, DWORD, BOOL>(pFunc, lpRect, dwStyle, bMenu);
     }
@@ -90,6 +92,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AdjustWindowRectEx(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AdjustWindowRectEx);
         return Library::Call<BOOL, ::LPRECT, DWORD, BOOL, DWORD>(pFunc, lpRect, dwStyle, bMenu, dwExStyle);
     }
@@ -97,6 +100,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AdjustWindowRectExForDpi(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AdjustWindowRectExForDpi);
         return Library::Call<BOOL, ::LPRECT, DWORD, BOOL, DWORD, UINT>(pFunc, lpRect, dwStyle, bMenu, dwExStyle, dpi);
     }
@@ -104,6 +108,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AllowSetForegroundWindow(DWORD dwProcessId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AllowSetForegroundWindow);
         return Library::Call<BOOL, DWORD>(pFunc, dwProcessId);
     }
@@ -111,6 +116,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AnimateWindow(HWND hWnd, DWORD dwTime, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AnimateWindow);
         return Library::Call<BOOL, HWND, DWORD, DWORD>(pFunc, hWnd, dwTime, dwFlags);
     }
@@ -118,6 +124,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AnyPopup(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AnyPopup);
         return Library::Call<BOOL>(pFunc);
     }
@@ -125,6 +132,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::ArrangeIconicWindows(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ArrangeIconicWindows);
         return Library::Call<UINT, HWND>(pFunc, hWnd);
     }
@@ -132,6 +140,7 @@ namespace qor { namespace win { namespace api {
     HDWP User32::BeginDeferWindowPos(int nNumWindows)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, BeginDeferWindowPos);
         return Library::Call<HDWP, int>(pFunc, nNumWindows);
     }
@@ -139,6 +148,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::BringWindowToTop(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, BringWindowToTop);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -146,6 +156,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::CascadeChildWindows(HWND hWndParent, WORD wFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CascadeChildWindows);
         return Library::Call<WORD, HWND, WORD>(pFunc, hWndParent, wFlags);
     }
@@ -153,6 +164,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::CascadeWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CascadeWindows);
         return Library::Call<WORD, HWND, UINT, const ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
     }
@@ -160,6 +172,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ChangeWindowMessageFilter(UINT message, DWORD dwFlag)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ChangeWindowMessageFilter);
         return Library::Call<BOOL, UINT, DWORD>(pFunc, message, dwFlag);
     }
@@ -167,6 +180,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::ChildWindowFromPoint(HWND hWndParent, ::POINT Point)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ChildWindowFromPoint);
         return Library::Call<HWND, HWND, ::POINT>(pFunc, hWndParent, Point);
     }
@@ -174,6 +188,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::ChildWindowFromPointEx(HWND hwnd, ::POINT pt, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ChildWindowFromPointEx);
         return Library::Call<HWND, HWND, ::POINT, UINT>(pFunc, hwnd, pt, flags);
     }
@@ -181,6 +196,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CloseWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseWindow);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -191,6 +207,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, CreateWindowEx);
         return Library::Call<HWND, DWORD, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HMENU, HINSTANCE, LPVOID >(
             pFunc, dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
@@ -199,6 +216,7 @@ namespace qor { namespace win { namespace api {
     HDWP User32::DeferWindowPos(HDWP hWinPosInfo, HWND hWnd, HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DeferWindowPos);
         return Library::Call<HDWP, HDWP, HWND, HWND, int, int, int, int, UINT>(
             pFunc, hWinPosInfo, hWnd, hWndInsertAfter, x, y, cx, cy, uFlags);
@@ -207,6 +225,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DeregisterShellHookWindow(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DeregisterShellHookWindow);
         return Library::Call<BOOL, HWND>(pFunc, hwnd);
     }
@@ -214,6 +233,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DestroyWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyWindow);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -221,6 +241,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EndDeferWindowPos(HDWP hWinPosInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndDeferWindowPos);
         return Library::Call<BOOL, HDWP>(pFunc, hWinPosInfo);
     }
@@ -228,6 +249,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EndTask(HWND hWnd, BOOL fShutDown, BOOL fForce)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndTask);
         return Library::Call<BOOL, HWND, BOOL, BOOL>(pFunc, hWnd, fShutDown, fForce);
     }
@@ -235,6 +257,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnumChildWindows(HWND hWndParent, WNDENUMPROC lpEnumFunc, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnumChildWindows);
         return Library::Call<BOOL, HWND, WNDENUMPROC, LPARAM>(pFunc, hWndParent, lpEnumFunc, lParam);
     }
@@ -242,6 +265,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnumThreadWindows(DWORD dwThreadId, WNDENUMPROC lpfn, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnumThreadWindows);
         return Library::Call<BOOL, DWORD, WNDENUMPROC, LPARAM>(pFunc, dwThreadId, lpfn, lParam);
     }
@@ -249,6 +273,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnumWindows(WNDENUMPROC lpEnumFunc, LPARAM lParam)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnumWindows);
         return Library::Call<BOOL, WNDENUMPROC, LPARAM >(pFunc, lpEnumFunc, lParam);
     }
@@ -256,6 +281,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::FindWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, FindWindow);
         return Library::Call<HWND, LPCTSTR, LPCTSTR>(pFunc, lpClassName, lpWindowName);
     }
@@ -263,6 +289,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::FindWindowExT(HWND hWndParent, HWND hWndChildAfter, LPCTSTR lpszClass, LPCTSTR lpszWindow)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, FindWindowEx);
         return Library::Call<HWND, HWND, HWND, LPCTSTR, LPCTSTR>(pFunc, hWndParent, hWndChildAfter, lpszClass, lpszWindow);
     }
@@ -270,6 +297,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetAltTabInfoT(HWND hwnd, int iItem, ::PALTTABINFO pati, LPTSTR pszItemText, UINT cchItemText)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetAltTabInfo);
         return Library::Call<BOOL, HWND, int, ::PALTTABINFO, LPTSTR, UINT>(pFunc, hwnd, iItem, pati, pszItemText, cchItemText);
     }
@@ -277,6 +305,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetAncestor(HWND hwnd, UINT gaFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetAncestor);
         return Library::Call<HWND, HWND, UINT>(pFunc, hwnd, gaFlags);
     }
@@ -284,6 +313,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetClientRect(HWND hWnd, ::LPRECT lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClientRect);
         return Library::Call<BOOL, HWND, ::LPRECT>(pFunc, hWnd, lpRect);
     }
@@ -291,6 +321,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetDesktopWindow(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDesktopWindow);
         return Library::Call<HWND>(pFunc);
     }
@@ -298,6 +329,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetForegroundWindow(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetForegroundWindow);
         return Library::Call<HWND>(pFunc);
     }
@@ -305,6 +337,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetGUIThreadInfo(DWORD idThread, ::LPGUITHREADINFO pgui)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGUIThreadInfo);
         return Library::Call<BOOL, DWORD, ::LPGUITHREADINFO>(pFunc, idThread, pgui);
     }
@@ -312,6 +345,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetLastActivePopup(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetLastActivePopup);
         return Library::Call<HWND, HWND>(pFunc, hWnd);
     }
@@ -319,6 +353,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetLayeredWindowAttributes(HWND hwnd, COLORREF* pcrKey, BYTE* pbAlpha, DWORD* pdwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetLayeredWindowAttributes);
         return Library::Call<BOOL, HWND, COLORREF*, BYTE*, DWORD*>(pFunc, hwnd, pcrKey, pbAlpha, pdwFlags);
     }
@@ -326,6 +361,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetParent(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetParent);
         return Library::Call<HWND, HWND>(pFunc, hWnd);
     }
@@ -333,6 +369,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetProcessDefaultLayout(DWORD* pdwDefaultLayout)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetProcessDefaultLayout);
         return Library::Call<BOOL, DWORD*>(pFunc, pdwDefaultLayout);
     }
@@ -340,6 +377,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetShellWindow(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetShellWindow);
         return Library::Call<HWND>(pFunc);
     }
@@ -347,6 +385,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetTitleBarInfo(HWND hwnd, ::PTITLEBARINFO pti)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetTitleBarInfo);
         return Library::Call<BOOL, HWND, ::PTITLEBARINFO>(pFunc, hwnd, pti);
     }
@@ -354,6 +393,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetTopWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetTopWindow);
         return Library::Call<HWND, HWND>(pFunc, hWnd);
     }
@@ -361,6 +401,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::GetWindow(HWND hWnd, UINT uCmd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindow);
         return Library::Call<HWND, HWND, UINT>(pFunc, hWnd, uCmd);
     }
@@ -368,6 +409,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetWindowInfo(HWND hwnd, ::PWINDOWINFO pwi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowInfo);
         return Library::Call<BOOL, HWND, ::PWINDOWINFO>(pFunc, hwnd, pwi);
     }
@@ -375,6 +417,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetWindowModuleFileNameT(HWND hwnd, LPTSTR pszFileName, UINT cchFileNameMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetWindowModuleFileName);
         return Library::Call<UINT, HWND, LPTSTR, UINT>(pFunc, hwnd, pszFileName, cchFileNameMax);
     }
@@ -382,6 +425,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetWindowPlacement(HWND hWnd, ::WINDOWPLACEMENT* lpwndpl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowPlacement);
         return Library::Call<BOOL, HWND, ::WINDOWPLACEMENT*>(pFunc, hWnd, lpwndpl);
     }
@@ -389,6 +433,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetWindowRect(HWND hWnd, ::LPRECT lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowRect);
         return Library::Call<BOOL, HWND, ::LPRECT>(pFunc, hWnd, lpRect);
     }
@@ -396,6 +441,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetWindowTextT(HWND hWnd, LPTSTR lpString, int nMaxCount)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetWindowText);
         return Library::Call<int, HWND, LPTSTR, int>(pFunc, hWnd, lpString, nMaxCount);
     }
@@ -403,6 +449,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetWindowTextLengthT(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetWindowTextLength);
         return Library::Call<int, HWND>(pFunc, hWnd);
     }
@@ -410,6 +457,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetWindowThreadProcessId(HWND hWnd, LPDWORD lpdwProcessId)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowThreadProcessId);
         return Library::Call<DWORD, HWND, LPDWORD>(pFunc, hWnd, lpdwProcessId);
     }
@@ -417,6 +465,7 @@ namespace qor { namespace win { namespace api {
     int User32::InternalGetWindowText(HWND hWnd, LPWSTR pString, int cchMaxCount)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InternalGetWindowText);
         return Library::Call<int, HWND, LPWSTR, int>(pFunc, hWnd, pString, cchMaxCount);
     }
@@ -424,6 +473,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsChild(HWND hWndParent, HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsChild);
         return Library::Call<BOOL, HWND, HWND>(pFunc, hWndParent, hWnd);
     }
@@ -431,6 +481,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsGUIThread(BOOL bConvert)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsGUIThread);
         return Library::Call<BOOL, BOOL>(pFunc, bConvert);
     }
@@ -438,6 +489,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsHungAppWindow(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsHungAppWindow);
         return Library::Call<BOOL, HWND>(pFunc, hwnd);
     }
@@ -445,6 +497,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsIconic(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsIconic);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -452,6 +505,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsProcessDPIAware(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsProcessDPIAware);
         return Library::Call<BOOL>(pFunc);
     }
@@ -459,6 +513,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWindow);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -466,6 +521,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWindowUnicode(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWindowUnicode);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -473,6 +529,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWindowVisible(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWindowVisible);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -480,6 +537,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsZoomed(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsZoomed);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -487,6 +545,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::LockSetForegroundWindow(UINT uLockCode)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LockSetForegroundWindow);
         return Library::Call<BOOL, UINT>(pFunc, uLockCode);
     }
@@ -494,6 +553,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::LogicalToPhysicalPoint(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LogicalToPhysicalPoint);
         //The SDK returns BOOL (winuser.h:9526) - FALSE when the point is not inside a physical display area of
         //this window's monitor - so the old void + Library::voidCall discarded a result the caller needs.
@@ -503,6 +563,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::LogicalToPhysicalPointForPerMonitorDPI(HWND hWnd, LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LogicalToPhysicalPointForPerMonitorDPI);
         return Library::Call<BOOL, HWND, LPPOINT>(pFunc, hWnd, lpPoint);
     }
@@ -510,6 +571,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MoveWindow);
         return Library::Call<BOOL, HWND, int, int, int, int, BOOL>(pFunc, hWnd, X, Y, nWidth, nHeight, bRepaint);
     }
@@ -517,6 +579,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::OpenIcon(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OpenIcon);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -524,6 +587,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PhysicalToLogicalPoint(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PhysicalToLogicalPoint);
         //The SDK returns BOOL (winuser.h:9533) - FALSE when the point is not inside the logical window area -
         //so the old void + Library::voidCall discarded a result the caller needs.
@@ -533,6 +597,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PhysicalToLogicalPointForPerMonitorDPI(HWND hWnd, LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PhysicalToLogicalPointForPerMonitorDPI);
         return Library::Call<BOOL, HWND, LPPOINT>(pFunc, hWnd, lpPoint);
     }
@@ -540,6 +605,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::RealChildWindowFromPoint(HWND hwndParent, ::POINT ptParentClientCoords)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RealChildWindowFromPoint);
         return Library::Call<HWND, HWND, ::POINT>(pFunc, hwndParent, ptParentClientCoords);
     }
@@ -547,6 +613,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::RealGetWindowClassT(HWND hwnd, LPTSTR ptszClassName, UINT cchClassNameMax)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RealGetWindowClass);
         return Library::Call<UINT, HWND, LPTSTR, UINT>(pFunc, hwnd, ptszClassName, cchClassNameMax);
     }
@@ -554,6 +621,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterShellHookWindow(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterShellHookWindow);
         return Library::Call<BOOL, HWND>(pFunc, hwnd);
     }
@@ -561,6 +629,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetForegroundWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetForegroundWindow);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -568,6 +637,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetLayeredWindowAttributes(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetLayeredWindowAttributes);
         return Library::Call<BOOL, HWND, COLORREF, BYTE, DWORD>(pFunc, hwnd, crKey, bAlpha, dwFlags);
     }
@@ -575,6 +645,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::SetParent(HWND hWndChild, HWND hWndNewParent)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetParent);
         return Library::Call<HWND, HWND, HWND>(pFunc, hWndChild, hWndNewParent);
     }
@@ -582,6 +653,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetProcessDefaultLayout(DWORD dwDefaultLayout)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetProcessDefaultLayout);
         return Library::Call<BOOL, DWORD>(pFunc, dwDefaultLayout);
     }
@@ -589,6 +661,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetProcessDPIAware(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetProcessDPIAware);
         return Library::Call<BOOL>(pFunc);
     }
@@ -596,6 +669,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowPlacement(HWND hWnd, const ::WINDOWPLACEMENT* lpwndpl)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowPlacement);
         return Library::Call<BOOL, HWND, const ::WINDOWPLACEMENT*>(pFunc, hWnd, lpwndpl);
     }
@@ -603,6 +677,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowPos);
         return Library::Call<BOOL, HWND, HWND, int, int, int, int, UINT>(pFunc, hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
     }
@@ -610,6 +685,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowTextT(HWND hWnd, LPCTSTR lpString)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetWindowText);
         return Library::Call<BOOL, HWND, LPCTSTR>(pFunc, hWnd, lpString);
     }
@@ -617,6 +693,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShowOwnedPopups(HWND hWnd, BOOL fShow)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShowOwnedPopups);
         return Library::Call<BOOL, HWND, BOOL>(pFunc, hWnd, fShow);
     }
@@ -624,6 +701,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShowWindow(HWND hWnd, int nCmdShow)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShowWindow);
         return Library::Call<BOOL, HWND, int>(pFunc, hWnd, nCmdShow);
     }
@@ -631,6 +709,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ShowWindowAsync(HWND hWnd, int nCmdShow)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShowWindowAsync);
         return Library::Call<BOOL, HWND, int>(pFunc, hWnd, nCmdShow);
     }
@@ -638,6 +717,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SoundSentry(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SoundSentry);
         return Library::Call<BOOL>(pFunc);
     }
@@ -645,6 +725,7 @@ namespace qor { namespace win { namespace api {
     void User32::SwitchToThisWindow(HWND hwnd, BOOL fUnknown)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SwitchToThisWindow);
         return Library::voidCall<HWND, BOOL>(pFunc, hwnd, fUnknown);
     }
@@ -652,6 +733,7 @@ namespace qor { namespace win { namespace api {
     WORD User32::TileWindows(HWND hwndParent, UINT wHow, const ::RECT* lpRect, UINT cKids, const HWND* lpKids)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TileWindows);
         return Library::Call<WORD, HWND, UINT, const ::RECT*, UINT, const HWND*>(pFunc, hwndParent, wHow, lpRect, cKids, lpKids);
     }
@@ -659,6 +741,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UpdateLayeredWindow(HWND hWnd, HDC hdcDst, ::POINT* pptDst, ::SIZE* psize, HDC hdcSrc, ::POINT* pptSrc, COLORREF crKey, ::BLENDFUNCTION* pblend, DWORD dwFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UpdateLayeredWindow);
         return Library::Call<BOOL, HWND, HDC, ::POINT*, ::SIZE*, HDC, ::POINT*, COLORREF, ::BLENDFUNCTION*, DWORD>(
             pFunc, hWnd, hdcDst, pptDst, psize, hdcSrc, pptSrc, crKey, pblend, dwFlags);
@@ -667,6 +750,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UpdateLayeredWindowIndirect(HWND hWnd, const ::UPDATELAYEREDWINDOWINFO* pULWInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UpdateLayeredWindowIndirect);
         return Library::Call<BOOL, HWND, const ::UPDATELAYEREDWINDOWINFO*>(pFunc, hWnd, pULWInfo);
     }
@@ -674,6 +758,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::WindowFromPhysicalPoint(::POINT Point)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WindowFromPhysicalPoint);
         return Library::Call<HWND, ::POINT>(pFunc, Point);
     }
@@ -681,6 +766,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::WindowFromPoint(::POINT Point)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WindowFromPoint);
         return Library::Call<HWND, ::POINT>(pFunc, Point);
     }
@@ -688,6 +774,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDpiForWindow(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDpiForWindow);
         return Library::Call<UINT, HWND>(pFunc, hwnd);
     }

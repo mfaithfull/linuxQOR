@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 8 Nov 2026
 //   (T6: the "//List Box functions" section declared three members and no TU defined any of them - new TU)
@@ -79,6 +80,7 @@ namespace qor { namespace win { namespace api {
     int User32::DlgDirListT(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DlgDirList);
         return Library::Call< int, HWND, LPTSTR, int, int, UINT >(pFunc, hDlg, lpPathSpec, nIDListBox, nIDStaticPath, uFileType);
     }
@@ -89,6 +91,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DlgDirSelectExT(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DlgDirSelectEx);
         return Library::Call< BOOL, HWND, LPTSTR, int, int >(pFunc, hwndDlg, lpString, chCount, idListBox);
     }
@@ -98,6 +101,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetListBoxInfo(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetListBoxInfo);
         return Library::Call< DWORD, HWND >(pFunc, hwnd);
     }

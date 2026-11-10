@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Reviewed 6 Nov 2026
 //   (T8 step 6, tranche 6b: the DPI / awareness family - 21 wrappers, new TU)
@@ -98,6 +99,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, AreDpiAwarenessContextsEqual);
         return Library::Call< BOOL, DPI_AWARENESS_CONTEXT, DPI_AWARENESS_CONTEXT >(pFunc, dpiContextA, dpiContextB);
     }
@@ -107,6 +109,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnableNonClientDpiScaling(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnableNonClientDpiScaling);
         return Library::Call< BOOL, HWND >(pFunc, hwnd);
     }
@@ -115,6 +118,7 @@ namespace qor { namespace win { namespace api {
     DPI_AWARENESS User32::GetAwarenessFromDpiAwarenessContext(DPI_AWARENESS_CONTEXT value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetAwarenessFromDpiAwarenessContext);
         return Library::Call< DPI_AWARENESS, DPI_AWARENESS_CONTEXT >(pFunc, value);
     }
@@ -126,6 +130,7 @@ namespace qor { namespace win { namespace api {
     DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS User32::GetDialogControlDpiChangeBehavior(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDialogControlDpiChangeBehavior);
         return Library::Call< DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS, HWND >(pFunc, hWnd);
     }
@@ -133,6 +138,7 @@ namespace qor { namespace win { namespace api {
     DIALOG_DPI_CHANGE_BEHAVIORS User32::GetDialogDpiChangeBehavior(HWND hDlg)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDialogDpiChangeBehavior);
         return Library::Call< DIALOG_DPI_CHANGE_BEHAVIORS, HWND >(pFunc, hDlg);
     }
@@ -143,6 +149,7 @@ namespace qor { namespace win { namespace api {
     DPI_AWARENESS_CONTEXT User32::GetDpiAwarenessContextForProcess(HANDLE hProcess)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDpiAwarenessContextForProcess);
         return Library::Call< DPI_AWARENESS_CONTEXT, HANDLE >(pFunc, hProcess);
     }
@@ -150,6 +157,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDpiForSystem(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDpiForSystem);
         return Library::Call< UINT >(pFunc);
     }
@@ -158,6 +166,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDpiFromDpiAwarenessContext(DPI_AWARENESS_CONTEXT value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDpiFromDpiAwarenessContext);
         return Library::Call< UINT, DPI_AWARENESS_CONTEXT >(pFunc, value);
     }
@@ -165,6 +174,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetSystemDpiForProcess(HANDLE hProcess)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSystemDpiForProcess);
         return Library::Call< UINT, HANDLE >(pFunc, hProcess);
     }
@@ -175,6 +185,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetSystemMetricsForDpi(int nIndex, UINT dpi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSystemMetricsForDpi);
         return Library::Call< int, int, UINT >(pFunc, nIndex, dpi);
     }
@@ -185,6 +196,7 @@ namespace qor { namespace win { namespace api {
     DPI_AWARENESS_CONTEXT User32::GetThreadDpiAwarenessContext(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetThreadDpiAwarenessContext);
         return Library::Call< DPI_AWARENESS_CONTEXT >(pFunc);
     }
@@ -192,6 +204,7 @@ namespace qor { namespace win { namespace api {
     DPI_HOSTING_BEHAVIOR User32::GetThreadDpiHostingBehavior(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetThreadDpiHostingBehavior);
         return Library::Call< DPI_HOSTING_BEHAVIOR >(pFunc);
     }
@@ -199,6 +212,7 @@ namespace qor { namespace win { namespace api {
     DPI_AWARENESS_CONTEXT User32::GetWindowDpiAwarenessContext(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowDpiAwarenessContext);
         return Library::Call< DPI_AWARENESS_CONTEXT, HWND >(pFunc, hwnd);
     }
@@ -206,6 +220,7 @@ namespace qor { namespace win { namespace api {
     DPI_HOSTING_BEHAVIOR User32::GetWindowDpiHostingBehavior(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowDpiHostingBehavior);
         return Library::Call< DPI_HOSTING_BEHAVIOR, HWND >(pFunc, hwnd);
     }
@@ -214,6 +229,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsValidDpiAwarenessContext);
         return Library::Call< BOOL, DPI_AWARENESS_CONTEXT >(pFunc, value);
     }
@@ -221,6 +237,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDialogControlDpiChangeBehavior(HWND hWnd, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS mask, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS values)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDialogControlDpiChangeBehavior);
         return Library::Call< BOOL, HWND, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS, DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS >(pFunc, hWnd, mask, values);
     }
@@ -228,6 +245,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetDialogDpiChangeBehavior(HWND hDlg, DIALOG_DPI_CHANGE_BEHAVIORS mask, DIALOG_DPI_CHANGE_BEHAVIORS values)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDialogDpiChangeBehavior);
         return Library::Call< BOOL, HWND, DIALOG_DPI_CHANGE_BEHAVIORS, DIALOG_DPI_CHANGE_BEHAVIORS >(pFunc, hDlg, mask, values);
     }
@@ -237,6 +255,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetProcessDpiAwarenessContext);
         return Library::Call< BOOL, DPI_AWARENESS_CONTEXT >(pFunc, value);
     }
@@ -244,6 +263,7 @@ namespace qor { namespace win { namespace api {
     DPI_AWARENESS_CONTEXT User32::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetThreadDpiAwarenessContext);
         return Library::Call< DPI_AWARENESS_CONTEXT, DPI_AWARENESS_CONTEXT >(pFunc, dpiContext);
     }
@@ -253,6 +273,7 @@ namespace qor { namespace win { namespace api {
     DPI_HOSTING_BEHAVIOR User32::SetThreadDpiHostingBehavior(DPI_HOSTING_BEHAVIOR value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetThreadDpiHostingBehavior);
         return Library::Call< DPI_HOSTING_BEHAVIOR, DPI_HOSTING_BEHAVIOR >(pFunc, value);
     }
@@ -264,6 +285,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SystemParametersInfoForDpi(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, UINT dpi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SystemParametersInfoForDpi);
         return Library::Call< BOOL, UINT, UINT, PVOID, UINT, UINT >(pFunc, uiAction, uiParam, pvParam, fWinIni, dpi);
     }

@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 9 Nov 2026
 //   (T9 step 9d: the "//Button Control functions" section declared 3 members non-static and no TU defined any of them - new TU)
@@ -87,6 +88,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckDlgButton);
         return Library::Call< BOOL, HWND, int, UINT >(pFunc, hDlg, nIDButton, uCheck);
     }
@@ -98,6 +100,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckRadioButton);
         return Library::Call< BOOL, HWND, int, int, int >(pFunc, hDlg, nIDFirstButton, nIDLastButton, nIDCheckButton);
     }
@@ -109,6 +112,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::IsDlgButtonChecked(HWND hDlg, int nIDButton)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsDlgButtonChecked);
         return Library::Call< UINT, HWND, int >(pFunc, hDlg, nIDButton);
     }

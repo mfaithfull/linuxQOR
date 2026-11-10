@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Reviewed 6 Nov 2026
 //   (T8 step 6, tranche 6c: the Touch / gesture family - 14 wrappers, new TU)
@@ -113,6 +114,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CloseGestureInfoHandle(HGESTUREINFO hGestureInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseGestureInfoHandle);
         return Library::Call< BOOL, HGESTUREINFO >(pFunc, hGestureInfo);
     }
@@ -123,6 +125,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CloseTouchInputHandle(HTOUCHINPUT hTouchInput)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseTouchInputHandle);
         return Library::Call< BOOL, HTOUCHINPUT >(pFunc, hTouchInput);
     }
@@ -134,6 +137,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetGestureConfig(HWND hwnd, DWORD dwReserved, DWORD dwFlags, PUINT pcIDs, PGESTURECONFIG pGestureConfig, UINT cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureConfig);
         return Library::Call< BOOL, HWND, DWORD, DWORD, PUINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, dwFlags, pcIDs, pGestureConfig, cbSize);
     }
@@ -143,6 +147,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetGestureExtraArgs(HGESTUREINFO hGestureInfo, UINT cbExtraArgs, PBYTE pExtraArgs)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureExtraArgs);
         return Library::Call< BOOL, HGESTUREINFO, UINT, PBYTE >(pFunc, hGestureInfo, cbExtraArgs, pExtraArgs);
     }
@@ -152,6 +157,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetGestureInfo(HGESTUREINFO hGestureInfo, PGESTUREINFO pGestureInfo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureInfo);
         return Library::Call< BOOL, HGESTUREINFO, PGESTUREINFO >(pFunc, hGestureInfo, pGestureInfo);
     }
@@ -162,6 +168,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetTouchInputInfo(HTOUCHINPUT hTouchInput, UINT cInputs, PTOUCHINPUT pInputs, int cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetTouchInputInfo);
         return Library::Call< BOOL, HTOUCHINPUT, UINT, PTOUCHINPUT, int >(pFunc, hTouchInput, cInputs, pInputs, cbSize);
     }
@@ -172,6 +179,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InitializeTouchInjection(UINT32 maxCount, DWORD dwMode)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InitializeTouchInjection);
         return Library::Call< BOOL, UINT32, DWORD >(pFunc, maxCount, dwMode);
     }
@@ -182,6 +190,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InjectTouchInput(UINT32 count, const POINTER_TOUCH_INFO *contacts)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InjectTouchInput);
         return Library::Call< BOOL, UINT32, const POINTER_TOUCH_INFO * >(pFunc, count, contacts);
     }
@@ -192,6 +201,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsTouchWindow(HWND hwnd, PULONG pulFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsTouchWindow);
         return Library::Call< BOOL, HWND, PULONG >(pFunc, hwnd, pulFlags);
     }
@@ -203,6 +213,7 @@ namespace qor { namespace win { namespace api {
     LRESULT User32::PackTouchHitTestingProximityEvaluation(const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, const TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PackTouchHitTestingProximityEvaluation);
         return Library::Call< LRESULT, const TOUCH_HIT_TESTING_INPUT *, const TOUCH_HIT_TESTING_PROXIMITY_EVALUATION * >(pFunc, pHitTestingInput, pProximityEval);
     }
@@ -213,6 +224,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterTouchHitTestingWindow(HWND hwnd, ULONG value)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterTouchHitTestingWindow);
         return Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, value);
     }
@@ -223,6 +235,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterTouchWindow(HWND hwnd, ULONG ulFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterTouchWindow);
         return Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, ulFlags);
     }
@@ -233,6 +246,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetGestureConfig(HWND hwnd, DWORD dwReserved, UINT cIDs, PGESTURECONFIG pGestureConfig, UINT cbSize)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetGestureConfig);
         return Library::Call< BOOL, HWND, DWORD, UINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, cIDs, pGestureConfig, cbSize);
     }
@@ -241,6 +255,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UnregisterTouchWindow(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterTouchWindow);
         return Library::Call< BOOL, HWND >(pFunc, hwnd);
     }

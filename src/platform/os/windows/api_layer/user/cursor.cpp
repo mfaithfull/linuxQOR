@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -53,6 +54,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ClipCursor(const RECT* lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ClipCursor);
         return Library::Call<BOOL, const RECT*>(pFunc, lpRect);
     }
@@ -60,6 +62,7 @@ namespace qor { namespace win { namespace api {
     HCURSOR User32::CreateCursor(HINSTANCE hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const VOID* pvANDPlane, const VOID* pvXORPlane)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateCursor);
         return Library::Call< HCURSOR, HINSTANCE, int, int, int, int, const VOID*, const VOID* >(pFunc, hInst, xHotSpot, yHotSpot, nWidth, nHeight, pvANDPlane, pvXORPlane);
     }
@@ -67,6 +70,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DestroyCursor(HCURSOR hCursor)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyCursor);
         return Library::Call< BOOL, HCURSOR >(pFunc, hCursor);
     }
@@ -74,6 +78,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetClipCursor(LPRECT lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipCursor);
         return Library::Call< BOOL, LPRECT >(pFunc, lpRect);
     }
@@ -81,6 +86,7 @@ namespace qor { namespace win { namespace api {
     HCURSOR User32::GetCursor(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCursor);
         return Library::Call< HCURSOR >(pFunc);
     }
@@ -88,6 +94,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetCursorInfo(PCURSORINFO pci)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCursorInfo);
         return Library::Call< BOOL, PCURSORINFO >(pFunc, pci);
     }
@@ -95,6 +102,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetCursorPos(LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCursorPos);
         return Library::Call< BOOL, LPPOINT >(pFunc, lpPoint);
     }
@@ -102,6 +110,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetPhysicalCursorPos(LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetPhysicalCursorPos);
         return Library::Call< BOOL, LPPOINT >(pFunc, lpPoint);
     }
@@ -109,6 +118,7 @@ namespace qor { namespace win { namespace api {
     HCURSOR User32::LoadCursorT(HINSTANCE hInstance, LPCTSTR lpCursorName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadCursor);
         return Library::Call< HCURSOR, HINSTANCE, LPCTSTR >(pFunc, hInstance, lpCursorName);
     }
@@ -116,6 +126,7 @@ namespace qor { namespace win { namespace api {
     HCURSOR User32::LoadCursorFromFileT(LPCTSTR lpFileName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadCursorFromFile);
         return Library::Call< HCURSOR, LPCTSTR >(pFunc, lpFileName);
     }
@@ -123,6 +134,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetCursorPos(int X, int Y)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCursorPos);
         return Library::Call< BOOL, int, int >(pFunc, X, Y);
     }
@@ -130,6 +142,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetPhysicalCursorPos(int X, int Y)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetPhysicalCursorPos);
         return Library::Call< BOOL, int, int >(pFunc, X, Y);
     }
@@ -137,6 +150,7 @@ namespace qor { namespace win { namespace api {
     int User32::ShowCursor(BOOL bShow)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShowCursor);
         return Library::Call< int, BOOL >(pFunc, bShow);
     }
@@ -144,6 +158,7 @@ namespace qor { namespace win { namespace api {
     HCURSOR User32::SetCursor(HCURSOR hCursor)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCursor);
         return Library::Call< HCURSOR, HCURSOR >(pFunc, hCursor);
     }
@@ -151,6 +166,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetSystemCursor(HCURSOR hcur, DWORD id)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetSystemCursor);
         return Library::Call< BOOL, HCURSOR, DWORD >(pFunc, hcur, id);
     }

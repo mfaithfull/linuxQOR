@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -35,6 +36,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ClientToScreen(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ClientToScreen);
         return Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
     }
@@ -42,6 +44,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ScreenToClient(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ScreenToClient);
         return Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
     }
@@ -49,6 +52,7 @@ namespace qor { namespace win { namespace api {
     int User32::MapWindowPoints(HWND hWndFrom, HWND hWndTo, ::LPPOINT lpPoints, UINT cPoints)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MapWindowPoints);
         return Library::Call< int, HWND, HWND, ::LPPOINT, UINT >(pFunc, hWndFrom, hWndTo, lpPoints, cPoints);
     }

@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -64,6 +65,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CalculatePopupWindowPosition(const ::POINT *anchorPoint, const ::SIZE *windowSize, UINT flags, ::RECT *excludeRect, ::RECT *popupWindowPosition)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CalculatePopupWindowPosition);
         return Library::Call< BOOL, const ::POINT *, const ::SIZE *, UINT, ::RECT *, ::RECT * >(pFunc, anchorPoint, windowSize, flags, excludeRect, popupWindowPosition);
     }
@@ -74,6 +76,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ChangeMenuT(HMENU hMenu, UINT cmd, LPCWSTR lpszNewItem, UINT cmdInsert, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, ChangeMenu);
         return Library::Call< BOOL, HMENU, UINT, LPCWSTR, UINT, UINT >(pFunc, hMenu, cmd, lpszNewItem, cmdInsert, flags);
     }
@@ -83,6 +86,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ChangeWindowMessageFilterEx(HWND hwnd, UINT message, DWORD action, PCHANGEFILTERSTRUCT pChangeFilterStruct)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ChangeWindowMessageFilterEx);
         return Library::Call< BOOL, HWND, UINT, DWORD, PCHANGEFILTERSTRUCT >(pFunc, hwnd, message, action, pChangeFilterStruct);
     }
@@ -92,6 +96,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EvaluateProximityToPolygon(UINT32 numVertices, const ::POINT *controlPolygon, const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EvaluateProximityToPolygon);
         return Library::Call< BOOL, UINT32, const ::POINT *, const TOUCH_HIT_TESTING_INPUT *, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION * >(pFunc, numVertices, controlPolygon, pHitTestingInput, pProximityEval);
     }
@@ -100,6 +105,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EvaluateProximityToRect(const ::RECT *controlBoundingBox, const TOUCH_HIT_TESTING_INPUT *pHitTestingInput, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION *pProximityEval)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EvaluateProximityToRect);
         return Library::Call< BOOL, const ::RECT *, const TOUCH_HIT_TESTING_INPUT *, TOUCH_HIT_TESTING_PROXIMITY_EVALUATION * >(pFunc, controlBoundingBox, pHitTestingInput, pProximityEval);
     }
@@ -108,6 +114,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetAutoRotationState(PAR_STATE pState)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetAutoRotationState);
         return Library::Call< BOOL, PAR_STATE >(pFunc, pState);
     }
@@ -115,6 +122,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetCIMSSM(INPUT_MESSAGE_SOURCE *inputMessageSource)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCIMSSM);
         return Library::Call< BOOL, INPUT_MESSAGE_SOURCE * >(pFunc, inputMessageSource);
     }
@@ -123,6 +131,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetClipboardMetadata(UINT format, PGETCLIPBMETADATA metadata)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetClipboardMetadata);
         return Library::Call< BOOL, UINT, PGETCLIPBMETADATA >(pFunc, format, metadata);
     }
@@ -130,6 +139,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetCurrentInputMessageSource(INPUT_MESSAGE_SOURCE *inputMessageSource)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetCurrentInputMessageSource);
         return Library::Call< BOOL, INPUT_MESSAGE_SOURCE * >(pFunc, inputMessageSource);
     }
@@ -139,6 +149,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::GetUnpredictedMessagePos(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUnpredictedMessagePos);
         return Library::Call< DWORD >(pFunc);
     }
@@ -147,6 +158,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetWindowDisplayAffinity(HWND hWnd, DWORD* pdwAffinity)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowDisplayAffinity);
         return Library::Call< BOOL, HWND, DWORD * >(pFunc, hWnd, pdwAffinity);
     }
@@ -157,6 +169,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetWindowFeedbackSetting(HWND hwnd, FEEDBACK_TYPE feedback, DWORD dwFlags, UINT32* pSize, VOID* config)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowFeedbackSetting);
         return Library::Call< BOOL, HWND, FEEDBACK_TYPE, DWORD, UINT32 *, VOID * >(pFunc, hwnd, feedback, dwFlags, pSize, config);
     }
@@ -165,6 +178,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InheritWindowMonitor(HWND hwnd, HWND hwndInherit)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InheritWindowMonitor);
         return Library::Call< BOOL, HWND, HWND >(pFunc, hwnd, hwndInherit);
     }
@@ -173,6 +187,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsImmersiveProcess(HANDLE hProcess)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsImmersiveProcess);
         return Library::Call< BOOL, HANDLE >(pFunc, hProcess);
     }
@@ -181,6 +196,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsWindowArranged(HWND hwnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsWindowArranged);
         return Library::Call< BOOL, HWND >(pFunc, hwnd);
     }
@@ -189,6 +205,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RegisterForTooltipDismissNotification(HWND hWnd, TOOLTIP_DISMISS_FLAGS tdFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterForTooltipDismissNotification);
         return Library::Call< BOOL, HWND, TOOLTIP_DISMISS_FLAGS >(pFunc, hWnd, tdFlags);
     }
@@ -197,6 +214,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetAdditionalForegroundBoostProcesses(HWND topLevelWindow, DWORD processHandleCount, HANDLE *processHandleArray)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetAdditionalForegroundBoostProcesses);
         return Library::Call< BOOL, HWND, DWORD, HANDLE * >(pFunc, topLevelWindow, processHandleCount, processHandleArray);
     }
@@ -206,6 +224,7 @@ namespace qor { namespace win { namespace api {
     UINT_PTR User32::SetCoalescableTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc, ULONG uToleranceDelay)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetCoalescableTimer);
         return Library::Call< UINT_PTR, HWND, UINT_PTR, UINT, TIMERPROC, ULONG >(pFunc, hWnd, nIDEvent, uElapse, lpTimerFunc, uToleranceDelay);
     }
@@ -214,6 +233,7 @@ namespace qor { namespace win { namespace api {
     void User32::SetDebugErrorLevel(DWORD dwLevel)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDebugErrorLevel);
         Library::voidCall< DWORD >(pFunc, dwLevel);
     }
@@ -222,6 +242,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetProcessRestrictionExemption(BOOL fEnableExemption)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetProcessRestrictionExemption);
         return Library::Call< BOOL, BOOL >(pFunc, fEnableExemption);
     }
@@ -230,6 +251,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::SetThreadCursorCreationScaling(UINT cursorDpi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetThreadCursorCreationScaling);
         return Library::Call< UINT, UINT >(pFunc, cursorDpi);
     }
@@ -238,6 +260,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowDisplayAffinity);
         return Library::Call< BOOL, HWND, DWORD >(pFunc, hWnd, dwAffinity);
     }
@@ -248,6 +271,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetWindowFeedbackSetting(HWND hwnd, FEEDBACK_TYPE feedback, DWORD dwFlags, UINT32 size, const VOID* configuration)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowFeedbackSetting);
         return Library::Call< BOOL, HWND, FEEDBACK_TYPE, DWORD, UINT32, const VOID * >(pFunc, hwnd, feedback, dwFlags, size, configuration);
     }

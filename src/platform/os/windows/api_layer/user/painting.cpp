@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -85,6 +86,7 @@ namespace qor { namespace win { namespace api {
     HDC User32::BeginPaint(HWND hWnd, ::LPPAINTSTRUCT lpPaint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, BeginPaint);
         return Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hWnd, lpPaint);
     }
@@ -92,6 +94,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawAnimatedRects(HWND hwnd, int idAni, const::RECT* lprcFrom, const::RECT* lprcTo)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawAnimatedRects);
         return Library::Call<BOOL, HWND, int, const ::RECT*, const ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
     }
@@ -99,6 +102,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprect, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawCaption);
         return Library::Call<BOOL, HWND, HDC, ::LPCRECT, UINT>(pFunc, hwnd, hdc, lprect, flags);
     }
@@ -106,6 +110,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawEdge(HDC hdc, ::LPRECT qrc, UINT edge, UINT grfFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawEdge);
         return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, qrc, edge, grfFlags);
     }
@@ -113,6 +118,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawFocusRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawFocusRect);
         return Library::Call<BOOL, HDC, const ::RECT*>(pFunc, hDC, lprc);
     }
@@ -120,6 +126,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawFrameControl(HDC hdc, ::LPRECT lprc, UINT uType, UINT uState)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawFrameControl);
         return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, lprc, uType, uState);
     }
@@ -127,6 +134,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawStateT(HDC hdc, HBRUSH hbrFore, ::DRAWSTATEPROC qfnCallBack, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DrawState);
         return Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbrFore, qfnCallBack, lData, wData, x, y, cx, cy, uFlags);
     }
@@ -134,6 +142,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EndPaint(HWND hWnd, const::PAINTSTRUCT* lpPaint)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndPaint);
         return Library::Call<BOOL, HWND, const ::PAINTSTRUCT*>(pFunc, hWnd, lpPaint);
     }
@@ -141,6 +150,7 @@ namespace qor { namespace win { namespace api {
     int User32::ExcludeUpdateRgn(HDC hDC, HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ExcludeUpdateRgn);
         return Library::Call<int, HDC, HWND>(pFunc, hDC, hWnd);
     }
@@ -148,6 +158,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetUpdateRect(HWND hWnd, ::LPRECT lpRect, BOOL bErase)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUpdateRect);
         return Library::Call<BOOL, HWND, ::LPRECT, BOOL>(pFunc, hWnd, lpRect, bErase);
     }
@@ -155,6 +166,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetUpdateRgn(HWND hWnd, HRGN hRgn, BOOL bErase)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUpdateRgn);
         return Library::Call<int, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bErase);
     }
@@ -162,6 +174,7 @@ namespace qor { namespace win { namespace api {
     HDC User32::GetWindowDC(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowDC);
         return Library::Call<HDC, HWND>(pFunc, hWnd);
     }
@@ -169,6 +182,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetWindowRgn(HWND hWnd, HRGN hRgn)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowRgn);
         return Library::Call<int, HWND, HRGN>(pFunc, hWnd, hRgn);
     }
@@ -176,6 +190,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetWindowRgnBox(HWND hWnd, ::LPRECT lprc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowRgnBox);
         return Library::Call<int, HWND, ::LPRECT>(pFunc, hWnd, lprc);
     }
@@ -183,6 +198,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GrayStringT(HDC hDC, HBRUSH hBrush, ::GRAYSTRINGPROC lpOutputFunc, LPARAM lpData, int nCount, int X, int Y, int nWidth, int nHeight)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GrayString);
         return Library::Call<BOOL, HDC, HBRUSH, GRAYSTRINGPROC, LPARAM, int, int, int, int, int>(pFunc, hDC, hBrush, lpOutputFunc, lpData, nCount, X, Y, nWidth, nHeight);
     }
@@ -190,6 +206,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InvalidateRect(HWND hWnd, const::RECT* lpRect, BOOL bErase)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InvalidateRect);
         return Library::Call<BOOL, HWND, const ::RECT*, BOOL>(pFunc, hWnd, lpRect, bErase);
     }
@@ -197,6 +214,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InvalidateRgn(HWND hWnd, HRGN hRgn, BOOL bErase)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InvalidateRgn);
         return Library::Call<BOOL, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bErase);
     }
@@ -204,6 +222,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::LockWindowUpdate(HWND hWndLock)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LockWindowUpdate);
         return Library::Call<BOOL, HWND>(pFunc, hWndLock);
     }
@@ -211,6 +230,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::PaintDesktop(HDC hdc)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PaintDesktop);
         return Library::Call<BOOL, HDC>(pFunc, hdc);
     }
@@ -218,6 +238,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RedrawWindow(HWND hWnd, const::RECT* lprcUpdate, HRGN hrgnUpdate, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RedrawWindow);
         return Library::Call<BOOL, HWND, const ::RECT*, HRGN, UINT>(pFunc, hWnd, lprcUpdate, hrgnUpdate, flags);
     }
@@ -225,6 +246,7 @@ namespace qor { namespace win { namespace api {
     int User32::SetWindowRgn(HWND hWnd, HRGN hRgn, BOOL bRedraw)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowRgn);
         return Library::Call<int, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bRedraw);
     }
@@ -232,6 +254,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::UpdateWindow(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UpdateWindow);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -239,6 +262,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ValidateRect(HWND hWnd, const::RECT* lpRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ValidateRect);
         return Library::Call<BOOL, HWND, const ::RECT*>(pFunc, hWnd, lpRect);
     }
@@ -246,6 +270,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ValidateRgn(HWND hWnd, HRGN hRgn)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ValidateRgn);
         return Library::Call<BOOL, HWND, HRGN>(pFunc, hWnd, hRgn);
     }
@@ -253,6 +278,7 @@ namespace qor { namespace win { namespace api {
     HWND User32::WindowFromDC(HDC hDC)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, WindowFromDC);
         return Library::Call<HWND, HDC>(pFunc, hDC);
     }

@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //=== api_layer conventions ========================================= Added 8 Nov 2026
 //   (T1: the two declared-but-undefined members in the "//Authorization functions" section - new TU)
@@ -49,6 +50,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSD, DWORD nLength, LPDWORD lpnLengthNeeded)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUserObjectSecurity);
         return Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR, DWORD, LPDWORD >(pFunc, hObj, pSIRequested, pSD, nLength, lpnLengthNeeded);
     }
@@ -59,6 +61,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetUserObjectSecurity);
         return Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR >(pFunc, hObj, pSIRequested, pSID);
     }

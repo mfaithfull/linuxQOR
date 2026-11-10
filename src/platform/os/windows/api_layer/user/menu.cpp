@@ -5,6 +5,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/flyers/error/error.h"
+#include "../kernel/errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
@@ -85,6 +86,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::AppendMenuT(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, AppendMenu);
         return Library::Call<BOOL, HMENU, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uFlags, uIDNewItem, lpNewItem);
     }
@@ -92,6 +94,7 @@ namespace qor { namespace win { namespace api {
     DWORD User32::CheckMenuItem(HMENU hMenu, UINT uIDCheckItem, UINT uCheck)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckMenuItem);
         return Library::Call<DWORD, HMENU, UINT, UINT>(pFunc, hMenu, uIDCheckItem, uCheck);
     }
@@ -99,6 +102,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::CheckMenuRadioItem(HMENU hmenu, UINT first, UINT last, UINT check, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckMenuRadioItem);
         return Library::Call<BOOL, HMENU, UINT, UINT, UINT, UINT>(pFunc, hmenu, first, last, check, flags);
     }
@@ -106,6 +110,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::CreateMenu(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateMenu);
         return Library::Call<HMENU>(pFunc);
     }
@@ -113,6 +118,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::CreatePopupMenu(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreatePopupMenu);
         return Library::Call<HMENU>(pFunc);
     }
@@ -120,6 +126,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DeleteMenu(HMENU hMenu, UINT uPosition, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DeleteMenu);
         return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
     }
@@ -127,6 +134,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DestroyMenu(HMENU hMenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyMenu);
         return Library::Call<BOOL, HMENU>(pFunc, hMenu);
     }
@@ -134,6 +142,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::DrawMenuBar(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawMenuBar);
         return Library::Call<BOOL, HWND>(pFunc, hWnd);
     }
@@ -141,6 +150,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EnableMenuItem(HMENU hMenu, UINT uIDEnableItem, UINT uEnable)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnableMenuItem);
         return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uIDEnableItem, uEnable);
     }
@@ -148,6 +158,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::EndMenu(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndMenu);
         return Library::Call<BOOL>(pFunc);
     }
@@ -155,6 +166,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::GetMenu(HWND hWnd)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenu);
         return Library::Call<HMENU, HWND>(pFunc, hWnd);
     }
@@ -162,6 +174,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetMenuBarInfo(HWND hwnd, LONG idObject, LONG idItem, PMENUBARINFO pmbi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuBarInfo);
         return Library::Call<BOOL, HWND, LONG, LONG, PMENUBARINFO>(pFunc, hwnd, idObject, idItem, pmbi);
     }
@@ -169,6 +182,7 @@ namespace qor { namespace win { namespace api {
     LONG User32::GetMenuCheckMarkDimensions(void)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuCheckMarkDimensions);
         return Library::Call<LONG>(pFunc);
     }
@@ -176,6 +190,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetMenuDefaultItem(HMENU hMenu, UINT fByPos, UINT gmdiFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuDefaultItem);
         return Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, fByPos, gmdiFlags);
     }
@@ -183,6 +198,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuInfo);
         return Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
     }
@@ -190,6 +206,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetMenuItemCount(HMENU hMenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemCount);
         return Library::Call<int, HMENU>(pFunc, hMenu);
     }
@@ -197,6 +214,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetMenuItemID(HMENU hMenu, int nPos)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemID);
         return Library::Call<UINT, HMENU, int>(pFunc, hMenu, nPos);
     }
@@ -204,6 +222,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPosition, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMenuItemInfo);
         return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmii);
     }
@@ -211,6 +230,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::GetMenuItemRect(HWND hWnd, HMENU hMenu, UINT uItem, ::LPRECT lprcItem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemRect);
         return Library::Call<BOOL, HWND, HMENU, UINT, ::LPRECT>(pFunc, hWnd, hMenu, uItem, lprcItem);
     }
@@ -218,6 +238,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetMenuState(HMENU hMenu, UINT uId, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuState);
         return Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, uId, uFlags);
     }
@@ -225,6 +246,7 @@ namespace qor { namespace win { namespace api {
     int User32::GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int cchMax, UINT flags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMenuString);
         return Library::Call<int, HMENU, UINT, LPTSTR, int, UINT>(pFunc, hMenu, uIDItem, lpString, cchMax, flags);
     }
@@ -232,6 +254,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::GetSubMenu(HMENU hMenu, int nPos)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSubMenu);
         return Library::Call<HMENU, HMENU, int>(pFunc, hMenu, nPos);
     }
@@ -239,6 +262,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::GetSystemMenu(HWND hWnd, BOOL bRevert)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSystemMenu);
         return Library::Call<HMENU, HWND, BOOL>(pFunc, hWnd, bRevert);
     }
@@ -246,6 +270,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::HiliteMenuItem(HWND hWnd, HMENU hMenu, UINT uIDHiliteItem, UINT uHilite)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, HiliteMenuItem);
         return Library::Call<BOOL, HWND, HMENU, UINT, UINT>(pFunc, hWnd, hMenu, uIDHiliteItem, uHilite);
     }
@@ -253,6 +278,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, InsertMenu);
         return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
     }
@@ -260,6 +286,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::InsertMenuItemT(HMENU hmenu, UINT item, BOOL fByPosition, LPCMENUITEMINFO lpmi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, InsertMenuItem);
         return Library::Call<BOOL, HMENU, UINT, BOOL, LPCMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmi);
     }
@@ -267,6 +294,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::IsMenu(HMENU hMenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, IsMenu);
         return Library::Call<BOOL, HMENU>(pFunc, hMenu);
     }
@@ -274,6 +302,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::LoadMenuT(HINSTANCE hInstance, LPCTSTR lpMenuName)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadMenu);
         return Library::Call<HMENU, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpMenuName);
     }
@@ -281,6 +310,7 @@ namespace qor { namespace win { namespace api {
     HMENU User32::LoadMenuIndirectT(const MENUTEMPLATE* lpMenuTemplate)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadMenuIndirect);
         return Library::Call<HMENU, const MENUTEMPLATE*>(pFunc, lpMenuTemplate);
     }
@@ -288,6 +318,7 @@ namespace qor { namespace win { namespace api {
     int User32::MenuItemFromPoint(HWND hWnd, HMENU hMenu, POINT ptScreen)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MenuItemFromPoint);
         return Library::Call<int, HWND, HMENU, POINT>(pFunc, hWnd, hMenu, ptScreen);
     }
@@ -295,6 +326,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::ModifyMenuT(HMENU hMnu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, ModifyMenu);
         return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMnu, uPosition, uFlags, uIDNewItem, lpNewItem);
     }
@@ -302,6 +334,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::RemoveMenu(HMENU hMenu, UINT uPosition, UINT uFlags)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RemoveMenu);
         return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
     }
@@ -309,6 +342,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenu(HWND hWnd, HMENU hMenu)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenu);
         return Library::Call<BOOL, HWND, HMENU>(pFunc, hWnd, hMenu);
     }
@@ -316,6 +350,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenuDefaultItem(HMENU hMenu, UINT uItem, UINT fByPos)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuDefaultItem);
         return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uItem, fByPos);
     }
@@ -323,6 +358,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuInfo);
         return Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
     }
@@ -330,6 +366,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenuItemBitmaps(HMENU hMenu, UINT uPosition, UINT uFlags, HBITMAP hBitmapUnchecked, HBITMAP hBitmapChecked)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuItemBitmaps);
         return Library::Call<BOOL, HMENU, UINT, UINT, HBITMAP, HBITMAP>(pFunc, hMenu, uPosition, uFlags, hBitmapUnchecked, hBitmapChecked);
     }
@@ -337,6 +374,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::SetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPositon, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetMenuItemInfo);
         return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPositon, lpmii);
     }
@@ -344,6 +382,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, const RECT* prcRect)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TrackPopupMenu);
         return Library::Call<BOOL, HMENU, UINT, int, int, int, HWND, const RECT*>(pFunc, hMenu, uFlags, x, y, nReserved, hWnd, prcRect);
     }
@@ -351,6 +390,7 @@ namespace qor { namespace win { namespace api {
     BOOL User32::TrackPopupMenuEx(HMENU hMenu, UINT uFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TrackPopupMenuEx);
         return Library::Call<BOOL, HMENU, UINT, int, int, HWND, ::LPTPMPARAMS>(pFunc, hMenu, uFlags, x, y, hwnd, lptpm);
     }
