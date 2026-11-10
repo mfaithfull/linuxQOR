@@ -60,6 +60,32 @@ namespace qor{ namespace platform { namespace win{
         return new_ref<DeviceContext>(PrimitiveHandle(GDI32::CreateCompatibleDC(nullptr)), true);
     }
 
+    //U22 - the release route this class feeds calls ReleaseDC with a NULL HWND, so the DC is leaked.
+    //(Note landed by the winqor_api_user review; its entry is src/platform/os/windows/api_layer/user/registers/u22.md,
+    //opened 30 Oct 2026 (session 11) and closed 11 Nov 2026 by decision D43. The cites below are that entry's,
+    //carried as written - nothing in this file was re-audited for them.)
+    //This is the class's only ReleaseDC call, and it pairs m_hWnd with m_handle. Nothing here sets m_hWnd
+    //besides the two FromWindow factories just above; the default ctor and the handle ctor both leave it 0,
+    //and PerThread::DeviceContextFromHandle (ui/gui/perthread.cpp:163-175) runs the handle ctor - so a
+    //DeviceContext obtained that way holds a real window DC against m_hWnd == 0.
+    //WindowController::GetADC() (ui/gui/controllers/windowcontroller.cpp:612-622) and GetADC(rgn, flags)
+    //(:624-633) are exactly that route: User32::GetDC (:615) / GetDCEx (:627), then DeviceContextFromHandle
+    //(:618), then dc->MustRelease() (:619), so ~DeviceContext runs Release() and this call becomes
+    //ReleaseDC(NULL, hdc). WindowController::GetDC() (:550-560) has the same shape over User32::GetWindowDC
+    //(:553). Microsoft requires the hWnd/hDC pair to match and returns 0 when it does not, so the DC is never
+    //returned to the window it belongs to - one GDI resource leak per such call. All four sites are compiled
+    //and the only in-tree callers are examples/experimental/osspecific/windows/mainwindow/mainwindow.cpp:80
+    //and :84, which is a built project. PaintSession is the one correct consumer: its ctor
+    //(ui/gui/painting/paintsession.cpp:38-43) pairs BeginPaint (:41) with the ~PaintSession EndPaint (:47)
+    //on the same PAINTSTRUCT and never sets MustRelease, so no ReleaseDC runs on that route.
+    //This member is not the defect to fix here - Release() passes on what the object was given, and a
+    //faithful ReleaseDC(NULL, hdc) is what the SDK contract rejects with 0. The pairing is wrong at the
+    //callers above, which are winqor_gui source: whoever sets MustRelease() without an HWND has nowhere to
+    //get one from, and giving it one is a behaviour change in this library's callers, not in this class.
+    //That is why the winqor_api_user review records this surface and never edits it (the U20 rule), and why
+    //U22 closes as "cannot be fixed within winqor_api_user" - the fix belongs to the call sites, so the
+    //answer to U22 is this note, left where the error actually is.
+
     int DeviceContext::Release()
     {
         return User32::ReleaseDC((HWND)(m_hWnd.Use()), (HDC)(m_handle.Use()));

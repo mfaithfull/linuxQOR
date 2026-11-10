@@ -85,5 +85,7 @@ Decisions:
     File: ./decisions/D41.md
   - D42: U21 - the folder's sections and TUs group members by consumer subsystem, not by the SDK's feature-macro family regions: TU's do not match SDK families exactly by design (a section that over-promises its label, a family split across sections/TUs and an audit-from-one-TU under-count are expected shape; 0 correctness defects; the "not even declared" collateral is discharged by T8 6f/6g and ScrollChildren is prototype-less under D18's scope line) - POLICY (11 Nov 2026), CLOSES U21, NO CODE CHANGE
     File: ./decisions/D42.md
+  - D43: U22 - the DeviceContext release route feeds ReleaseDC a NULL HWND (m_hWnd is set only by the two FromWindow factories, so a context built by PerThread::DeviceContextFromHandle releases as ReleaseDC(NULL, hdc) and the DC leaks): U22's deliverable is a note at the Release() member of ui/gui/gdiobjects/devicecontext.cpp, the source where the error actually is, and U22 closes as cannot be fixed within winqor_api_user (the wrapper is a faithful ReleaseDC pass-through; the HWND/DC pairing is wrong at the winqor_gui callers, another library's behaviour change - the U20 rule) - POLICY (11 Nov 2026), CLOSES U22, NO CODE CHANGE (comment-only note, no fact re-verified, no gate run)
+    File: ./decisions/D43.md
 
 ---
