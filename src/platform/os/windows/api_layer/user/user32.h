@@ -503,42 +503,6 @@ namespace qor { namespace win { namespace api {
         static LRESULT DefMDIChildProcT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
         static BOOL TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg);
 
-        //Dynamic Data Exchange functions
-        BOOL DdeAbandonTransaction(DWORD idInst, HCONV hConv, DWORD idTransaction) const;
-        LPBYTE DdeAccessData(HDDEDATA hData, LPDWORD pcbDataSize, DWORD idInst) const;
-        BOOL DdeUnaccessData(HDDEDATA hData, DWORD idInst) const;
-        HDDEDATA DdeAddData(HDDEDATA hData, LPBYTE pSrc, DWORD cb, DWORD cbOff, DWORD idInst) const;
-        HDDEDATA DdeClientTransaction(LPBYTE pData, DWORD cbData, HCONV hConv, HSZ hszItem, UINT wFmt, UINT wType, DWORD dwTimeout, LPDWORD pdwResult, DWORD idInst) const;
-        int DdeCmpStringHandles(HSZ hsz1, HSZ hsz2) const;
-        HCONV DdeConnect(DWORD idInst, HSZ hszService, HSZ hszTopic, PCONVCONTEXT pCC) const;
-        HCONVLIST DdeConnectList(DWORD idInst, HSZ hszService, HSZ hszTopic, HCONVLIST hConvList, PCONVCONTEXT pCC) const;
-        HDDEDATA DdeCreateDataHandle(DWORD idInst, LPBYTE pSrc, DWORD cb, DWORD cbOff, HSZ hszItem, UINT wFmt, UINT afCmd) const;
-        HSZ mxDdeCreateStringHandle(DWORD idInst, LPTSTR psz, int iCodePage) const;
-        BOOL DdeDisconnect(HCONV hConv, DWORD idInst) const;
-        BOOL DdeDisconnectList(HCONVLIST hConvList, DWORD idInst) const;
-        BOOL DdeEnableCallback(DWORD idInst, HCONV hConv, UINT wCmd) const;
-        BOOL DdeFreeDataHandle(HDDEDATA hData, DWORD idInst) const;
-        BOOL DdeFreeStringHandle(DWORD idInst, HSZ hsz) const;
-        DWORD DdeGetData(HDDEDATA hData, LPBYTE pDst, DWORD cbMax, DWORD cbOff, DWORD idInst) const;
-        UINT DdeGetLastError(DWORD idInst) const;
-        BOOL DdeImpersonateClient(HCONV hConv, DWORD idInst) const;
-        UINT DdeInitialize(LPDWORD pidInst, PFNCALLBACK pfnCallback, DWORD afCmd, DWORD ulRes) const;
-        BOOL DdeKeepStringHandle(DWORD idInst, HSZ hsz) const;
-        HDDEDATA DdeNameService(DWORD idInst, UINT hsz1, UINT hsz2, UINT afCmd) const;
-        BOOL DdePostAdvise(DWORD idInst, HSZ hszTopic, HSZ hszItem) const;
-        UINT DdeQueryConvInfo(HCONV hConv, DWORD idTransaction, PCONVINFO pConvInfo, DWORD idInst) const;
-        HCONV DdeQueryNextServer(HCONVLIST hConvList, HCONV hConvPrev) const;
-        DWORD DdeQueryString(DWORD idInst, HSZ hsz, LPTSTR psz, DWORD cchMax, int iCodePage) const;
-        HCONV DdeReconnect(HCONV hConv, DWORD idInst) const;
-        BOOL DdeSetQualityOfService(HWND hwndClient, const SECURITY_QUALITY_OF_SERVICE* pqosNew, PSECURITY_QUALITY_OF_SERVICE pqosPrev) const;
-        BOOL DdeSetUserHandle(HCONV hConv, DWORD id, DWORD_PTR hUser, DWORD idInst) const;
-        BOOL DdeUninitialize(DWORD idInst) const;
-        BOOL FreeDDElParam(UINT msg, LPARAM lParam) const;
-        LPARAM PackDDElParam(UINT msg, UINT_PTR uiLo, UINT_PTR uiHi) const;
-        BOOL ImpersonateDdeClientWindow(HWND hWndClient, HWND hWndServer) const;
-        LPARAM ReuseDDElParam(LPARAM lParam, UINT msgIn, UINT msgOut, UINT_PTR uiLo, UINT_PTR uiHi) const;
-        BOOL UnpackDDElParam(UINT msg, LPARAM lParam, PUINT_PTR puiLo, PUINT_PTR puiHi) const;
-
         //Raw Input functions
         static LRESULT DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader);
         static UINT GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);

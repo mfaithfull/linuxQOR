@@ -67,4 +67,6 @@ Decisions:
     File: ./decisions/D32.md
   - D33: T9 step 9g - wrap the 1 //Printing functions member in a new printing.cpp TU, put static on it and bind qor_pp_useswinapi bare (the bare stem IS the export and the SDK puts no switch on it) - ACTION (9 Nov 2026)
     File: ./decisions/D33.md
+  - D34: T9 step 9h - delete the 34-member //Dynamic Data Exchange functions block from user32.h (the family is outside D18's documented set - 0 of the 34 in um\WinUser.h, 27 in um\ddeml.h, 7 in neither, and the 34 `) const;` spellings copy no SDK prototype) - ACTION (9 Nov 2026)
+    File: ./decisions/D34.md
 ---

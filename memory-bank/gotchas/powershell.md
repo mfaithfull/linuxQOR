@@ -79,4 +79,20 @@ Type: Context
   (`$all = Get-Content ...; $all[23..31]`) or with a cmdlet (`Get-Content ... | Select-Object -Skip 23 -First 9`). Same class
   as the earlier `For-Each` typo: the parse dies before the scan runs, so the "empty result" you see next is not a finding
   (9 Nov 2026, reading `memory-bank/activeContext.md` at the 9g close).
+- **A nested `Where-Object` shadows the outer `$_`, and a never-assigned `$l` makes the set difference read "everything differs"**
+  The standing all-libraries gate diff (`_tmp_t9_9g_apialldiff.ps1`, cloned into `_tmp_t9_9h_apialldiff.ps1`) computes
+  "diagnostics only in post" as `@($post | Where-Object { ($_ -match 'warning C|error C') -and (@($pre | Where-Object { $_ -eq $l }).Count -eq 0) })`:
+  the inner `$_` is the INNER item, and `$l` is never assigned in that expression - it is whatever an earlier
+  `foreach($l in ...)` loop last left in it. On the 9h close, whose pre and post logs are **byte-identical** (SHA-256
+  equal), that diff printed `only_in_post_count=166` and `only_in_post` = every diagnostic, plus the mirror 166 for
+  pre. A full-count difference on logs you can hash-equal is this bug, not a finding. The working shape is
+  `_tmp_t9_9h_apialldiff2.ps1`: pre-count a name-keyed hashtable, then walk post decrementing it and collect leftovers,
+  then walk pre over the leftovers - a real multiset difference with explicit variables, which read **0/0**.
+- **A pwsh `>` redirect writes UTF-16 on this tree, so `Select-String -Path <that file>` reads 0 matches on a dump you just wrote**
+  `dumpbin /exports C:\Windows\System32\user32.dll > tmp\_tmp_t9_9h_exports_fresh.txt 2>&1` then
+  `Select-String -Path <that file> -Pattern 'Dde'` returns **0**, and so do `ordinal` and `DDE` - while
+  `Get-Content <that file> | Select-String -CaseSensitive 'Dde'` returns the 38 rows. The pipe decodes the BOM; the
+  `-Path` form does not. A 0 from `-Path` on a file you know you just wrote is this bug; read dumps through
+  `Get-Content`, or write them with `cmd /c ... >` or `| Out-File -Encoding utf8`. Cost one re-measure of the DDE export
+  dump at the 9h close (9 Nov 2026).
 
