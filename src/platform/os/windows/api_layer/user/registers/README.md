@@ -9,7 +9,7 @@ the shape is `u28.md`.
 The `Lines` and `Was registers.md` columns below are historical, **not maintained**, and not to be trusted - the
 generators that filled them are retired. Use the `Register ids` column only; the id-to-file map is derivable from the id.
 
-Closed / frozen - append nothing: `u4` (D26->D34), `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
+Closed / frozen - append nothing: `u4` (D26->D34), `u7` (D35), `u14` (D15), `u15` (D14), `u6`, `u3`, and **P1, P2, P5** in `prescan.md` (4 Nov 2026:
 428 bindings, 0 unresolvable). Frozen as provenance, never read at session start: `census.md`, `u16.md`, `u19.md`,
 `u26.md`.
 
