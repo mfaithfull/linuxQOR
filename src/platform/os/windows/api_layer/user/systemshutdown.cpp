@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -112,12 +113,26 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HWND, LPCWSTR >(pFunc, hWnd, pwszReason);
     }
 
+    //BOOL, and the SDK reserves FALSE for failure at this stem, so the return check is sound here - the one place in
+    //this section where the session-27 test ("only sound where the SDK's failure value is not also a legal success
+    //value") passes for every value. winuser.h:15939 declares BOOL WINAPI ShutdownBlockReasonDestroy(_In_ HWND hWnd)
+    //with no SAL return qualifier, and the Microsoft page states "If the call succeeds, the return value is nonzero.
+    //If the call fails, the return value is zero", the documented failure being ERROR_ACCESS_DENIED for a call from a
+    //thread other than the one that created hWnd - no legal call answers FALSE. BOOL + FALSE-means-error takes the
+    //CheckReturn<BOOL,BoolCheck> shape the kernel/shell layers use and this library already has at
+    //errorhandling.cpp:85; BoolCheck (returncheck.h:94) tests value ? true : false, so it fails on FALSE only, and
+    //G6 (neither qor_pp_parameter_checking nor qor_pp_yes is defined anywhere) keeps that check live on every call.
+    //This is U2's first code site outside the 4 checks the library already carried: the FALSE branch now raises a
+    //continuable issue that the Win32ErrorHandler above reports with its decoded Windows text instead of being
+    //indistinguishable from success. 0 callers in-tree reach this stem (D14 published surface), so the new throw is
+    //confined to that surface.
     BOOL User32::ShutdownBlockReasonDestroy(HWND hWnd)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonDestroy);
-        return Library::Call< BOOL, HWND >(pFunc, hWnd);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND >(pFunc, hWnd);
+        return bResult;
     }
 
     BOOL User32::ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff)
