@@ -8,22 +8,22 @@ Items:
     Status: Atomic
     Content:
   - Title: Endpoint return semantics
-    Status: Drafted
+    Status: Refined
     Content: ./EndpointReturnSemantics/plan.md
   - Title: Check class vocabulary
-    Status: Planning
-    Content:
+    Status: Refined
+    Content: ./CheckClassVocabulary/plan.md
   - Title: Small TU batch region checks
-    Status: Planning
-    Content:
+    Status: Refined
+    Content: ./SmallTUBatchRegionChecks/plan.md
   - Title: Large TU batch region checks
-    Status: Planning
-    Content:
+    Status: Refined
+    Content: ./LargeTUBatchRegionChecks/plan.md
   - Title: Folder gate and census
     Status: Atomic
     Content:
   - Title: Records and commit
-    Status: Planning
+    Status: Atomic
     Content:
 ---
 
@@ -39,12 +39,12 @@ Make the U2 return-check policy resolve at **all 597 wrapper call sites** of `wi
 
 Cache, not record: the front matter owns structure, the disk owns truth, this slot only makes the resume cheap. Read the front matter and this slot, re-derive from disk, rewrite this slot if they disagree. Rotate in place - never append below this block.
 
-- `Cursor: plan.md -> Endpoint return semantics -> ./EndpointReturnSemantics/plan.md -> Fill the small TU region slice`
-  Root pre-order: item 1 `Site census tooling` is Atomic and its instrument is measured clean; item 2 is `Drafted`, so the descent inside it is the frontier. Everything left of the cursor is done, everything right of it is not.
-- `Measured at this write: sites 597 / 597 anchors; stems 597 (479 useswinapi + 118 AW); NO-PROTOTYPE 125; SAL return annotations on bound prototypes 1; live CheckReturn sites 5 over 3 TUs; table rows 597 with verdict columns empty; caller counts 396 zero / 201 nonzero`
+- `Cursor: plan.md -> TERMINAL (all 7 items Refined/Atomic) -> ## Handoff`
+  The tree is fully refined: items 2-5 are `Refined` with child plans on disk, items 1/6/7 are `Atomic`. No item needs refinement, so the skill's loop ends and the handoff section is the exit. The frontier for **execution** (not planning) sits inside `EndpointReturnSemantics/plan.md` item 1.
+- `Measured at this write (tmp/_tmp_u2_tree_verify.ps1 -> .txt, fail=0): planFiles 5, chain children 4, levels 0/1, items 7/4/3/4/5 all status-matched; sites 597 / 597 anchors; stems 597 (479 useswinapi + 118 AW); NO-PROTOTYPE 125; SAL return annotations on bound prototypes 1; live CheckReturn sites 5 over 3 TUs; table rows 597 with verdict columns FILLED 0; caller counts 396 zero / 201 nonzero; ledger 5+10+18+27+33+36+90+153+139+86 = 597 over 53 TUs, 0 TU delta, 0 unbatched`
   Rewrite this line the moment a re-census verifies, and tick the matching row of the `registers/u2.md` working record in the same session (the U17 lesson).
-- `Next action: fill the small-TU-region slice of the table` (124 rows), not the code - no `CheckReturn` token moves before its row has a verdict with a verbatim quote.
-- `Cursor check: tmp/_tmp_u2_tree_verify.ps1` - walks the chain against the front matter, re-runs the site census, prints the per-batch ledger, and reports any gap left of the cursor or any checked site right of it.
+- `Next action (execution, not planning): fill the 124-row small-TU-region slice of tmp/_tmp_u2_endpoint_table.csv` - verdicts first, code never before its row carries a verdict with a verbatim quote. 0 of 597 verdicts are filled today.
+- `Cursor check: tmp/_tmp_u2_tree_verify.ps1` - discovers every plan on disk (no hardcoded list), walks chain both ways, checks Level = parent + 1 and status/content consistency per item, re-runs the site census, prints the per-batch ledger and the landed-check/table-lag guard.
 - `Blocking precondition: no record write and no commit until the dated folder gate reads 54/54 exit 0 with 0 errors / 0 warnings` - the precondition line at the foot of `## Records and commit` is the authority, not this slot.
 
 ## Context
@@ -88,13 +88,19 @@ Seed verdicts measured or fetched this pass (the table's first rows to trust): `
 
 Reconcile `returncheck.h` against the measured return mix before any batch lands: name the class each verdict needs, write only the missing ones, and discharge the latent signature hazard seen while reading the header (`LongSuccessCheck : AutoErrorCheck< long >` declares `Test (intptr_t&)`, which on x64 where `intptr_t` is `long long` does **not** override `Test (long&)`, so the base's always-false `Test` would fire - relevant because it is the class `shell`/`kernel` use at their `HRESULT` sites and any api_user `LONG` verdict would otherwise inherit it).
 
+Child plan: `./CheckClassVocabulary/plan.md` (Level 1, 3 `Atomic` items, terminal). It carries the class inventory, the residual-set rule, and the `LongSuccessCheck` routing decision with its measured probe (`tmp/_tmp_u2_ovr_probe_neg*.exe` -> `BASE(Test 1) -> false`).
+
 ## Small TU batch region checks
 
 The 33 small-TU region (**124** sites) in the U1 tree's batch order S1-S5; each batch's sites are read from the table, only the `checked` verdicts are edited, and the batch ends at its per-TU re-census.
 
+Child plan: `./SmallTUBatchRegionChecks/plan.md` (Level 1, 5 `Atomic` items S1-S5, terminal) - it carries the per-TU site counts from the disk ledger, the 5 already-decided sites these batches must not re-edit, and the per-batch re-census invariant.
+
 ## Large TU batch region checks
 
 The 19 large-TU region (**468** sites) in L1/L2/L3 order with `window.cpp` (86 sites, 53 `BOOL` + 34 `HWND` + the numeric mix) last, mirroring the U1 tree.
+
+Child plan: `./LargeTUBatchRegionChecks/plan.md` (Level 1, 4 `Atomic` items L1/L2/L3/`window.cpp`, terminal) - it carries the L1/L2/L3/window ledger counts (90/153/139/86), the answer-shaped `BOOL` families expected to land `unchecked`, and the caller-audit precondition for the nonzero-caller rows.
 
 ## Folder gate and census
 
@@ -103,4 +109,21 @@ One named run: the standing line at `status.md:158-165` over all 54 `.cpp` (resp
 ## Records and commit
 
 D-entry per landed batch region plus the close, `registers/u2.md` head closure line, `status.md` boot line and Open list, `DECISIONS.md` index, `registers/README.md`, `completed_work.md`, `memory-bank/activeContext.md`, then `git commit` (protocol 1).
+
+## Handoff
+
+The root tree is **terminal** (4 `Refined` with child plans on disk, 3 `Atomic`), so this plan's product - structure and decisions - is complete and the work itself belongs to another agent. Measured at this write: `tmp/_tmp_u2_tree_verify.ps1` -> `tmp/_tmp_u2_tree_verify.txt`, `planFiles 5`, `chain children 4`, `fail=0`, ledger 597 over 53 TUs with 0 delta, **0 of 597 verdicts filled**, 5 live `CheckReturn` sites (the seeds decided outside the table).
+
+Take `/implement` with the deepest complete plan for the item the user picks; `/to-tickets` instead if the batches are to be spread across sessions. In item order, the deepest complete plans are:
+
+| Pick | Deepest complete plan | What it lands |
+|---|---|---|
+| the table's verdicts (**the frontier - everything else waits on it**) | `./EndpointReturnSemantics/plan.md` (Level 1, 4 `Atomic`) | `verdict / checkClass / docQuote` for 597 rows, slice by slice, then the verdict audit |
+| the vocabulary | `./CheckClassVocabulary/plan.md` (Level 1, 3 `Atomic`) | the class per return type, only genuinely missing classes in `returncheck.h` (which puts the 122-source all-libraries gate in play), and the `LongSuccessCheck` routing decision |
+| the small-TU code | `./SmallTUBatchRegionChecks/plan.md` (Level 1, 5 `Atomic`) | `CheckReturn< >` at the `checked` rows of 124 sites over 33 TUs, batch by batch with a per-batch re-census |
+| the large-TU code | `./LargeTUBatchRegionChecks/plan.md` (Level 1, 4 `Atomic`) | the same over 473 sites, densest-last, with the caller audit before each nonzero-caller row lands |
+| the gate and census | root item `Folder gate and census` (`Atomic`) | the standing 54/54 folder gate, the `/EP` and dating legs, the census invariants |
+| the records | root item `Records and commit` (`Atomic`) | D-entry per landed batch region, the `registers/u2.md` head closure line, then `git commit` |
+
+Order the executor must respect: the table's verdicts first (their audit item last inside that plan), the vocabulary before any batch that needs a class it writes, then the batch plans small-region-before-large-region, and no record write and no commit until the dated folder gate reads 54/54 exit 0 with 0 errors / 0 warnings. **U2 stays open until that gate and the census read 597 sites resolved into the three end states.**
 

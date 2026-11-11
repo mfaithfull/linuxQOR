@@ -5,16 +5,16 @@ Parent: "../plan.md"
 Level: 1
 Items:
   - Title: Fill the small TU region slice
-    Status: Planning
+    Status: Atomic
     Content:
   - Title: Fill the large TU region slice
-    Status: Planning
+    Status: Atomic
     Content:
   - Title: Fill the window slice
-    Status: Planning
+    Status: Atomic
     Content:
   - Title: Audit the verdicts
-    Status: Planning
+    Status: Atomic
     Content:
 ---
 
@@ -28,7 +28,7 @@ Fill the verdict triple (`verdict | checkClass | docQuote`) for **all 597** rows
 
 ## Resume
 
-Cursor: item 1 **Fill the small TU region slice** (`Planning`). The table exists with nine mechanical columns filled; nothing in the verdict columns is filled yet except the 7 seed rows recorded in the parent plan's "Endpoint return semantics" section.
+Terminal as planned: all four items are `Atomic` (each is one bounded pass over the named artifact `tmp/_tmp_u2_endpoint_table.csv` or one audit over it), so this plan holds no child and no frontier. The frontier for the whole tree sits in the **parent's** item order - a session executing this plan takes item 1 first, and the parent's ordering plus its "hard precondition" lines decide when this plan may run at all.
 
 ## Context
 
