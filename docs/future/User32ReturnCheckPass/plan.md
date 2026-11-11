@@ -8,7 +8,7 @@ Items:
     Status: Atomic
     Content:
   - Title: Endpoint return semantics
-    Status: Refined
+    Status: Drafted
     Content: ./EndpointReturnSemantics/plan.md
   - Title: Check class vocabulary
     Status: Planning
@@ -20,20 +20,32 @@ Items:
     Status: Planning
     Content:
   - Title: Folder gate and census
-    Status: Planning
+    Status: Atomic
     Content:
   - Title: Records and commit
     Status: Planning
     Content:
 ---
 
+# Resolve U2 - return checks at the winqor_api_user wrapper call sites
+
+Slug: `User32ReturnCheckPass` - from the request title "Resolve U2 - return checks at the winqor_api_user wrapper call sites" (drop-words `the`/`a`/`an`/`of` removed from the request phrase, PascalCased, ASCII, 21 chars, inside the 24-char cap; no collision with the sibling `User32ErrorHandlerPass`). Uniqueness is stored here, not recomputed.
+
 ## Goal
 
 Make the U2 return-check policy resolve at **all 597 wrapper call sites** of `winqor_api_user` - each site ending in one of exactly three states (checked with a named `CheckReturn< ret, Check >`, deliberately unchecked with a written reason tied to its SDK failure value, or `void` with nothing to check) - with the decision for every site carried in one reusable per-endpoint table, so the code set lands in TU batches behind the U1 tree's proven boundaries.
 
-## Resume
+## Resume (state slot - the only mutable section of this plan)
 
-Cursor: root item 1 **Site census tooling** is measured and its two instrument defects are discharged (see its section); the frontier is item 2 **Endpoint return semantics** (`Refined`, table shape and seed in `./EndpointReturnSemantics/plan.md`). Items 3-7 need refinement at their own pass.
+Cache, not record: the front matter owns structure, the disk owns truth, this slot only makes the resume cheap. Read the front matter and this slot, re-derive from disk, rewrite this slot if they disagree. Rotate in place - never append below this block.
+
+- `Cursor: plan.md -> Endpoint return semantics -> ./EndpointReturnSemantics/plan.md -> Fill the small TU region slice`
+  Root pre-order: item 1 `Site census tooling` is Atomic and its instrument is measured clean; item 2 is `Drafted`, so the descent inside it is the frontier. Everything left of the cursor is done, everything right of it is not.
+- `Measured at this write: sites 597 / 597 anchors; stems 597 (479 useswinapi + 118 AW); NO-PROTOTYPE 125; SAL return annotations on bound prototypes 1; live CheckReturn sites 5 over 3 TUs; table rows 597 with verdict columns empty; caller counts 396 zero / 201 nonzero`
+  Rewrite this line the moment a re-census verifies, and tick the matching row of the `registers/u2.md` working record in the same session (the U17 lesson).
+- `Next action: fill the small-TU-region slice of the table` (124 rows), not the code - no `CheckReturn` token moves before its row has a verdict with a verbatim quote.
+- `Cursor check: tmp/_tmp_u2_tree_verify.ps1` - walks the chain against the front matter, re-runs the site census, prints the per-batch ledger, and reports any gap left of the cursor or any checked site right of it.
+- `Blocking precondition: no record write and no commit until the dated folder gate reads 54/54 exit 0 with 0 errors / 0 warnings` - the precondition line at the foot of `## Records and commit` is the authority, not this slot.
 
 ## Context
 
