@@ -1,0 +1,7 @@
+# Line-ending normalization. Without this, git prints
+# "warning: in the working copy of '...', LF will be replaced by CRLF" on every
+# diff/add over the memory-bank record files, and those warnings push the
+# "N files changed" line out of the readable part of the output
+# (memory-bank/gotchas/git.md, measured 13 Nov 2026). eol=crlf also makes the
+# record diffs stable, which is why they can be committed at all.
+*.md text eol=crlf
