@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -83,62 +84,135 @@ namespace qor { namespace win { namespace api {
     //25 binding literals are unchanged (tmp/_tmp_paint_pp_pre_s26.txt vs tmp/_tmp_paint_pp_post_s26.txt).
 
 
+    //Return policy (U2, table row BeginPaint / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HDC > - docQuote "If the function succeeds, the return value is the handle to a display device
+    //context for the specified window. If the function fails, the return value is NULL , indicating that no display
+    //device context is available." so NULL is reserved for a failed call and the DC handle the caller wraps is never
+    //legitimately NULL from this call; sdkRetType HDC so the base is HDC and CheckNonZeroHandle (returncheck.h:137,
+    //template< typename THandle > : public AutoErrorCheck< THandle >) is already in the vocabulary - no new check class.
+    //AUDIT: the table counts 1 in-tree caller for the exact stem and the site-level read found two spellings of it -
+    //ui/gui/controllers/windowcontroller.cpp:520 (qualified) and ui/gui/painting/paintsession.cpp:41 (unqualified under
+    //using namespace qor::win::api), both feeding the returned HDC straight to PerThread::DeviceContextFromHandle
+    //without testing it - so with the check landed a NULL DC now raises a continuable issue the Win32ErrorHandler above
+    //reports rather than travelling silently into a DeviceContext whose HWND member is 0 (U22).
     HDC User32::BeginPaint(HWND hWnd, ::LPPAINTSTRUCT lpPaint)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, BeginPaint);
-        return Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hWnd, lpPaint);
+        CheckReturn< HDC, CheckNonZeroHandle< HDC > >::TType hResult = Library::Call<HDC, HWND, ::LPPAINTSTRUCT>(pFunc, hWnd, lpPaint);
+        return hResult;
     }
 
+    //Return policy (U2, table row DrawAnimatedRects / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - docQuote "If the function succeeds, the return value is nonzero. If the function fails, the return
+    //value is zero." is the whole Return value section and the page names no legal zero, so zero is reserved for a
+    //failed draw; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree
+    //caller, ui/gui/controllers/windowcontroller.cpp:527, which spells the wrapper's BOOL as
+    //return User32::DrawAnimatedRects (...) ? true : false inside WindowController::DrawAnimatedRects - the caller
+    //already reads zero as a plain false, so landing the check makes a failed animated draw raise a continuable
+    //issue the Win32ErrorHandler above reports before that false is returned.
     BOOL User32::DrawAnimatedRects(HWND hwnd, int idAni, const::RECT* lprcFrom, const::RECT* lprcTo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawAnimatedRects);
-        return Library::Call<BOOL, HWND, int, const ::RECT*, const ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, int, const ::RECT*, const ::RECT*>(pFunc, hwnd, idAni, lprcFrom, lprcTo);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawCaption / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's docQuote word for word ("If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero."), so zero is reserved for a failed caption draw and the
+    //caption's rectangle and flags are parameters; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new
+    //check class. AUDIT: 1 in-tree caller, ui/gui/controllers/windowcontroller.cpp:532, the same
+    //... ? true : false idiom inside WindowController::DrawCaption, so a failed caption draw now raises a continuable
+    //issue the Win32ErrorHandler above reports before that false is returned.
     BOOL User32::DrawCaption(HWND hwnd, HDC hdc, ::LPCRECT lprect, UINT flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawCaption);
-        return Library::Call<BOOL, HWND, HDC, ::LPCRECT, UINT>(pFunc, hwnd, hdc, lprect, flags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, HDC, ::LPCRECT, UINT>(pFunc, hwnd, hdc, lprect, flags);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawEdge / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's docQuote word for word ("If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero."), so zero is reserved for a failed edge draw and the
+    //edge and grfFlags are parameters; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class.
+    //0 in-tree callers for the exact stem (D14 published surface), so nothing built today reaches this site and the row
+    //is change-safe; G6 keeps the check live on every call, so an edge draw that cannot run now raises a continuable
+    //issue the Win32ErrorHandler above reports rather than travelling as a silent zero.
     BOOL User32::DrawEdge(HDC hdc, ::LPRECT qrc, UINT edge, UINT grfFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawEdge);
-        return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, qrc, edge, grfFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, qrc, edge, grfFlags);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawFocusRect / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's docQuote word for word ("If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero."), so zero is reserved for a failed focus draw and the
+    //rectangle is a parameter; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. 0 in-tree
+    //callers for the exact stem (D14 published surface), so nothing built today reaches this site and the row is change
+    //safe; G6 keeps the check live on every call, so a focus draw that cannot run now raises a continuable issue the
+    //Win32ErrorHandler above reports rather than travelling as a silent zero.
     BOOL User32::DrawFocusRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawFocusRect);
-        return Library::Call<BOOL, HDC, const ::RECT*>(pFunc, hDC, lprc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, const ::RECT*>(pFunc, hDC, lprc);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawFrameControl / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's docQuote word for word ("If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero."), so zero is reserved for a failed frame draw and the
+    //rectangle, uType and uState are parameters; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new
+    //check class. 0 in-tree callers for the exact stem (D14 published surface), so nothing built today reaches this
+    //site and the row is change-safe; G6 keeps the check live on every call, so a frame draw that cannot run now raises
+    //a continuable issue the Win32ErrorHandler above reports rather than travelling as a silent zero.
     BOOL User32::DrawFrameControl(HDC hdc, ::LPRECT lprc, UINT uType, UINT uState)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawFrameControl);
-        return Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, lprc, uType, uState);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, ::LPRECT, UINT, UINT>(pFunc, hdc, lprc, uType, uState);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawState / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's docQuote word for word ("If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero."), so zero is reserved for a failed state draw and what
+    //is drawn travels inside the opaque lData / wData pair, the callback and the geometry being parameters; the row's
+    //sdkRetType is NO-PROTOTYPE (the DrawStateA/W family the SDK declares as a #define pair), so the base is the
+    //published BOOL and BoolCheck (returncheck.h:94) covers it - no new check class. 0 in-tree callers for the exact
+    //stem (D14 published surface), so nothing built today reaches this site and the row is change-safe; G6 keeps the
+    //check live on every call, so a state draw that cannot run now raises a continuable issue the Win32ErrorHandler
+    //above reports rather than travelling as a silent zero.
     BOOL User32::DrawStateT(HDC hdc, HBRUSH hbrFore, ::DRAWSTATEPROC qfnCallBack, LPARAM lData, WPARAM wData, int x, int y, int cx, int cy, UINT uFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DrawState);
-        return Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbrFore, qfnCallBack, lData, wData, x, y, cx, cy, uFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, HBRUSH, DRAWSTATEPROC, LPARAM, WPARAM, int, int, int, int, UINT>(pFunc, hdc, hbrFore, qfnCallBack, lData, wData, x, y, cx, cy, uFlags);
+        return bResult;
     }
 
+    //Return policy (U2, table row EndPaint / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //the page reserves nothing. The table's verbatim docQuote "The return value is always nonzero." is the whole
+    //Return value section, so D51 step 2 (an API that reserves no return value for errors) reads no-check and no class
+    //fits; landing CheckNonZero< BOOL > here would be a no-op check that can never fire, so the row is left unchecked
+    //rather than given a check that cannot fail; deliberately unlike the InvalidateRgn row, which carries the same
+    //wording and the same reading. AUDIT: the table counts 1 in-tree caller and the site-level read found two spellings
+    //of it - ui/gui/controllers/windowcontroller.cpp:537 (return User32::EndPaint (...) ? true : false, the caller
+    //reading the always-nonzero flag as a plain true) and ui/gui/painting/paintsession.cpp:47 in
+    //PaintSession::~PaintSession, which discards the value outright - so no reading of the flag exists to key, and no
+    //token is landed.
     BOOL User32::EndPaint(HWND hWnd, const::PAINTSTRUCT* lpPaint)
     {
         qor_pp_fcontext;
@@ -146,6 +220,14 @@ namespace qor { namespace win { namespace api {
         qor_pp_useswinapi(user32, EndPaint);
         return Library::Call<BOOL, HWND, const ::PAINTSTRUCT*>(pFunc, hWnd, lpPaint);
     }
+
+    //Return policy (U2, table row ExcludeUpdateRgn / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass - an
+    //enumerated answer, not a status. The table's verbatim docQuote "The return value specifies the complexity of the excluded
+    //region; it can be any one of the following values. Value Meaning COMPLEXREGION Region consists of more than one rectangle.
+    //ERROR An error occurred. NULLREGION Region is empty. SIMPLEREGION Region is a single rectangle." - the return is the value
+    //the caller branches on, and ERROR is a member of the enumeration the caller must already handle alongside the two region
+    //states, so no single value is separable as failure; keying a class on ERROR or on zero would report the legal NULLREGION
+    //empty-region answer as a failure. 0 in-tree callers (change-safe). No token is landed.
 
     int User32::ExcludeUpdateRgn(HDC hDC, HWND hWnd)
     {
@@ -155,6 +237,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HDC, HWND>(pFunc, hDC, hWnd);
     }
 
+    //Return policy (U2, table row GetUpdateRect / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass - a
+    //question about the window's update region, not a status. The table's verbatim docQuote "If the update region is not empty,
+    //the return value is nonzero. If there is no update region, the return value is zero." - a window with nothing to repaint is
+    //a legal state answering zero, so nothing is reserved and keying BoolCheck would report a legal empty update region as a
+    //failure; the rectangle itself is an out-parameter. AUDIT: 1 in-tree caller, so the site-level read is owed before any token
+    //moves - none is landed.
+
     BOOL User32::GetUpdateRect(HWND hWnd, ::LPRECT lpRect, BOOL bErase)
     {
         qor_pp_fcontext;
@@ -163,6 +252,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, ::LPRECT, BOOL>(pFunc, hWnd, lpRect, bErase);
     }
 
+    //Return policy (U2, table row GetUpdateRgn / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //an enumerated answer, not a status. The table's verbatim docQuote "The return value indicates the complexity of the
+    //resulting region; it can be one of the following values. Value Meaning COMPLEXREGION Region consists of more than one
+    //rectangle. ERROR An error occurred. NULLREGION Region is empty. SIMPLEREGION Region is a single rectangle." - the
+    //return is the value the caller branches on, and ERROR is a member of the enumeration the caller must already handle
+    //alongside the two region states, so no single value is separable as failure; the same reading the ExcludeUpdateRgn
+    //row takes. AUDIT: 1 in-tree caller, ui/gui/controllers/windowcontroller.cpp:547, which returns the value straight out
+    //of WindowController::GetUpdateRgn with no test on it - so no reading exists to key, and no token is landed.
     int User32::GetUpdateRgn(HWND hWnd, HRGN hRgn, BOOL bErase)
     {
         qor_pp_fcontext;
@@ -171,14 +268,35 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bErase);
     }
 
+    //Return policy (U2, table row GetWindowDC / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HDC > - docQuote "If the function succeeds, the return value is a handle to a device context
+    //for the specified window. If the function fails, the return value is NULL , indicating an error or an invalid hWnd
+    //parameter." so NULL is reserved for a failed call and the DC handle the caller wraps is never legitimately NULL
+    //from this call; the same class the BeginPaint row takes, CheckNonZeroHandle (returncheck.h:137, template< typename
+    //THandle > : public AutoErrorCheck< THandle >) over the row's HDC rather than HandleCheck, which keys on
+    //INVALID_HANDLE_VALUE; sdkRetType HDC so the base is HDC - no new check class. AUDIT: the table counts 2 in-tree
+    //callers and the site-level read found one call spelling, ui/gui/controllers/windowcontroller.cpp:553 inside
+    //WindowController::GetDC(), which stores the HDC, tests it against nullptr and only then builds the DeviceContext
+    //from it - plus one textual mention at ui/gui/gdiobjects/devicecontext.cpp:74, a comment that compares that
+    //GetDC()/ReleaseDC(NULL, hdc) shape to the GetWindowDC route rather than calling it. With the check landed, a NULL
+    //DC now raises a continuable issue the Win32ErrorHandler above reports before the caller's own nullptr test runs.
     HDC User32::GetWindowDC(HWND hWnd)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowDC);
-        return Library::Call<HDC, HWND>(pFunc, hWnd);
+        CheckReturn< HDC, CheckNonZeroHandle< HDC > >::TType hResult = Library::Call<HDC, HWND>(pFunc, hWnd);
+        return hResult;
     }
 
+    //Return policy (U2, table row GetWindowRgn / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //an enumerated answer the caller branches on. The table's verbatim docQuote "The return value specifies the type of
+    //the region that the function obtains. It can be one of the following values. NULLREGION The region is empty.
+    //SIMPLEREGION The region is a single rectangle. COMPLEXREGION The region is more than one rectangle. ERROR The
+    //specified window does not have a region, or an error occurred while retrieving the region." - ERROR names a window
+    //with no region set, a legal state, so no value is separable as failure; the region itself is an out-parameter.
+    //AUDIT: 1 in-tree caller, ui/gui/controllers/windowcontroller.cpp:564, which returns the value straight out of
+    //WindowController::GetRgn with no test - no reading to key and no token landed.
     int User32::GetWindowRgn(HWND hWnd, HRGN hRgn)
     {
         qor_pp_fcontext;
@@ -187,6 +305,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, HRGN>(pFunc, hWnd, hRgn);
     }
 
+    //Return policy (U2, table row GetWindowRgnBox / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //the same enumerated answer the GetWindowRgn row takes, the only difference being that the box is returned in the
+    //RECTANGLE out-parameter. The table's verbatim docQuote "The return value specifies the type of the region that the
+    //function obtains. It can be one of the following values. Value Meaning COMPLEXREGION The region is more than one
+    //rectangle. ERROR The specified window does not have a region, or an error occurred while attempting to return the
+    //region. NULLREGION The region is empty. SIMPLEREGION The region is a single rectangle." - ERROR again names a window
+    //with no region set, a legal state, so nothing is separable as failure; row type int. AUDIT: 1 in-tree caller,
+    //ui/gui/controllers/windowcontroller.cpp:569, which returns the value straight out of WindowController::GetRgnBox
+    //with no test - no reading to key and no token landed.
     int User32::GetWindowRgnBox(HWND hWnd, ::LPRECT lprc)
     {
         qor_pp_fcontext;
@@ -195,6 +322,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call<int, HWND, ::LPRECT>(pFunc, hWnd, lprc);
     }
 
+    //Return policy (U2, table row GrayString / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //the documented zero mixes the caller's own callback answer with a real failure. The table's verbatim docQuote "If
+    //the string is drawn, the return value is nonzero. If either the TextOut function or the application-defined output
+    //function returned zero, or there was insufficient memory to create a memory bitmap for graying, the return value
+    //is zero." - the application-defined GRAYSTRINGPROC the caller passes chooses its own zero to mean, so that zero is
+    //not separable from the out-of-memory failure and keying BoolCheck would report the caller's own answer as a
+    //failure; 0 in-tree callers (change-safe). No token is landed.
     BOOL User32::GrayStringT(HDC hDC, HBRUSH hBrush, ::GRAYSTRINGPROC lpOutputFunc, LPARAM lpData, int nCount, int X, int Y, int nWidth, int nHeight)
     {
         qor_pp_fcontext;
@@ -203,14 +337,33 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HDC, HBRUSH, GRAYSTRINGPROC, LPARAM, int, int, int, int, int>(pFunc, hDC, hBrush, lpOutputFunc, lpData, nCount, X, Y, nWidth, nHeight);
     }
 
+    //Return policy (U2, table row InvalidateRect / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the table's verbatim docQuote "If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero." is the whole Return value section and the page names no legal zero, so zero is
+    //reserved for a failed invalidation; the rectangle, the window and the erase flag are parameters, so the BOOL carries
+    //no answer of its own - deliberately unlike the GetUpdateRect row, whose zero answers the caller's emptiness question.
+    //sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree caller,
+    //ui/gui/controllers/windowcontroller.cpp:574, which already spells the result as "return User32::InvalidateRect (...)
+    //? true : false" inside WindowController::InvalidateRect - the caller reads zero as a plain false, so landing the
+    //check makes a failed invalidation raise a continuable issue the Win32ErrorHandler above reports before that false
+    //is returned.
     BOOL User32::InvalidateRect(HWND hWnd, const::RECT* lpRect, BOOL bErase)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InvalidateRect);
-        return Library::Call<BOOL, HWND, const ::RECT*, BOOL>(pFunc, hWnd, lpRect, bErase);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, const ::RECT*, BOOL>(pFunc, hWnd, lpRect, bErase);
+        return bResult;
     }
 
+    //Return policy (U2, table row InvalidateRgn / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //the page reserves nothing. The table's verbatim docQuote "The return value is always nonzero." is the whole Return
+    //value section, so D51 step 2 (an API that reserves no return value for errors) reads no-check and no class fits;
+    //landing CheckNonZero< BOOL > here would be a no-op check that can never fire, so the row is left unchecked rather
+    //than given a check that cannot fail - the same reading the EndPaint row takes. AUDIT: 1 in-tree caller,
+    //ui/gui/controllers/windowcontroller.cpp:579, which spells it "return User32::InvalidateRgn (...) ? true : false"
+    //inside WindowController::InvalidateRgn - the caller reads the always-nonzero flag as a plain true, so no reading of
+    //the flag exists to key and no token is landed.
     BOOL User32::InvalidateRgn(HWND hWnd, HRGN hRgn, BOOL bErase)
     {
         qor_pp_fcontext;
@@ -219,6 +372,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bErase);
     }
 
+    //Return policy (U2, table row LockWindowUpdate / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //the page names a legal state behind its zero. The table's verbatim docQuote "If the function succeeds, the return
+    //value is nonzero. If the function fails, the return value is zero, indicating that an error occurred or another
+    //window was already locked." - a second lock attempt while another window already holds the lock is a routine caller
+    //state answering zero, so the zero is not separable from a call failure and keying BoolCheck would report a legal
+    //already-locked state as a failure; the window to lock is a parameter. AUDIT: 1 in-tree caller,
+    //ui/gui/controllers/windowcontroller.cpp:584, which spells it "return User32::LockWindowUpdate (WINDOW_HANDLE) ?
+    //true : false" inside WindowController::LockUpdate() - the caller already treats the already-locked zero as a plain
+    //false, which is the reading that makes the check wrong; no token is landed.
     BOOL User32::LockWindowUpdate(HWND hWndLock)
     {
         qor_pp_fcontext;
@@ -227,54 +389,109 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND>(pFunc, hWndLock);
     }
 
+    //Return policy (U2, table row PaintDesktop / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's status wording word for word, "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero.", is the whole Return value section and the page names
+    //no legal zero, so zero is reserved for a failed desktop paint; the desktop handle is a parameter and the wallpaper
+    //is drawn through the device context, so the BOOL carries no answer; sdkRetType BOOL so BoolCheck (returncheck.h:94)
+    //covers it - no new check class. AUDIT: 0 in-tree callers, so the landing is change-safe and no call site reads this
+    //result today.
     BOOL User32::PaintDesktop(HDC hdc)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PaintDesktop);
-        return Library::Call<BOOL, HDC>(pFunc, hdc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC>(pFunc, hdc);
+        return bResult;
     }
 
+    //Return policy (U2, table row RedrawWindow / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's status wording word for word, "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero.", is the whole Return value section, so zero is reserved
+    //for a failed redraw; the window, the rectangle, the region and the flags are all parameters and the repaint happens
+    //through the device context, so the BOOL carries no answer; the Remarks qualify when the repaint happens and name no
+    //legal zero; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree caller,
+    //windowcontroller.cpp:589 (WindowController::Redraw), which reads the result as a status with "? true : false" and
+    //never treats a zero as a legal answer, so the landed check only adds the error report the caller already relies on.
     BOOL User32::RedrawWindow(HWND hWnd, const::RECT* lprcUpdate, HRGN hrgnUpdate, UINT flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RedrawWindow);
-        return Library::Call<BOOL, HWND, const ::RECT*, HRGN, UINT>(pFunc, hWnd, lprcUpdate, hrgnUpdate, flags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, const ::RECT*, HRGN, UINT>(pFunc, hWnd, lprcUpdate, hrgnUpdate, flags);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetWindowRgn / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int > - plain status wording on a row whose type is int, "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero."; the region and the window are parameters, so the
+    //return carries no answer and zero is reserved; the class base is the row's int (both sdkRetType and pubRetType), so
+    //CheckNonZero< int > (returncheck.h:187) rather than BoolCheck, which would key at the wrong type; deliberately unlike
+    //the GetWindowRgn row, whose int return is the region-complexity enumeration the caller branches on. AUDIT: 1 in-tree
+    //caller, windowcontroller.cpp:594 (WindowController::SetRgn), which returns the int through to its own callers and
+    //never reads a zero as a legal answer, so the landed check only adds the error report.
     int User32::SetWindowRgn(HWND hWnd, HRGN hRgn, BOOL bRedraw)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowRgn);
-        return Library::Call<int, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bRedraw);
+        CheckReturn< int, CheckNonZero< int > >::TType iResult = Library::Call<int, HWND, HRGN, BOOL>(pFunc, hWnd, hRgn, bRedraw);
+        return iResult;
     }
 
+    //Return policy (U2, table row UpdateWindow / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the DrawAnimatedRects row's status wording word for word, "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero.", is the whole Return value section; the window and the
+    //device context are parameters and the repaint is drawn through the context, so the BOOL carries no answer and zero is
+    //reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree caller,
+    //windowcontroller.cpp:599 (WindowController::Update), which reads the result as a status through "? true : false" and
+    //never treats a zero as a legal answer.
     BOOL User32::UpdateWindow(HWND hWnd)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UpdateWindow);
-        return Library::Call<BOOL, HWND>(pFunc, hWnd);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND>(pFunc, hWnd);
+        return bResult;
     }
 
+    //Return policy (U2, table row ValidateRect / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - plain status BOOL for a region-validating action, the DrawAnimatedRects row's status wording word for
+    //word, "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.", is
+    //the whole Return value section; the rectangle and the window are parameters, so the return carries no answer and zero
+    //is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree caller,
+    //windowcontroller.cpp:604 (WindowController::ValidateRect), which reads the result as a status through "? true : false".
     BOOL User32::ValidateRect(HWND hWnd, const::RECT* lpRect)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ValidateRect);
-        return Library::Call<BOOL, HWND, const ::RECT*>(pFunc, hWnd, lpRect);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, const ::RECT*>(pFunc, hWnd, lpRect);
+        return bResult;
     }
 
+    //Return policy (U2, table row ValidateRgn / painting.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck - the ValidateRect row's wording word for word for a region-validating action, "If the function succeeds,
+    //the return value is nonzero. If the function fails, the return value is zero." being the whole Return value section;
+    //the region and the window are parameters, so the return carries no answer and zero is reserved; sdkRetType BOOL so
+    //BoolCheck (returncheck.h:94) covers it - no new check class. AUDIT: 1 in-tree caller, windowcontroller.cpp:609
+    //(WindowController::ValidateRgn), which reads the result as a status through "? true : false".
     BOOL User32::ValidateRgn(HWND hWnd, HRGN hRgn)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ValidateRgn);
-        return Library::Call<BOOL, HWND, HRGN>(pFunc, hWnd, hRgn);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, HRGN>(pFunc, hWnd, hRgn);
+        return bResult;
     }
 
+    //Return policy (U2, table row WindowFromDC / painting.cpp, 12 Nov 2026): the row reads unchecked with no checkClass -
+    //answer-shaped handle with a legal NULL, "The return value is a handle to the window associated with the specified DC.
+    //If no window is associated with the specified DC, the return value is NULL ." - a device context that belongs to no
+    //window (a printer DC, or a DC the caller created without a window) is a legal state answering NULL, so nothing is
+    //reserved and CheckNonZeroHandle< HWND > would report a legal context-less lookup as a failure; same shape as the
+    //GetClipboardOwner and GetOpenClipboardWindow rows; row type HWND. AUDIT: 0 in-tree callers, so the reading is
+    //change-safe and no call site reads this result today.
     HWND User32::WindowFromDC(HDC hDC)
     {
         qor_pp_fcontext;

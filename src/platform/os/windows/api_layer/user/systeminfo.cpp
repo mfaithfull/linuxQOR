@@ -77,9 +77,20 @@
 //Gate: systeminfo.cpp standalone at /W4 exit 0, then the folder 50/50 at /W4 exit 0, cl /EP emitting the 4 literals
 //above, and - because user32.h moved - the all-libraries run as a diff against a pre-edit run (117 cpp echoes, 166
 //diagnostic lines, 1 C1083 at opengl/wgl.cpp:31, exit 2).
+//
+//Addendum, 12 Nov 2026 (U2 Small TU batch S4, item systeminfo sites): the U1/U2 paragraphs above are the review's
+//record and stand superseded on three rows - the endpoint table now reads GetSystemMetrics checked with checkClass
+//CheckNonZero< int >, SetSysColors checked BoolCheck and SystemParametersInfo checked BoolCheck, with only GetSysColor
+//unchecked, so this TU carries 3 CheckReturn sites and gained its one ../returncheck.h include (0 -> 1; this TU had
+//no such include before this pass, and the checks that make it live are here now). The decision is the table's, not
+//re-derived here; each row's verbatim docQuote and its written reason sits at the site below. The one row the review
+//expected unchecked and the table puts on a check is GetSystemMetrics: the page reserves zero for that stem and names
+//no legal zero metric for it, while the GetSysColor row is the sibling whose page says outright that zero is a legal
+//RGB value - that one stays unchecked. This item lands 3 tokens and 1 written reason.
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -88,6 +99,16 @@ namespace qor { namespace win { namespace api {
     //36 of them) and the DWORD is the COLORREF the OS holds for that slot. The prototype carries no _Success_ and 0 is a
     //legal colour, so the layer hands the value over as written and a bad index is indistinguishable from black to the
     //caller - which is why there is no CheckReturn here.
+    //Return policy (U2, table row GetSysColor / systeminfo.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "Type: DWORD The function returns the red, green, blue (RGB) color
+    //value of the given element. If the nIndex parameter is out of range, the return value is zero. Because zero is
+    //also a valid RGB value, you cannot use GetSysColor to determine whether a system color is supported by the
+    //current platform." - the page names the collision itself, so the documented failure value zero is a legal colour
+    //and the session-27 soundness test (a checked-failure site is only sound where the SDK's failure value is not
+    //also a legal success value) fails at that value: a check here would report a black slot as a failed call. The
+    //row's callers column reads 0 in-tree callers (D14: an uncalled export is published surface), so there was no
+    //call site to re-read. This site keeps 0 CheckReturn and hands the COLORREF over as written - bare qor_pp_useswinapi
+    //binding, DWORD.
     DWORD User32::GetSysColor(int nIndex)
     {
         qor_pp_fcontext;
@@ -100,24 +121,47 @@ namespace qor { namespace win { namespace api {
     //um\WinUser.h) and the int is the metric. No _Success_ here either, and 0 is a legal metric, so the same "as written"
     //rule applies - the live callers below read SM_CYCAPTION / SM_CXICON / SM_CYICON / SM_CXSMICON / SM_CYSMICON through
     //the SDK import, not through this member.
+    //Return policy (U2, table row GetSystemMetrics / systeminfo.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int >, and the table's verbatim docQuote is "Type: int If the function succeeds, the return value is
+    //the requested system metric or configuration setting. If the function fails, the return value is 0. GetLastError
+    //does not provide extended error information." - the metric this stem answers with leaves through the return and
+    //nothing else, so the return carries the verdict: the page reserves 0 for failure and names no legal zero metric
+    //for this row, so the session-27 soundness test passes at every value. sdkRetType is int, so the class base is the
+    //SDK's own int and the check class is the CheckNonZero the numeric rows already use (returncheck.h:186, Test at
+    //:194 is (value == 0) ? false : true) - no new check class. The row's callers column reads 0 in-tree callers for
+    //the exact stem: the SM_* reads at ui/gl/windowimpl.cpp:521 /:1626 /:1627 that the U19 paragraph above names reach
+    //the SDK import thunk instead of this member, so no call site had to be re-read. G6 keeps the check live on every
+    //call, and Library::Call's swallowed-fault default is a zero int, which now reads as the documented failure.
     int User32::GetSystemMetrics(int nIndex)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetSystemMetrics);
-        return Library::Call< int, int >(pFunc, nIndex);
+        CheckReturn< int, CheckNonZero< int > >::TType nResult = Library::Call< int, int >(pFunc, nIndex);
+        return nResult;
     }
 
     //Repaint cElements of the colour slots: lpaElements names the slots and lpaRgbValues the colours to set them to, and
     //_In_reads_(cElements) at :9708/:9709 is the SDK's own statement that the two arrays are cElements long - the layer
     //forwards both as written and neither sizes nor pairs them. This BOOL carries no _Success_, so the layer takes no
     //hand off the return.
+    //Return policy (U2, table row SetSysColors / systeminfo.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is a
+    //nonzero value. If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError" - the colours this stem paints are the caller's own lpaRgbValues, which leave through the slots
+    //rather than through the return, so the returned value is pure status and zero is reserved for failure; the
+    //session-27 soundness test passes at every value, and BOOL + zero-means-failure takes the BoolCheck the library
+    //already has (returncheck.h:94, Test at :99 is value ? true : false) - no new check class. The row's callers
+    //column reads 0 in-tree callers (D14: an uncalled export is published surface), so no call site had to be re-read.
+    //The wrapper still forwards cElements/lpaElements/lpaRgbValues exactly as written, and G6 keeps the check live
+    //on every call.
     BOOL User32::SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetSysColors);
-        return Library::Call< BOOL, int, const INT *, const COLORREF * >(pFunc, cElements, lpaElements, lpaRgbValues);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, int, const INT *, const COLORREF * >(pFunc, cElements, lpaElements, lpaRgbValues);
+        return bResult;
     }
 
     //The system-wide get/set switch: uiAction picks the SPI_* action (SPI_GETICONTITLELOGFONT :12466, SPI_SETMOUSETRAILS
@@ -125,12 +169,26 @@ namespace qor { namespace win { namespace api {
     //pvParam the payload the action reads or writes (_Pre_maybenull_ so NULL is legal for the actions that take none) and
     //fWinIni requests the INI write-back. This is the one BOOL here whose FALSE the SDK itself calls a failure
     //(_Success_(return != FALSE) at :13251/:13260) - and the one binding here that must be the AW spelling; see the banner.
+    //Return policy (U2, table row SystemParametersInfo / systeminfo.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is a
+    //nonzero value. If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError" - the payload this action reads or writes leaves through the caller's own pvParam, so the return is
+    //pure status and zero is reserved for failure; the SDK states the reservation twice for this family, _Success_(return
+    //!= FALSE) at :13251/:13260, so the session-27 soundness test passes at every value. This is an AW row whose
+    //prototype the census could not resolve (NO-PROTOTYPE), so the class base is the published BOOL this wrapper
+    //declares rather than an SDK spelling, and BOOL + zero-means-failure takes the BoolCheck the library already has
+    //(returncheck.h:94) - no new check class. The row's callers column reads 0 in-tree callers for the exact stem: the
+    //SystemParametersInfoW reads the U19 paragraph above names reach the SDK import thunk, and the bare-stem reads at
+    //examples/experimental/osspecific/windows/retropad/retropad.cpp:598 and viewmodel.cpp:326 are rewritten by the SDK
+    //macro to the W export, so neither reaches this member and no call site had to be re-read. The binding stays the
+    //AW spelling and G6 keeps the check live on every call.
     BOOL User32::SystemParametersInfoT(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SystemParametersInfo);
-        return Library::Call< BOOL, UINT, UINT, PVOID, UINT >(pFunc, uiAction, uiParam, pvParam, fWinIni);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT, UINT, PVOID, UINT >(pFunc, uiAction, uiParam, pvParam, fWinIni);
+        return bResult;
     }
 
 }}}   //qor::win::api

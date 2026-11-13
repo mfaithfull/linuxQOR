@@ -33,11 +33,19 @@
 //out-parameter, which the wrapper forwards as the caller wrote it and does not inspect - the same shape the U1 note makes
 //of GetUserObjectInformationT above.
 //
+//Addendum, 11 Nov 2026 (U2 Small TU batch S1, SmallTUBatchRegionChecks/SmallTUBatchS1 item security sites): the
+//paragraph above is T1's record and stands superseded - the endpoint table's rows GetUserObjectSecurity and
+//SetUserObjectSecurity both now read checked with checkClass BoolCheck, so BOTH wrappers carry a CheckReturn and this
+//TU gained its one ../returncheck.h include (0 -> 2 CheckReturn sites in this TU, 1 of the library's 5 seeds plus this
+//batch's 8). The decision itself is the table's, not re-derived here; the site comments below carry each row's verbatim
+//docQuote and the class it names.
+
 //Gate: standalone security.cpp at /W4 exit 0, then the whole folder 46/46 at /W4 exit 0, dated by tmp/obj/security.obj
 //being newer than the source.
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -47,23 +55,40 @@ namespace qor { namespace win { namespace api {
     //wants, pSD is the buffer they are read into and nLength its capacity, while lpnLengthNeeded is the out-parameter
     //that carries the required length when pSD is too small. None of that is visible to a wrapper, so all five arguments
     //are forwarded as the caller wrote them and the BOOL answer is passed through unchanged.
+    //Return policy (U2, table row GetUserObjectSecurity / security.cpp, 11 Nov 2026): the row reads checked with
+    //checkClass BoolCheck. The table's verbatim docQuote - "If the function succeeds, the function returns nonzero. If
+    //the function fails, it returns zero. To get extended error information, call GetLastError ." - reserves zero for
+    //failure, and the only failure the caller can read here (a too-small pSD buffer) is reported through lpnLengthNeeded
+    //IN ADDITION to that zero, never instead of it, so no success answer is zero and the session-27 soundness test
+    //passes at every value. BOOL + zero-means-failure takes BoolCheck (returncheck.h:94), which already exists; G6
+    //keeps the check live on every call, so a zero now raises a continuable issue the Win32ErrorHandler above reports
+    //instead of travelling as a success. The row carries 0 in-tree callers (D14 published surface).
     BOOL User32::GetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSD, DWORD nLength, LPDWORD lpnLengthNeeded)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetUserObjectSecurity);
-        return Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR, DWORD, LPDWORD >(pFunc, hObj, pSIRequested, pSD, nLength, lpnLengthNeeded);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR, DWORD, LPDWORD >(pFunc, hObj, pSIRequested, pSD, nLength, lpnLengthNeeded);
+        return bResult;
     }
 
     //BOOL as a real success flag again. Here pSID points at the SECURITY_DESCRIPTOR to apply, and the OS copies it into
     //the object named by hObj; a caller that passes a handle for an unrelated object gets an OS failure it reads from
     //the return, which the layer neither sees nor corrects.
+    //Return policy (U2, table row SetUserObjectSecurity / security.cpp, 11 Nov 2026): the row reads checked with
+    //checkClass BoolCheck - the same shape as the GetUserObjectSecurity row above. The table's verbatim docQuote -
+    //"If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get extended
+    //error information, call GetLastError ." - reserves zero for failure and this member answers no value other than
+    //that success/failure pair, so the session-27 soundness test passes at every value and BOOL + zero-means-failure
+    //takes the existing BoolCheck (returncheck.h:94). G6 keeps the check live on every call, so a failed grant now
+    //raises a continuable issue instead of being indistinguishable from a granted one. 0 in-tree callers (D14).
     BOOL User32::SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetUserObjectSecurity);
-        return Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR >(pFunc, hObj, pSIRequested, pSID);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, PSECURITY_INFORMATION, PSECURITY_DESCRIPTOR >(pFunc, hObj, pSIRequested, pSID);
+        return bResult;
     }
 
 }}}

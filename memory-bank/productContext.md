@@ -1,6 +1,6 @@
 # Product Context
 
-The QOR addresses the neglected `utilities`/`utils` layer in application source trees: code that is critical to an application but is neither application logic nor framework logic. The project re-examines application-over-framework layering through two ideas:
+The QOR addresses the neglected `utilities`/`utils` layer in application source trees: code that is critical to an application but is neither application logic nor standard library. The project re-examines application-over-framework layering through two ideas:
 
 - Separation of Concerns: portability, adaptability, and reduced coupling to dependencies.
 - Self Aware Software: make the software do to itself what a computer can do well - test, build, report, scale, manage memory, port, connect, and examine itself.

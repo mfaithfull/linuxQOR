@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -95,6 +96,21 @@ namespace qor { namespace win { namespace api {
     //U24 instance, unlike FlashWindow's previous-state BOOL); :785 converts implicitly while :795 writes
     //"? true : false" - a gui-side consistency nit, not a layer one. The gui's WM_HELP path
     //(ui/gui/view/handlers/interactive/help.cpp:46) takes the context id from the HELPINFO payload, so it never goes
+    //
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S4, item help sites): the U1/U2 paragraphs above are the review's
+    //record and stand superseded on three of the five rows - the endpoint table now reads SetMenuContextHelpId,
+    //SetWindowContextHelpId and WinHelp checked with checkClass BoolCheck, and only the two context-help-id getters
+    //unchecked, so this TU carries 3 CheckReturn sites and gained its one ../returncheck.h include (0 -> 1; this TU had
+    //no such include before this pass, and the checks that make it live are here now). The decision is the table's, not
+    //re-derived here; each row's verbatim docQuote and its written reason sits at the site below, and the two unchecked
+    //rows keep 0 CheckReturn. The one row the batch note expected unchecked and the table puts on a check is WinHelp:
+    //the row's docQuote reserves zero outright - "Returns nonzero if successful, or zero otherwise. To retrieve
+    //extended error information, call GetLastError" - and the table names no legal-success zero for that stem, so the
+    //session-27 soundness test passes and the check lands; the BOOL stays a genuine success flag for the caller's fold,
+    //which is what the U24 paragraph above already recorded. Both context-help-id getters stay unchecked exactly as
+    //the paragraph above argued: their DWORD answer makes a rejected handle indistinguishable from an object that
+    //legitimately carries no context id. This item lands 3 tokens and 2 written reasons over the 5 rows.
+
     //through either context-help-id getter.
 
     //The menu half of the context-help-id family - user32.h:744-745, which the header has held since the folder review
@@ -106,14 +122,34 @@ namespace qor { namespace win { namespace api {
     //Both bind bare: the export table has one row each (SetMenuContextHelpId 34A RVA 0002FBC0, GetMenuContextHelpId
     //17C RVA 000796C0) and no A/W spelling of either stem, and neither stem is in user32.h's nine #undefs, so the bare
     //qor_pp_useswinapi is the D13 spelling for both (G1/G2).
+    //Return policy (U2, table row SetMenuContextHelpId / help.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL Returns nonzero if successful, or zero otherwise. To
+    //retrieve extended error information, call GetLastError ." - this stem sets a property of the caller's own menu, so
+    //the id leaves through the menu rather than through the return and the returned value is pure status with zero
+    //reserved for failure; the session-27 soundness test (a checked-failure site is only sound where the SDK's failure
+    //value is not also a legal success value) passes at every value, and BOOL + zero-means-failure takes the BoolCheck
+    //the library already has (returncheck.h:94, Test at :99 is value ? true : false) - no new check class. The row's
+    //callers column reads 0 in-tree callers (D14: an uncalled export is published surface; the pair is the T2 shape the
+    //paragraph above names), so there was no call site to re-read. The binding stays bare qor_pp_useswinapi - one export
+    //for this stem and no A/W spelling - and G6 keeps the check live on every call.
     BOOL User32::SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuContextHelpId);
-        return Library::Call<BOOL, HMENU, DWORD>(pFunc, hmenu, dwContextHelpId);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, DWORD>(pFunc, hmenu, dwContextHelpId);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetMenuContextHelpId / help.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "Type: DWORD Returns the Help context identifier if the menu has one, or
+    //zero otherwise." - answer-shaped numeric: the DWORD is the id the menu carries, and zero is the documented answer
+    //for a menu that legitimately has no help context, so nothing is reserved and the session-27 soundness test (a
+    //checked-failure site is only sound where the SDK's failure value is not also a legal success value) fails at that
+    //value - a check here would report a context-less menu as a failed call, and a rejected menu handle is
+    //indistinguishable from that same legal zero. The row's callers column reads 0 in-tree callers (the scan in the
+    //paragraph above finds this stem in no call site at all), so no caller reading depends on a failure spelling. This
+    //site keeps 0 CheckReturn and hands the DWORD over as written - bare qor_pp_useswinapi binding.
     DWORD User32::GetMenuContextHelpId(HMENU hmenu)
     {
         qor_pp_fcontext;
@@ -122,14 +158,34 @@ namespace qor { namespace win { namespace api {
         return Library::Call<DWORD, HMENU>(pFunc, hmenu);
     }
 
+    //Return policy (U2, table row SetWindowContextHelpId / help.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL Returns nonzero if successful, or zero otherwise. To
+    //retrieve extended error information, call GetLastError ." - the same pure-status BOOL as the menu sibling: the id
+    //this stem sets leaves through the caller's own window rather than through the return, so zero is reserved for
+    //failure and the session-27 soundness test passes at every value; BOOL + zero-means-failure takes the BoolCheck the
+    //library already has (returncheck.h:94) - no new check class. The row's callers column reads 1 in-tree caller,
+    //re-read before this token moved: ui/gui/controllers/windowcontroller.cpp:797 returns this BOOL straight through as
+    //its own bool in WindowController::SetContextHelpId, so the continuable issue the Win32ErrorHandler above reports
+    //replaces that caller's implicit FALSE path - and the fold stays semantically right, which is what the U24 paragraph
+    //above records. The wrapper still forwards hwnd/dwContextHelpId exactly as that caller wrote them, and G6 keeps the
+    //check live on every call.
     BOOL User32::SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetWindowContextHelpId);
-        return Library::Call<BOOL, HWND, DWORD>(pFunc, hwnd, dwContextHelpId);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, DWORD>(pFunc, hwnd, dwContextHelpId);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetWindowContextHelpId / help.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "Type: DWORD Returns the Help context identifier if the window has one,
+    //or zero otherwise." - the same answer-shaped DWORD as the menu sibling: zero is the documented answer for a window
+    //that carries no context id, and a rejected handle is indistinguishable from that, so nothing is reserved and the
+    //session-27 soundness test fails at zero - a check here would report a context-less window as a failed call. The
+    //row's callers column reads 1 in-tree caller, re-read before this verdict was accepted: ui/gui/controllers/
+    //windowcontroller.cpp:802 hands the DWORD straight through as its own unsigned long with no test on it, so nothing
+    //at the call site depends on a failure spelling. This site keeps 0 CheckReturn and hands the value over as written.
     DWORD User32::GetWindowContextHelpId(HWND hwnd)
     {
         qor_pp_fcontext;
@@ -138,12 +194,25 @@ namespace qor { namespace win { namespace api {
         return Library::Call<DWORD, HWND>(pFunc, hwnd);
     }
 
+    //Return policy (U2, table row WinHelp / help.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, and
+    //the table's verbatim docQuote is "Type: BOOL Returns nonzero if successful, or zero otherwise. To retrieve extended
+    //error information, call GetLastError ." - the help file, command and payload this stem acts on are the caller's own
+    //and leave through neither the return nor an acquired handle, so the returned value is pure status and the page
+    //reserves zero for failure outright; the session-27 soundness test passes at every value and no legal-success zero is
+    //named for this stem in the row. This is an AW row (the table has WinHelpA and WinHelpW and no bare WinHelp) whose
+    //prototype the census could not resolve (NO-PROTOTYPE), so the class base is the published BOOL this wrapper declares
+    //rather than an SDK spelling, and BOOL + zero-means-failure takes the BoolCheck the library already has (returncheck.h
+    //:94) - no new check class. The row's callers column reads 0 for the exact stem while the T spelling sits at
+    //ui/gui/controllers/windowcontroller.cpp:807, re-read before this token moved: it folds this BOOL into its own bool
+    //with "? true : false", so the check turns that caller's silent FALSE path into a continuable issue the Win32ErrorHandler
+    //above reports. The binding stays the AW spelling and G6 keeps the check live on every call.
     BOOL User32::WinHelpT(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, WinHelp);
-        return Library::Call<BOOL, HWND, LPCTSTR, UINT, ULONG_PTR>(pFunc, hWndMain, lpszHelp, uCommand, dwData);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, LPCTSTR, UINT, ULONG_PTR>(pFunc, hWndMain, lpszHelp, uCommand, dwData);
+        return bResult;
     }
 
 }}}//qor::win::api

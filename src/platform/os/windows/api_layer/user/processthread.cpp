@@ -78,6 +78,15 @@ namespace qor { namespace win { namespace api {
     //declared nowhere in the header or in winuser.h, while DdeSetUserHandle (9C) is declared at user32.h:528 as one of
     //the 34 non-static const DDE members no TU defines (U4's largest block). Neither belongs to this section and no
     //header line was touched.
+    //
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S4, item processthread sites): the U1/U2 paragraphs above are the
+    //review's record and stand superseded on two rows - the endpoint table now reads AttachThreadInput checked
+    //BoolCheck, GetGuiResources checked CheckNonZero< DWORD >, UserHandleGrantAccess checked BoolCheck, and
+    //IsWow64Message and WaitForInputIdle unchecked with no check class, so this TU keeps exactly 3 CheckReturn
+    //sites and its one ../returncheck.h include at :12 (unchanged at 1 - it was already live for the seeds). The
+    //decision is the table's, not re-derived here; each row's verbatim docQuote and its written reason sits at the
+    //site below. Both rows in play end unchecked, so this item lands 0 tokens; the 3 seeds for AttachThreadInput,
+    //GetGuiResources and UserHandleGrantAccess are never re-edited.
 
     BOOL User32::AttachThreadInput(DWORD idAttach, DWORD idAttachTo, BOOL fAttach)
     {
@@ -99,6 +108,17 @@ namespace qor { namespace win { namespace api {
         return dwResult;
     }
 
+    //Return policy (U2, table row IsWow64Message / processthread.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote is "The function returns TRUE if the last message read from the
+    //current thread's queue originated from a WOW64 process, and FALSE otherwise." - the value is the answer this
+    //stem gives about the queue, not a verdict on the call: TRUE and FALSE are both legal outcomes, nothing is
+    //reserved for failure, and the session-27 soundness test (a checked-failure site is only sound where the SDK's
+    //failure value is not also a legal success value) fails here, so a check would report "the last message did not
+    //come from a WOW64 process" as a call failure. The row's callers column reads 1, re-read before this verdict was
+    //accepted: ui/gui/view/handlers/messagehandler.cpp:246 "return User32::IsWow64Message() ? true : false;" inside
+    //bool MessageHandler::IsWow64(), which folds the BOOL into its own bool and never tests a failure spelling, so
+    //nothing at that call site would change meaning under a check. This site keeps 0 CheckReturn and hands the state
+    //over as written - bare qor_pp_useswinapi binding, BOOL.
     BOOL User32::IsWow64Message(void)
     {
         qor_pp_fcontext;
@@ -117,6 +137,16 @@ namespace qor { namespace win { namespace api {
         return bResult;
     }
 
+    //Return policy (U2, table row WaitForInputIdle / processthread.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote is "The following table shows the possible return values for this
+    //function. Return code/value Description 0 The wait was satisfied successfully. WAIT_TIMEOUT The wait was
+    //terminated because the time-out interval elapsed. WAIT_FAILED An error occurred." - an inverted site in session-27
+    //terms: the cell the page prints for the satisfied wait is 0, so a zero-check would call a successful wait a
+    //failure, and the one documented error cell (WAIT_FAILED) is the odd value such a check would leave reading as
+    //success; the soundness test fails at every value, so no check class can be put on this return without
+    //misreporting a legal WAIT_* answer. The row's callers column reads 0 in-tree callers (D14: an uncalled export is
+    //published surface), so there was no call site to re-read. This site keeps 0 CheckReturn and hands the WAIT_*
+    //code over as written - bare qor_pp_useswinapi binding, DWORD.
     DWORD User32::WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds)
     {
         qor_pp_fcontext;

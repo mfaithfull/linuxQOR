@@ -40,6 +40,14 @@ namespace qor { namespace win { namespace api {
     //ConsoleSetWindowOwner, ConsoleEndTask) and fail with an access-denied status for a caller that is not the
     //console owner.
 
+    //Return policy (U2, table row ConsoleControl / console.cpp, 11 Nov 2026): the row reads UNCHECKED with no checkClass,
+    //and the table records why in its note - "no Learn page at all (probe: no-slug-in-Learn-index) so no documented
+    //failure value exists; NTSTATUS status code whose own values are legal answers". The docQuote column therefore
+    //carries no quote: the doc-ref probe asked this row's URL once and found no Learn page for the stem, so there is
+    //nothing to key a check on, and the paragraph above already measured the same shape from the SDK side (_Return_type
+    //success_(return >= 0), zero success / positive informational / only negative failure). No token and no
+    //../returncheck.h include here - this TU keeps its 0 CheckReturn sites, and Library::Call's swallowed-fault default
+    //of 0 stays indistinguishable from STATUS_SUCCESS (status.md U7). 0 in-tree callers (D14 published surface).
     NTSTATUS User32::ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD ConsoleInformationLength)
     {
         qor_pp_fcontext;

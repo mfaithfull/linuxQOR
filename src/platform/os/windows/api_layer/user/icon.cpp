@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -67,109 +68,212 @@ namespace qor { namespace win { namespace api {
     //0 MEMBER, and all 7 BYPASS are in unbuilt targets (5 in ui/gl/windowimpl.cpp:191,:1603,:1608,:1642,:1645 -
     //ui/CMakeLists.txt:4 #add_subdirectory(gl); 2 in examples/.../retropad/controller.cpp:43 + retropad.cpp:940 -
     //osspecific/windows/CMakeLists.txt:9) -> 0 bypass in built code.
+    //U2 pass (12 Nov 2026, LargeTUBatchRegionChecks / LargeTUBatchL1 item 4 "icon sites"): that include is back and this pass is
+    //why it is live - the table reads 13 of the 14 rows checked and 1 unchecked (PrivateExtractIcons), so 13 sites build CheckReturn
+    //over their Call and the one keeps the SDK value with a written reason at the site. Six rows take CheckNonZeroHandle< HICON >
+    //(CopyIcon, CreateIcon, CreateIconFromResource, CreateIconFromResourceEx, CreateIconIndirect, LoadIcon), five take BoolCheck
+    //(DestroyIcon, DrawIcon, DrawIconEx, GetIconInfo, GetIconInfoEx) and two CheckNonZero< int > (the LookupIconIdFromDirectory pair);
+    //the line above that read "U2 policy: no CheckReturn added here, and U1: no Win32ErrorHandler" is superseded by this pass, and U1
+    //has since put Win32ErrorHandler at all fourteen sites. Audit before landing (tmp/_tmp_u2_ic_callers.ps1): CopyIcon has 3 live call
+    //sites - ui/gui/gdiobjects/cursor.cpp:91 Cursor::Clone(), ui/gui/gdiobjects/icon.cpp:18 Icon(const Icon&) and icon.cpp:102 Icon::Clone(),
+    //each feeding the result straight into a PrimitiveHandle, so a NULL the SDK answered now throws instead of seeding a null handle;
+    //the table's 6-caller row also counts the comment mentions of the stem, and the site-level read finds these 3. Census after the pass:
+    //CheckReturn-code=13 == table-checked=13, returncheck-includes=1.
 
+    //Return policy (U2, table row CopyIcon / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON >, and the
+    //table's verbatim docQuote is "If the function succeeds, the return value is a handle to the duplicate icon. If the function fails,
+    //the return value is NULL" - the duplicate handle is the answer and a created handle is never NULL, so the session-27 soundness test
+    //passes at NULL and CheckNonZeroHandle (returncheck.h:137, template< typename THandle > : public AutoErrorCheck< THandle >, Test false
+    //only at 0x00000000) fits the HICON row type. Audit: 3 live call sites, ui/gui/gdiobjects/cursor.cpp:91 Cursor::Clone(), the Icon(const
+    //Icon&) copy ctor at ui/gui/gdiobjects/icon.cpp:18 and Icon::Clone() at :102, each wrapping the result in a PrimitiveHandle - so a NULL
+    //the SDK answered now throws instead of seeding a null handle, the behaviour change D51 accepts for a row that reserves NULL.
     HICON User32::CopyIcon(HICON hIcon)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CopyIcon);
-        return Library::Call<HICON, HICON>(pFunc, hIcon);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, HICON>(pFunc, hIcon);
+        return hResult;
     }
 
+    //Return policy (U2, table row CreateIcon / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON >; the table's
+    //verbatim docQuote is "If the function succeeds, the return value is a handle to an icon. If the function fails, the return value is
+    //NULL" - the icon the caller describes through its arguments is the answer, so the handle is never legitimately NULL and the session-27
+    //test passes at NULL; HICON row type, so CheckNonZeroHandle (returncheck.h:137) covers it. Audit: 1 live caller, ui/gui/gdiobjects/icon.cpp:24
+    //in the Icon(void*,...) ctor, which assigns it to m_handle and marks the icon owned - a NULL now throws rather than leaving an owning null handle.
     HICON User32::CreateIcon(HINSTANCE hInstance, int nWidth, int nHeight, BYTE cPlanes, BYTE cBitsPixel, const BYTE* lpbANDbits, const BYTE* lpbXORbits)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIcon);
-        return Library::Call<HICON, HINSTANCE, int, int, BYTE, BYTE, const BYTE*, const BYTE*>(pFunc, hInstance, nWidth, nHeight, cPlanes, cBitsPixel, lpbANDbits, lpbXORbits);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, HINSTANCE, int, int, BYTE, BYTE, const BYTE*, const BYTE*>(pFunc, hInstance, nWidth, nHeight, cPlanes, cBitsPixel, lpbANDbits, lpbXORbits);
+        return hResult;
     }
 
+    //Return policy (U2, table row CreateIconFromResource / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON > -
+    //the table's verbatim docQuote is "If the function succeeds, the return value is a handle to the icon or cursor. If the function fails,
+    //the return value is NULL", and the resource the caller passes in presbits/dwResSize is the answer's subject, so the created handle is
+    //never legitimately NULL and the session-27 test passes at NULL; HICON row type so CheckNonZeroHandle (returncheck.h:137) covers it.
+    //Audit: 1 live caller, ui/gui/gdiobjects/icon.cpp:30 in the Icon(byte*,...) ctor, which stores it as an owning handle.
     HICON User32::CreateIconFromResource(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconFromResource);
-        return Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD>(pFunc, presbits, dwResSize, fIcon, dwVer);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD>(pFunc, presbits, dwResSize, fIcon, dwVer);
+        return hResult;
     }
 
+    //Return policy (U2, table row CreateIconFromResourceEx / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON > -
+    //the table's verbatim docQuote is the non-Ex twin's "If the function fails, the return value is NULL", so the created handle is reserved
+    //against NULL and the size/version selection lives in the arguments; HICON row type so CheckNonZeroHandle (returncheck.h:137) covers it.
+    //Audit: 1 live caller, ui/gui/gdiobjects/icon.cpp:36 in the sized Icon(byte*,...) ctor, which stores it as an owning handle.
     HICON User32::CreateIconFromResourceEx(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer, int cxDesired, int cyDesired, UINT Flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconFromResourceEx);
-        return Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD, int, int, UINT>(pFunc, presbits, dwResSize, fIcon, dwVer, cxDesired, cyDesired, Flags);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, PBYTE, DWORD, BOOL, DWORD, int, int, UINT>(pFunc, presbits, dwResSize, fIcon, dwVer, cxDesired, cyDesired, Flags);
+        return hResult;
     }
 
+    //Return policy (U2, table row CreateIconIndirect / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON > -
+    //the table's verbatim docQuote is "If the function succeeds, the return value is a handle to the icon or cursor that is created. If the
+    //function fails, the return value is NULL . To get extended error information, call GetLastError ." and the ICONINFO the caller describes
+    //is an argument, so the created handle is never legitimately NULL and the session-27 test passes at NULL; HICON row type so CheckNonZeroHandle
+    //(returncheck.h:137) covers it. Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:42 in the Icon(IconInfo&) ctor, which assigns it to
+    //m_handle and sets m_owning - a NULL the SDK answered now throws instead of leaving an owning null handle that ~Icon would DestroyIcon.
     HICON User32::CreateIconIndirect(const ::ICONINFO* piconinfo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateIconIndirect);
-        return Library::Call<HICON, const ::ICONINFO*>(pFunc, piconinfo);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, const ::ICONINFO*>(pFunc, piconinfo);
+        return hResult;
     }
 
+    //Return policy (U2, table row DestroyIcon / icon.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the table's verbatim docQuote is the
+    //two-line status "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended
+    //error information, call GetLastError ." - the icon being destroyed is an argument and the call answers nothing besides status, so zero is
+    //reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:91 in ~Icon, where
+    //the value is discarded today - a failed destroy now raises continuable("A checked parameter failed a test") (returncheck.h:83) from inside a
+    //destructor, so the hazard this site carries is an exception unwinding through ~Icon rather than a silently swallowed failure; recorded here
+    //because the row is checked and no class fits a failed destroy any more tightly.
     BOOL User32::DestroyIcon(HICON hIcon)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyIcon);
-        return Library::Call<BOOL, HICON>(pFunc, hIcon);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HICON>(pFunc, hIcon);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawIcon / icon.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the table's verbatim docQuote is the
+    //two-line status "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended
+    //error information, call GetLastError ." - the icon and the device context are arguments, so zero is reserved and the BOOL answers nothing
+    //of its own; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:108 in Icon::Draw,
+    //which folds the value with "? true : false" - a failed draw now raises instead of returning false from a method whose callers read false as "not drawn".
     BOOL User32::DrawIcon(HDC hDC, int X, int Y, HICON hIcon)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawIcon);
-        return Library::Call<BOOL, HDC, int, int, HICON>(pFunc, hDC, X, Y, hIcon);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, int, int, HICON>(pFunc, hDC, X, Y, hIcon);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawIconEx / icon.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the table's verbatim docQuote is the
+    //non-Ex twin's wording line for line, "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+    //To get extended error information, call GetLastError ." - the icon, the device context and the geometry are all arguments, so zero is reserved
+    //and the BOOL carries no answer; the row's sdkRetType is NO-PROTOTYPE and the binding is the bare stem, so the type comes from the published
+    //BOOL - and BoolCheck is unparameterised (returncheck.h:94, class BoolCheck : public AutoErrorCheck< BOOL >), so no class base is picked.
+    //Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:113 in Icon::DrawEx, which folds the value with "? true : false".
     BOOL User32::DrawIconEx(HDC hdc, int xLeft, int yTop, HICON hIcon, int cxWidth, int cyWidth, UINT istepIfAniCur, HBRUSH hbrFlickerFreeDraw, UINT diFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawIconEx);
-        return Library::Call<BOOL, HDC, int, int, HICON, int, int, UINT, HBRUSH, UINT>(pFunc, hdc, xLeft, yTop, hIcon, cxWidth, cyWidth, istepIfAniCur, hbrFlickerFreeDraw, diFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HDC, int, int, HICON, int, int, UINT, HBRUSH, UINT>(pFunc, hdc, xLeft, yTop, hIcon, cxWidth, cyWidth, istepIfAniCur, hbrFlickerFreeDraw, diFlags);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetIconInfo / icon.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the table's verbatim docQuote is
+    //the status line that names its own out-parameter, "If the function succeeds, the return value is nonzero and the function fills in the
+    //members of the specified ICONINFO structure. If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError ." - the information the caller asks for travels in the PICONINFO it passes, so the BOOL answers nothing of its own and zero
+    //is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:118 in Icon::GetInfo,
+    //which folds the value with "? true : false" - a failed query now raises instead of leaving the caller's IconInfo half-filled and reported false.
     BOOL User32::GetIconInfo(HICON hIcon, ::PICONINFO piconinfo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetIconInfo);
-        return Library::Call<BOOL, HICON, ::PICONINFO>(pFunc, hIcon, piconinfo);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HICON, ::PICONINFO>(pFunc, hIcon, piconinfo);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetIconInfoEx / icon.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the table's verbatim docQuote is the
+    //whole Return value section on the corrected a-slug page nf-winuser-geticoninfoexa, "Type: BOOL TRUE indicates success, FALSE indicates failure."
+    // - status only, with the ICONINFOEX the caller passes as an out-parameter, so the session-27 test passes at FALSE; the row's sdkRetType is
+    //NO-PROTOTYPE and this is an AW binding, so the type comes from the published BOOL and BoolCheck's unparameterised base (returncheck.h:94) is used
+    //rather than picked. Audit: the table reads 0 in-tree callers (change-safe) for the bare stem; the site-level read also finds the member spelling
+    //User32::GetIconInfoExT called at ui/gui/gdiobjects/icon.cpp:123 in Icon::GetInfoExT, which folds the value with "? true : false".
     BOOL User32::GetIconInfoExT(HICON hicon, ::PICONINFOEX piconinfo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetIconInfoEx);
-        return Library::Call<BOOL, HICON, ::PICONINFOEX>(pFunc, hicon, piconinfo);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HICON, ::PICONINFOEX>(pFunc, hicon, piconinfo);
+        return bResult;
     }
 
+    //Return policy (U2, table row LoadIcon / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZeroHandle< HICON >; the table's verbatim docQuote
+    //fetched off the corrected a-slug page nf-winuser-loadicona is "If the function succeeds, the return value is a handle to the newly loaded icon. If
+    //the function fails, the return value is NULL . To get extended error information, call GetLastError ." - the icon the caller names is an argument, so
+    //the loaded handle is never legitimately NULL and the session-27 test passes at NULL; the row's sdkRetType is NO-PROTOTYPE and this is an AW binding,
+    //so the class base is the published HICON, which CheckNonZeroHandle (returncheck.h:137, template< typename THandle >) covers. Audit: the table reads 0
+    //in-tree callers for the bare stem (change-safe); the site-level read finds the member spelling User32::LoadIconT live at ui/gui/gdiobjects/icon.cpp:48
+    //(Icon(void*,std::string)) and :54 (Icon(const wchar_t*)), and the header note above records that windowfactory.cpp:92's Icon(nullptr) reaches :52-56,
+    //where the SDK answers NULL with GetLastError 1813 (ERROR_RESOURCE_NAME_NOT_FOUND) - so this token turns that documented "no small icon" path into a
+    //throw, the behaviour change D51 accepts for a row that reserves NULL, and the caller-side misuse the U20 / D47 note already records.
     HICON User32::LoadIconT(HINSTANCE hInstance, LPCTSTR lpIconName)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadIcon);
-        return Library::Call<HICON, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpIconName);
+        CheckReturn< HICON, CheckNonZeroHandle< HICON > >::TType hResult = Library::Call<HICON, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpIconName);
+        return hResult;
     }
 
+    //Return policy (U2, table row LookupIconIdFromDirectory / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZero< int >; the table's verbatim
+    //docQuote is "If the function succeeds, the return value is an integer resource identifier for the icon ( RT_ICON ) or cursor ( RT_CURSOR ) that best
+    //fits the current display device. If the function fails, the return value is zero. To get extended error information, call GetLastError ." - the answer
+    //is a resource identifier and 0 is reserved for failure, so the session-27 test passes at every value; sdkRetType int matches the published int, so the
+    //base is int and CheckNonZero (returncheck.h:187, template< typename TNumeric > : public AutoErrorCheck< TNumeric >) covers it. Audit: 1 live call site,
+    //ui/gui/gdiobjects/icon.cpp:128 in Icon::LookupIdFromDirectory, whose return type is int and whose callers read 0 as "no match" today.
     int User32::LookupIconIdFromDirectory(PBYTE presbits, BOOL fIcon)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LookupIconIdFromDirectory);
-        return Library::Call<int, PBYTE, BOOL>(pFunc, presbits, fIcon);
+        CheckReturn< int, CheckNonZero< int > >::TType iResult = Library::Call<int, PBYTE, BOOL>(pFunc, presbits, fIcon);
+        return iResult;
     }
 
+    //Return policy (U2, table row LookupIconIdFromDirectoryEx / icon.cpp, 12 Nov 2026): checked with checkClass CheckNonZero< int >; the table's verbatim
+    //docQuote is the LookupIconIdFromDirectory row's line for line - "If the function succeeds, the return value is an integer resource identifier for the icon ( RT_ICON ) or cursor ( RT_CURSOR ) that best
+    //fits the current display device. If the function fails, the return value is zero. To get extended error information, call GetLastError ." - so the answer
+    //is a resource identifier and 0 is reserved for failure, and the session-27 test passes at every value; sdkRetType int matches the published int, so the
+    //base is int and CheckNonZero (returncheck.h:187, template< typename TNumeric > : public AutoErrorCheck< TNumeric >) covers it - the same class the sibling
+    //row above takes. Audit: 1 live call site, ui/gui/gdiobjects/icon.cpp:133 in Icon::LookupIdFromDirectoryEx, whose return type is int (declared icon.h:99)
+    //and which has no further in-tree caller of that member, so the landed check changes no other observed call-site reading; the member's int return is preserved.
     int User32::LookupIconIdFromDirectoryEx(PBYTE presbits, BOOL fIcon, int cxDesired, int cyDesired, UINT Flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LookupIconIdFromDirectoryEx);
-        return Library::Call<int, PBYTE, BOOL, int, int, UINT>(pFunc, presbits, fIcon, cxDesired, cyDesired, Flags);
+        CheckReturn< int, CheckNonZero< int > >::TType iResult = Library::Call<int, PBYTE, BOOL, int, int, UINT>(pFunc, presbits, fIcon, cxDesired, cyDesired, Flags);
+        return iResult;
     }
 
     UINT User32::PrivateExtractIconsT(LPCTSTR szFileName, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags)

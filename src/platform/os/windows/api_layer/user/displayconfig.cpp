@@ -101,8 +101,19 @@
 //nothing left unaccounted - the 41 are Shutdown / power 3, legacy hook 4, legacy word / class-long 10 and 24 Other.
 
 
+//Addendum, 12 Nov 2026 (U2 Small TU batch S5, item displayconfig sites): the paragraph above is the review's record
+//and stands superseded - the endpoint table reads all 7 rows of this TU checked, so this TU lands 7 CheckReturn sites
+//(5 TSuccessCheck< LONG > over the LONG error-code rows and 2 BoolCheck over the rotation pair) and gained its one
+//../returncheck.h include (0 -> 1). The decision is the table's, not re-derived here: those pages state "ERROR_SUCCESS
+//The function succeeded" and then list only failure codes, so 0 is the reserved success answer and the test must read
+//value == 0 - the pass-through the review describes is exactly the value TSuccessCheck leaves in place, and what the
+//token changes is that a non-zero (documented failure) answer now raises a continuable issue the Win32ErrorHandler
+//above reports instead of being handed over as an answer. The review's warning against a nonzero reflex on these five
+//stays true - the landed class is the opposite polarity, not that one. Each row's verbatim docQuote and class sits at
+//the site below. 0 in-tree callers for all 7 stems, so 0 call site needed re-reading before the tokens moved.
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -111,36 +122,67 @@ namespace qor { namespace win { namespace api {
     //requestPacket is _Inout_ (winuser.h:13234-:13235): the caller fills the DISPLAYCONFIG_DEVICE_INFO_HEADER prefix - type /
     //size / adapterId / id (wingdi.h:3062-3067) - and that same block is the out buffer, so its size must describe
     //the whole derived packet (DISPLAYCONFIG_GET_DEVICE_INFO_HEADER and friends), which nothing here can validate.
+    //Return policy (U2, table row DisplayConfigGetDeviceInfo / displayconfig.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass TSuccessCheck< LONG >, and the table's verbatim docQuote opens "The function returns one of the
+    //following return codes. Return code Description ERROR_SUCCESS The function succeeded." while its last two entries
+    //are "ERROR_INSUFFICIENT_BUFFER The size of the packet that the caller passes is not big enough for the information
+    //that the caller requests." and "ERROR_GEN_FAILURE An unspecified error occurred." - every code the row names after
+    //ERROR_SUCCESS is a documented failure, so the reserved value is ERROR_SUCCESS itself and the test reads value == 0
+    //rather than value != 0; the pass-through the banner above describes is exactly the value TSuccessCheck leaves in
+    //place, and what the token changes is that a nonzero (documented failure) answer now raises a continuable issue the
+    //Win32ErrorHandler above reports instead of being handed over as an answer. Session-27 soundness holds at every
+    //value: this stem answers no error code on success, so no legal answer is a reserved one. LONG takes TSuccessCheck
+    //(returncheck.h:174, Test at :179 is (value == 0) ? true : false) already in the vocabulary - LongSuccessCheck is
+    //routed away because its Test(intptr_t&) does not override the base Test(long&) on x64 - so no new check class.
+    //0 in-tree callers over src, re-measured before this token moved.
     LONG User32::DisplayConfigGetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* requestPacket)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DisplayConfigGetDeviceInfo);
-        return Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, requestPacket);
+        CheckReturn< LONG, TSuccessCheck< LONG > >::TType lResult = Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, requestPacket);
+        return lResult;
     }
 
     //The _In_ counterpart (winuser.h:13240): the packet is fully formed by the caller and nothing is written back, so this is
     //the one member of the pair that could take a const pointer - the SDK does not say const, so neither does the
     //published signature. Same LONG error-code rule as the Get above; the type / size / adapterId / id prefix is what
     //selects which device-info request is being made.
+    //Return policy (U2, table row DisplayConfigSetDeviceInfo / displayconfig.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass TSuccessCheck< LONG > - the same return-code table as the Get twin above, whose verbatim docQuote
+    //opens "The function returns one of the following return codes. Return code Description ERROR_SUCCESS The function
+    //succeeded." and ends "ERROR_INSUFFICIENT_BUFFER The size of the packet that the caller passes is not big enough."
+    //then "ERROR_GEN_FAILURE An unspecified error occurred." so ERROR_SUCCESS is the reserved success answer and every
+    //code it names is a documented failure; the test reads value == 0, session-27 soundness holds at every value, and
+    //LONG takes the TSuccessCheck template (returncheck.h:174, Test at :179 is (value == 0) ? true : false) that is
+    //already in the vocabulary. 0 in-tree callers over src, re-measured before this token moved.
     LONG User32::DisplayConfigSetDeviceInfo(DISPLAYCONFIG_DEVICE_INFO_HEADER* setPacket)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DisplayConfigSetDeviceInfo);
-        return Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, setPacket);
+        CheckReturn< LONG, TSuccessCheck< LONG > >::TType lResult = Library::Call< LONG, DISPLAYCONFIG_DEVICE_INFO_HEADER* >(pFunc, setPacket);
+        return lResult;
     }
 
     //One of the two BOOL members of the family: this one really is a success flag. pOrientation is _Out_ and the value
     //written is an ORIENTATION_PREFERENCE (an enum, winuser.h:16038, not a DWORD - the ORIENTATION_PREFERENCE_* values
     //are 0x0/0x1/0x2/0x4/0x8 and are flag-shaped, so DEFINE_ENUM_FLAG_OPERATORS at :16051 lets them combine). WINVER
     //>= 0x0602 name, and unlike the five below it is NOT inside the NOGDI / _WINGDI_ region.
+    //Return policy (U2, table row GetDisplayAutoRotationPreferences / displayconfig.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass BoolCheck, and the table's verbatim docQuote is the whole status sentence "TRUE if the
+    //method succeeds, otherwise FALSE." - the preference itself leaves through pOrientation, so the returned word is
+    //the call's own status and FALSE is reserved for failure, never a legal answer. That is exactly BoolCheck's test
+    //(returncheck.h:94, Test at :99 is value ? true : false) the library already uses for every BOOL status row - no
+    //new check class. 0 in-tree callers over src, re-measured before this token moved, so the continuable issue this
+    //site can now raise reaches only callers outside the tree.
     BOOL User32::GetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE* pOrientation)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDisplayAutoRotationPreferences);
-        return Library::Call< BOOL, ORIENTATION_PREFERENCE* >(pFunc, pOrientation);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, ORIENTATION_PREFERENCE* >(pFunc, pOrientation);
+        return bResult;
     }
 
     //The sizing call the caller is expected to make first: both count parameters are _Out_ (:13205-:13206), i.e. this
@@ -148,12 +190,21 @@ namespace qor { namespace win { namespace api {
     //QueryDisplayConfig needs. flags is the QDC_* group (wingdi.h:3330-3335 - QDC_ALL_PATHS / QDC_ONLY_ACTIVE_PATHS /
     //QDC_DATABASE_CURRENT / QDC_VIRTUAL_MODE_AWARE / QDC_INCLUDE_HMD / QDC_VIRTUAL_REFRESH_RATE_AWARE, not
     //winuser.h). LONG return is ERROR_SUCCESS / ERROR_INVALID_PARAMETER, again passed through.
+    //Return policy (U2, table row GetDisplayConfigBufferSizes / displayconfig.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass TSuccessCheck< LONG >. The table's verbatim docQuote opens "The function returns one of the
+    //following return codes. Return code Description ERROR_SUCCESS The function succeeded." and its last entry is
+    //"ERROR_GEN_FAILURE An unspecified error occurred." - both counts are _Out_ parameters, so this LONG carries
+    //nothing but a code and ERROR_SUCCESS is the reserved success answer; the test reads value == 0 and the session-27
+    //soundness test passes at every value since no success answer of this stem is an error code. LONG takes TSuccessCheck
+    //(returncheck.h:174, Test at :179 is (value == 0) ? true : false), already in the vocabulary, LongSuccessCheck
+    //routed away. 0 in-tree callers over src, re-measured before this token moved.
     LONG User32::GetDisplayConfigBufferSizes(UINT32 flags, UINT32* numPathArrayElements, UINT32* numModeInfoArrayElements)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetDisplayConfigBufferSizes);
-        return Library::Call< LONG, UINT32, UINT32*, UINT32* >(pFunc, flags, numPathArrayElements, numModeInfoArrayElements);
+        CheckReturn< LONG, TSuccessCheck< LONG > >::TType lResult = Library::Call< LONG, UINT32, UINT32*, UINT32* >(pFunc, flags, numPathArrayElements, numModeInfoArrayElements);
+        return lResult;
     }
 
     //The read call of the family. Both count parameters are _Inout_ (:13223, :13225), each array being
@@ -164,23 +215,41 @@ namespace qor { namespace win { namespace api {
     //one: _When_(!(flags & QDC_DATABASE_CURRENT), _Pre_null_) _When_(flags & QDC_DATABASE_CURRENT, _Out_) (:13227-
     //:13229), so passing non-null with QDC_DATABASE_CURRENT set, or null without it, is ERROR_INVALID_PARAMETER -
     //the caller's error, stated here, not coded. Nothing here sizes or validates either array.
+    //Return policy (U2, table row QueryDisplayConfig / displayconfig.cpp, 12 Nov 2026): the row reads checked with
+    //checkClass TSuccessCheck< LONG >, and the census carries no sdkRetType for this stem, so the class base is the
+    //published LONG the wrapper holds - the spelling the token and the row agree on. The table's verbatim docQuote
+    //opens "The function returns one of the following return codes. Return code Description ERROR_SUCCESS The function
+    //succeeded." and ends "ERROR_GEN_FAILURE An unspecified error occurred. ERROR_INSUFFICIENT_BUFFER The supplied path
+    //and mode buffer are too small." - the counts and the two arrays answer through parameters, so the LONG is only
+    //ever a code, ERROR_SUCCESS is the reserved success answer and the test reads value == 0; session-27 soundness
+    //holds at every value. TSuccessCheck (returncheck.h:174, Test at :179 is (value == 0) ? true : false) is already in
+    //the vocabulary. 0 in-tree callers over src, re-measured before this token moved.
     LONG User32::QueryDisplayConfig(UINT32 flags, UINT32* numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32* numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, DISPLAYCONFIG_TOPOLOGY_ID* currentTopologyId)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, QueryDisplayConfig);
-        return Library::Call< LONG, UINT32, UINT32*, DISPLAYCONFIG_PATH_INFO*, UINT32*, DISPLAYCONFIG_MODE_INFO*, DISPLAYCONFIG_TOPOLOGY_ID* >(pFunc, flags, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, currentTopologyId);
+        CheckReturn< LONG, TSuccessCheck< LONG > >::TType lResult = Library::Call< LONG, UINT32, UINT32*, DISPLAYCONFIG_PATH_INFO*, UINT32*, DISPLAYCONFIG_MODE_INFO*, DISPLAYCONFIG_TOPOLOGY_ID* >(pFunc, flags, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, currentTopologyId);
+        return lResult;
     }
 
     //The second BOOL member: a plain success flag. orientation is an ORIENTATION_PREFERENCE value (:16038) and this
     //is a per-process preference only - it does not reconfigure the display, unlike SetDisplayConfig below. WINVER
     //>= 0x0602 name, outside the NOGDI / _WINGDI_ region.
+    //Return policy (U2, table row SetDisplayAutoRotationPreferences / displayconfig.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass BoolCheck, and the table's verbatim docQuote is "TRUE if the method succeeds, otherwise
+    //FALSE. See GetDisplayAutoRotationPreferences for an example of using this function." - the orientation is an
+    //argument and nothing answers through the return, so the returned word is pure call status and FALSE is reserved
+    //for failure. BoolCheck (returncheck.h:94, Test at :99 is value ? true : false) is the class the library already
+    //gives every BOOL status row, so no new check class, and 0 in-tree callers over src reach this stem, re-measured
+    //before this token moved.
     BOOL User32::SetDisplayAutoRotationPreferences(ORIENTATION_PREFERENCE orientation)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDisplayAutoRotationPreferences);
-        return Library::Call< BOOL, ORIENTATION_PREFERENCE >(pFunc, orientation);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, ORIENTATION_PREFERENCE >(pFunc, orientation);
+        return bResult;
     }
 
     //The only wrapper in this library that changes machine state: it applies a display topology to the console
@@ -191,12 +260,21 @@ namespace qor { namespace win { namespace api {
     //SDC_APPLY, SDC_SAVE_TO_DATABASE and the rest. SDC_VALIDATE alone is the read-only way to test a topology
     //without applying it, which matters because the wrapper cannot tell the caller which of the two it asked for.
     //LONG return: ERROR_SUCCESS, ERROR_INVALID_PARAMETER, ERROR_GEN_FAILURE or a device IoCtrl code.
+    //Return policy (U2, table row SetDisplayConfig / displayconfig.cpp, 12 Nov 2026): the row reads checked with
+    //checkClass TSuccessCheck< LONG >. The table's verbatim docQuote opens "The function returns one of the following
+    //return codes. Return code Description ERROR_SUCCESS The function succeeded." and its last entry is "ERROR_BAD_
+    //CONFIGURATION The function could not find a workable solution for the source and target modes that the caller did
+    //not specify." after "ERROR_GEN_FAILURE An unspecified error occurred." - every parameter here is an input, so the
+    //LONG answers with a code only and ERROR_SUCCESS is the reserved success answer; the test reads value == 0 and
+    //session-27 soundness holds at every value. TSuccessCheck (returncheck.h:174, Test at :179 is (value == 0) ? true :
+    //false) is already in the vocabulary, LongSuccessCheck routed away, and 0 in-tree callers over src reach this stem.
     LONG User32::SetDisplayConfig(UINT32 numPathArrayElements, DISPLAYCONFIG_PATH_INFO* pathArray, UINT32 numModeInfoArrayElements, DISPLAYCONFIG_MODE_INFO* modeInfoArray, UINT32 flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDisplayConfig);
-        return Library::Call< LONG, UINT32, DISPLAYCONFIG_PATH_INFO*, UINT32, DISPLAYCONFIG_MODE_INFO*, UINT32 >(pFunc, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, flags);
+        CheckReturn< LONG, TSuccessCheck< LONG > >::TType lResult = Library::Call< LONG, UINT32, DISPLAYCONFIG_PATH_INFO*, UINT32, DISPLAYCONFIG_MODE_INFO*, UINT32 >(pFunc, numPathArrayElements, pathArray, numModeInfoArrayElements, modeInfoArray, flags);
+        return lResult;
     }
 
 }}}//qor::win::api

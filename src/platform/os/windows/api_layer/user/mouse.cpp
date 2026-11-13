@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -94,6 +95,14 @@ namespace qor { namespace win { namespace api {
     //arises in this section. 0 U25 - no const in any of the ten declarations, and ::POINT is qualified identically
     //in declaration and definition.
 
+    //Return policy (U2, table row DragDetect / mouse.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: BOOL If the user moved the mouse outside of the drag rectangle while holding
+    //down the left button, the return value is nonzero. If the user did not move the mouse outside of the drag rectangle
+    //while holding down the left button, the return value is zero." - the two branches are the two answers to the caller's
+    //question ("did a drag happen?"), so zero is the answer for "no drag" rather than a failure value; the page names no
+    //failure value at all and never tells the caller to call GetLastError, so D51 step 2 (an API that reserves no return
+    //value for errors) reads no-check and the session-27 soundness test fails at that value - keying BoolCheck here would
+    //report a legal no-drag answer as a failure. The value comes back exactly as the SDK produced it.
     BOOL User32::DragDetect(HWND hwnd, ::POINT pt)
     {
         qor_pp_fcontext;
@@ -102,6 +111,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HWND, ::POINT >(pFunc, hwnd, pt);
     }
 
+    //Return policy (U2, table row GetCapture / mouse.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: HWND The return value is a handle to the capture window associated with the
+    //current thread. If no window in the thread has captured the mouse, the return value is NULL ." - NULL is the empty
+    //result of the query the call performs, a legal state of the thread (a thread that never called SetCapture), so
+    //nothing is reserved for failure and the session-27 soundness test fails at that value; HandleCheck (returncheck.h:112,
+    //which fails on INVALID_HANDLE_VALUE) and CheckNonZeroHandle (returncheck.h:137, which fails on NULL) would both report
+    //a legal "no capture window" answer as a failure, so no class fits and none is landed. The value comes back exactly as
+    //the SDK produced it.
     HWND User32::GetCapture(void)
     {
         qor_pp_fcontext;
@@ -110,6 +127,12 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HWND >(pFunc);
     }
 
+    //Return policy (U2, table row GetDoubleClickTime / mouse.cpp, 12 Nov 2026): the row reads unchecked with no checkClass,
+    //and the table's verbatim docQuote is "Type: UINT The return value specifies the current double-click time, in
+    //milliseconds. The maximum return value is 5000 milliseconds." - the return is the value the caller asks the system for,
+    //and the page bounds the answer above rather than reserving anything below: there is no "If the function fails" branch
+    //and the page never tells the caller to call GetLastError, so D51 step 2 reads no-check and keying CheckNonZero< UINT >
+    //would report a legal zero-millisecond setting as a failure. The value comes back exactly as the SDK produced it.
     UINT User32::GetDoubleClickTime(void)
     {
         qor_pp_fcontext;
@@ -118,12 +141,24 @@ namespace qor { namespace win { namespace api {
         return Library::Call< UINT >(pFunc);
     }
 
+    //Return policy (U2, table row GetMouseMovePointsEx / mouse.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< int, -1 >, and the table's verbatim docQuote is "Type: int If the function succeeds, the return
+    //value is the number of points in the buffer. Otherwise, the function returns -1. For extended error information, your
+    //application can call GetLastError ." (the page writes that minus sign as an en-dash; the source stays ASCII) - the SDK
+    //reserves -1 as the failure value and the success answer is a point count, so -1 is never a legal answer while a zero
+    //point count is (an empty buffer is the answer the caller asked for) and must stay a pass. That polarity rules CheckNonZero
+    //out and names TCheckFailureValue (returncheck.h:213, Test at :226 is (value == iFailure) ? false : true), which fails
+    //only at -1 and passes at every count including 0; sdkRetType is int so the class base is int and the template is already
+    //in the vocabulary - no new check class. The table's inTreeCallers column reads 1, an upper bound that counts comments and
+    //other libraries' declarations; the site-level read (12 Nov 2026) finds no live call site for this stem anywhere in the
+    //tree, so the row is change-safe and G6's liveness costs nothing built today.
     int User32::GetMouseMovePointsEx(UINT cbSize, LPMOUSEMOVEPOINT lppt, LPMOUSEMOVEPOINT lpptBuf, int nBufPoints, DWORD resolution)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMouseMovePointsEx);
-        return Library::Call< int, UINT, LPMOUSEMOVEPOINT, LPMOUSEMOVEPOINT, int, DWORD >(pFunc, cbSize, lppt, lpptBuf, nBufPoints, resolution);
+        CheckReturn< int, TCheckFailureValue< int, -1 > >::TType iResult = Library::Call< int, UINT, LPMOUSEMOVEPOINT, LPMOUSEMOVEPOINT, int, DWORD >(pFunc, cbSize, lppt, lpptBuf, nBufPoints, resolution);
+        return iResult;
     }
 
     VOID User32::mouse_event(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR dwExtraInfo)
@@ -134,14 +169,30 @@ namespace qor { namespace win { namespace api {
         return Library::voidCall< DWORD, DWORD, DWORD, DWORD, ULONG_PTR >(pFunc, dwFlags, dx, dy, dwData, dwExtraInfo);
     }
 
+    //Return policy (U2, table row ReleaseCapture / mouse.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the call's subject is the
+    //thread's own capture state and the BOOL reports only whether the release happened, so the BOOL carries no answer and
+    //zero is reserved for the documented failure; the session-27 soundness test passes at every value and sdkRetType is BOOL,
+    //so BoolCheck (returncheck.h:94, the AutoErrorCheck< BOOL > subclass already used by the errorhandling.cpp:85 and
+    //systemshutdown.cpp:134 precedent) covers it - no new check class. The table's inTreeCallers column reads 1, an upper
+    //bound; the site-level read (12 Nov 2026) finds the single hit to be the comment at synchronization.cpp:85, not a call
+    //site, so there is no live caller today and G6's liveness costs nothing built today.
     BOOL User32::ReleaseCapture(void)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ReleaseCapture);
-        return Library::Call< BOOL >(pFunc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL >(pFunc);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetCapture / mouse.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: HWND The return value is a handle to the window that had previously captured
+    //the mouse. If there is no such window, the return value is NULL ." - the handle is the previous-capture state the caller
+    //asked about, and a thread that had never captured the mouse legitimately answers NULL, so nothing is reserved for
+    //failure and the session-27 soundness test fails at that value; CheckNonZeroHandle< HWND > (returncheck.h:137) would
+    //report that legal first capture as a failure. The value comes back exactly as the SDK produced it.
     HWND User32::SetCapture(HWND hWnd)
     {
         qor_pp_fcontext;
@@ -150,14 +201,30 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HWND, HWND >(pFunc, hWnd);
     }
 
+    //Return policy (U2, table row SetDoubleClickTime / mouse.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the interval being set is the
+    //parameter and the BOOL reports only whether the set happened, so the BOOL carries no answer and zero is reserved; the
+    //session-27 soundness test passes at every value and sdkRetType is BOOL, so BoolCheck (returncheck.h:94) covers it - no
+    //new check class. The table's inTreeCallers column reads 1, an upper bound; the site-level read (12 Nov 2026) finds only
+    //comments and the user32.h:531 declaration for this stem, so there is no live call site and G6's liveness costs nothing
+    //built today.
     BOOL User32::SetDoubleClickTime(UINT uInterval)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetDoubleClickTime);
-        return Library::Call< BOOL, UINT >(pFunc, uInterval);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT >(pFunc, uInterval);
+        return bResult;
     }
 
+    //Return policy (U2, table row SwapMouseButton / mouse.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: BOOL If the meaning of the mouse buttons was reversed previously, before the
+    //function was called, the return value is nonzero. If the meaning of the mouse buttons was not reversed, the return value
+    //is zero." - the BOOL is the previous state the caller asked for, not the outcome of the swap (the swap itself is
+    //unconditional), so zero is a legal answer and nothing is reserved; the page names no failure value and never tells the
+    //caller to call GetLastError, so D51 step 2 reads no-check and keying BoolCheck would report a legal previously-unreversed
+    //state as a failure. The value comes back exactly as the SDK produced it.
     BOOL User32::SwapMouseButton(BOOL fSwap)
     {
         qor_pp_fcontext;
@@ -166,12 +233,22 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, BOOL >(pFunc, fSwap);
     }
 
+    //Return policy (U2, table row TrackMouseEvent / mouse.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero . If the function
+    //fails, return value is zero. To get extended error information, call GetLastError ." (the page's own wording drops the
+    //article in the second clause) - the TRACKMOUSEEVENT structure the caller passes is both the request and the out-parameter,
+    //so the event data answers through that structure rather than through the return and the BOOL carries no answer; zero is
+    //therefore reserved for the documented failure and the session-27 soundness test passes at every value, so BoolCheck
+    //(returncheck.h:94) covers the BOOL sdkRetType - no new check class. The table's inTreeCallers column reads 1, an upper
+    //bound; the site-level read (12 Nov 2026) finds only comments, this TU's own definition and the user32.h:533 declaration,
+    //so there is no live call site and G6's liveness costs nothing built today.
     BOOL User32::TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, TrackMouseEvent);
-        return Library::Call< BOOL, LPTRACKMOUSEEVENT >(pFunc, lpEventTrack);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, LPTRACKMOUSEEVENT >(pFunc, lpEventTrack);
+        return bResult;
     }
 
 }}}//qor::win::api

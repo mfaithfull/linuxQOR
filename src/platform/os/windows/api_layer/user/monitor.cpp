@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -123,23 +124,61 @@ namespace qor { namespace win { namespace api {
     //fourth row is the new fact: i_m/monitor.cpp:163 calls the GetMonitorInfoW import from the very translation unit
     //that calls User32::GetMonitorInfoT at :56 and :62, so one export is reached through both paths in one file and the
     //bypass runs. Recorded, not fixed - collapsing it is a winqor_gui change, not a change to this layer.
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S4, item monitor sites): that sentence is the review's record and stands
+    //superseded - the endpoint table now reads EnumDisplayMonitors (BoolCheck) and GetMonitorInfo (BoolCheck) checked and
+    //only the three MonitorFrom* rows unchecked, so this TU carries 2 CheckReturn sites and gained its one ../returncheck.h
+    //include (0 -> 2). The decision is the table's, not re-derived here; each row's verbatim docQuote and class sits at
+    //the site below, and the three unchecked rows carry their written reason.
 
+    //Return policy (U2, table row EnumDisplayMonitors / monitor.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the monitors this stem enumerates leave through lpfnEnum, so the value
+    //it returns is the walk's own status word and zero is reserved for failure; the session-27 soundness test (a checked
+    //failure site is only sound where the SDK's failure value is not also a legal success value) passes at every value,
+    //and BOOL + zero-means-failure takes the BoolCheck the library already has (returncheck.h:94, Test at :99 is value
+    //? true : false) - no new check class. 2 in-tree callers, re-read before this token moved: ui/gui/controllers/i_m/
+    //monitor.cpp:187 and :228 both fold this BOOL into their own bool return with "? true : false" and pass hdc/lprcClip/
+    //lpfnEnum/dwData exactly as spelled here, so the new throw replaces that caller's false path with a continuable
+    //issue the Win32ErrorHandler above reports; the wrapper still forwards all four arguments as the caller wrote them.
     BOOL User32::EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnumDisplayMonitors);
-        return Library::Call< BOOL, HDC, LPCRECT, ::MONITORENUMPROC, LPARAM>(pFunc, hdc, lprcClip, lpfnEnum, dwData);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HDC, LPCRECT, ::MONITORENUMPROC, LPARAM>(pFunc, hdc, lprcClip, lpfnEnum, dwData);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetMonitorInfo / monitor.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the answer this stem produces is the caller's own ::LPMONITORINFO, which
+    //the call fills in, so the return is pure status and zero is reserved for failure; the session-27 soundness test
+    //(a checked-failure site is only sound where the SDK's failure value is not also a legal success value) passes at
+    //every value, and BOOL + zero-means-failure takes the BoolCheck the library already has (returncheck.h:94, Test at
+    //:99 is value ? true : false) - no new check class. The row is an AW binding whose prototype the census could not
+    //resolve (NO-PROTOTYPE), so the class base is the published BOOL this wrapper declares rather than an SDK spelling.
+    //The table's callers column reads 0 for the exact stem, while the U15 scan above names the T spelling at
+    //ui/gui/controllers/i_m/monitor.cpp:56 and :62 - both re-read before this token moved: each returns this BOOL as its
+    //own bool with "? true : false" and passes hMonitor/lpmi through unchanged, so the new throw replaces that caller's
+    //false path with a continuable issue the Win32ErrorHandler above reports; G6 keeps the check live on every call.
     BOOL User32::GetMonitorInfoT(HMONITOR hMonitor, ::LPMONITORINFO lpmi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMonitorInfo);
-        return Library::Call<BOOL, HMONITOR, ::LPMONITORINFO>(pFunc, hMonitor, lpmi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMONITOR, ::LPMONITORINFO>(pFunc, hMonitor, lpmi);
+        return bResult;
     }
 
+    //Return policy (U2, table row MonitorFromPoint / monitor.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "If the point is contained by a display monitor, the return value is an
+    //HMONITOR handle to that display monitor. If the point is not contained by a display monitor, the return value
+    //depends on the value of dwFlags ." - the row's note records that NULL is a legal answer under the CLIP flag, so
+    //nothing is reserved and the session-27 test fails at that value: a CheckNonZeroHandle here would report a caller's
+    //legitimate "no monitor at this point" as a failure. 1 in-tree caller, re-read before this verdict was accepted:
+    //ui/gui/controllers/i_m/monitor.cpp:236 feeds the value straight into Monitor's own handle member, which is exactly
+    //the "hold whatever the flag gave us" reading the page describes. This site keeps 0 CheckReturn and hands the value
+    //over as written - bare binding, HMONITOR.
     HMONITOR User32::MonitorFromPoint(::POINT pt, DWORD dwFlags)
     {
         qor_pp_fcontext;
@@ -148,6 +187,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HMONITOR, ::POINT, DWORD>(pFunc, pt, dwFlags);
     }
 
+    //Return policy (U2, table row MonitorFromRect / monitor.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "If the rectangle intersects one or more display monitor rectangles,
+    //the return value is an HMONITOR handle to the display monitor that has the largest area of intersection with the
+    //rectangle. If the rectangle does not intersect a display monitor, the return value depends on the value of dwFlags
+    //." - same dwFlags wording as the two sibling rows: the row's note records NULL as a legal answer, so nothing is
+    //reserved and the session-27 test fails at that value. 1 in-tree caller, re-read before this verdict was accepted:
+    //ui/gui/controllers/i_m/monitor.cpp:242 again builds a Monitor from the value with no test on it. This site keeps
+    //0 CheckReturn and hands the value over as written - bare binding, HMONITOR.
     HMONITOR User32::MonitorFromRect(LPCRECT lprc, DWORD dwFlags)
     {
         qor_pp_fcontext;
@@ -156,6 +203,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HMONITOR, LPCRECT, DWORD>(pFunc, lprc, dwFlags);
     }
 
+    //Return policy (U2, table row MonitorFromWindow / monitor.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "If the window intersects one or more display monitor rectangles, the
+    //return value is an HMONITOR handle to the display monitor that has the largest area of intersection with the window.
+    //If the window does not intersect a display monitor, the return value depends on the value of dwFlags ." - the row's
+    //note records NULL as a legal answer under the flag, so nothing is reserved and a check here would report a
+    //legitimate "this window touches no monitor" as a failure. 2 in-tree callers, both re-read before this verdict was
+    //accepted: ui/gui/controllers/i_m/monitor.cpp:248 builds a Monitor from the value, and ui/gui/controllers/
+    //windowcontroller.cpp:679 hands it to MonitorFromHandle with no NULL test. This site keeps 0 CheckReturn and hands
+    //the value over as written - bare binding, HMONITOR.
     HMONITOR User32::MonitorFromWindow(HWND hwnd, DWORD dwFlags)
     {
         qor_pp_fcontext;

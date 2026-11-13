@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -69,21 +70,50 @@ namespace qor { namespace win { namespace api {
     //does fill dbcc_size/dbcc_devicetype/dbcc_classguid first, :79-83). That file is in no source list - winqor_gl
     //is winqor_gl.cpp cursorimpl.cpp windowimpl.cpp wgl.cpp - and ui/CMakeLists.txt:4 comments add_subdirectory(gl)
     //out of the build, so the bypass is source debt rather than run-time behaviour (U19: 0 LAYER / 1 BYPASS).
+    //Addendum, 11 Nov 2026 (U2 Small TU batch S1, item devicemanagement sites): the "neither is checked" sentence above
+    //is that session's record and stands superseded - the endpoint table now reads BOTH rows checked, RegisterDeviceNotification
+    //with checkClass CheckNonZeroHandle< HDEVNOTIFY > and UnregisterDeviceNotification with BoolCheck, so both wrappers
+    //here carry a CheckReturn and this TU gained its one ../returncheck.h include (0 -> 2 CheckReturn sites in this TU).
+    //Each row's verbatim docQuote and class are stated at the site below; the decision itself is the table's, and the
+    //handle-release contract two lines above (the HDEVNOTIFY is released only by UnregisterDeviceNotification) is unchanged.
 
+    //Return policy (U2, table row RegisterDeviceNotification / devicemanagement.cpp, 11 Nov 2026): the row reads checked
+    //with checkClass CheckNonZeroHandle< HDEVNOTIFY >, and the table's verbatim docQuote is "If the function succeeds,
+    //the return value is a device notification handle. If the function fails, the return value is NULL . To get extended
+    //error information, call GetLastError ." - the row's note records "failure value NULL means no notification handle,
+    //never a legal answer", so the session-27 soundness test passes at every value and the handle row takes the
+    //CheckNonZeroHandle template (returncheck.h:136, Test is value == 0x00000000 ? false : true) the vocabulary already
+    //offers; HDEVNOTIFY is typedef PVOID at winuser.h:3943-3944, so the SDK's NULL failure and a default-constructed
+    //Library::Call failure are the same value, which G6 now turns into a continuable issue the Win32ErrorHandler above
+    //reports instead of a silent NULL. The row has 0 in-tree callers through this surface.
     HDEVNOTIFY User32::RegisterDeviceNotificationT(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterDeviceNotification);
-        return Library::Call< HDEVNOTIFY, HANDLE, LPVOID, DWORD >(pFunc, hRecipient, NotificationFilter, Flags);
+        CheckReturn< HDEVNOTIFY, CheckNonZeroHandle< HDEVNOTIFY > >::TType hResult = Library::Call< HDEVNOTIFY, HANDLE, LPVOID, DWORD >(pFunc, hRecipient, NotificationFilter, Flags);
+        return hResult;
     }
 
+    //Return policy (U2, table row UnregisterDeviceNotification / devicemanagement.cpp, 11 Nov 2026): the row reads checked
+    //with checkClass BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError ." -
+    //zero is reserved for failure and this member answers nothing other than that success/failure pair (the HDEVNOTIFY
+    //it releases is an in-parameter, so there is no returned answer for a zero to collide with), so the session-27
+    //soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success
+    //value) passes at every value and BOOL + zero-means-failure takes the BoolCheck the library already has
+    //(returncheck.h:94, value ? true : false) - no new check class. G6 (neither qor_pp_parameter_checking nor qor_pp_yes
+    //is defined anywhere) keeps the check live on every call, so a failed unregister now raises a continuable issue the
+    //Win32ErrorHandler above reports rather than travelling as an indistinguishable success; Library::Call's swallowed-
+    //fault default is a zero BOOL, so a fault now reads as the documented failure (status.md U7). 0 in-tree callers
+    //(D14 published surface), so the new throw is confined to that surface.
     BOOL User32::UnregisterDeviceNotification(HDEVNOTIFY Handle)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterDeviceNotification);
-        return Library::Call< BOOL, HDEVNOTIFY >(pFunc, Handle);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HDEVNOTIFY >(pFunc, Handle);
+        return bResult;
     }
 
 }}}//qor::win::api

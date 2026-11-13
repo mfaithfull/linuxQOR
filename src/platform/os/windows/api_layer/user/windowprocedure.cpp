@@ -73,6 +73,13 @@ namespace qor { namespace win { namespace api {
     //"(" - left as-is, no tally booked.
 
 
+    //Return policy (U2, table row CallWindowProc / windowprocedure.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote is "Type: LRESULT The return value specifies the result of the
+    //message processing and depends on the message sent." - the page reserves no value for failure at all: the value
+    //is the answer to the message, so the session-27 test gates nothing and a check would report a legal answer as
+    //a failure. This site keeps 0 CheckReturn and hands the LRESULT to the OS as the caller wrote it, which is also
+    //what keeps the U7 note above intact. 0 in-tree callers of the exact stem (the table counts that spelling; the
+    //T-suffixed member is called nowhere in src), AW binding, NO-PROTOTYPE, LRESULT.
     LRESULT User32::CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
@@ -81,6 +88,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call<LRESULT,WNDPROC, HWND, UINT, WPARAM, LPARAM>(pFunc, lpPrevWndFunc, hWnd, Msg, wParam, lParam);
     }
 
+    //Return policy (U2, table row DefWindowProc / windowprocedure.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote is "Type: LRESULT The return value is the result of the message
+    //processing and depends on the message." - no value is reserved for failure, the value is the message's answer,
+    //so the session-27 test gates nothing and a check would report a legal answer as a failure. This site keeps 0
+    //CheckReturn. 0 in-tree callers of the exact stem (the table counts that spelling); the T-suffixed member has 1,
+    //re-read before any token could move: ui/gui/window.cpp:106 Window::DefWindowProcT returns this LRESULT as its
+    //own long long and that member is the window procedure chain the U7 note above records, so leaving the site
+    //unchecked is what keeps that contract intact. AW binding, NO-PROTOTYPE, LRESULT.
     LRESULT User32::DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;

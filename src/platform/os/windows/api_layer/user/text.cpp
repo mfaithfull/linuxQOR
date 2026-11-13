@@ -93,8 +93,33 @@ namespace qor { namespace win { namespace api {
     //   it carries the U26 `TagRECT` mirror question, U19's `TrackPopupMenu` BYPASS split and U27's `SetScrollInfo`
     //   question, then `windowclass.cpp`, `windowprocedure.cpp`, `windowproperties.cpp` and the `winqor_api_user.cpp`
     //   glue TU.
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S4, item text sites): the U1/U2 paragraph above is the review's record
+    //and stands superseded where it hints at a check - the endpoint table reads all 4 rows UNCHECKED here, so 0 of the
+    //4 sites carry a CheckReturn and this TU keeps 0 ../returncheck.h includes. The hint that needed superseding is
+    //the DrawText pair: the review says the SDK's _Success_(return) makes a non-zero test "what the SDK itself asserts",
+    //but the table's verbatim docQuote gives those returns a measurement ("If the function succeeds, the return value
+    //is the height of the text in logical units ... If the function fails, the return value is zero"), and zero is that
+    //measurement's degenerate answer for an empty string or a zero-height draw, so the session-27 soundness test (a
+    //checked-failure site is only sound where the SDK's failure value is not also a legal success value) fails at that
+    //value and the row's verdict is unchecked. The decision is the table's, not re-derived here; each row's verbatim
+    //docQuote and written reason sits at the site below.
 
 
+
+    //Return policy (U2, table row DrawText / text.cpp, 12 Nov 2026): the row reads UNCHECKED with no check class, and
+    //the table's verbatim docQuote is "If the function succeeds, the return value is the height of the text in logical
+    //units. If DT_VCENTER or DT_BOTTOM is specified, the return value is the offset from lpRect->top to the bottom of
+    //the drawn text. If the function fails, the return value is zero." - answer-shaped numeric: the int is the height
+    //or the offset this stem measures, and zero is that measurement's degenerate answer for an empty string or a
+    //zero-height draw, so nothing is reserved and the session-27 soundness test (a checked-failure site is only sound
+    //where the SDK's failure value is not also a legal success value) fails at that value - a CheckNonZero< int > here
+    //would report a legal zero-height draw as a failed call. The row is an AW binding whose prototype the census could
+    //not resolve (NO-PROTOTYPE), so the class base would have been the published int this wrapper declares - never
+    //reached, since the verdict is unchecked. The table's callers column reads 0 for the exact stem; the T spelling's
+    //1 in-tree mention was re-read at ui/gui/gdiobjects/devicecontext.cpp:831 before this verdict was accepted
+    //(tmp/_tmp_u2_text_callers.ps1 -> tmp/_tmp_u2_text_callers.txt, hits=16) - it returns the int as its own int
+    //with no test on it, so no caller reading depends on a failure spelling. This site keeps 0 CheckReturn and hands
+    //the int over as written - AW binding.
     int User32::DrawTextT(HDC hdc, LPCTSTR lpchText, int cchText, ::LPRECT lprc, UINT format)
     {
         qor_pp_fcontext;
@@ -103,6 +128,16 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HDC, LPCTSTR, int, ::LPRECT, UINT >(pFunc, hdc, lpchText, cchText, lprc, format);
     }
 
+    //Return policy (U2, table row DrawTextEx / text.cpp, 12 Nov 2026): the row reads UNCHECKED with no check class, and
+    //the table's verbatim docQuote is "If the function succeeds, the return value is the text height in logical units.
+    //If DT_VCENTER or DT_BOTTOM is specified, the return value is the offset from lprc->top to the bottom of the drawn
+    //text If the function fails, the return value is zero." - the same answer-shaped numeric as the DrawText row above:
+    //the int is that height or offset and zero is its degenerate answer, so nothing is reserved and the session-27
+    //soundness test fails at that value. The row's note records it as an AW row with no SDK prototype, so the class
+    //base would have been the published int this wrapper declares - never reached. The table's callers column reads
+    //0 for the exact stem; the T spelling's 1 in-tree mention at ui/gui/gdiobjects/devicecontext.cpp:836 was re-read
+    //before this verdict was accepted - it returns the int untested, so no caller reading depends on a failure
+    //spelling. This site keeps 0 CheckReturn and hands the int over as written - AW binding.
     int User32::DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT format, ::LPDRAWTEXTPARAMS lpdtp)
     {
         qor_pp_fcontext;
@@ -111,6 +146,17 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HDC, LPTSTR, int, ::LPRECT, UINT, ::LPDRAWTEXTPARAMS >(pFunc, hdc, lpchText, cchText, lprc, format, lpdtp);
     }
 
+    //Return policy (U2, table row GetTabbedTextExtent / text.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "If the function succeeds, the return value is the dimensions of the
+    //string in logical units. The height is in the high-order word and the width is in the low-order word. If the
+    //function fails, the return value is 0. GetTabbedTextExtent will fail if hDC is invalid and if nTabPositions is
+    //less than 0." - answer-shaped numeric: the packed LOWORD width / HIWORD height is the measurement the call
+    //produces, and a string that measures zero carries exactly the packed zero the failure reports, so the documented
+    //failure value is not reserved and the session-27 soundness test fails at it - the invalid-hDC / negative-nTabPositions
+    //failures are indistinguishable from a legal zero-size answer. The table's callers column reads 0 for the exact
+    //stem; the T spelling's 1 in-tree mention at ui/gui/gdiobjects/devicecontext.cpp:841 was re-read before this
+    //verdict was accepted - it returns the DWORD untested. This site keeps 0 CheckReturn and hands the DWORD over
+    //as written - AW binding.
     DWORD User32::GetTabbedTextExtentT(HDC hdc, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions)
     {
         qor_pp_fcontext;
@@ -119,6 +165,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call< DWORD, HDC, LPCTSTR, int, int, const INT* >(pFunc, hdc, lpString, chCount, nTabPositions, lpnTabStopPositions);
     }
 
+    //Return policy (U2, table row TabbedTextOut / text.cpp, 12 Nov 2026): the row reads UNCHECKED with no check class,
+    //and the table's verbatim docQuote is "If the function succeeds, the return value is the dimensions, in logical
+    //units, of the string. The height is in the high-order word and the width is in the low-order word. If the
+    //function fails, the return value is zero." - answer-shaped numeric again: the LONG packs the drawn string's
+    //width and height, and zero is that pair's degenerate answer, so nothing is reserved and the session-27 soundness
+    //test fails at that value - which is also why this row's LONG never reaches a class-base decision. The table's
+    //callers column reads 0 for the exact stem; the T spelling's 1 in-tree mention at ui/gui/gdiobjects/devicecontext.cpp:846
+    //was re-read before this verdict was accepted - it returns the LONG untested. This site keeps 0 CheckReturn and
+    //hands the LONG over as written - AW binding.
     LONG User32::TabbedTextOutT(HDC hdc, int x, int y, LPCTSTR lpString, int chCount, int nTabPositions, const INT* lpnTabStopPositions, int nTabOrigin)
     {
         qor_pp_fcontext;

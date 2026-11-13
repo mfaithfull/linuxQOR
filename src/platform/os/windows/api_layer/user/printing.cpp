@@ -106,6 +106,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -115,12 +116,24 @@ namespace qor { namespace win { namespace api {
     //selects the PW_* variants the SDK spells at um\WinUser.h:4607 PW_CLIENTONLY 0x00000001 and :4610 PW_RENDERFULLCONTENT
     //0x00000002 (the second only under #if(_WIN32_WINNT >= 0x0603), and kernel32.h:22-30 pins 0x0A00, so both are visible
     //here); the layer forwards all three arguments exactly as the caller wrote them.
+    //Return policy (U2, table row PrintWindow / printing.cpp, 11 Nov 2026): the row is CHECKED with BoolCheck, so this
+    //is the TU's one CheckReturn site and the TU gains its one ../returncheck.h include. The table's verbatim docQuote
+    //reads "If the function succeeds, it returns a nonzero value. If the function fails, it returns zero.", so zero is
+    //reserved for failure and no success answer is zero - the session-27 soundness test (a checked-failure site is only
+    //sound where the SDK's failure value is not also a legal success value) passes at every value, and BOOL + zero-means-
+    //failure takes the BoolCheck the library already has (returncheck.h:94, value ? true : false), so no new check class
+    //is needed. G6 (neither qor_pp_parameter_checking nor qor_pp_yes is defined anywhere) keeps the check live on every
+    //call, so a FALSE now raises a continuable issue the Win32ErrorHandler above reports with its decoded Windows text
+    //rather than travelling as an indistinguishable success; the swallowed-fault default of Library::Call is a zero
+    //BOOL, i.e. a fault now reads as the documented failure (status.md U7). The row carries 0 in-tree callers (D14
+    //published surface), so the new throw is confined to that surface.
     BOOL User32::PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, PrintWindow);
-        return Library::Call< BOOL, HWND, HDC, UINT >(pFunc, hwnd, hdcBlt, nFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, HDC, UINT >(pFunc, hwnd, hdcBlt, nFlags);
+        return bResult;
     }
 
 }}}   //qor::win::api

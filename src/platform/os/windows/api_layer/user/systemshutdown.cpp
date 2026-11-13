@@ -76,19 +76,50 @@ namespace qor { namespace win { namespace api {
     //NOUSER and carries no version floor - its guard stack is #ifndef _WINUSER_ ;; #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP),
     //so its declaration and wrapper are unconditional, same shape as the 6c gesture five. Same return convention: BOOL,
     //no _Check_return_ in the SDK, 0 Win32ErrorHandler / 0 CheckReturn here.
+    //
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S5, item systemshutdown sites): the paragraphs above are the review's
+    //record and stand superseded - the endpoint table reads 6 rows for this TU, 5 `checked` and 1 `unchecked`, so this
+    //TU lands 4 further CheckReturn sites (all four over the BOOL rows, every one BoolCheck) and keeps its 1
+    //../returncheck.h include (:12, the one D51's seed already needed - 0 new include here). The decision is the
+    //table's, not re-derived here: the four pages state "If the call succeeds, the return value is nonzero" / "If the
+    //function succeeds, the return value is nonzero" and then reserve zero for failure, so the reserved value is zero
+    //and the test reads value != 0 through BoolCheck - the pass-through the paragraphs above describe is exactly the
+    //value BoolCheck leaves in place, and what the token changes is that a zero (documented failure) answer now raises
+    //a continuable issue the Win32ErrorHandler above reports instead of being handed over as an answer. The warning
+    //against a nonzero reflex on the two asynchronous rows stays true - a nonzero return only starts the shutdown or
+    //the lock, so the check tests failure and never outcome. CancelShutdown stays `unchecked` with its reason at the
+    //site: the doc-ref probe found no Learn page for that stem, so there is no documented failure value to key on.
+    //ShutdownBlockReasonDestroy is D51's seed - its CheckReturn statement, at :134 before this item's edits and :179
+    //after them, was never re-edited. Each row's verbatim docQuote and class sits at the site below. 0 in-tree callers
+    //for all 6 stems, re-measured before the tokens moved.
 
+    //Return policy (U2, table row ExitWindowsEx / systemshutdown.cpp, 12 Nov 2026): the row reads checked with
+    //checkClass BoolCheck, and the table's verbatim docQuote opens "If the function succeeds, the return value is
+    //nonzero." and closes "If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError ." - the page warns in between that a nonzero return only says the shutdown "has been initiated"
+    //because the function executes asynchronously, so the BOOL is call status and not outcome, and zero is the
+    //reserved failure value. BoolCheck (returncheck.h:94, Test at :99 is value ? true : false) fails on zero only, so
+    //the session-27 soundness test holds at every value, and 0 in-tree callers over src reach this stem.
     BOOL User32::ExitWindowsEx(UINT uFlags, DWORD dwReason)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ExitWindowsEx);
-        return Library::Call< BOOL, UINT, DWORD >(pFunc, uFlags, dwReason);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT, DWORD >(pFunc, uFlags, dwReason);
+        return bResult;
     }
 
     //BOOL, and FALSE means the shutdown abort did not take - the SDK carries no _Check_return_ here, so a discarded
     //return leaves no trace on either side (U1/U2: no Win32ErrorHandler, no CheckReturn; the value is the caller's to read).
     //CancelShutdown aborts a shutdown already in progress - it is the counterpart of the ExitWindowsEx above, not of the
     //ShutdownBlockReason trio - and takes no argument, so the wrapper is a bare Library::Call< BOOL >(pFunc).
+    //Return policy (U2, table row CancelShutdown / systemshutdown.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //checkClass, and the table's note records why - "no Learn page at all (probe: no-slug-in-Learn-index) so no
+    //documented failure value exists; BOOL status with nothing to gate on". The docQuote column therefore carries no
+    //quote: the doc-ref probe asked this row's URL once and found no Learn page for the stem, so there is nothing to
+    //key a check on and the session-27 soundness test cannot be run at any value. No token and no extra include here -
+    //the TU's one ../returncheck.h include belongs to the four checked rows below, and Library::Call's swallowed-fault
+    //default of 0 stays indistinguishable from a rejected abort. 0 in-tree callers (D14 published surface).
     BOOL User32::CancelShutdown(void)
     {
         qor_pp_fcontext;
@@ -97,20 +128,35 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL >(pFunc);
     }
 
+    //Return policy (U2, table row LockWorkStation / systemshutdown.cpp, 12 Nov 2026): the row reads checked with
+    //checkClass BoolCheck, and the table's verbatim docQuote opens "If the function succeeds, the return value is
+    //nonzero." and closes "If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError ." - in between it warns that a nonzero return only says the operation "has been initiated" and
+    //nothing about whether the workstation was successfully locked, so the BOOL is call status and zero is reserved
+    //for failure. BoolCheck (returncheck.h:94, Test at :99 is value ? true : false) fails on zero only, so the
+    //session-27 soundness test holds at every value, and 0 in-tree callers over src reach this stem.
     BOOL User32::LockWorkStation(void)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, LockWorkStation);
-        return Library::Call< BOOL >(pFunc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL >(pFunc);
+        return bResult;
     }
 
+    //Return policy (U2, table row ShutdownBlockReasonCreate / systemshutdown.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass BoolCheck, and the table's verbatim docQuote is the whole Return-value section "If the call
+    //succeeds, the return value is nonzero. If the call fails, the return value is zero. To get extended error
+    //information, call GetLastError ." - the reason text is an _In_ argument, so nothing answers through the return
+    //and zero is reserved for failure. BoolCheck (returncheck.h:94, Test at :99 is value ? true : false) fails on zero
+    //only, so the session-27 soundness test holds at every value, and 0 in-tree callers over src reach this stem.
     BOOL User32::ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonCreate);
-        return Library::Call< BOOL, HWND, LPCWSTR >(pFunc, hWnd, pwszReason);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, LPCWSTR >(pFunc, hWnd, pwszReason);
+        return bResult;
     }
 
     //BOOL, and the SDK reserves FALSE for failure at this stem, so the return check is sound here - the one place in
@@ -135,12 +181,20 @@ namespace qor { namespace win { namespace api {
         return bResult;
     }
 
+    //Return policy (U2, table row ShutdownBlockReasonQuery / systemshutdown.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass BoolCheck, and the table's verbatim docQuote is the whole Return-value section "If the call
+    //succeeds, the return value is nonzero. If the call fails, the return value is zero. To get extended error
+    //information, call GetLastError ." - the reason text answers through the _Out_writes_bytes_all_ LPWSTR pwszBuff
+    //and its DWORD* pcchBuff, so the BOOL carries call status only and zero is reserved for failure. BoolCheck
+    //(returncheck.h:94, Test at :99 is value ? true : false) fails on zero only, so the session-27 soundness test
+    //holds at every value, and 0 in-tree callers over src reach this stem.
     BOOL User32::ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ShutdownBlockReasonQuery);
-        return Library::Call< BOOL, HWND, LPWSTR, DWORD* >(pFunc, hWnd, pwszBuff, pcchBuff);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, LPWSTR, DWORD* >(pFunc, hWnd, pwszBuff, pcchBuff);
+        return bResult;
     }
 
 }}}//qor::win::api

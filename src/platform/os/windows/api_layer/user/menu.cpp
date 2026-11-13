@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -83,84 +84,177 @@ namespace qor { namespace win { namespace api {
     //the SDK documents -1 from GetMenuItemCount and MenuItemFromPoint and 0xFFFFFFFF from GetMenuState and
     //GetMenuDefaultItem - while 24 of the 39 wrappers return BOOL and none of it is looked at.
 
+    //Return policy (U2, table row AppendMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the menu being appended to
+    //and the item's text are parameters, so the BOOL carries no answer and zero is reserved; the row's sdkRetType is
+    //NO-PROTOTYPE (AW binding) so the base is the published BOOL and BoolCheck (returncheck.h:94) covers it; the page is
+    //reached through the suffixed ANSI twin slug nf-winuser-appendmenua (CORRECTED leg). AUDIT: the table counts 0 in-tree
+    //callers for the bare stem, but this wrapper's spelling is AppendMenuT and it is called at i_m/menu.cpp :77 :84 :93 -
+    //each site already tests the return (... ? true : false and if(...)), so a fired check adds only the continuable
+    //diagnostic and each site's own false / -1 branch is unchanged.
     BOOL User32::AppendMenuT(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, AppendMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uFlags, uIDNewItem, lpNewItem);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uFlags, uIDNewItem, lpNewItem);
+        return bResult;
     }
 
+    //Return policy (U2, table row CheckMenuItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< DWORD, ( DWORD )-1 >, so the call carries the token - docQuote "Type: DWORD The return value
+    //specifies the previous state of the menu item (either MF_CHECKED or MF_UNCHECKED ). If the menu item does not exist,
+    //the return value is UINT_MAX." - the return is the previous check state the caller asked about, so one of the two flag
+    //values (MF_UNCHECKED) is zero and CheckNonZero< DWORD > would report a legal unchecked item as a failure; the only
+    //reserved value is UINT_MAX, which is ( DWORD )-1, so TCheckFailureValue (returncheck.h:213, Test fails only at iFailure)
+    //passes at both flag values; the same form the rawinput.cpp rows already carry. AUDIT: the table counts 1 in-tree caller
+    //and the site-level read is i_m/menu.cpp:67 "return User32::CheckMenuItem((HMENU)(m_handle.Use()), uIDCheckItem, uCheck);"
+    //into "unsigned long Menu::CheckItem(...)" - the site forwards the state as its own answer, so the check fires only at
+    //the documented nonexistent-item sentinel and both flag values pass through unchanged.
     DWORD User32::CheckMenuItem(HMENU hMenu, UINT uIDCheckItem, UINT uCheck)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckMenuItem);
-        return Library::Call<DWORD, HMENU, UINT, UINT>(pFunc, hMenu, uIDCheckItem, uCheck);
+        CheckReturn< DWORD, TCheckFailureValue< DWORD, ( DWORD )-1 > >::TType dResult = Library::Call<DWORD, HMENU, UINT, UINT>(pFunc, hMenu, uIDCheckItem, uCheck);
+        return dResult;
     }
 
+    //Return policy (U2, table row CheckMenuRadioItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //so the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero. To get extended error information, use the GetLastError function." - the radio
+    //group and its indices are parameters, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck
+    //(returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is i_m/menu.cpp:98
+    //"return User32::CheckMenuRadioItem(MENU_HANDLE, idFirst, idLast, idCheck, flags) ? true : false;" - the site already
+    //collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::CheckMenuRadioItem(HMENU hmenu, UINT first, UINT last, UINT check, UINT flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckMenuRadioItem);
-        return Library::Call<BOOL, HMENU, UINT, UINT, UINT, UINT>(pFunc, hmenu, first, last, check, flags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT, UINT, UINT>(pFunc, hmenu, first, last, check, flags);
+        return bResult;
     }
 
+    //Return policy (U2, table row CreateMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HMENU >, so the call carries the token - docQuote "Type: HMENU If the function succeeds, the return
+    //value is a handle to the newly created menu. If the function fails, the return value is NULL . To get extended error
+    //information, call GetLastError ." - the handle is what the caller hands to AddMenu/AppendMenu next, so a NULL menu handle
+    //is never usable and zero is reserved; the row's sdkRetType column is blank so the class base is the published HMENU, and
+    //CheckNonZeroHandle (returncheck.h:137, template< typename THandle >) covers it - the same shape the pointer.cpp
+    //CreateSyntheticPointerDevice row carries. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:40
+    //"Menu::Menu() : m_handle(User32::CreateMenu())" - the handle is stored in the controller's m_handle member, so a fired
+    //check adds only the continuable diagnostic and the member keeps whatever the call returned; the check fires only at the
+    //documented NULL.
     HMENU User32::CreateMenu(void)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreateMenu);
-        return Library::Call<HMENU>(pFunc);
+        CheckReturn< HMENU, CheckNonZeroHandle< HMENU > >::TType hResult = Library::Call<HMENU>(pFunc);
+        return hResult;
     }
 
+    //Return policy (U2, table row CreatePopupMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HMENU >, so the call carries the token - docQuote "Type: HMENU If the function succeeds, the return
+    //value is a handle to the newly created menu. If the function fails, the return value is NULL . To get extended error
+    //information, call GetLastError ." - the CreateMenu row's Return value section word for word (the popup twin), so a NULL
+    //menu handle is never usable and zero is reserved; the row's sdkRetType column is blank so the class base is the published
+    //HMENU and CheckNonZeroHandle (returncheck.h:137) fits. AUDIT: the table counts 1 in-tree caller and the site-level read
+    //is n_r/popupmenu.cpp:40 "PopupMenu::PopupMenu() : Menu(User32::CreatePopupMenu())" - the handle initialises the Menu
+    //member, so a fired check adds only the continuable diagnostic and the member keeps whatever the call returned; the check
+    //fires only at the documented NULL.
     HMENU User32::CreatePopupMenu(void)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CreatePopupMenu);
-        return Library::Call<HMENU>(pFunc);
+        CheckReturn< HMENU, CheckNonZeroHandle< HMENU > >::TType hResult = Library::Call<HMENU>(pFunc);
+        return hResult;
     }
 
+    //Return policy (U2, table row DeleteMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the menu and item id are
+    //parameters, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers
+    //it. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:103
+    //"return User32::DeleteMenu(MENU_HANDLE, position, flags) ? true : false;" - the site already collapses the BOOL, so a
+    //fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::DeleteMenu(HMENU hMenu, UINT uPosition, UINT uFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DeleteMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
+        return bResult;
     }
 
+    //Return policy (U2, table row DestroyMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the DeleteMenu row's wording
+    //word for word, the menu handle is a parameter, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so
+    //BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:108
+    //"return User32::DestroyMenu(MENU_HANDLE) ? true : false;" - the site already collapses the BOOL, so a fired check adds
+    //only the diagnostic and the site's false branch is unchanged.
     BOOL User32::DestroyMenu(HMENU hMenu)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DestroyMenu);
-        return Library::Call<BOOL, HMENU>(pFunc, hMenu);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU>(pFunc, hMenu);
+        return bResult;
     }
 
+    //Return policy (U2, table row DrawMenuBar / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the window whose bar is drawn
+    //is a parameter and the drawing itself returns nothing, so the BOOL carries no answer and zero is reserved; sdkRetType
+    //BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is
+    //windowcontroller.cpp:468 "return User32::DrawMenuBar(WINDOW_HANDLE) ? true :false;" - the site already collapses the
+    //BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::DrawMenuBar(HWND hWnd)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, DrawMenuBar);
-        return Library::Call<BOOL, HWND>(pFunc, hWnd);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND>(pFunc, hWnd);
+        return bResult;
     }
 
+    //Return policy (U2, table row EnableMenuItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< BOOL, -1 >, so the call carries the token - docQuote "Type: BOOL The return value specifies the
+    //previous state of the menu item (it is either MF_DISABLED , MF_ENABLED , or MF_GRAYED ). If the menu item does not exist,
+    //the return value is -1." - the return is the previous enable state the caller asked about, so one of the three flag
+    //values is zero and keying CheckNonZero< BOOL > or BoolCheck would report a legal MF_ENABLED item as a failure; -1 is
+    //the only reserved value, so TCheckFailureValue< BOOL, -1 > (returncheck.h:213) passes at all three flag values; the
+    //published BOOL row type is typedef int in the Windows headers this layer includes, so -1 survives the comparison - the
+    //same reading the GetMessage row carries. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:72
+    //"return User32::EnableMenuItem((HMENU)(m_handle.Use()), uIDEnableItem, uEnable) ? true : false;" - the site already
+    //collapses the value into a BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::EnableMenuItem(HMENU hMenu, UINT uIDEnableItem, UINT uEnable)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EnableMenuItem);
-        return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uIDEnableItem, uEnable);
+        CheckReturn< BOOL, TCheckFailureValue< BOOL, -1 > >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uIDEnableItem, uEnable);
+        return bResult;
     }
 
+    //Return policy (U2, table row EndMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so the
+    //call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the DeleteMenu row's wording
+    //word for word, the window is a parameter, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck
+    //(returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:113
+    //"return User32::EndMenu() ? true : false;" - the site already collapses the BOOL, so a fired check adds only the diagnostic
+    //and the site's false branch is unchanged.
     BOOL User32::EndMenu(void)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, EndMenu);
-        return Library::Call<BOOL>(pFunc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL>(pFunc);
+        return bResult;
     }
 
     HMENU User32::GetMenu(HWND hWnd)
@@ -171,12 +265,19 @@ namespace qor { namespace win { namespace api {
         return Library::Call<HMENU, HWND>(pFunc, hWnd);
     }
 
+    //Return policy (U2, table row GetMenuBarInfo / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the MENU_BARINFO the caller
+    //wants is an out-parameter and the ids are parameters, so the BOOL carries no answer and zero is reserved; sdkRetType
+    //BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is
+    //windowcontroller.cpp:481 "return User32::GetMenuBarInfo(WINDOW_HANDLE, idObject, idItem, reinterpret_cast<PMENUBARINFO>(&mbi)) ? true : false;" - the site already collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::GetMenuBarInfo(HWND hwnd, LONG idObject, LONG idItem, PMENUBARINFO pmbi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuBarInfo);
-        return Library::Call<BOOL, HWND, LONG, LONG, PMENUBARINFO>(pFunc, hwnd, idObject, idItem, pmbi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, LONG, LONG, PMENUBARINFO>(pFunc, hwnd, idObject, idItem, pmbi);
+        return bResult;
     }
 
     LONG User32::GetMenuCheckMarkDimensions(void)
@@ -187,68 +288,137 @@ namespace qor { namespace win { namespace api {
         return Library::Call<LONG>(pFunc);
     }
 
+    //Return policy (U2, table row GetMenuDefaultItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< UINT, ( UINT )-1 >, so the call carries the token - docQuote "Type: UINT If the function succeeds,
+    //the return value is the identifier or position of the menu item. If the function fails, the return value is -1. To get
+    //extended error information, call GetLastError ." - the item's position or identifier is the answer, and position 0 (the
+    //first item) is legal, so keying CheckNonZero< UINT > would report a legal first item as a failure; -1 is the only reserved
+    //value, and for the UINT row type that is ( UINT )-1, so TCheckFailureValue< UINT, ( UINT )-1 > (returncheck.h:213) passes
+    //at every legal position; the same form the rawinput.cpp UINT rows already carry. AUDIT: the table counts 1 in-tree caller
+    //and the site-level read is menu.cpp:118 "return User32::GetMenuDefaultItem(MENU_HANDLE, byPos, flags);" - the site forwards
+    //the item as its own answer, so a fired check adds only the continuable diagnostic and both legal positions pass through unchanged.
     UINT User32::GetMenuDefaultItem(HMENU hMenu, UINT fByPos, UINT gmdiFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuDefaultItem);
-        return Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, fByPos, gmdiFlags);
+        CheckReturn< UINT, TCheckFailureValue< UINT, ( UINT )-1 > >::TType uResult = Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, fByPos, gmdiFlags);
+        return uResult;
     }
 
+    //Return policy (U2, table row GetMenuInfo / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - a Get*Info whose payload is an
+    //out-parameter: the MENUINFO structure the caller fills is an out-parameter, so the BOOL carries no answer and zero is
+    //reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the
+    //site-level read is menu.cpp:123 "return User32::GetMenuInfo(MENU_HANDLE, reinterpret_cast<LPCMENUINFO>(&menuInfo)) ? true : false;" - the site already collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::GetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuInfo);
-        return Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetMenuItemCount / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< int, -1 >, so the call carries the token - docQuote "Type: int If the function succeeds, the return
+    //value specifies the number of items in the menu. If the function fails, the return value is -1. To get extended error
+    //information, call GetLastError ." - a count with a reserved sentinel that is not zero: a menu with no items is a legal
+    //state answering 0, so keying CheckNonZero< int > would report a legal empty menu as a failure while -1 is the documented
+    //failure; TCheckFailureValue< int, -1 > (returncheck.h:213) passes at every count; sdkRetType int. AUDIT: the table counts
+    //1 in-tree caller and the site-level read is menu.cpp:128 "return User32::GetMenuItemCount(MENU_HANDLE);" - the site forwards
+    //the count as its own answer, so a fired check adds only the continuable diagnostic and every count passes through unchanged.
     int User32::GetMenuItemCount(HMENU hMenu)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemCount);
-        return Library::Call<int, HMENU>(pFunc, hMenu);
+        CheckReturn< int, TCheckFailureValue< int, -1 > >::TType iResult = Library::Call<int, HMENU>(pFunc, hMenu);
+        return iResult;
     }
 
+    //Return policy (U2, table row GetMenuItemID / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< UINT, ( UINT )-1 >, so the call carries the token - docQuote "Type: UINT The return value is the
+    //identifier of the specified menu item. If the menu item identifier is NULL or if the specified item opens a submenu, the
+    //return value is -1." - an identifier answer with a reserved sentinel that is not zero: identifiers start at 0 for the first
+    //item, so a zero identifier is a legal answer and only -1 is reserved; TCheckFailureValue< UINT, ( UINT )-1 > (returncheck.h:213)
+    //covers the UINT row type; deliberately the -1 here also answers "the item opens a submenu", a legal question about the item's
+    //shape, which is recorded in the reason rather than decided as a second failure value. AUDIT: the table counts 1 in-tree caller
+    //and the site-level read is menu.cpp:133 "return User32::GetMenuItemID(MENU_HANDLE, pos);" - the site forwards the identifier,
+    //so a fired check adds only the continuable diagnostic and every identifier passes through unchanged.
     UINT User32::GetMenuItemID(HMENU hMenu, int nPos)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemID);
-        return Library::Call<UINT, HMENU, int>(pFunc, hMenu, nPos);
+        CheckReturn< UINT, TCheckFailureValue< UINT, ( UINT )-1 > >::TType uResult = Library::Call<UINT, HMENU, int>(pFunc, hMenu, nPos);
+        return uResult;
     }
 
+    //Return policy (U2, table row GetMenuItemInfo / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, use the GetLastError function." - a plain status BOOL
+    //whose payload is an out-parameter: the MENUITEMINFO structure the caller fills is an out-parameter, so the BOOL carries no
+    //answer and zero is reserved; the row's sdkRetType is NO-PROTOTYPE (AW binding) so the base is the published BOOL and BoolCheck
+    //(returncheck.h:94) covers it; the page is reached through the suffixed ANSI twin slug nf-winuser-getmenuiteminfoa (CORRECTED leg). AUDIT: the table counts 0 in-tree callers (change-safe), so no site-level read is owed before the token moves.
     BOOL User32::GetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPosition, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMenuItemInfo);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmii);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmii);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetMenuItemRect / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, use the GetLastError function." - the item's RECT is
+    //written to the parameter the caller passes, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck
+    //(returncheck.h:94) covers it. AUDIT: the table counts 2 in-tree callers and the site-level reads are menu.cpp:143
+    //"return User32::GetMenuItemRect(window ? ... : ... ,MENU_HANDLE, item, reinterpret_cast<LPRECT>(&rcItem)) ? true : false;"
+    //and windowcontroller.cpp:486 "return User32::GetMenuItemRect(WINDOW_HANDLE, (HMENU)(menu->GetHandle().Use()), item, reinterpret_cast<LPRECT>(&rc)) ? true : false;" - both sites already collapse the BOOL, so a fired check adds only the diagnostic and each site's false branch is unchanged.
     BOOL User32::GetMenuItemRect(HWND hWnd, HMENU hMenu, UINT uItem, ::LPRECT lprcItem)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuItemRect);
-        return Library::Call<BOOL, HWND, HMENU, UINT, ::LPRECT>(pFunc, hWnd, hMenu, uItem, lprcItem);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, HMENU, UINT, ::LPRECT>(pFunc, hWnd, hMenu, uItem, lprcItem);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetMenuState / menu.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //TCheckFailureValue< UINT, ( UINT )-1 >, so the call carries the token - docQuote "Type: UINT If the specified item does not
+    //exist, the return value is -1. If the menu item opens a submenu, the low-order byte of the return value contains the menu
+    //flags associated with the item, and the high-order byte contains the number of items in the submenu opened by the item.
+    //Otherwise, the return value is a mask (Bitwise OR) of the menu flags." with the enumerated flags MF_CHECKED 0x00000008L ,
+    //MF_DISABLED 0x00000002L , MF_GRAYED 0x00000001L , MF_HILITE 0x00000080L - an enabled, unhighlighted item answers a mask with
+    //no flag bits set, i.e. zero, a legal answer, so keying CheckNonZero< UINT > would report it as a failure while -1 is the
+    //documented missing-item value; TCheckFailureValue< UINT, ( UINT )-1 > (returncheck.h:213) passes at every mask and submenu-packed
+    //value. AUDIT: the table counts 1 in-tree caller and the site-level read is menu.cpp:148 "return User32::GetMenuState(MENU_HANDLE, id, flags);" - the site forwards the mask as its own answer, so a fired check adds only the continuable diagnostic and every mask passes through unchanged.
     UINT User32::GetMenuState(HMENU hMenu, UINT uId, UINT uFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetMenuState);
-        return Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, uId, uFlags);
+        CheckReturn< UINT, TCheckFailureValue< UINT, ( UINT )-1 > >::TType uResult = Library::Call<UINT, HMENU, UINT, UINT>(pFunc, hMenu, uId, uFlags);
+        return uResult;
     }
 
+    //Return policy (U2, table row GetMenuString / menu.cpp, 12 Nov 2026): the row reads checked with checkClass CheckNonZero< int >, so
+    //the call carries the token - docQuote "Type: int If the function succeeds, the return value specifies the number of characters copied to
+    //the buffer, not including the terminating null character. If the function fails, the return value is zero. If the specified item is not of
+    //type MIIM_STRING or MFT_STRING , then the return value is zero." - the string lands in the buffer the caller passes, so the count carries no
+    //answer, and zero is reserved twice (a failed call and a wrong item type); sdkRetType NO-PROTOTYPE so the base is the published int and
+    //CheckNonZero< int > (returncheck.h:187) covers it. CAVEAT recorded: a zero-length string item would answer 0 legitimately, the same caveat
+    //the LoadStringA row carries. The table counts 0 in-tree callers, so the change is change-safe and no site-level audit is owed.
     int User32::GetMenuStringT(HMENU hMenu, UINT uIDItem, LPTSTR lpString, int cchMax, UINT flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetMenuString);
-        return Library::Call<int, HMENU, UINT, LPTSTR, int, UINT>(pFunc, hMenu, uIDItem, lpString, cchMax, flags);
+        CheckReturn< int, CheckNonZero< int > >::TType iResult = Library::Call<int, HMENU, UINT, LPTSTR, int, UINT>(pFunc, hMenu, uIDItem, lpString, cchMax, flags);
+        return iResult;
     }
 
     HMENU User32::GetSubMenu(HMENU hMenu, int nPos)
@@ -275,20 +445,34 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, HMENU, UINT, UINT>(pFunc, hWnd, hMenu, uIDHiliteItem, uHilite);
     }
 
+    //Return policy (U2, table row InsertMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the menu, the item text and the flags are
+    //parameters, so the BOOL carries no answer and zero is reserved; sdkRetType NO-PROTOTYPE so the base is the published BOOL and BoolCheck
+    //(returncheck.h:94) covers it; the page is reached via the suffixed ANSI twin slug nf-winuser-insertmenua (CORRECTED leg).
+    //The table counts 0 in-tree callers, so the change is change-safe and no site-level audit is owed.
     BOOL User32::InsertMenuT(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, InsertMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMenu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        return bResult;
     }
 
+    //Return policy (U2, table row InsertMenuItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, use the GetLastError function." - the MENUITEMINFO the caller
+    //supplies is a parameter, so the BOOL carries no answer and zero is reserved; sdkRetType NO-PROTOTYPE so the base is the published
+    //BOOL and BoolCheck (returncheck.h:94) covers it; the page is reached via the suffixed ANSI twin slug nf-winuser-insertmenuitema
+    //(CORRECTED leg). The table counts 0 in-tree callers, so the change is change-safe and no site-level audit is owed.
     BOOL User32::InsertMenuItemT(HMENU hmenu, UINT item, BOOL fByPosition, LPCMENUITEMINFO lpmi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, InsertMenuItem);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPCMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, BOOL, LPCMENUITEMINFO>(pFunc, hmenu, item, fByPosition, lpmi);
+        return bResult;
     }
 
     BOOL User32::IsMenu(HMENU hMenu)
@@ -299,84 +483,165 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HMENU>(pFunc, hMenu);
     }
 
+    //Return policy (U2, table row LoadMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass CheckNonZeroHandle< HMENU >, so
+    //the call carries the token - docQuote "Type: HMENU If the function succeeds, the return value is a handle to the menu resource. If the
+    //function fails, the return value is NULL . To get extended error information, call GetLastError ." - the page names both a failure
+    //condition and the GetLastError route, so NULL is reserved rather than an answer about the caller's parameters, and the handle is what
+    //the caller hands to the menu-drawing calls next; sdkRetType NO-PROTOTYPE so the class base is the published HMENU and
+    //CheckNonZeroHandle< HMENU > (returncheck.h:137, template< typename THandle >) covers it; deliberately unlike the GetSubMenu /
+    //GetSystemMenu rows below, whose pages name no failure condition. The table counts 0 in-tree callers, so the change is
+    //change-safe and no site-level audit is owed; the page is reached via the suffixed ANSI twin slug nf-winuser-loadmenua (CORRECTED leg).
     HMENU User32::LoadMenuT(HINSTANCE hInstance, LPCTSTR lpMenuName)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadMenu);
-        return Library::Call<HMENU, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpMenuName);
+        CheckReturn< HMENU, CheckNonZeroHandle< HMENU > >::TType hResult = Library::Call<HMENU, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpMenuName);
+        return hResult;
     }
 
+    //Return policy (U2, table row LoadMenuIndirect / menu.cpp, 12 Nov 2026): the row reads checked with checkClass CheckNonZeroHandle< HMENU >, so
+    //the call carries the token - docQuote "Type: HMENU If the function succeeds, the return value is a handle to the menu. If the function
+    //fails, the return value is NULL . To get extended error information, call GetLastError ." - the LoadMenu row's reading with the menu built
+    //from the indirect string, so NULL is reserved and the handle is the answer the caller uses next; sdkRetType NO-PROTOTYPE so the class base
+    //is the published HMENU and CheckNonZeroHandle< HMENU > (returncheck.h:137) covers it; the page is reached via the suffixed ANSI twin
+    //slug nf-winuser-loadmenuindirecta (CORRECTED leg). The table counts 0 in-tree callers, so the change is change-safe and no site-level
+    //audit is owed.
     HMENU User32::LoadMenuIndirectT(const MENUTEMPLATE* lpMenuTemplate)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadMenuIndirect);
-        return Library::Call<HMENU, const MENUTEMPLATE*>(pFunc, lpMenuTemplate);
+        CheckReturn< HMENU, CheckNonZeroHandle< HMENU > >::TType hResult = Library::Call<HMENU, const MENUTEMPLATE*>(pFunc, lpMenuTemplate);
+        return hResult;
     }
 
+    //Return policy (U2, table row MenuItemFromPoint / menu.cpp, 12 Nov 2026): the row reads checked with checkClass TCheckFailureValue< int, -1 >, so
+    //the call carries the token - docQuote "Type: int Returns the zero-based position of the menu item at the specified location or -1 if no
+    //menu item is at the specified location." - the position is zero-based, so the item at the top of the menu answers 0 legitimately and keying
+    //CheckNonZero< int > would report it as a failure; only -1 is reserved, so TCheckFailureValue< int, -1 > (returncheck.h:213) passes at every
+    //position. AUDIT: the table counts 2 in-tree callers and the site-level reads are windowcontroller.cpp:499 "return User32::MenuItemFromPoint(WINDOW_HANDLE,
+    //(HMENU)(menu ? menu->GetHandle().Use() : nullptr), *(reinterpret_cast<POINT*>(&point)));" inside WindowController::GetMenuItemFromPoint and
+    //windowcontroller.cpp:509 "return User32::MenuItemFromPoint(WINDOW_HANDLE, (HMENU)(menu->GetHandle().Use()), *(reinterpret_cast<POINT*>(&screenPoint)));"
+    //inside WindowController::MenuItemFromPoint - both wrappers return int and forward the position as their own answer, so a fired check adds only
+    //the continuable diagnostic and the -1 no-item sentinel reaches the callers unchanged.
     int User32::MenuItemFromPoint(HWND hWnd, HMENU hMenu, POINT ptScreen)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MenuItemFromPoint);
-        return Library::Call<int, HWND, HMENU, POINT>(pFunc, hWnd, hMenu, ptScreen);
+        CheckReturn< int, TCheckFailureValue< int, -1 > >::TType iResult = Library::Call<int, HWND, HMENU, POINT>(pFunc, hWnd, hMenu, ptScreen);
+        return iResult;
     }
 
+    //Return policy (U2, table row ModifyMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the menu, the item text and the type are
+    //parameters, so the BOOL carries no answer and zero is reserved; sdkRetType NO-PROTOTYPE so the base is the published BOOL and BoolCheck
+    //(returncheck.h:94) covers it; the page is reached via the suffixed ANSI twin slug nf-winuser-modifymenua (CORRECTED leg).
+    //The table counts 0 in-tree callers, so the change is change-safe and no site-level audit is owed.
     BOOL User32::ModifyMenuT(HMENU hMnu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, ModifyMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMnu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT, UINT_PTR, LPCTSTR>(pFunc, hMnu, uPosition, uFlags, uIDNewItem, lpNewItem);
+        return bResult;
     }
 
+    //Return policy (U2, table row RemoveMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the DeleteMenu row's wording word for word,
+    //and the menu and item id are parameters, so the BOOL carries no answer and zero is reserved; sdkRetType NO-PROTOTYPE so the base is
+    //the published BOOL and BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the site-level read is
+    //i_m/menu.cpp:188 "return User32::RemoveMenu(MENU_HANDLE, position, flags) ? true : false;" inside Menu::Remove - the site already
+    //collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::RemoveMenu(HMENU hMenu, UINT uPosition, UINT uFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RemoveMenu);
-        return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uPosition, uFlags);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetMenu / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the window and the menu handle are
+    //parameters, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it.
+    //AUDIT: the table counts 1 in-tree caller and the site-level read is windowcontroller.cpp:514 "return User32::SetMenu(WINDOW_HANDLE,
+    //(HMENU)(menu->GetHandle().Use())) ? true : false;" inside WindowController::SetMenu - the site already collapses the BOOL, so a fired
+    //check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::SetMenu(HWND hWnd, HMENU hMenu)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenu);
-        return Library::Call<BOOL, HWND, HMENU>(pFunc, hWnd, hMenu);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, HMENU>(pFunc, hWnd, hMenu);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetMenuDefaultItem / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, use the GetLastError function." - the default item's identifier is a
+    //parameter, so the BOOL carries no answer and zero is reserved; deliberately unlike the GetMenuDefaultItem row above, whose return is the
+    //identifier answer with -1 reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller
+    //and the site-level read is i_m/menu.cpp:193 "return User32::SetMenuDefaultItem(MENU_HANDLE, item, byPos) ? true : false;" inside
+    //Menu::SetDefaultItem - the site already collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::SetMenuDefaultItem(HMENU hMenu, UINT uItem, UINT fByPos)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuDefaultItem);
-        return Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uItem, fByPos);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT>(pFunc, hMenu, uItem, fByPos);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetMenuInfo / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the MENUINFO the caller supplies is a
+    //parameter, so the BOOL carries no answer and zero is reserved; deliberately unlike the GetMenuInfo row above only in direction -
+    //both take BoolCheck; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts 1 in-tree caller and the
+    //site-level read is i_m/menu.cpp:198 "return User32::SetMenuInfo(MENU_HANDLE, reinterpret_cast<LPCMENUINFO>(&info)) ? true : false;"
+    //inside Menu::SetInfo - the site already collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is unchanged.
     BOOL User32::SetMenuInfo(HMENU hmenu, ::LPCMENUINFO lpcmi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuInfo);
-        return Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, ::LPCMENUINFO>(pFunc, hmenu, lpcmi);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetMenuItemBitmaps / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, call GetLastError ." - the check/uncheck bitmaps are parameters,
+    //so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. AUDIT: the table counts
+    //1 in-tree caller and the site-level read is i_m/menu.cpp:208 "return User32::SetMenuItemBitmaps(MENU_HANDLE, position, flags, (HBITMAP)(nullptr), (HBITMAP)(nullptr)) ? true : false;"
+    //inside Menu::SetItemBitmaps - the site already collapses the BOOL, so a fired check adds only the diagnostic and the site's false branch is
+    //unchanged; the site's own nullptr bitmaps are left untouched by this change.
     BOOL User32::SetMenuItemBitmaps(HMENU hMenu, UINT uPosition, UINT uFlags, HBITMAP hBitmapUnchecked, HBITMAP hBitmapChecked)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetMenuItemBitmaps);
-        return Library::Call<BOOL, HMENU, UINT, UINT, HBITMAP, HBITMAP>(pFunc, hMenu, uPosition, uFlags, hBitmapUnchecked, hBitmapChecked);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, UINT, HBITMAP, HBITMAP>(pFunc, hMenu, uPosition, uFlags, hBitmapUnchecked, hBitmapChecked);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetMenuItemInfo / menu.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, so
+    //the call carries the token - docQuote "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero. To get extended error information, use the GetLastError function." - the MENUITEMINFO the caller
+    //supplies is a parameter, so the BOOL carries no answer and zero is reserved; sdkRetType NO-PROTOTYPE so the base is the published
+    //BOOL and BoolCheck (returncheck.h:94) covers it; the page is reached via the suffixed ANSI twin slug nf-winuser-setmenuiteminfoa
+    //(CORRECTED leg). The table counts 0 in-tree callers, so the change is change-safe and no site-level audit is owed.
     BOOL User32::SetMenuItemInfoT(HMENU hmenu, UINT item, BOOL fByPositon, LPMENUITEMINFO lpmii)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetMenuItemInfo);
-        return Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPositon, lpmii);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HMENU, UINT, BOOL, LPMENUITEMINFO>(pFunc, hmenu, item, fByPositon, lpmii);
+        return bResult;
     }
 
     BOOL User32::TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, const RECT* prcRect)

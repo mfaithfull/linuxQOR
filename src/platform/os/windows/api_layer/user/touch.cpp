@@ -104,6 +104,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -111,88 +112,138 @@ namespace qor { namespace win { namespace api {
     //is done with the handle the close is its responsibility and skipping it leaks process memory, but a handle that
     //was passed to DefWindowProc or forwarded with PostMessage / SendMessage has transferred and must NOT be closed.
     //The layer holds no guard for it - the message loop, not the wrapper, owns that decision.
+    //Return policy (U2, table row CloseGestureInfoHandle / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the handle being closed is the only argument and the GESTUREINFO payload never travels through this return,
+    //so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree
+    //callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::CloseGestureInfoHandle(HGESTUREINFO hGestureInfo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseGestureInfoHandle);
-        return Library::Call< BOOL, HGESTUREINFO >(pFunc, hGestureInfo);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HGESTUREINFO >(pFunc, hGestureInfo);
+        return bResult;
     }
 
     //The WM_TOUCH counterpart of the close above: hTouchInput comes from WM_TOUCH lParam and nothing in this library
     //creates it. FALSE rather than a raised Win32Error is the SDK's answer for an invalid handle (U1, no
     //Win32ErrorHandler at these call sites).
+    //Return policy (U2, table row CloseTouchInputHandle / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the HTOUCHINPUT being closed is the only argument and the payload the window reads comes from WM_TOUCH lParam,
+    //not from this return, so the BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table
+    //reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::CloseTouchInputHandle(HTOUCHINPUT hTouchInput)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CloseTouchInputHandle);
-        return Library::Call< BOOL, HTOUCHINPUT >(pFunc, hTouchInput);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HTOUCHINPUT >(pFunc, hTouchInput);
+        return bResult;
     }
 
     //dwReserved must be 0 and dwFlags is the GCF_* set (GCF_INCLUDE_ANCESTORS, :15878). The SDK declares the count
     //parameter _In_ PUINT pcIDs (:15888) - it reads the buffer size from *pcIDs and puts the in/out on the buffer
     //itself (_Inout_updates_(*pcIDs), :15890) - so the published parameter stays PUINT and the buffer contract,
     //including the GESTURECONFIGMAXCOUNT (256) cap, remains the caller's. cbSize is sizeof(GESTURECONFIG).
+    //Return policy (U2, table row GetGestureConfig / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the configuration the call reports lands in the PGESTURECONFIG buffer the caller sizes and in *pcIDs, so this
+    //BOOL carries no answer of its own and zero is reserved for a failed call; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table
+    //reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetGestureConfig(HWND hwnd, DWORD dwReserved, DWORD dwFlags, PUINT pcIDs, PGESTURECONFIG pGestureConfig, UINT cbSize)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureConfig);
-        return Library::Call< BOOL, HWND, DWORD, DWORD, PUINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, dwFlags, pcIDs, pGestureConfig, cbSize);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, DWORD, DWORD, PUINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, dwFlags, pcIDs, pGestureConfig, cbSize);
+        return bResult;
     }
 
     //cbExtraArgs is the cbExtraArgs field of the GESTUREINFO filled by GetGestureInfo, and pExtraArgs must be a
     //buffer of exactly that many bytes - the layer does not know the size and cannot check it.
+    //Return policy (U2, table row GetGestureExtraArgs / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the extra arguments the call reports land in the pExtraArgs buffer the caller sized from the GESTUREINFO's cbExtraArgs,
+    //so this BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table
+    //reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetGestureExtraArgs(HGESTUREINFO hGestureInfo, UINT cbExtraArgs, PBYTE pExtraArgs)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureExtraArgs);
-        return Library::Call< BOOL, HGESTUREINFO, UINT, PBYTE >(pFunc, hGestureInfo, cbExtraArgs, pExtraArgs);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HGESTUREINFO, UINT, PBYTE >(pFunc, hGestureInfo, cbExtraArgs, pExtraArgs);
+        return bResult;
     }
 
     //Turns the WM_GESTURE lParam handle into a GESTUREINFO. FALSE means the handle was not valid, and the handle is
     //still the caller's to close (or to let travel with the message) - see CloseGestureInfoHandle above.
+    //Return policy (U2, table row GetGestureInfo / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the GESTUREINFO the call reads out of the handle lands in the pGestureInfo the caller supplies, so this BOOL
+    //carries no answer and zero is reserved for a failed call (an invalid handle); sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table
+    //reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetGestureInfo(HGESTUREINFO hGestureInfo, PGESTUREINFO pGestureInfo)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetGestureInfo);
-        return Library::Call< BOOL, HGESTUREINFO, PGESTUREINFO >(pFunc, hGestureInfo, pGestureInfo);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HGESTUREINFO, PGESTUREINFO >(pFunc, hGestureInfo, pGestureInfo);
+        return bResult;
     }
 
     //The WM_TOUCH payload. cInputs is the count the window is expecting (normally from the message's wParam) and
     //pInputs must be an array of cInputs TOUCHINPUT structures with cbSize == sizeof(TOUCHINPUT); the SDK writes the
     //array, the caller sizes it, and dwMask / TOUCHINPUTMASKF_* decide which fields are meaningful afterwards.
+    //Return policy (U2, table row GetTouchInputInfo / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information,
+    //use the GetLastError function." - the TOUCHINPUT array the call writes goes into the pInputs buffer the caller sized with cInputs and cbSize,
+    //so this BOOL carries no answer and zero is reserved; sdkRetType BOOL so BoolCheck (returncheck.h:94) covers it. The table
+    //reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetTouchInputInfo(HTOUCHINPUT hTouchInput, UINT cInputs, PTOUCHINPUT pInputs, int cbSize)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetTouchInputInfo);
-        return Library::Call< BOOL, HTOUCHINPUT, UINT, PTOUCHINPUT, int >(pFunc, hTouchInput, cInputs, pInputs, cbSize);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HTOUCHINPUT, UINT, PTOUCHINPUT, int >(pFunc, hTouchInput, cInputs, pInputs, cbSize);
+        return bResult;
     }
 
     //Injection is per-process and is expected once, before the first InjectTouchInput, with maxCount the largest
     //contact array the caller will ever inject. It needs the injected-input privilege, which this layer does not and
     //cannot grant - FALSE is the documented answer for both "already initialised" and "not permitted".
+    //Return policy (U2, table row InitializeTouchInjection / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE. To get extended error information,
+    //call GetLastError ." (this page words the pair TRUE / FALSE rather than the nonzero / zero form the other rows here carry) - the call's only
+    //subject is its parameters, so the BOOL carries no answer, and both conditions the comment above names (already initialised, and not permitted
+    //without the injected-input privilege) are reasons the page routes to GetLastError rather than answers the caller reads back; sdkRetType BOOL
+    //so BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today;
+    //the check is live (G6) on every call from anywhere.
     BOOL User32::InitializeTouchInjection(UINT32 maxCount, DWORD dwMode)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InitializeTouchInjection);
-        return Library::Call< BOOL, UINT32, DWORD >(pFunc, maxCount, dwMode);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT32, DWORD >(pFunc, maxCount, dwMode);
+        return bResult;
     }
 
     //The array element type is POINTER_TOUCH_INFO, the same structure pointer.cpp wraps the GetPointerTouchInfo*
     //accessors for - this is where the 6a and 6c families meet, and it is why the Touch-named pointer members were
     //not wrapped twice. count is the caller's, and the SDK reads (does not write) the array.
+    //Return policy (U2, table row InjectTouchInput / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is non-zero. If the function fails, the return value is zero. To get extended error information,
+    //call GetLastError ." (the page hyphenates non-zero here) - the contacts the call injects are the const array the caller passes, which the SDK
+    //only reads, so the BOOL carries no answer and zero is reserved for a failed injection; sdkRetType BOOL so BoolCheck (returncheck.h:94)
+    //covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call.
     BOOL User32::InjectTouchInput(UINT32 count, const POINTER_TOUCH_INFO *contacts)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InjectTouchInput);
-        return Library::Call< BOOL, UINT32, const POINTER_TOUCH_INFO * >(pFunc, count, contacts);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT32, const POINTER_TOUCH_INFO * >(pFunc, count, contacts);
+        return bResult;
     }
 
 
@@ -221,43 +272,74 @@ namespace qor { namespace win { namespace api {
     //value is one of TOUCH_HIT_TESTING_DEFAULT / TOUCH_HIT_TESTING_CLIENT / TOUCH_HIT_TESTING_NONE (:6719-6721) and
     //decides whether the OS or this window hit-tests touch; it is a ULONG, not a flag set, so combining values is not
     //meaningful. WINVER >= 0x0602 name.
+    //Return policy (U2, table row RegisterTouchHitTestingWindow / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If this function succeeds, it returns TRUE. Otherwise, it returns FALSE. To retrieve extended error information, call the GetLastError function."
+    // (this page words the pair TRUE / FALSE rather than the nonzero / zero form the other rows here carry) - the window and its hit-test value are
+    //arguments and the effective TOUCH_HIT_TESTING_* choice is read back from the window, not through this return, so the BOOL carries no answer and
+    //FALSE is reserved for a failed call; the page has no Remarks section and documents no legal FALSE. sdkRetType BOOL so BoolCheck (returncheck.h:94)
+    //covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call.
     BOOL User32::RegisterTouchHitTestingWindow(HWND hwnd, ULONG value)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterTouchHitTestingWindow);
-        return Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, value);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, value);
+        return bResult;
     }
 
     //opts the window into WM_TOUCH; ulFlags is the TWF_FINETOUCH / TWF_WANTPALM pair (:6263-6264). Registering does
     //not make the window pointer-enabled - the 6a RegisterPointerInputTarget pair is a separate contract, and the
     //hwnd is the caller's to create and destroy, as it is for every wrapper in this library.
+    //Return policy (U2, table row RegisterTouchWindow / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error
+    //information, use the GetLastError function." - the hwnd and its TWF_* flags are arguments, so the BOOL carries no answer and zero is reserved;
+    //the Remarks make the call mandatory on every touch window ("RegisterTouchWindow must be called on every window that will be used for touch
+    //input"), so a FALSE is a registration that did not happen rather than an answer the caller reads back. sdkRetType BOOL so BoolCheck
+    //(returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check
+    //is live (G6) on every call from anywhere.
     BOOL User32::RegisterTouchWindow(HWND hwnd, ULONG ulFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterTouchWindow);
-        return Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, ulFlags);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, ULONG >(pFunc, hwnd, ulFlags);
+        return bResult;
     }
 
     //dwReserved must be 0. cIDs is the length of the pGestureConfig array (cap GESTURECONFIGMAXCOUNT, :15860) and
     //cbSize sizeof(GESTURECONFIG); dwWant / dwBlock take the GCF_* flags per dwID, and anything neither wanted nor
     //blocked falls back to the parent window's preferences or the system defaults (:15808-15810).
+    //Return policy (U2, table row SetGestureConfig / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error
+    //information, use the GetLastError function." - the gesture configuration is read in from the pGestureConfig array the caller supplies and
+    //never travels through this return, so the BOOL carries no answer and zero is reserved; the Remarks only time the call ("call SetGestureConfig
+    //at window creation time ... in response to WM_GESTURENOTIFY messages"), they name no legal zero. sdkRetType BOOL so BoolCheck
+    //(returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check
+    //is live (G6) on every call from anywhere.
     BOOL User32::SetGestureConfig(HWND hwnd, DWORD dwReserved, UINT cIDs, PGESTURECONFIG pGestureConfig, UINT cbSize)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetGestureConfig);
-        return Library::Call< BOOL, HWND, DWORD, UINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, cIDs, pGestureConfig, cbSize);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, DWORD, UINT, PGESTURECONFIG, UINT >(pFunc, hwnd, dwReserved, cIDs, pGestureConfig, cbSize);
+        return bResult;
     }
 
     //Reverses RegisterTouchWindow for the same hwnd; the WM_TOUCH handle contract is unaffected by it.
+    //Return policy (U2, table row UnregisterTouchWindow / touch.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error
+    //information, use the GetLastError function." - the hwnd is an argument, so the BOOL carries no answer and zero is reserved. The Remarks make
+    //clear that an unregistered window is NOT reported as a FALSE ("The UnregisterTouchWindow function succeeds even if the specified window was
+    //not previously registered as being touch-capable."), so only a bad hwnd fails and no legal outcome is mistaken for a failure. sdkRetType BOOL
+    //so BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today;
+    //the check is live (G6) on every call from anywhere.
     BOOL User32::UnregisterTouchWindow(HWND hwnd)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterTouchWindow);
-        return Library::Call< BOOL, HWND >(pFunc, hwnd);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND >(pFunc, hwnd);
+        return bResult;
     }
 
 }}}//qor::win::api

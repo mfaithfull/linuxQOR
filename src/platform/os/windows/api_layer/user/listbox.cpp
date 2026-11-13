@@ -70,6 +70,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -77,17 +78,36 @@ namespace qor { namespace win { namespace api {
     //The list box is addressed from inside its dialog: hDlg is the dialog window, nIDListBox the control's id inside it
     //and nIDStaticPath one of the DDL_* file-filter bits (winuser.h:11607-11616). lpPathSpec is both the pattern in and
     //the next entry out, so the caller owns it and the layer forwards it untouched. The count comes back as written.
+    //Return policy (U2, table row DlgDirList / listbox.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int >, and the table's verbatim docQuote is "Type: int If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero. For example, if the string specified by lpPathSpec is not
+    //a valid path, the function fails. To get extended error information, call ." - the page reserves zero for failure,
+    //and the int this member answers with is not a count or a value but the success of the directory listing, so no legal
+    //answer reaches the reserved zero and the session-27 soundness test (a checked failure site is only sound where the
+    //SDK's failure value is not also a legal success value) passes at every value. The row is an AW binding with NO-PROTOTYPE
+    //in the census, so the class base is the published int the wrapper holds. CheckNonZero (returncheck.h:186, Test at
+    //:194 is (value == 0) ? false : true) is the template the numeric rows already use - no new check class. 0 in-tree
+    //callers for the exact stem (D14 published surface), so nothing built today reaches this site; G6 keeps the check
+    //live on every call, and Library::Call's swallowed-fault default is a zero int, which now reads as the documented
+    //failure rather than as a successful listing (status.md U7).
     int User32::DlgDirListT(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DlgDirList);
-        return Library::Call< int, HWND, LPTSTR, int, int, UINT >(pFunc, hDlg, lpPathSpec, nIDListBox, nIDStaticPath, uFileType);
+        CheckReturn< int, CheckNonZero< int > >::TType nResult = Library::Call< int, HWND, LPTSTR, int, int, UINT >(pFunc, hDlg, lpPathSpec, nIDListBox, nIDStaticPath, uFileType);
+        return nResult;
     }
 
     //BOOL, but not a plain success flag: the SDK's own note is that FALSE means the selected control's text did not fit
     //into the chCount characters the caller supplied. lpString is _Out_writes_(chCount) and stays caller-owned; the
     //layer neither sizes nor inspects it.
+    //Return policy (U2, table row DlgDirSelectEx / listbox.cpp, 12 Nov 2026): the row reads unchecked with no checkClass,
+    //and the table's verbatim docQuote is "Type: BOOL If the current selection is a directory name, the return value is
+    //nonzero. If the current selection is not a directory name, the return value is zero. To get extended error
+    //information, call GetLastError ." - the zero answers the question the caller asked about the selection's text, it
+    //does not report a failure, so the session-27 test fails at that value before any check is considered. AW binding,
+    //NO-PROTOTYPE, BOOL; no token from this row.
     BOOL User32::DlgDirSelectExT(HWND hwndDlg, LPTSTR lpString, int chCount, int idListBox)
     {
         qor_pp_fcontext;
@@ -98,6 +118,12 @@ namespace qor { namespace win { namespace api {
 
     //A value, not a flag: the number of list-box items per row for the window named by hwnd, 0 when that window is not
     //a list box. Returned raw, which is what leaves a swallowed fault and a legitimate 0 indistinguishable (U7).
+    //Return policy (U2, table row GetListBoxInfo / listbox.cpp, 12 Nov 2026): the row reads unchecked with no checkClass,
+    //and the table's verbatim docQuote is "Type: DWORD The return value is the number of items per column." - the page
+    //gives the value as an answer and reserves no value for failure, so a zero is a legal count (the TU comment above
+    //names it: 0 when the window is not a list box) and a CheckNonZero< DWORD > would report that legal count as a
+    //failure. 0 in-tree callers for the exact stem, but the row is unchecked on the page's own wording, not on the
+    //caller count; no token from this row and the count is returned as the SDK wrote it.
     DWORD User32::GetListBoxInfo(HWND hwnd)
     {
         qor_pp_fcontext;

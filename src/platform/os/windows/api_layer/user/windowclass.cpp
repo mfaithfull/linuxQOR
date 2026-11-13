@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -60,20 +61,30 @@ namespace qor { namespace win { namespace api {
     //and uses no lowercase const - recorded, not restyled. T7: the #include "../returncheck.h" at (then) :11 was unused
     //here (0 CheckReturn/BoolCheck/Win32ErrorHandler) - dead, removed under T7 on 5 Nov 2026.
 
+    //Return policy (U2, table row GetClassInfo / windowclass.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function finds a matching class and successfully copies the data, the return value is nonzero. If the function fails,
+    //the return value is zero. To get extended error information, call GetLastError ." - the LPWNDCLASS the call fills is an out-parameter the
+    //caller supplies, so the BOOL carries no answer of its own and zero is reserved for a failed lookup; the row's AW binding leaves NO-PROTOTYPE
+    //in the table, so the class base is the published BOOL and BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree callers for
+    //this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassInfo);
-        return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASS >(pFunc, hInstance, lpClassName, lpWndClass);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASS >(pFunc, hInstance, lpClassName, lpWndClass);
+        return bResult;
     }
 
+    //Return policy (U2, table row GetClassInfoEx / windowclass.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function finds a matching class and successfully copies the data, the return value is nonzero. If the function does not find a matching class and successfully copy the data, the return value is zero. To get extended error information, call GetLastError ." - the LPWNDCLASSEX the call fills is an out-parameter the caller supplies, so the BOOL carries no answer of its own and zero is reserved for the not-found lookup; the row's AW binding leaves NO-PROTOTYPE in the table, so the class base is the published BOOL and BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::GetClassInfoExT(HINSTANCE hInstance, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassInfoEx);
-        return Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASSEX >(pFunc, hInstance, lpszClass, lpwcx);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HINSTANCE, LPCTSTR, LPWNDCLASSEX >(pFunc, hInstance, lpszClass, lpwcx);
+        return bResult;
     }
 
     ULONG_PTR User32::GetClassLongPtrT(HWND hWnd, int nIndex)
@@ -84,12 +95,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call< ULONG_PTR, HWND, int >(pFunc, hWnd, nIndex);
     }
 
+    //Return policy (U2, table row GetClassName / windowclass.cpp, 12 Nov 2026): checked with checkClass CheckNonZero< int >; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is the number of characters copied to the buffer, not including the terminating null character. If the function fails, the return value is zero. To get extended error information, call GetLastError function ." - the class name lands in the LPTSTR buffer the caller supplies, so the int is a count rather than the answer and zero is reserved for a failed call; the row's AW binding leaves NO-PROTOTYPE in the table, so the class base is the published int and the template CheckNonZero (returncheck.h:187) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old 0 return today; the check is live (G6) on every call from anywhere.
     int User32::GetClassNameT(HWND hWnd, LPTSTR lpClassName, int nMaxCount)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, GetClassName);
-        return Library::Call< int, HWND, LPTSTR, int >(pFunc, hWnd, lpClassName, nMaxCount);
+        CheckReturn< int, CheckNonZero< int > >::TType iResult = Library::Call< int, HWND, LPTSTR, int >(pFunc, hWnd, lpClassName, nMaxCount);
+        return iResult;
     }
 
     WORD User32::GetClassWord(HWND hWnd, int nIndex)
@@ -108,20 +122,26 @@ namespace qor { namespace win { namespace api {
         return Library::Call< LONG, HWND, int >(pFunc, hWnd, nIndex);
     }
 
+    //Return policy (U2, table row RegisterClass / windowclass.cpp, 12 Nov 2026): checked with checkClass CheckNonZero< ATOM >; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is a class atom that uniquely identifies the class being registered. This atom can only be used by the CreateWindow , CreateWindowEx , GetClassInfo , GetClassInfoEx , FindWindow , FindWindowEx , and UnregisterClass functions and the IActiveIMMApp::FilterClientWindows method. If the function fails, the return value is zero. To get extended error information, call GetLastError ." - the atom is what the caller hands straight to those functions, so no legal answer is zero and zero is reserved for a failed registration; the row's AW binding leaves NO-PROTOTYPE in the table, so the class base is the published ATOM (Dimm.h:258 typedef WORD ATOM) and the template CheckNonZero (returncheck.h:187) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old 0 atom today; the check is live (G6) on every call from anywhere.
     ATOM User32::RegisterClassT(const WNDCLASS* lpWndClass)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterClass);
-        return Library::Call< ATOM, const WNDCLASS* >(pFunc, lpWndClass);
+        CheckReturn< ATOM, CheckNonZero< ATOM > >::TType aResult = Library::Call< ATOM, const WNDCLASS* >(pFunc, lpWndClass);
+        return aResult;
     }
 
+    //Return policy (U2, table row RegisterClassEx / windowclass.cpp, 12 Nov 2026): checked with checkClass CheckNonZero< ATOM >; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is a class atom that uniquely identifies the class being registered. This atom can only be used by the CreateWindow , CreateWindowEx , GetClassInfo , GetClassInfoEx , FindWindow , FindWindowEx , and UnregisterClass functions and the IActiveIMMap::FilterClientWindows method. If the function fails, the return value is zero. To get extended error information, call GetLastError ." - word-for-word the RegisterClass row's reading, so the atom is reserved nonzero exactly as there; the row's AW binding leaves NO-PROTOTYPE in the table, so the class base is the published ATOM (Dimm.h:258 typedef WORD ATOM) and the template CheckNonZero (returncheck.h:187) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old 0 atom today; the check is live (G6) on every call from anywhere.
     ATOM User32::RegisterClassExT(const WNDCLASSEX* lpwcx)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, RegisterClassEx);
-        return Library::Call< ATOM, const WNDCLASSEX* >(pFunc, lpwcx);
+        CheckReturn< ATOM, CheckNonZero< ATOM > >::TType aResult = Library::Call< ATOM, const WNDCLASSEX* >(pFunc, lpwcx);
+        return aResult;
     }
 
     ULONG_PTR User32::SetClassLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
@@ -164,12 +184,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call< LONG_PTR, HWND, int >(pFunc, hWnd, nIndex);
     }
 
+    //Return policy (U2, table row UnregisterClass / windowclass.cpp, 12 Nov 2026): checked with checkClass BoolCheck; the page's verbatim
+    //docQuote is "If the function succeeds, the return value is nonzero. If the class could not be found or if a window still exists that was created with the class, the return value is zero. To get extended error information, call GetLastError ." - the zero branch is the documented failure with extended error info rather than an answer the call asks, so it matches the Unregister* family (UnregisterPowerSettingNotification, UnregisterSuspendResumeNotification and UnregisterTouchWindow all BoolCheck); the row's AW binding leaves NO-PROTOTYPE in the table, so the class base is the published BOOL and BoolCheck (returncheck.h:94) covers it. The table reports 0 in-tree callers for this row, so no in-tree site reads the old FALSE return today; the check is live (G6) on every call from anywhere.
     BOOL User32::UnregisterClassT(LPCTSTR lpClassName, HINSTANCE hInstance)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, UnregisterClass);
-        return Library::Call< BOOL, LPCTSTR, HINSTANCE >(pFunc, lpClassName, hInstance);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, LPCTSTR, HINSTANCE >(pFunc, lpClassName, hInstance);
+        return bResult;
     }
 
 }}}//qor::win::api

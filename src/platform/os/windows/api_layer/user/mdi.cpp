@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -81,14 +82,32 @@ namespace qor { namespace win { namespace api {
     //x64-Debug profile), so this is latent; it is winqor_gui surface, recorded under U26 and not fixed here - message.cpp's
     //session will find the same mirror in front of far more wrappers.
 
+    //Return policy (U2, table row CreateMDIWindow / mdi.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HWND >, and the table's verbatim docQuote is "Type: HWND If the function succeeds, the return
+    //value is the handle to the created window. If the function fails, the return value is NULL . To get extended error
+    //information, call GetLastError ." - the page reserves NULL for failure, and what this member hands back is a window
+    //handle the page documents no legal NULL for, so the session-27 soundness test (a checked failure site is only sound
+    //where the SDK's failure value is not also a legal success value) passes at every value. The census row is an AW
+    //binding with NO-PROTOTYPE, so the class base is the published HWND the wrapper holds, not an SDK spelling.
+    //CheckNonZeroHandle (returncheck.h:136, Test at :144 is (value == 0x00000000) ? false : true) is what the handle rows
+    //already use - no new check class. 0 in-tree callers for the exact stem (D14 published surface), so nothing built
+    //today reaches this site; G6 keeps the check live on every call, and Library::Call's swallowed-fault default is a
+    //NULL HWND, which now reads as the documented failure rather than as a child handle the caller would own (U7).
     HWND User32::CreateMDIWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, CreateMDIWindow);
-        return Library::Call< HWND, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HINSTANCE, LPARAM >(pFunc, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hInstance, lParam);
+        CheckReturn< HWND, CheckNonZeroHandle< HWND > >::TType hResult = Library::Call< HWND, LPCTSTR, LPCTSTR, DWORD, int, int, int, int, HWND, HINSTANCE, LPARAM >(pFunc, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hInstance, lParam);
+        return hResult;
     }
 
+    //Return policy (U2, table row DefFrameProc / mdi.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: LRESULT The return value specifies the result of the message processing and
+    //depends on the message. If the hWndMDIClient parameter is NULL , the return value is the same as for the DefWindowProc
+    //function." - the page reserves no value for failure at all: the LRESULT is the message's own result, so a check would
+    //report a legal result as a failure and the session-27 test has no failure value to pass. AW binding, NO-PROTOTYPE,
+    //LRESULT; no token from this row and the value is returned exactly as the window-procedure contract wants it.
     LRESULT User32::DefFrameProcT(HWND hWnd, HWND hWndMDIClient, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
@@ -97,6 +116,11 @@ namespace qor { namespace win { namespace api {
         return Library::Call< LRESULT, HWND, HWND, UINT, WPARAM, LPARAM >(pFunc, hWnd, hWndMDIClient, uMsg, wParam, lParam);
     }
 
+    //Return policy (U2, table row DefMDIChildProc / mdi.cpp, 12 Nov 2026): the row reads unchecked with no checkClass,
+    //docQuote "Type: LRESULT The return value specifies the result of the message processing and depends on the message."
+    // - same shape as the frame twin above: the page hands the caller the message's own result and reserves nothing for
+    //failure, so the session-27 test has no failure value to pass and a check would report a legal result as one. AW
+    //binding, NO-PROTOTYPE, LRESULT; no token from this row.
     LRESULT User32::DefMDIChildProcT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
@@ -105,6 +129,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call< LRESULT, HWND, UINT, WPARAM, LPARAM >(pFunc, hWnd, uMsg, wParam, lParam);
     }
 
+    //Return policy (U2, table row TranslateMDISysAccel / mdi.cpp, 12 Nov 2026): the row reads unchecked with no checkClass,
+    //and the table's verbatim docQuote is "Type: BOOL If the message is translated into a system command, the return
+    //value is nonzero. If the message is not translated into a system command, the return value is zero." - zero answers
+    //the caller's question rather than failing, so the session-27 test fails at that value before any check is considered.
+    //The row's 1 in-tree caller was re-read before the token decision: MessageHandler::TranslateMDISysAccel
+    //(platform/os/windows/ui/gui/view/handlers/messagehandler.cpp) returns the flag as a bool via `? true : false`, so it
+    //already reads a zero as "not translated" and a BoolCheck there would raise a continuable issue on that legal answer.
+    //No token from this row.
     BOOL User32::TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg)
     {
         qor_pp_fcontext;

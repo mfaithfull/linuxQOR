@@ -97,9 +97,18 @@
 //above against the module literal L"user32", and - because user32.h moved - the all-libraries run as a diff against a
 //pre-edit run (119 cpp echoes pre, 120 post, 166 diagnostic lines on both, 1 C1083 at opengl/wgl.cpp:31 on both, exit 2 on
 //both), dated by cmd /c dir /T W rather than by pwsh (see the folder's gotchas note).
+//
+//Addendum, 12 Nov 2026 (U2 Small TU batch S2, item synchronization sites): the banner's "So 0 Win32ErrorHandler and 0
+//CheckReturn in this TU" line is that session's record and stands superseded - the endpoint table now reads both rows
+//checked with checkClass TCheckFailureValue< DWORD, 0xFFFFFFFFL >, so this TU carries 2 CheckReturn sites and gained
+//its one ../returncheck.h include (0 -> 2). What the G6 audit rejected was a check on the value 0, and that rejection
+//still stands: the class the table chose tests WAIT_FAILED (DWORD)0xFFFFFFFF, not 0, so a timeout (WAIT_OBJECT_0 +
+//nCount, or WAIT_TIMEOUT 258L) and the WAIT_OBJECT_0 answer keep passing. The decision is the table's, not re-derived
+//here; each row's verbatim docQuote and class sit at the site below.
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -112,25 +121,50 @@ namespace qor { namespace win { namespace api {
     //milliseconds - the caller converts its own seconds with (DWORD)(timeout * 1e3). dwWakeMask names one event in the
     //WM_* family the same header spells (:1983 WM_NULL, :1987 WM_SIZE, :2004 WM_PAINT, :2076 WM_WINDOWPOSCHANGED) or a
     //QS_* event-set macro (:7058 QS_ALLINPUT), and that caller passes QS_ALLINPUT.
+    //Return policy (U2, table row MsgWaitForMultipleObjects / synchronization.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass TCheckFailureValue< DWORD, 0xFFFFFFFFL >. The table's verbatim docQuote opens "If the function
+    //succeeds, the return value indicates the event that caused the function to return. It can be one of the following
+    //values." and its last two entries are "WAIT_TIMEOUT 258L The time-out interval elapsed and the conditions specified
+    //by the bWaitAll and dwWakeMask parameters were not satisfied." then "WAIT_FAILED (DWORD)0xFFFFFFFF The function has
+    //failed. To get extended error information, call GetLastError ." - so the reserved failure is WAIT_FAILED, not 0,
+    //and no legal answer reaches it: WAIT_OBJECT_0 .. WAIT_OBJECT_0 + nCount, WAIT_ABANDONED_0 .. + nCount - 1 and
+    //WAIT_TIMEOUT 258L all differ, so the session-27 soundness test (a checked-failure site is only sound where the
+    //SDK's failure value is not also a legal success value) passes at every value, and 0 is WAIT_OBJECT_0 - a legal
+    //answer that stays a pass under this test. The DWORD row takes the TCheckFailureValue template (returncheck.h:213,
+    //Test at :224 is (value == iFailure) ? false : true) the vocabulary already offers - no new check class. 0 in-tree
+    //wrapper callers reach this stem (the only in-tree consumer of the wait calls the SDK import directly), so the new
+    //throw is confined to the published surface; the wrapper still forwards all five arguments as the caller wrote them.
     DWORD User32::MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL fWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MsgWaitForMultipleObjects);
-        return Library::Call< DWORD, DWORD, const HANDLE *, BOOL, DWORD, DWORD >(pFunc, nCount, pHandles, fWaitAll, dwMilliseconds, dwWakeMask);
+        CheckReturn< DWORD, TCheckFailureValue< DWORD, 0xFFFFFFFFL > >::TType dwResult = Library::Call< DWORD, DWORD, const HANDLE *, BOOL, DWORD, DWORD >(pFunc, nCount, pHandles, fWaitAll, dwMilliseconds, dwWakeMask);
+        return dwResult;
     }
 
     //The Ex member of the same wait: the SDK's prototype at um\WinUser.h:6992-:6997 drops fWaitAll and adds dwFlags as
     //the fifth _In_ DWORD, so the caller states the wait's scope in that word rather than in an all-or-any flag - the
     //header declares no macro family for it (0 MSG_WAIT_* lines in um\WinUser.h), so nothing here names its values. The
-    //DWORD is the same wait reason code as the base member's, 0 is a legal answer, and the export is bare (hint 293)
-    //with no Ex A/W row; see the banner.
+    //DWORD is the same wait reason code as the base member's, and the export is bare (hint 293) with no Ex A/W row;
+    //see the banner.
+    //Return policy (U2, table row MsgWaitForMultipleObjectsEx / synchronization.cpp, 12 Nov 2026): the row reads checked
+    //with checkClass TCheckFailureValue< DWORD, 0xFFFFFFFFL >. The table's verbatim docQuote opens with the same two
+    //sentences as the non-Ex twin above and its last two entries are "WAIT_TIMEOUT 258L The time-out interval elapsed,
+    //but the conditions specified by the dwFlags and dwWakeMask parameters were not met." then "WAIT_FAILED (DWORD)0xFFFFFFFF
+    //The function has failed. To get extended error information, call GetLastError ." - the same WAIT_FAILED convention,
+    //and this row's legal set additionally carries WAIT_IO_COMPLETION 0x000000C0L, which also differs from the reserved
+    //value, so the session-27 soundness test passes at every value and 0 (WAIT_OBJECT_0) stays a pass. The DWORD row
+    //takes the TCheckFailureValue template (returncheck.h:213, Test at :224 is (value == iFailure) ? false : true) the
+    //vocabulary already offers - no new check class. 0 in-tree wrapper callers reach this stem, so the new throw is
+    //confined to the published surface; the wrapper still forwards all five arguments as the caller wrote them.
     DWORD User32::MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, MsgWaitForMultipleObjectsEx);
-        return Library::Call< DWORD, DWORD, const HANDLE *, DWORD, DWORD, DWORD >(pFunc, nCount, pHandles, dwMilliseconds, dwWakeMask, dwFlags);
+        CheckReturn< DWORD, TCheckFailureValue< DWORD, 0xFFFFFFFFL > >::TType dwResult = Library::Call< DWORD, DWORD, const HANDLE *, DWORD, DWORD, DWORD >(pFunc, nCount, pHandles, dwMilliseconds, dwWakeMask, dwFlags);
+        return dwResult;
     }
 
 }}}   //qor::win::api

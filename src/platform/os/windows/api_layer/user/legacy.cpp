@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 //=== api_layer conventions ========================================= Reviewed 7 Nov 2026
 //   (T8 step 6, tranche 6g: the held-open legacy bucket - 6 names / 5 members, new TU)
@@ -122,6 +123,12 @@ namespace qor { namespace win { namespace api {
     //hwndParent and hwndFrom are two window handles and the OS requires the second to be a descendant of the first; fmt
     //selects how the bytes behind data are interpreted. None of that is visible to a wrapper, so all five arguments are
     //forwarded as the caller wrote them and the DWORD answer is passed through unchanged.
+    //Return policy (U2, table row DragObject / legacy.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass and
+    //its docQuote cell is the probe's `-`, because tmp/_tmp_u2_docref_probe.ps1 found no Learn page for this stem at all
+    //(no-slug-in-Learn-index) - with no page there is no documented failure value, so the row reserves nothing a check
+    //could key on and the session-27 soundness test (a checked failure site is only sound where the SDK's failure value
+    //is not also a legal success value) has no value to test. The DWORD is the answer the drag produced. No token from
+    //this row; the TU's one ../returncheck.h include belongs to the GetWindowWord row below.
     DWORD User32::DragObject(HWND hwndParent, HWND hwndFrom, UINT fmt, ULONG_PTR data, HCURSOR hcur)
     {
         qor_pp_fcontext;
@@ -133,6 +140,12 @@ namespace qor { namespace win { namespace api {
     //BOOL as a real success flag - FALSE says the queue was not resized, and reading the return is the only way a caller
     //finds that out. cMessagesMax is the requested capacity; the OS caps it against its own limit, and the layer neither
     //sees nor corrects that. This is the one member of the bucket whose return is a flag.
+    //Return policy (U2, table row SetMessageQueue / legacy.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass,
+    //and its docQuote cell is the probe's `-` again - tmp/_tmp_u2_docref_probe.ps1 found no Learn page for this stem, so
+    //the table carries no verbatim sentence reserving zero for failure. The BOOL here reads like a success flag in the
+    //SDK's own comment, but a flag whose failure value no page documents is exactly what the tightened gate refuses to
+    //guess: a CheckReturn< BOOL, BoolCheck > here would rest on judgement, not on the row, and would report a legal
+    //zero as a failure. No token from this row; the site comment is the written reason the contract asks for.
     BOOL User32::SetMessageQueue(int cMessagesMax)
     {
         qor_pp_fcontext;
@@ -144,17 +157,33 @@ namespace qor { namespace win { namespace api {
     //WORD, not a flag: the current value of the nIndex-th 16-bit slot in the window's extra-bytes record - the same
     //nIndex-into-that-record contract as the wrapped GetWindowLongT (user32.h:727) and the already-wrapped WORD class
     //sibling GetClassWord (:726). nIndex is the caller's index and the layer cannot see whether it is in range.
+    //Return policy (U2, table row GetWindowWord / legacy.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< WORD >, and the table's verbatim docQuote is "If the function succeeds, the return value is the
+    //requested value. If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError ." - the page reserves zero for failure and the requested value is one of the window's extra-bytes
+    //attribute words, none of which the page documents as a legal zero, so the session-27 soundness test (a checked
+    //failure site is only sound where the SDK's failure value is not also a legal success value) passes at every value
+    //and the numeric row takes the CheckNonZero template (returncheck.h:186, Test at :194 is (value == 0) ? false : true)
+    //the vocabulary already offers - no new check class. 0 in-tree callers for the exact stem (D14 published surface),
+    //so nothing built today reaches this site; G6 keeps the check live on every call, and Library::Call's swallowed-fault
+    //default is a zero WORD, which now reads as the documented failure rather than as an attribute word (status.md U7).
     WORD User32::GetWindowWord(HWND hWnd, int nIndex)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetWindowWord);
-        return Library::Call< WORD, HWND, int >(pFunc, hWnd, nIndex);
+        CheckReturn< WORD, CheckNonZero< WORD > >::TType wResult = Library::Call< WORD, HWND, int >(pFunc, hWnd, nIndex);
+        return wResult;
     }
 
     //WORD again, and this time the value returned is the one put in place. wNewWord is a plain _In_ WORD, so a wider
     //caller value is already truncated by the caller, not by the layer. Twin of SetWindowLongT (user32.h:732) and of
     //SetClassWord (:731).
+    //Return policy (U2, table row SetWindowWord / legacy.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass,
+    //and its docQuote cell is the probe's `-` - no Learn page exists for the stem, so the row documents no failure value
+    //at all. Independently of that, the WORD this member hands back is the value it put in place, so a zero is a legal
+    //answer (the caller asked for the slot whose value is 0) and the session-27 test fails at that value before any
+    //check is considered. No token from this row; the site comment carries the written reason.
     WORD User32::SetWindowWord(HWND hWnd, int nIndex, WORD wNewWord)
     {
         qor_pp_fcontext;

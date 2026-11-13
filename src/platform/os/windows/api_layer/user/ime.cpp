@@ -58,6 +58,10 @@ namespace qor { namespace win { namespace api {
 
     //DisableProcessWindowsGhosting takes nothing and returns nothing (fire-and-forget, no failure signal - the SDK
     //prototype is void(void)), so Library::voidCall matches the SDK and this adds no U18 instance.
+    //U2 row note (12 Nov 2026): the table's verdict for this row is void and its docQuote column reads "None" (the page
+    //carries no Return value section), so per the landing contract this row gets neither a token nor a written reason.
+    //The row's sdkRetType reads VOID and its callers column reads 0 - the only in-tree mention of the stem outside this
+    //TU is the static declaration at user32.h:699 - so the review's paragraph above already matches the table's verdict.
     void User32::DisableProcessWindowsGhosting(void)
     {
         qor_pp_fcontext;
@@ -66,6 +70,23 @@ namespace qor { namespace win { namespace api {
         Library::voidCall<>(pFunc);
     }
 
+    //Return policy (U2, table row SendIMEMessageEx / ime.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass,
+    //and the table's verbatim docQuote is "The result of processing of the subfunction. If the result is not success,
+    //one of the following error codes is stored into the wParam of the IMESTRUCT structure. Return code Description
+    //IME_RS_DISKERROR Disk error. IME_RS_ERROR General error. IME_RS_ILLEGAL Contains an illegal character. IME_RS_INVALID
+    //Invalid subfunction. IME_RS_NEST Subfunction is nested and, therefore, cannot be used. IME_RS_NOIME The IME has
+    //not been selected (has not been installed). IME_RS_NOROOM Short of area. IME_RS_NOTFOUND No candidate found.
+    //IME_RS_SYSTEMMODAL Windows is in system mode, data cannot be passed to the IME. IME_RS_TOOLONG Characters too
+    //long." - the value this member hands back is the subfunction's own result code, and the page puts the failure
+    //detail somewhere else entirely: inside the caller's own IMESTRUCT handed in as lParam. So the return reserves
+    //no single failure value, and the session-27 soundness test (a checked-failure site is only sound where the SDK's
+    //failure value is not also a legal success value) has no value to test at - every LRESULT this stem can answer is
+    //a legal subfunction outcome. The row's sdkRetType column reads NO-PROTOTYPE, so there is no SDK spelling to take
+    //a class base from and no token to place. The table's callers column reads 0 for the exact stem; the U19 paragraph
+    //above names the hand-through, re-read before this verdict was accepted at ui/gui/controllers/windowcontroller.cpp:787
+    //inside WindowController::SendIMEMessageEx (:785, published at windowcontroller.h:292), which returns the LRESULT
+    //straight through as its own long long with no test on it - so nothing at that call site depends on a failure
+    //spelling. 0 CheckReturn here; the answer comes back exactly as the OS wrote it.
     LRESULT User32::SendIMEMessageExT(HWND hwnd, LPARAM lParam)
     {
         qor_pp_fcontext;
@@ -76,6 +97,14 @@ namespace qor { namespace win { namespace api {
 
     //WINNLSGetIMEHotkey returns UINT (WinNls32.h:87: UINT WINAPI WINNLSGetIMEHotkey(HWND)) - a hotkey code, not a
     //success flag, so it comes back raw with no CheckReturn, matching the U1/U2 policy for this block.
+    //Return policy (U2, table row WINNLSGetIMEHotkey / ime.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass
+    //and the table's docQuote column reads "-" - the doc-ref probe found no Learn page at all for this stem (no-slug-in-Learn-index),
+    //so the table carries no documented failure value to read the session-27 soundness test against, and the UINT this
+    //member answers is the hotkey code for the window's IME, a value-shaped answer at every spelling. The row's sdkRetType
+    //column reads NO-PROTOTYPE (the SDK declaration sits in um/WinNls32.h:87, opt-in and absent from this layer's include
+    //chain - see the banner), so no SDK spelling offers a class base either. 0 in-tree mentions of this stem outside this
+    //TU (the only one is the static declaration at user32.h:701), so the row is unchecked on the page's absence rather
+    //than on that count: 0 CheckReturn here, and the hotkey code comes back exactly as the OS wrote it.
     UINT User32::WINNLSGetIMEHotkey(HWND hwnd)
     {
         qor_pp_fcontext;
@@ -87,6 +116,17 @@ namespace qor { namespace win { namespace api {
     //WINNLSEnableIME returns BOOL (WinNls32.h:88: BOOL WINAPI WINNLSEnableIME(HWND, BOOL)) and the SDK marks it obsolete;
     //it stays on the interface (see the one-line obsolete comment at its declaration) and returns raw - no CheckReturn,
     //so a swallowed fault and a legitimate FALSE are indistinguishable (U7), the same convention as SendIMEMessageEx.
+    //Return policy (U2, table row WINNLSEnableIME / ime.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass, and
+    //the table's verbatim docQuote is "The previous state of the IME. TRUE if it was enabled before this call, otherwise,
+    //FALSE ." - the BOOL reports the state the IME was in BEFORE this call, not this call's outcome, so neither spelling
+    //is reserved for failure and the session-27 soundness test (a checked-failure site is only sound where the SDK's
+    //failure value is not also a legal success value) fails at both values: a FALSE here is the legal answer "it was
+    //disabled before", not a fault, and a check would report that answer as a failed call. The row's sdkRetType column
+    //reads NO-PROTOTYPE (the SDK declaration sits in um/WinNls32.h:88, opt-in and absent from this layer's chain), so
+    //no SDK spelling offers a class base. 0 in-tree mentions of this stem outside this TU (only the static declaration
+    //at user32.h:702 and the SDK's own obsolete-warning comment at :703), so the row is unchecked on the page's
+    //previous-state wording rather than on that count: 0 CheckReturn here, and the previous state comes back exactly
+    //as the OS wrote it - a swallowed fault and a legitimate FALSE stay indistinguishable (U7).
     BOOL User32::WINNLSEnableIME(HWND hwnd, BOOL bFlag)
     {
         qor_pp_fcontext;
@@ -97,6 +137,14 @@ namespace qor { namespace win { namespace api {
 
     //WINNLSGetEnableStatus returns BOOL (WinNls32.h:89: BOOL WINAPI WINNLSGetEnableStatus(HWND)) - the IME enable state
     //for the window, returned raw per the same U1/U2 policy.
+    //Return policy (U2, table row WINNLSGetEnableStatus / ime.cpp, 12 Nov 2026): the row reads UNCHECKED with no checkClass
+    //and the table's docQuote column reads "-" - the doc-ref probe found no Learn page for this stem either (no-slug-in-Learn-index),
+    //so the table carries no documented failure value to read the session-27 soundness test against. What the member
+    //answers is the IME enable state of the window, a legal BOOL at both spellings, so nothing is reserved and no
+    //class base exists: the row's sdkRetType column reads NO-PROTOTYPE (the SDK declaration sits in um/WinNls32.h:89,
+    //opt-in and absent from this layer's chain). 0 in-tree mentions of this stem outside this TU (only the static
+    //declaration at user32.h:704), so the row is unchecked on the answer's shape rather than on that count - 0
+    //CheckReturn here, and the status comes back exactly as the OS wrote it.
     BOOL User32::WINNLSGetEnableStatus(HWND hwnd)
     {
         qor_pp_fcontext;

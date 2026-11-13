@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -93,15 +94,43 @@ namespace qor { namespace win { namespace api {
     //this TU was 11 spaced / 0 tight, and normalising it moves folder U14(a) from 174 spaced / 254 tight to
     //163 / 265 by user decision. Its ../returncheck.h include (then :11) used nothing from it: one of T7's 35 dead
     //includes, removed 5 Nov 2026 when the folder-wide decision behind T7 was taken.
+    //
+    //U2 pass (12 Nov 2026, LargeTUBatchRegionChecks / LargeTUBatchL1 item 2 "rectangle sites" slice 1): that include is
+    //back, and this pass is the reason it is live now - the 5 rows the table reads checked (CopyRect, InflateRect,
+    //OffsetRect, SetRect, SetRectEmpty) build CheckReturn< BOOL, BoolCheck >::TType over their Call<BOOL,...>, and the
+    //other 6 keep the value exactly as the SDK produced it with a written reason at the site. Census after the pass:
+    //CheckReturn-code=5 == table-checked=5, returncheck-includes=1. Unlike the mouse leaf these five have live in-tree
+    //callers, and the audit was read at the site rather than taken from the table's upper bound: platform::win::Rect in
+    //ui/gui/view/drawing/rect.cpp reads the BOOL as a success flag at :37 CopyFrom, :47 Inflate, :64 Offset, :75 Set and
+    //:80 SetEmpty (each "return User32::<stem>(...) ? true : false"), so landing the check replaces a FALSE those facades
+    //used to return with a throw - the behaviour change D51 accepts for a row whose page reserves zero for failure, and
+    //no caller of these five inspects a FALSE for any other meaning. The three facades that drop the BOOL outright
+    //(:53 FromIntersection, :86 FromSubtraction, :93 FromUnion) are exactly three of the unchecked rows, which is why
+    //they stay token-free.
 
+    //Return policy (U2, table row CopyRect / rectangle.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero. If the function
+    //fails, the return value is zero." - the destination RECT the caller passes is both the request and the out-parameter, so
+    //the copied rectangle answers through it and the BOOL carries nothing besides whether the copy happened; zero is therefore
+    //reserved, the session-27 soundness test passes at every value, and sdkRetType is BOOL so BoolCheck (returncheck.h:94)
+    //covers it - no new check class. Audit: ui/gui/view/drawing/rect.cpp:37 Rect::CopyFrom reads the BOOL as a success flag,
+    //so a failed copy now throws out of that facade instead of returning false.
     BOOL User32::CopyRect(::LPRECT lprcDst, const::RECT* lprcSrc)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CopyRect);
-        return Library::Call<BOOL, ::LPRECT, const ::RECT*>(pFunc, lprcDst, lprcSrc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, ::LPRECT, const ::RECT*>(pFunc, lprcDst, lprcSrc);
+        return bResult;
     }
 
+    //Return policy (U2, table row EqualRect / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and the
+    //table's verbatim docQuote is "Type: BOOL If the two rectangles are identical, the return value is nonzero. If the two
+    //rectangles are not identical, the return value is zero." - the BOOL is the answer to the caller's equality question about
+    //the two RECTs it already holds, both of which are parameters, so zero is a legal answer, nothing is reserved and the
+    //page names no failure value at all (D51 step 2 reads no-check); keying BoolCheck here would report a legal "not
+    //identical" as a failure - the session-27 inverse case this TU's header block records. The value comes back as the SDK
+    //produced it. Audit: ui/gui/view/drawing/rect.cpp:42 Rect::Equal returns the BOOL to its caller as the answer.
     BOOL User32::EqualRect(const::RECT* lprc1, const::RECT* lprc2)
     {
         qor_pp_fcontext;
@@ -110,14 +139,30 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, const ::RECT*, const RECT*>(pFunc, lprc1, lprc2);
     }
 
+    //Return policy (U2, table row InflateRect / rectangle.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is the plain status "Type: BOOL If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero." - the RECT the caller passes is both the request and the out-parameter
+    //and dx/dy are inputs, so the inflated rectangle answers through the RECT and the BOOL carries nothing besides whether the
+    //inflation happened; zero is reserved, the session-27 soundness test passes at every value, and sdkRetType is BOOL so
+    //BoolCheck (returncheck.h:94) covers it - no new check class. Audit: ui/gui/view/drawing/rect.cpp:47 Rect::Inflate reads
+    //the BOOL as a success flag, so a failed inflation now throws out of that facade instead of returning false.
     BOOL User32::InflateRect(::LPRECT lprc, int dx, int dy)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InflateRect);
-        return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
+        return bResult;
     }
 
+    //Return policy (U2, table row IntersectRect / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "Type: BOOL If the rectangles intersect, the return value is nonzero. If the rectangles
+    //do not intersect, the return value is zero." - the zero reports the documented outcome of a pair of rectangles that
+    //happen not to overlap, not a failed call: the page fills lprcDst with an all-zero rectangle in exactly that case, so a
+    //legal geometric outcome collides with the value a check would key on and the session-27 soundness test fails there. This
+    //is also one of the three facades that drop the BOOL outright - ui/gui/view/drawing/rect.cpp:53 Rect::FromIntersection
+    //calls the member and hands back the Rect the SDK filled - so over the compiled tree "the sources do not intersect" is
+    //already indistinguishable one level up, and a token could not buy back that information. The value comes back as produced.
     BOOL User32::IntersectRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
@@ -126,6 +171,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
+    //Return policy (U2, table row IsRectEmpty / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and the
+    //table's verbatim docQuote is "Type: BOOL If the rectangle is empty, the return value is nonzero. If the rectangle is not
+    //empty, the return value is zero." - the BOOL is the answer to the caller's emptiness question about the RECT it already
+    //holds, that RECT being a parameter, so zero is a legal answer, nothing is reserved, and the page names no failure value
+    //at all (D51 step 2 reads no-check); keying BoolCheck would report a non-empty rectangle as a failure. The polarity is
+    //worth noting: this member answers nonzero for the emptiness the caller asked about, so a value-keyed check would also
+    //read the answer backwards. Audit: ui/gui/view/drawing/rect.cpp:59 Rect::IsEmpty returns the BOOL as the answer.
     BOOL User32::IsRectEmpty(const::RECT* lprc)
     {
         qor_pp_fcontext;
@@ -134,14 +186,29 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, const ::RECT*>(pFunc, lprc);
     }
 
+    //Return policy (U2, table row OffsetRect / rectangle.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck,
+    //and the table's verbatim docQuote is the plain status "Type: BOOL If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero." shared word for word with the InflateRect row - the offset RECT answers
+    //through the RECT the caller passes and dx/dy are inputs, so the BOOL carries nothing besides whether the offset happened
+    //and zero is reserved; the session-27 soundness test passes at every value, and sdkRetType is BOOL so BoolCheck
+    //(returncheck.h:94) covers it - no new check class. Audit: ui/gui/view/drawing/rect.cpp:64 Rect::Offset reads the BOOL as a
+    //success flag, so a failed offset now throws out of that facade instead of returning false.
     BOOL User32::OffsetRect(::LPRECT lprc, int dx, int dy)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, OffsetRect);
-        return Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, ::LPRECT, int, int>(pFunc, lprc, dx, dy);
+        return bResult;
     }
 
+    //Return policy (U2, table row PtInRect / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and the
+    //table's verbatim docQuote is "Type: BOOL If the specified point lies within the rectangle, the return value is nonzero.
+    //If the specified point does not lie within the rectangle, the return value is zero." - the BOOL is the answer to the
+    //caller's containment question about a RECT and a POINT it already holds, both parameters, so zero is a legal answer,
+    //nothing is reserved, and the page names no failure value at all (D51 step 2 reads no-check); keying BoolCheck would
+    //report a point outside the rectangle as a failure. Audit: ui/gui/view/drawing/rect.cpp:70 Rect::IsPointInRect returns
+    //the BOOL as the answer.
     BOOL User32::PtInRect(const::RECT* lprc, POINT pt)
     {
         qor_pp_fcontext;
@@ -150,22 +217,45 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, const ::RECT*, POINT>(pFunc, lprc, pt);
     }
 
+    //Return policy (U2, table row SetRect / rectangle.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, and the
+    //table's verbatim docQuote is the plain status "Type: BOOL If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the rectangle being built answers through the RECT the caller passes and the
+    //four coordinates are inputs, so the BOOL carries nothing besides whether the set happened and zero is reserved; the
+    //session-27 soundness test passes at every value, and sdkRetType is BOOL so BoolCheck (returncheck.h:94) covers it - no
+    //new check class. Audit: ui/gui/view/drawing/rect.cpp:75 Rect::Set reads the BOOL as a success flag, so a failed set now
+    //throws out of that facade instead of returning false.
     BOOL User32::SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetRect);
-        return Library::Call<BOOL, ::LPRECT, int, int, int, int>(pFunc, lprc, xLeft, yTop, xRight, yBottom);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, ::LPRECT, int, int, int, int>(pFunc, lprc, xLeft, yTop, xRight, yBottom);
+        return bResult;
     }
 
+    //Return policy (U2, table row SetRectEmpty / rectangle.cpp, 12 Nov 2026): the row reads checked with checkClass BoolCheck, and
+    //the table's verbatim docQuote is the plain status "Type: BOOL If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the emptied RECT answers through the parameter the caller passes, so the BOOL
+    //carries nothing besides whether the emptying happened and zero is reserved; the session-27 soundness test passes at every
+    //value, and sdkRetType is BOOL so BoolCheck (returncheck.h:94) covers it - no new check class. Audit: ui/gui/view/drawing/rect.cpp:80
+    //Rect::SetEmpty reads the BOOL as a success flag, so a failed emptying now throws out of that facade instead of returning false.
     BOOL User32::SetRectEmpty(::LPRECT lprc)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, SetRectEmpty);
-        return Library::Call<BOOL, ::LPRECT>(pFunc, lprc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, ::LPRECT>(pFunc, lprc);
+        return bResult;
     }
 
+    //Return policy (U2, table row SubtractRect / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "If the resulting rectangle is empty, the return value is zero. If the resulting
+    //rectangle is not empty, the return value is nonzero." - the BOOL is the answer to the caller's question about the
+    //result, and an empty subtraction result is a documented outcome rather than a failure (the result itself answers
+    //through lprcDst), so zero is a legal answer, nothing is reserved and the page names no failure value at all (D51 step
+    //2 reads no-check); keying BoolCheck here would report a legal empty result as a failure - the session-27 inverse case
+    //this TU's header block records. The value comes back as the SDK produced it. Audit: ui/gui/view/drawing/rect.cpp:86
+    //Rect::FromSubtraction calls this and drops the BOOL outright, so no caller inspects the zero for any other meaning.
     BOOL User32::SubtractRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;
@@ -174,6 +264,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, ::LPRECT, const ::RECT*, const ::RECT*>(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
+    //Return policy (U2, table row UnionRect / rectangle.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and
+    //the table's verbatim docQuote is "If the specified structure contains a nonempty rectangle, the return value is
+    //nonzero. If the specified structure does not contain a nonempty rectangle, the return value is zero." - the BOOL
+    //answers the caller's question about the rectangle it asked for, and the union itself lands in lprcDst, so a pair of
+    //sources that yields no nonempty rectangle is a documented outcome rather than a failure; zero is a legal answer,
+    //nothing is reserved and the page names no failure value at all (D51 step 2 reads no-check), so keying BoolCheck
+    //would report a legal empty union as a failure - the session-27 inverse case this TU's header block records. The value
+    //comes back as the SDK produced it. Audit: ui/gui/view/drawing/rect.cpp:91 Rect::FromUnion calls this and drops the
+    //BOOL outright, returning only the RECT, so no caller inspects the zero for any other meaning.
     BOOL User32::UnionRect(::LPRECT lprcDst, const::RECT* lprcSrc1, const::RECT* lprcSrc2)
     {
         qor_pp_fcontext;

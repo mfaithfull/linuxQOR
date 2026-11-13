@@ -61,6 +61,8 @@ namespace qor { namespace win { namespace api {
     //the wrapper is compiled and reachable but nothing built invokes it. The U19 scan over the four stems gives
     //1 LAYER / 0 BYPASS / 0 MEMBER: no site in the tree reaches these entry points through the SDK import.
 
+    //The window's active state BEFORE the flash - the answer to a question about the caption, not a status word.
+    //Return policy (U2, table row FlashWindow / errorhandling.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and the table's verbatim docQuote is "The return value specifies the window's state before the call to the FlashWindow function. If the window caption was drawn as active before the call, the return value is nonzero. Otherwise, the return value is zero." - zero is the documented ANSWER for a window that was already inactive rather than a failure value, so the session-27 soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success value) fails at that value before any check is considered, and a BoolCheck here would report a perfectly successful flash of an inactive window as a failure. BOOL + previous-state shape, 0 in-tree callers for the exact stem (D14 published surface) and the row is unchecked on the page's own wording rather than on that count; no token from this row and the answer comes back exactly as the OS wrote it.
     BOOL User32::FlashWindow(HWND hWnd, BOOL bInvert)
     {
         qor_pp_fcontext;
@@ -69,6 +71,8 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, BOOL>(pFunc, hWnd, bInvert);
     }
 
+    //The same previous-state BOOL as FlashWindow's; the one caller in the tree reads it as a success flag.
+    //Return policy (U2, table row FlashWindowEx / errorhandling.cpp, 12 Nov 2026): the row reads unchecked with no checkClass, and the table's verbatim docQuote is "The return value specifies the window's state before the call to the FlashWindowEx function. If the window caption was drawn as active before the call, the return value is nonzero. Otherwise, the return value is zero." - zero is the documented answer for a window that was already inactive, and the page names no failure value for the FLASHW_* requests at all, so the session-27 soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success value) fails at that value before any check is considered. The 1 in-tree caller was re-read before the verdict was accepted (ui/gui/controllers/windowcontroller.cpp:729 - WindowController::Flash, built at gui/CMakeLists.txt:27, which writes User32::FlashWindowEx(&flashInfo) ? true : false): that reading is the U24 instance closed by D44 and not a failure signal this wrapper could act on, so the row keeps its unchecked verdict and the caller keeps its reading. No token from this row and the answer comes back exactly as the OS wrote it.
     BOOL User32::FlashWindowEx(::PFLASHWINFO pfwi)
     {
         qor_pp_fcontext;
@@ -86,6 +90,7 @@ namespace qor { namespace win { namespace api {
         return bResult;
     }
 
+    //void both here and in the SDK (winuser.h:13558-13563), so Library::voidCall matches and there is no return to inspect; the row's verdict is void (page carries no Return value section) and this row adds neither a token nor a reason. 0 in-tree callers for the stem, and the call's own success is unobservable through this member either way (U7).
     void User32::SetLastErrorEx(DWORD dwErrCode, DWORD dwType)
     {
         qor_pp_fcontext;

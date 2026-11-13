@@ -117,6 +117,7 @@
 //
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -126,12 +127,25 @@ namespace qor { namespace win { namespace api {
     //module; lpBitmapName is the resource name the caller owns. The stem is an A/W family and the bare spelling is not
     //an export of the loaded user32.dll, so the binding is the AW form - under qor_pp_unicode 1 that reaches LoadBitmapW
     //and the narrow LoadBitmapA stays unresolved at run time, the shape every other AW stem in this library has.
+    //Return policy (U2, table row LoadBitmap / bitmap.cpp, 11 Nov 2026): the row reads checked with checkClass
+    //CheckNonZeroHandle< HBITMAP > and the table's verbatim docQuote is "If the function succeeds, the return value is
+    //the handle to the specified bitmap. If the function fails, the return value is NULL ." - the row's note records
+    //"failure value NULL means no handle, never a legal answer", so the session-27 soundness test (a checked-failure
+    //site is only sound where the SDK's failure value is not also a legal success value) passes at every value and the
+    //handle row takes the CheckNonZeroHandle template (returncheck.h:137, Test at :144 is (value == 0x00000000) ? false
+    //: true) the vocabulary already offers - no new check class. A NULL from the API and the default-constructed HBITMAP
+    //a swallowed SEH fault leaves behind are the same value, so G6 (neither qor_pp_parameter_checking nor qor_pp_yes is
+    //defined anywhere) now turns both into a continuable issue the Win32ErrorHandler above reports rather than a handle
+    //the caller would go on using or leak (status.md U7). 0 in-tree callers (D14 published surface), so nothing built
+    //today reaches this site; the TU gains its one ../returncheck.h include above and keeps its 1 binding / 1
+    //Library::Call shape.
     HBITMAP User32::LoadBitmapT(HINSTANCE hInstance, LPCTSTR lpBitmapName)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, LoadBitmap);
-        return Library::Call< HBITMAP, HINSTANCE, LPCTSTR >(pFunc, hInstance, lpBitmapName);
+        CheckReturn< HBITMAP, CheckNonZeroHandle< HBITMAP > >::TType hResult = Library::Call< HBITMAP, HINSTANCE, LPCTSTR >(pFunc, hInstance, lpBitmapName);
+        return hResult;
     }
 
 }}}   //qor::win::api

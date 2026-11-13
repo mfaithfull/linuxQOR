@@ -74,41 +74,72 @@
 //Gate: buttoncontrol.cpp standalone at /W4 exit 0, then the folder 51/51 at /W4 exit 0, cl /EP emitting the 3 literals
 //above against the module literal L"user32", and - because user32.h moved - the all-libraries run as a diff against a pre-edit
 //run (118 cpp echoes, 166 diagnostic lines, 1 C1083 at opengl/wgl.cpp:31, exit 2).
+//
+//Addendum, 12 Nov 2026 (U2 Small TU batch S2, item buttoncontrol sites): the banner's "0 CheckReturn" claim and the
+//site sentence "see the banner's G6 audit for why there is no CheckReturn" are that session's record and stand
+//superseded - the endpoint table now reads CheckDlgButton and CheckRadioButton checked (both BoolCheck) and only
+//IsDlgButtonChecked unchecked, so this TU carries 2 CheckReturn sites and gained its one ../returncheck.h include
+//(0 -> 2). The decision is the table's, not re-derived here; each row's verbatim docQuote and class sit at the site
+//below, and the unchecked row's written reason sits at its own site.
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
 
     //The dialog's own question "is this control set to this state": hDlg names the dialog window, nIDButton the control's
     //resource id and uCheck the state to ask for - the SDK takes it as a plain _In_ UINT, not a BOOL, so the caller states
-    //the state rather than the header narrowing it. No _Success_ and no _Check_return_ here, so FALSE is the answer "not set"
-    //and a bad hDlg is indistinguishable from that answer; see the banner's G6 audit for why there is no CheckReturn.
+    //the state rather than the header narrowing it.
+    //Return policy (U2, table row CheckDlgButton / buttoncontrol.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero. To get extended error information, call GetLastError ." - so zero
+    //is reserved for failure and no success answer is zero, the session-27 soundness test (a checked-failure site is
+    //only sound where the SDK's failure value is not also a legal success value) passes at every value, and BOOL +
+    //zero-means-failure takes the BoolCheck the library already has (returncheck.h:94, Test at :99 is value ? true :
+    //false) - no new check class. 0 in-tree callers (D14 published surface), so the new throw is confined to that
+    //surface; the wrapper still forwards all three arguments as the caller wrote them.
     BOOL User32::CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckDlgButton);
-        return Library::Call< BOOL, HWND, int, UINT >(pFunc, hDlg, nIDButton, uCheck);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, int, UINT >(pFunc, hDlg, nIDButton, uCheck);
+        return bResult;
     }
 
     //The same question over a range: nIDFirstButton..nIDLastButton bounds the group and nIDCheckButton picks the control
-    //inside it, so this is the one member here with four arguments and no state argument of its own - uCheck does not exist
-    //for a group, the SDK asks whether the checked control of the group is nIDCheckButton. The range is the caller's to get
-    //right: nothing in the SDK or here sizes or orders it, and FALSE covers both "not the checked one" and "outside the group".
+    //inside it, so this is the one member here with four arguments and no state argument of its own - uCheck does not
+    //exist for a group, the SDK asks whether the checked control of the group is nIDCheckButton. The range is the
+    //caller's to get right: nothing in the SDK or here sizes or orders it.
+    //Return policy (U2, table row CheckRadioButton / buttoncontrol.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero. To get extended error information, call GetLastError ." - the same
+    //BOOL status wording as the CheckDlgButton twin above, so zero is reserved for failure and the session-27 soundness
+    //test passes at every value even though FALSE also reads as "not the checked one"; BOOL + zero-means-failure takes
+    //the BoolCheck the library already has (returncheck.h:94, Test at :99 is value ? true : false) - no new check
+    //class. 0 in-tree callers (D14 published surface), so the new throw is confined to that surface; the wrapper still
+    //forwards all four arguments as the caller wrote them.
     BOOL User32::CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, CheckRadioButton);
-        return Library::Call< BOOL, HWND, int, int, int >(pFunc, hDlg, nIDFirstButton, nIDLastButton, nIDCheckButton);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, int, int, int >(pFunc, hDlg, nIDFirstButton, nIDLastButton, nIDCheckButton);
+        return bResult;
     }
 
     //The state as a value rather than a question: 0 for "not checked" and 1 for "checked", so this UINT is a two-valued
-    //answer and 0 is legal - the reason the two BOOL questions above and this one all hand their return over as written.
-    //The export is bare (hint 234) and the table has no IsDlgButtonCheckedA/W row, so the binding is the bare spelling;
-    //see the banner.
+    //answer and 0 is legal.
+    //Return policy (U2, table row IsDlgButtonChecked / buttoncontrol.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote ends "If the button has any other style, the return value is zero."
+    //against a return table whose answers are BST_CHECKED, BST_INDETERMINATE and BST_UNCHECKED - the row's note records
+    //"0 is a legal answer - the page answers BST_UNCHECKED and adds 'If the button has any other style, the return value
+    //is zero', so no value is reserved for failure". A style the control does not have answers zero the way BST_UNCHECKED
+    //does, so the session-27 soundness test fails at that value and a check would report a legal answer as a failure:
+    //this site keeps 0 CheckReturn and hands the value over as written. The export stays bare (hint 234) and the table
+    //has no IsDlgButtonCheckedA/W row, so the binding is the bare spelling; see the banner.
     UINT User32::IsDlgButtonChecked(HWND hDlg, int nIDButton)
     {
         qor_pp_fcontext;

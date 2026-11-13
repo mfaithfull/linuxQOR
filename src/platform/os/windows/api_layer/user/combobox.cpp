@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -35,14 +36,33 @@ namespace qor { namespace win { namespace api {
     //open item U17 for one folder-wide decision.
     //Section coverage is complete: those three are the only *Combo*-named entry points in the user32.dll table.
 
+    //Return policy (U2, table row DlgDirListComboBox / combobox.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int >, and the table's verbatim docQuote is "Type: int If the function succeeds, the return value is
+    //nonzero. If the function fails, the return value is zero. For example, if the string specified by lpPathSpec is not
+    //a valid path, the function fails. To get extended error information, call GetLastError ." - the answer this stem
+    //produces is the rewritten lpPathSpec buffer the caller owns, so the int is that status word alone and zero is
+    //reserved for failure; the session-27 soundness test (a checked-failure site is only sound where the SDK's failure
+    //value is not also a legal success value) passes at every value, and the int row takes the CheckNonZero template
+    //(returncheck.h:187, Test at :192 is (value == 0) ? false : true) the vocabulary already offers - no new check class.
+    //The row is an AW binding whose prototype the census could not resolve (NO-PROTOTYPE), so the class base is the
+    //published int this wrapper declares rather than an SDK spelling. 0 in-tree callers (D14 published surface), so the
+    //new throw is confined to that surface; the wrapper still forwards all five arguments as the caller wrote them.
     int User32::DlgDirListComboBoxT(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, DlgDirListComboBox);
-        return Library::Call<int, HWND, LPTSTR, int, int, UINT>(pFunc, hDlg, lpPathSpec, nIDComboBox, nIDStaticPath, uFiletype);
+        CheckReturn< int, CheckNonZero< int > >::TType nResult = Library::Call<int, HWND, LPTSTR, int, int, UINT>(pFunc, hDlg, lpPathSpec, nIDComboBox, nIDStaticPath, uFiletype);
+        return nResult;
     }
 
+    //Return policy (U2, table row DlgDirSelectComboBoxEx / combobox.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote is "Type: BOOL If the current selection is a directory name, the
+    //return value is nonzero. If the current selection is not a directory name, the return value is zero. To get
+    //extended error information, call GetLastError ." - the row's note records "zero is an answer not a failure", the
+    //selection being a file rather than a directory is an ordinary question the caller asked, so the session-27 test
+    //fails at that value and a check would report a legal answer as a failure: this site keeps 0 CheckReturn and hands
+    //the value over as written. AW binding, NO-PROTOTYPE, BOOL.
     BOOL User32::DlgDirSelectComboBoxExT(HWND hwndDlg, LPTSTR lpString, int cchOut, int idComboBox)
     {
         qor_pp_fcontext;
@@ -51,12 +71,24 @@ namespace qor { namespace win { namespace api {
         return Library::Call<BOOL, HWND, LPTSTR, int, int>(pFunc, hwndDlg, lpString, cchOut, idComboBox);
     }
 
+    //Return policy (U2, table row GetComboBoxInfo / combobox.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "Type: BOOL If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero. To get extended error information, call GetLastError ." - the
+    //answer this stem produces is the PCBOMBOBOXINFO the caller hands in and the call fills in, so the BOOL is pure
+    //status and zero is reserved for failure; the session-27 soundness test passes at every value, and BOOL + zero-
+    //means-failure takes the BoolCheck the library already has (returncheck.h:94, Test at :99 is value ? true : false)
+    //- no new check class. 3 in-tree callers, re-read before this token moved: ui/gui/controllers/a_h/comboboxcontroller
+    //cpp:114 folds this BOOL into its own bool return, :149 and :184 call the wrapper for the filled-in cbi and drop
+    //the return. All three pass the arguments this wrapper forwards unchanged, so the new throw only replaces their
+    //FALSE path with a continuable issue the Win32ErrorHandler above reports - the two discarding callers gain that
+    //report where they previously had silence; the wrapper still forwards both arguments as the caller wrote them.
     BOOL User32::GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, GetComboBoxInfo);
-        return Library::Call<BOOL, HWND, PCOMBOBOXINFO>(pFunc, hwndCombo, pcbi);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HWND, PCOMBOBOXINFO>(pFunc, hwndCombo, pcbi);
+        return bResult;
     }
 
 }}}//qor::win::api

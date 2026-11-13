@@ -111,26 +111,50 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
     //Power-settings pair - the two declarations the header has held since the folder review; they are now static and
     //defined here. Both bind bare: no A/W spelling and no user32.h #undef for either stem.
+    //Return policy (U2, table row RegisterPowerSettingNotification / powermanagement.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass CheckNonZeroHandle< HPOWERNOTIFY >, and the table's verbatim docQuote is "Returns a
+    //notification handle for unregistering for power notifications. If the function fails, the return value is NULL. To
+    //get extended error information, call GetLastError ." - the page reserves NULL for failure and the answer this member
+    //hands back is the registration handle the caller needs for the unregister call, which the page gives no legal NULL
+    //for, so the session-27 soundness test (a checked failure site is only sound where the SDK's failure value is not
+    //also a legal success value) passes at every value. The census row names sdkRetType HPOWERNOTIFY (winuser.h:3993,
+    //typedef'd PVOID at :3985), so the class base is that SDK type and not the published spelling. CheckNonZeroHandle
+    //(returncheck.h:136, Test at :144 is (value == 0x00000000) ? false : true) is the handle template the vocabulary
+    //already offers - no new check class. 0 in-tree callers for the exact stem (D14 published surface), so nothing built
+    //today reaches this site; G6 keeps the check live on every call, and Library::Call's swallowed-fault default is a
+    //NULL handle, which now reads as the documented failure instead of a handle the caller would hand to unregister (U7).
     HPOWERNOTIFY User32::RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterPowerSettingNotification);
-        return Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, PowerSettingGuid, Flags);
+        CheckReturn< HPOWERNOTIFY, CheckNonZeroHandle< HPOWERNOTIFY > >::TType hResult = Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, PowerSettingGuid, Flags);
+        return hResult;
     }
 
     //BOOL success flag: FALSE means the registration was not withdrawn. Handle is the HPOWERNOTIFY returned by the call above.
+    //Return policy (U2, table row UnregisterPowerSettingNotification / powermanagement.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError ."
+    //- zero is reserved for failure and this member answers nothing other than that success/failure pair (the HPOWERNOTIFY
+    //it withdraws is an in-parameter, so there is no returned answer for a zero to collide with), so the session-27 test
+    //passes at every value and BOOL + zero-means-failure takes the BoolCheck the library already has (returncheck.h:94,
+    //value ? true : false) - no new check class. 0 in-tree callers for the exact stem (D14 published surface); G6 keeps
+    //the check live on every call, so a failed unregister now raises a continuable issue the Win32ErrorHandler above
+    //reports rather than travelling as an indistinguishable success (status.md U7).
     BOOL User32::UnregisterPowerSettingNotification(HPOWERNOTIFY Handle)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterPowerSettingNotification);
-        return Library::Call< BOOL >(pFunc, Handle);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL >(pFunc, Handle);
+        return bResult;
     }
 
     //HPOWERNOTIFY, not a numeric: the SDK typedefs it PVOID at winuser.h:3985, so the answer is a handle or NULL and
@@ -138,23 +162,44 @@ namespace qor { namespace win { namespace api {
     //hRecipient must match Flags (DEVICE_NOTIFY_WINDOW_HANDLE 0x00000000 winuser.h:3946 for a window, DEVICE_NOTIFY_SERVICE_HANDLE
     //:3947 0x00000001 for a service); 0 is a legal Flags value, so the layer cannot spot a missing one and forwards both arguments
     //as the caller wrote them.
+    //Return policy (U2, table row RegisterSuspendResumeNotification / powermanagement.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass CheckNonZeroHandle< HPOWERNOTIFY >, and the table's verbatim docQuote is "A handle to the
+    //registration. Use this handle to unregister for notifications. If the function fails, the return value is NULL. To
+    //get extended error information call GetLastError ." - the page reserves NULL for failure and the answer this member
+    //hands back is the registration handle the matching unregister call needs, which the page gives no legal NULL for,
+    //so the session-27 soundness test (a checked failure site is only sound where the SDK's failure value is not also a
+    //legal success value) passes at every value. The census row names sdkRetType HPOWERNOTIFY (winuser.h:4009), so the
+    //class base is that SDK type. CheckNonZeroHandle (returncheck.h:136, Test at :144 is (value == 0x00000000) ? false :
+    //true) is the handle template the vocabulary already offers - no new check class. 0 in-tree callers for the exact
+    //stem (D14 published surface); G6 keeps the check live on every call, so a NULL registration now raises a continuable
+    //issue instead of travelling as a handle the caller would hand to UnregisterSuspendResumeNotification (status.md U7).
     HPOWERNOTIFY User32::RegisterSuspendResumeNotification(HANDLE hRecipient, DWORD Flags)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, RegisterSuspendResumeNotification);
-        return Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, Flags);
+        CheckReturn< HPOWERNOTIFY, CheckNonZeroHandle< HPOWERNOTIFY > >::TType hResult = Library::Call< HPOWERNOTIFY >(pFunc, hRecipient, Flags);
+        return hResult;
     }
 
     //BOOL, and FALSE means the notification was not withdrawn - a real success flag, not a Win32 error code, so it is
     //passed through and the caller reads it. Handle is the HPOWERNOTIFY the register call returned; anything else is the
     //caller's error, which this layer neither sees nor corrects.
+    //Return policy (U2, table row UnregisterSuspendResumeNotification / powermanagement.cpp, 12 Nov 2026): the row reads
+    //checked with checkClass BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value
+    //is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError ."
+    //- the same status wording as the power-settings twin above: zero is reserved for failure and the member answers
+    //nothing else (the HPOWERNOTIFY it withdraws is an in-parameter), so the session-27 test passes at every value and
+    //BoolCheck (returncheck.h:94, value ? true : false) is the class already in the library - no new check class. 0 in-tree
+    //callers for the exact stem (D14 published surface); G6 keeps the check live on every call, so a failed withdrawal
+    //now raises a continuable issue the Win32ErrorHandler above reports rather than travelling as a silent success.
     BOOL User32::UnregisterSuspendResumeNotification(HPOWERNOTIFY Handle)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, UnregisterSuspendResumeNotification);
-        return Library::Call< BOOL >(pFunc, Handle);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL >(pFunc, Handle);
+        return bResult;
     }
 
 }}}

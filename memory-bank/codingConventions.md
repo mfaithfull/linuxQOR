@@ -31,6 +31,10 @@ See `memory-bank/systemPatterns.md` for the layering rules. In short: `src/confi
 | File-static globals | `_` prefix, often anonymous namespace | `static qor::Library _qor_library(...)` |
 | Global accessors | `The*` / `This*` | `ThePlatform()`, `ThisModule()` |
 
+
+## Comments
+ - When writing a comment into a source file you never extend an existing comment. Old comments must be removed to prevent distraction by stale information. More than 2 lines is not a comment it belongs in documentation. Source code is not a log of work. Logs belong in docs/past/logs
+
 ## Module interface
 
 - Export APIs with `qor_pp_module_interface` or `qor_pp_module_interface_gcc(QOR_X)` where GCC/Clang-specific export handling is needed.

@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -33,22 +34,53 @@ namespace qor { namespace win { namespace api {
     //user32.h; the two point converters that are defined live in window.cpp and declare a void return where the SDK
     //returns BOOL (open item U18).
 
+    //Return policy (U2, table row ClientToScreen / coordtransform.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the answer this stem produces is the lpPoint the caller owns and the
+    //call rewrites in place, so the BOOL is that status word alone and zero is reserved for failure; the session-27
+    //soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success
+    //value) passes at every value, and BOOL + zero-means-failure takes the BoolCheck the library already has
+    //(returncheck.h:94, Test at :99 is value ? true : false) - no new check class. 1 in-tree caller, re-read before
+    //this token moved: ui/gui/controllers/windowcontroller.cpp:643 WindowController::ClientToScreen folds this BOOL
+    //into its own bool with "? true : false", so the new throw replaces that caller's false path with a continuable
+    //issue the Win32ErrorHandler above reports; the wrapper still forwards both arguments as the caller wrote them.
     BOOL User32::ClientToScreen(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ClientToScreen);
-        return Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
+        return bResult;
     }
 
+    //Return policy (U2, table row ScreenToClient / coordtransform.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the answer this stem produces is the lpPoint the caller owns and the
+    //call rewrites in place, so the BOOL is that status word alone and zero is reserved for failure; the session-27
+    //soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success
+    //value) passes at every value, and BOOL + zero-means-failure takes the BoolCheck the library already has
+    //(returncheck.h:94, Test at :99 is value ? true : false) - no new check class. 1 in-tree caller, re-read before
+    //this token moved: ui/gui/controllers/windowcontroller.cpp:648 WindowController::ScreenToClient folds this BOOL
+    //into its own bool with "? true : false", so the new throw replaces that caller's false path with a continuable
+    //issue the Win32ErrorHandler above reports; the wrapper still forwards both arguments as the caller wrote them.
     BOOL User32::ScreenToClient(HWND hWnd, ::LPPOINT lpPoint)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, ScreenToClient);
-        return Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, ::LPPOINT >(pFunc, hWnd, lpPoint);
+        return bResult;
     }
 
+    //Return policy (U2, table row MapWindowPoints / coordtransform.cpp, 12 Nov 2026): the row reads UNCHECKED with no
+    //check class, and the table's verbatim docQuote ends "If the function fails, the return value is zero. Call
+    //SetLastError prior to calling this method to differentiate an error return value from a legitimate "0" return
+    //value." - the page itself declines to separate the failure value from the answer, which is the delta it applied
+    //to the caller's POINTs, so the session-27 test fails at zero and a check would report a legal answer as a
+    //failure: this site keeps 0 CheckReturn and hands the delta over exactly as the caller wrote it. 1 in-tree
+    //caller, re-read before any token could move: ui/gui/controllers/windowcontroller.cpp:653
+    //WindowController::MapPoints returns this int as its own int, so a check there would have turned a 0-delta
+    //success into a reported failure.
     int User32::MapWindowPoints(HWND hWndFrom, HWND hWndTo, ::LPPOINT lpPoints, UINT cPoints)
     {
         qor_pp_fcontext;

@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -74,29 +75,62 @@ namespace qor { namespace win { namespace api {
     //widths on this toolchain, so the alias is sound in practice - the same hand-mirror pattern as the
     //COMBOBOXINFO/MSGBOXPARAMS sites noted under U15/U23. It remains a reinterpret_cast between unrelated types rather
     //than a conversion, which is a winqor_gui observation, not a defect in this layer.
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S2, item filledshapes sites): the "adds no Win32ErrorHandler and no
+    //CheckReturn (U1/U2: 3 call sites, 0 handlers, 0 checks)" sentence above is that session's record and stands
+    //superseded - the endpoint table now reads all three rows checked, so this TU carries 3 CheckReturn sites and
+    //gained its one ../returncheck.h include (0 -> 3). The decision is the table's, not re-derived here; each row's
+    //verbatim docQuote and class sit at the site below.
 
+    //Return policy (U2, table row FillRect / filledshapes.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int >, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero." - the int here is that status word and carries no answer
+    //meaning, so zero is reserved for failure and the session-27 soundness test (a checked-failure site is only sound
+    //where the SDK's failure value is not also a legal success value) passes at every value; the int row takes the
+    //CheckNonZero template (returncheck.h:187, Test at :192 is (value == 0) ? false : true) the vocabulary already
+    //offers - no new check class. 1 in-tree caller (ui/gui/gdiobjects/devicecontext.cpp:101 DeviceContext::FillRect
+    //hands this int straight to its own caller), so the new throw replaces that caller's zero path with a continuable
+    //issue the Win32ErrorHandler above reports; the wrapper still forwards all three arguments as the caller wrote them.
     int User32::FillRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, FillRect);
-        return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        CheckReturn< int, CheckNonZero< int > >::TType nResult = Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        return nResult;
     }
 
+    //Return policy (U2, table row FrameRect / filledshapes.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //CheckNonZero< int >, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero.
+    //If the function fails, the return value is zero." - same status-only int as the FillRect twin above, so zero is
+    //reserved for failure and the session-27 soundness test passes at every value; the int row takes the CheckNonZero
+    //template (returncheck.h:187, Test at :192 is (value == 0) ? false : true) the vocabulary already offers - no new
+    //check class. 1 in-tree caller (ui/gui/gdiobjects/devicecontext.cpp:106 DeviceContext::FrameRect returns this int
+    //straight to its own caller), so the new throw replaces that caller's zero path with a continuable issue the
+    //Win32ErrorHandler above reports; the wrapper still forwards all three arguments as the caller wrote them.
     int User32::FrameRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, FrameRect);
-        return Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        CheckReturn< int, CheckNonZero< int > >::TType nResult = Library::Call< int, HDC, const ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        return nResult;
     }
 
+    //Return policy (U2, table row InvertRect / filledshapes.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the function succeeds, the return value is nonzero. If the
+    //function fails, the return value is zero." - the BOOL is that status and the painted rect itself is the answer,
+    //so FALSE is reserved for failure and the session-27 soundness test passes at every value; BOOL + FALSE-means-
+    //failure takes the BoolCheck the library already has (returncheck.h:94, Test at :99 is value ? true : false), so
+    //no new check class is needed. 1 in-tree caller (ui/gui/gdiobjects/devicecontext.cpp:111 DeviceContext::InvertRect
+    //folds this BOOL into bool), so the new throw replaces that caller's false path with a continuable issue the
+    //Win32ErrorHandler above reports; the wrapper still forwards both arguments as the caller wrote them.
     BOOL User32::InvertRect(HDC hDC, const::RECT* lprc)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(user32, InvertRect);
-        return Library::Call< BOOL, HDC, const ::RECT* >(pFunc, hDC, lprc);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HDC, const ::RECT* >(pFunc, hDC, lprc);
+        return bResult;
     }
 
 }}}//qor::win::api

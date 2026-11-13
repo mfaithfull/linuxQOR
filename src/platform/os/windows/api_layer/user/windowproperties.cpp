@@ -9,6 +9,7 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "user32.h"
+#include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
@@ -75,7 +76,23 @@ namespace qor { namespace win { namespace api {
     //declared at user32.h:196 (another section) and defined at window.cpp:565 with bare qor_pp_useswinapi (:568), the
     //D13 spelling for a name with ONE export on both arches and no A/W family (prototype winuser.h:4633, DESKTOP family,
     //no version floor). Not a U4 candidate, not a session-35 item: window.cpp's (session 33).
+    //
+    //Addendum, 12 Nov 2026 (U2 Small TU batch S4, item windowproperties sites): the U1/U2 paragraph above is the review's
+    //record and stands superseded for one of the five rows - the endpoint table now reads SetProp checked with checkClass
+    //BoolCheck and only EnumProps, EnumPropsEx, GetProp and RemoveProp unchecked, so this TU carries 1 CheckReturn site
+    //and regained its one ../returncheck.h include (0 -> 1; the include this TU removed under T7 on 5 Nov 2026 is back
+    //because the check that made it live is here now). The decision is the table's, not re-derived here; each row's
+    //verbatim docQuote and its written reason sits at the site below, and the four unchecked rows keep 0 CheckReturn.
 
+    //Return policy (U2, table row EnumProps / windowproperties.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "The return value specifies the last value returned by the callback
+    //function. It is -1 if the function did not find a property for enumeration." - the value is whatever the caller's own
+    //lpEnumFunc last returned, so every int a callback hands back is a legal answer and -1 is a documented outcome, not a
+    //reserved failure; the session-27 soundness test (a checked-failure site is only sound where the SDK's failure value
+    //is not also a legal success value) fails here - a callback that returns -1 for its own reason would be reported as a
+    //call failure. 1 in-tree caller re-read before this verdict was accepted: ui/gui/controllers/windowcontroller.cpp:695
+    //stores the int in "int result", then returns it as its own int at :699 with no test, so nothing at the call site
+    //depends on a failure spelling. This site keeps 0 CheckReturn and hands the value over as written - AW binding, int.
     int User32::EnumPropsT(HWND hWnd, PROPENUMPROC lpEnumFunc)
     {
         qor_pp_fcontext;
@@ -84,6 +101,13 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HWND, PROPENUMPROC >(pFunc, hWnd, lpEnumFunc);
     }
 
+    //Return policy (U2, table row EnumPropsEx / windowproperties.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "The return value specifies the last value returned by the callback
+    //function. It is -1 if the function did not find a property for enumeration." - same callback-shaped int as the
+    //sibling row: the value is the last thing the caller's lpEnumFunc returned, so the SDK reserves nothing and the
+    //session-27 soundness test fails at -1, which is a documented outcome rather than a failure. 0 in-tree callers for
+    //this stem (the table's callers column and the U19 scan agree), so no caller reading depends on a failure spelling.
+    //This site keeps 0 CheckReturn and hands the value over as written - AW binding, int, LPARAM lParam passed through.
     int User32::EnumPropsExT(HWND hWnd, PROPENUMPROCEX lpEnumFunc, LPARAM lParam)
     {
         qor_pp_fcontext;
@@ -92,6 +116,17 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HWND, PROPENUMPROCEX, LPARAM >(pFunc, hWnd, lpEnumFunc, lParam);
     }
 
+    //Return policy (U2, table row GetProp / windowproperties.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "If the property list contains the string, the return value is the
+    //associated data handle. Otherwise, the return value is NULL" - the handle is the answer this stem produces, so NULL
+    //is the documented answer for "no such property" and nothing is reserved; the session-27 soundness test fails at that
+    //value, and a CheckReturnHandle here would report a caller's legitimate absent-property read as a failure (that is
+    //also the U7 collision the review above records: Library::Call returns NULL for a failed call too, so the layer
+    //cannot separate the two without a check that would be unsound). 4 in-tree call sites for the T spelling, all re-read
+    //before this verdict was accepted: ui/gui/controllers/windowcontroller.cpp:702 returns the handle untouched, and
+    //ui/gui/factories/windowfactory.cpp:51 and ui/gui/windows/a_h/dialog.cpp:57 / :64 test it against nullptr on their
+    //own - exactly the "absent means create it" reading the page describes. This site keeps 0 CheckReturn and hands the
+    //handle over as written - AW binding, HANDLE.
     HANDLE User32::GetPropT(HWND hWnd, LPCTSTR lpString)
     {
         qor_pp_fcontext;
@@ -100,6 +135,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HANDLE, HWND, LPCTSTR>(pFunc, hWnd, lpString);
     }
 
+    //Return policy (U2, table row RemoveProp / windowproperties.cpp, 12 Nov 2026): the row reads UNCHECKED with no check
+    //class, and the table's verbatim docQuote is "The return value identifies the specified data. If the data cannot be
+    //found in the specified property list, the return value is NULL" - answer-shaped handle again, same shape as the
+    //GetProp row: NULL is a documented outcome the caller may legitimately hold, nothing is reserved, and the session-27
+    //soundness test fails at that value, so a check here would report a "nothing of that name to remove" read as a
+    //failure. 1 in-tree call site for the T spelling, re-read before this verdict was accepted: ui/gui/controllers/
+    //windowcontroller.cpp:707 returns the handle straight through as its own void* with no test on it, which is exactly
+    //the "hand back whatever the list gave" reading. This site keeps 0 CheckReturn and hands the handle over as written.
     HANDLE User32::RemovePropT(HWND hWnd, LPCTSTR lpString)
     {
         qor_pp_fcontext;
@@ -108,12 +151,29 @@ namespace qor { namespace win { namespace api {
         return Library::Call< HANDLE, HWND, LPCTSTR >(pFunc, hWnd, lpString);
     }
 
+    //Return policy (U2, table row SetProp / windowproperties.cpp, 12 Nov 2026): the row reads checked with checkClass
+    //BoolCheck, and the table's verbatim docQuote is "If the data handle and string are added to the property list, the
+    //return value is nonzero. If the function fails, the return value is zero. To get extended error information, call
+    //GetLastError" - the property this stem adds is the caller's own hData, which leaves through the property list rather
+    //than through the return, so the returned value is pure status and zero is reserved for failure; the session-27
+    //soundness test (a checked-failure site is only sound where the SDK's failure value is not also a legal success
+    //value) passes at every value, and BOOL + zero-means-failure takes the BoolCheck the library already has (returncheck.h
+    //:94, Test at :99 is value ? true : false) - no new check class. The row is an AW binding whose prototype the census
+    //could not resolve (NO-PROTOTYPE), so the class base is the published BOOL this wrapper declares, not an SDK spelling.
+    //The table's callers column reads 0 for the exact stem, while the U19 scan above names the T spelling at
+    //ui/gui/controllers/windowcontroller.cpp:712, ui/gui/factories/windowfactory.cpp:60 and ui/gui/windows/a_h/
+    //dialog.cpp:47 - all three re-read before this token moved: :712 folds this BOOL into its own bool with "? true :
+    //false", so the new throw replaces that caller's false path with a continuable issue the Win32ErrorHandler above
+    //reports, and :60 / :47 discard the value entirely, so they now get the issue where they used to continue silently
+    //over a FALSE. The wrapper still forwards hWnd/lpString/hData exactly as those callers wrote them, and G6 keeps the
+    //check live on every call.
     BOOL User32::SetPropT(HWND hWnd, LPCTSTR lpString, HANDLE hData)
     {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapiAW(user32, SetProp);
-        return Library::Call< BOOL, HWND, LPCTSTR, HANDLE >(pFunc, hWnd, lpString, hData);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HWND, LPCTSTR, HANDLE >(pFunc, hWnd, lpString, hData);
+        return bResult;
     }
 
 }}}//qor::win::api
