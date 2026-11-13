@@ -1,14 +1,18 @@
 $ErrorBehavior = 'Off'
 # doc-fetch - one curl per URL the docref probe marked resolved, Return value
 # section verbatim. Generalised from the eight <slug>_fetch clones in tmp/.
-# args (in order, all optional): want slug take skip slice [prefix] [dir]
-$want = 'misc.cpp'
-$slug = 'misc'
+# args (in order): want slug take skip slice prefix dir
+# want / slug / prefix / dir have NO defaults - a default that encodes one task
+# is a contract violation, since it silently writes into another task's files.
+# take (the per-item URL cap) / skip (leaf cursor) / slice (report name only)
+# are the only args allowed to default.
+$want = ''
+$slug = ''
 $take = 10
 $skip = 0
 $slice = 1
-$prefix = '_tmp_u2_'
-$dir = 'c:\RAID0\Develop\linuxQOR\tmp'
+$prefix = ''
+$dir = ''
 $arg = @($Args)
 if ($arg.Count -ge 1) { $want = [string] $arg[0] }
 if ($arg.Count -ge 2) { $slug = [string] $arg[1] }
@@ -17,6 +21,17 @@ if ($arg.Count -ge 4) { $skip = [int] $arg[3] }
 if ($arg.Count -ge 5) { $slice = [int] $arg[4] }
 if ($arg.Count -ge 6) { $prefix = [string] $arg[5] }
 if ($arg.Count -ge 7) { $dir = [string] $arg[6] }
+$missing = @()
+if (-not $want) { $missing += 'want' }
+if (-not $slug) { $missing += 'slug' }
+if (-not $prefix) { $missing += 'prefix' }
+if (-not $dir) { $missing += 'dir' }
+if ($missing.Count -gt 0) {
+  'USAGE doc-fetch.ps1 want slug take skip slice prefix dir (want slug prefix dir are required; take defaults 10, skip 0, slice 1)'
+  'MISSING args=' + ($missing -join ' ')
+  'VERDICT fail=1'
+  exit 1
+}
 $tab = "$dir\${prefix}endpoint_table.csv"
 $pro = "$dir\${prefix}docref_probe.txt"
 $cache = "$dir\${prefix}probe_cache.txt"

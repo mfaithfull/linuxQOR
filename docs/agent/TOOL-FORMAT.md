@@ -52,8 +52,7 @@ index:
 Type: Tool
 Scripts:
   - File: tools/<slug>/<script>.ps1
-    Usage: "the arguments, in order, with what each one changes"
-    LastRun: <ISO date>
+    Usage: "the arguments, in order, marking which are required"
     Output: "where the report lands"
 ---
 
@@ -71,12 +70,20 @@ Required sections and what each must record:
 - **Contract** — required args and defaults, plus the **resolved paths the run
   writes**. A script with a baked absolute path writes into the previous task's
   file and prints its own numbers, which looks like success. Any path that is
-  not an argument is a contract violation.
+  not an argument is a contract violation. The same rule one level up: **no
+  default may encode a task** (`prefix`, `dir`, a TU name). If a default names
+  one task, a later task that forgets the argument silently writes into the
+  earlier task's artifacts - so those args are required, the script prints
+  `USAGE` + `MISSING args=...` + `VERDICT fail=1`, and exits `1` without
+  touching a file. Only task-neutral args (a cap, an offset, a report suffix)
+  may default.
 - **Provenance** — where the script came from, and **the bugs it fixes**.
   Promoting an instrument out of `tmp/` is a review, not a copy: a bug present
   in three copies must be fixed once, in the promoted copy, and named here.
-- `LastRun` advances only on a run that finished with the report's own verdict
-  line at `fail=0`.
+- Run history is not recorded in the doc. Derive it:
+  `git log -1 --format=%ad -- tools/<slug>/<script>`. A `LastRun` field is
+  mutable state in a tracked file - every run dirties git and every stale value
+  looks current.
 
 ## Rules
 

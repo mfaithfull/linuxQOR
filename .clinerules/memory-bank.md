@@ -40,6 +40,15 @@ The Memory Bank consists of markdown files:
    - Dependencies
    - Tool usage patterns
 
+6. `tools.md`
+   - Index of reusable tools (`Type: Index`, key `index:`)
+   - Each entry: `UseWhen` (the retrieval key), `Scope`, `File` -> `memory-bank/tools/<slug>/tool.md`
+   - Scripts live in the tracked `tools/<slug>/` tree, **never** in `tmp/`
+   - Read it BEFORE writing any new script: if a capability is indexed,
+     reuse and refine that tool instead of cloning one. A script written
+     into `tmp/` is not versioned, findable, or durable.
+   - Format is specified in `docs/agent/TOOL-FORMAT.md`
+
 ## Memory Bank Updates
 
 Memory Bank updates occur when:

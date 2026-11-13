@@ -2,8 +2,7 @@
 Type: Tool
 Scripts:
   - File: tools/doc-fetch/doc-fetch.ps1
-    Usage: "want slug take skip slice [prefix] [dir] - e.g. strings.cpp str 10 20 3 ; want is the TU column value, slug names the report and the html cache, take/skip select the table rows in table order, slice is the explicit slice number used only to name the report, prefix defaults to _tmp_u2_, dir defaults to tmp/"
-    LastRun: 2026-11-13
+    Usage: "want slug take skip slice prefix dir - e.g. strings.cpp str 10 20 3 _tmp_u2_ c:\RAID0\Develop\linuxQOR\tmp ; want is the TU column value, slug names the report and the html cache, take/skip select the table rows in table order, slice is the explicit slice number used only to name the report; want/slug/prefix/dir are REQUIRED (no task-shaped defaults), take defaults 10, skip 0, slice 1"
     Output: "tmp/<prefix><slug>_fetch[_s<slice>].out.txt ; one <prefix><slug>_<stem>.html per fetched URL"
 ---
 
@@ -28,19 +27,23 @@ Three legs, each printed explicitly so a report is self-explaining:
 
 ## Contract
 
-Positional args, all optional, in this order:
+Positional args. `want` / `slug` / `prefix` / `dir` are **required** - a missing
+one prints `USAGE`, `MISSING args=...`, `VERDICT fail=1` and exits `1` without
+touching any file. Only the three numeric args may default:
 
-| arg | default | what it changes |
-|---|---|---|
-| `want` | `misc.cpp` | the table's TU column |
-| `slug` | `misc` | names the report and the html cache files |
-| `take` | `10` | rows per slice - the per-item URL cap |
-| `skip` | `0` | rows to skip, i.e. the leaf cursor's `slice_start` |
-| `slice` | `1` | explicit slice number, **only** to name the report |
-| `prefix` | `_tmp_u2_` | artifact prefix for table / probe / cache / report |
-| `dir` | `tmp/` | where artifacts live |
+| arg | required | default | what it changes |
+|---|---|---|---|
+| `want` | yes | - | the table's TU column |
+| `slug` | yes | - | names the report and the html cache files |
+| `take` | no | `10` | rows per slice - the per-item URL cap |
+| `skip` | no | `0` | rows to skip, i.e. the leaf cursor's `slice_start` |
+| `slice` | no | `1` | explicit slice number, **only** to name the report |
+| `prefix` | yes | - | artifact prefix for table / probe / cache / report |
+| `dir` | yes | - | where this task's artifacts live |
 
-No path is baked into the script. The run's first three report lines are
+No path is baked into the script, and no default encodes a task: `prefix` and
+`dir` name the task, so giving them a default silently writes into another
+task's files and prints its own numbers, which looks like success. The run's first three report lines are
 `CONTRACT`, `PATHS` and `ROWS` - the resolved argument values, the resolved
 file paths, and the selected row range by stem. A report that does not name
 its inputs is not this tool's output.
@@ -68,6 +71,18 @@ re-found per copy:
 - **Divergent clone bodies.** The clones had drifted apart - one probed with
   `Select-Object -Skip 3` against the probe's 4-line header, another used a
   `take + 0` division. A single body removes the drift class.
+
+- **Task-shaped defaults.** The clones defaulted `want` to a TU and `dir` to an
+  absolute `tmp/` path. A default that names one task is the same contract
+  violation one level up: a later task that forgets the argument writes into the
+  earlier task's artifacts and prints its own numbers, which looks like success.
+  `want` / `slug` / `prefix` / `dir` are now required; only `take` (cap),
+  `skip` (offset) and `slice` (report suffix) default. Measured both ways 13
+  Nov 2026: `doc-fetch.ps1 strings.cpp str 3 20` printed
+  `MISSING args=prefix dir`, `VERDICT fail=1`, exit `1`, and touched no file;
+  the full invocation reproduced the historic
+  `_tmp_u2_str_fetch_s3.out.txt` values (`bytes=52406 section_len=205
+  match-cache` on `IsCharAlphaNumericA`), `VERDICT fail=0`.
 
 Validated by re-running an already-fetched slice rather than trusting the
 rewrite: `doc-fetch.ps1 strings.cpp str 3 20 <slice>` reproduced the historic
