@@ -33,7 +33,7 @@ See `memory-bank/systemPatterns.md` for the layering rules. In short: `src/confi
 
 
 ## Comments
- - When writing a comment into a source file you never extend an existing comment. Old comments must be removed to prevent distraction by stale information. More than 2 lines is not a comment it belongs in documentation. Source code is not a log of work. Logs belong in docs/past/logs
+ - When writing a comment into a source file you never extend an existing comment. Old comments must be removed to prevent distraction by stale information. More than 2 lines is not a comment it belongs in documentation. Source code is not a log of work.
 
 ## Module interface
 
