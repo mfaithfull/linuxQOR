@@ -38,10 +38,15 @@ One page per `src/components` QOR lib target - 45 targets, the largest region, o
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: group 1, leaf 1 - Write the qor_jsondata page`
-  ([`./ComponentsPagesGroup1/plan.md`](./ComponentsPagesGroup1/plan.md)) - not started. Opens at
-  `coverage = 43 of 90` (the number `FrameworkLibPages` closes on) and closes at
+- `Cursor: group 2, leaf 1 - Write the qor_unicodetextfilter page`
+  ([`./ComponentsPagesGroup2/plan.md`](./ComponentsPagesGroup2/plan.md)) - not started. Opens at
+  `coverage = 50 of 90` (the number `ComponentsPagesGroup1` closed on) and closes at
   `coverage = 88 of 90`, `uncovered_targets = 2` with the two named (`qor_mime`, `qor_yaml`).
+- **Group 1 CLOSED 18 Nov 2026** - all 7 pages landed (`qor_jsondata`, `qor_ttf`, `qor_parser`,
+  `qor_base64decodefilter`, `qor_base64encodefilter`, `qor_jpegdecodefilter`, `qor_linereader`);
+  close-line stop pair printed `coverage = 50 of 90`, `uncovered_targets = 40`,
+  `illegal_fields = 0`, `dead = 0` (229 of 229 anchors re-resolve). 50 module pages +
+  `purpose.md` now on disk.
 - **Re-cut 16 Nov 2026: the 10-page leaf was never one step**, and this plan is the same mistake
   waiting at 4.5x the size. The five `Atomic` slices of 10 + 10 + 10 + 10 + 5 pages are replaced by
   **45 leaves of one page each** in 7 `Refined` groups of 7 / 7 / 7 / 7 / 6 / 6 / 5 - seven because

@@ -39,11 +39,11 @@ Seven steps of **one page each** over the head of the `src/components` target li
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: leaf 1 - Write the qor_jsondata page` - not started. Opens at `coverage = 43 of 90`
-  (the line `FrameworkPagesGroup4` closes on) and closes at `coverage = 50 of 90`,
-  `uncovered_targets = 40`.
-- Nothing here is landed; `docs/wiki/modules/` holds 19 pages at this re-cut and the framework
-  region runs first in item order.
+- **CLOSED 18 Nov 2026** - all 7 leaves landed. Close-line stop pair printed
+  `coverage = 50 of 90`, `uncovered_targets = 40`, `illegal_fields = 0`, `dead = 0`
+  (229 of 229 anchors re-resolve). `coverage = 50 of 90` is the number
+  `ComponentsPagesGroup2` opens on.
+- `docs/wiki/modules/` holds 50 module pages + `purpose.md` as of this re-derivation.
 
 ## Context
 

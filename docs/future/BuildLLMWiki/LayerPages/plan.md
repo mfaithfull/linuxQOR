@@ -32,7 +32,13 @@ build targets - so that "the wiki is behind" becomes a named set of targets rath
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: item 4 - Components lib pages` - item 3 `Framework lib pages` **CLOSED 17 Nov 2026**:
+- `Cursor: item 4 - Components lib pages`, at `group 2, leaf 1 - Write the
+  qor_unicodetextfilter page`. Inside item 4, `ComponentsPagesGroup1` **CLOSED 18 Nov 2026**:
+  all 7 pages landed (`qor_jsondata`, `qor_ttf`, `qor_parser`, `qor_base64decodefilter`,
+  `qor_base64encodefilter`, `qor_jpegdecodefilter`, `qor_linereader`); close-line stop pair
+  printed `coverage = 50 of 90`, `uncovered_targets = 40`, `illegal_fields = 0`, `dead = 0`
+  (`anchors = 229 of 229`), each `VERDICT fail=0`.
+  Item 3 `Framework lib pages` **CLOSED 17 Nov 2026**:
   all 26 framework pages landed in 4 groups, and leaf 26 printed the region close line exactly -
   `coverage = 43 of 90`, `uncovered_targets = 47`, `dangling_module_pages = 0`,
   `illegal_fields = 0` (`pages = 43 of 49`, `strays = 0`), `dead = 0` (`anchors = 190 of 190`),
