@@ -39,9 +39,23 @@ Seven steps of **one page each** across the tail of `pipeline/sources` and into 
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: leaf 1 - Write the qor_generatorsource page` - not started. Opens at
-  `coverage = 57 of 90` (the line `ComponentsPagesGroup2` closes on) and closes at
-  `coverage = 64 of 90`, `uncovered_targets = 26`.
+- **Group 3 CLOSED 18 Nov 2026** - all 7 pages landed (`qor_generatorsource`,
+  `qor_randomsource`, `qor_stringsource`, `qor_serialize`, `qor_generator`,
+  `qor_netclient`, `qor_httpclient`); the close-line stop pair printed
+  `coverage = 64 of 90`, `uncovered_targets = 26`, `illegal_fields = 0`
+  (`pages = 64 of 70`, `strays = 0`), `dead = 0` (`anchors = 310 of 310`), each
+  `VERDICT fail=0`; `wiki-lint provenance` unchanged at `violations = 2` (the same
+  pre-existing pair). Leaf 7 `qor_httpclient` **CLOSED 18 Nov 2026**:
+  `docs/wiki/modules/qor_httpclient.md` (56 lines, `Claims: 14`, 6 anchors) - the
+  judge itself is the finding: `cmake --build cmakebuild --target qor_httpclient`
+  exits 1 with `MSB1009: Project file does not exist`, because no `add_subdirectory`
+  reaches the folder (`clients/CMakeLists.txt` is one commented-out line naming
+  neither `http` nor an uncommented `socket`), its headers include a
+  `src/components/network/` tree that does not exist, and 3,192 of the folder's
+  5,923 lines are compiled by no CMake file at all. First page in the wiki whose
+  `Judges` command fails - the page records the failure as the falsifiable state.
+  Leaf-by-leaf stop lines ran `coverage = 58` through `64 of 90` with anchors
+  `274` -> `310`; per-leaf facts live in the pages themselves.
 - **Two of these seven have folder names that do not match the target**: `qor_serialize` is
   `src/components/io/deserializer`, `qor_httpclient` is `src/components/io/network/clients/http`.
   The leaf cites the CMakeLists it read, which is the only way this class of mistake is caught.

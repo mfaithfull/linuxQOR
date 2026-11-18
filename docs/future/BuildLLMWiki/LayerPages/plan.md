@@ -32,8 +32,16 @@ build targets - so that "the wiki is behind" becomes a named set of targets rath
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: item 4 - Components lib pages`, at `group 3, leaf 1 - Write the
-  qor_generatorsource page`. Inside item 4, `ComponentsPagesGroup2` **CLOSED 18 Nov 2026**:
+- `Cursor: item 4 - Components lib pages`, at `group 4, leaf 1 - Write the
+  qor_socketclient page`. Inside item 4, `ComponentsPagesGroup3` **CLOSED 18 Nov 2026**:
+  all 7 pages landed (`qor_generatorsource`, `qor_randomsource`, `qor_stringsource`,
+  `qor_serialize`, `qor_generator`, `qor_netclient`, `qor_httpclient`); close-line stop
+  pair printed `coverage = 64 of 90`, `uncovered_targets = 26`, `illegal_fields = 0`,
+  `dead = 0` (`anchors = 310 of 310`), each `VERDICT fail=0`; `wiki-lint provenance`
+  unchanged at `violations = 2`. `qor_httpclient` is the first page whose `Judges`
+  command fails - the target is indexed but never configured (`MSB1009`), recorded
+  on the page. `ComponentsPagesGroup2`
+  **CLOSED 18 Nov 2026**:
   all 7 pages landed (`qor_unicodetextfilter`, `qor_datasink`, `qor_deserializersink`,
   `qor_parsersink`, `qor_stringsink`, `qor_aggregatesource`, `qor_datasource`); close-line stop
   pair printed `coverage = 57 of 90`, `uncovered_targets = 33`, `illegal_fields = 0`

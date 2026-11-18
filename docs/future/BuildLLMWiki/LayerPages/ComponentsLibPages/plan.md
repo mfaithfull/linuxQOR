@@ -38,10 +38,18 @@ One page per `src/components` QOR lib target - 45 targets, the largest region, o
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: group 3, leaf 1 - Write the qor_generatorsource page`
-  ([`./ComponentsPagesGroup3/plan.md`](./ComponentsPagesGroup3/plan.md)) - not started. Opens at
-  `coverage = 57 of 90` (the number `ComponentsPagesGroup2` closed on) and closes at
-  `coverage = 64 of 90`, `uncovered_targets = 26`.
+- `Cursor: group 4, leaf 1 - Write the qor_socketclient page`
+  ([`./ComponentsPagesGroup4/plan.md`](./ComponentsPagesGroup4/plan.md)) -
+  **Group 3 CLOSED 18 Nov 2026**: all 7 pages landed (`qor_generatorsource`,
+  `qor_randomsource`, `qor_stringsource`, `qor_serialize`, `qor_generator`,
+  `qor_netclient`, `qor_httpclient`); close-line stop pair printed
+  `coverage = 64 of 90`, `uncovered_targets = 26`, `illegal_fields = 0`,
+  `dead = 0` (`anchors = 310 of 310`), each `VERDICT fail=0`; `wiki-lint provenance`
+  unchanged at `violations = 2`. Leaf 7's lesson: a target can be fully indexed and
+  still not configured - `qor_httpclient`'s judge exits 1 (`MSB1009`, no project file)
+  because `src/components/io/network/clients/CMakeLists.txt` never adds its subdirectory;
+  group 4 leaf 1 `qor_socketclient` shares that same commented-out line, expect the
+  same ghost.
 - **Group 2 CLOSED 18 Nov 2026** - all 7 pages landed (`qor_unicodetextfilter`, `qor_datasink`,
   `qor_deserializersink`, `qor_parsersink`, `qor_stringsink`, `qor_aggregatesource`,
   `qor_datasource`); close-line stop pair printed `coverage = 57 of 90`,
