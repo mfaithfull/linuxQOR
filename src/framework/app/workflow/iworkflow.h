@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_WORKFLOW_INTERFFACE
-#define QOR_PP_H_WORKFLOW_INTERFFACE
+#ifndef QOR_PP_H_WORKFLOW_INTERFACE
+#define QOR_PP_H_WORKFLOW_INTERFACE
 
 #include "../application/irunable.h"
 
@@ -23,4 +23,4 @@ namespace qor{ namespace workflow{
 
 }}//qor::workflow
 
-#endif//QOR_PP_H_WORKFLOW_INTERFFACE
+#endif//QOR_PP_H_WORKFLOW_INTERFACE

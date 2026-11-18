@@ -8,8 +8,8 @@
 #include "workflow.h"
 #include "src/qor/flyers/error/error.h"
 
-namespace qor{ 
-    
+namespace qor{
+
     namespace workflow{
 
         State::State(Workflow* workflow) : m_Workflow(workflow)
@@ -33,6 +33,7 @@ namespace qor{
 
     Workflow& Workflow::operator = (const Workflow& src)
     {
+        m_result = src.m_result;
         m_complete = src.m_complete;
         m_StateStack = src.m_StateStack;
         m_initialState = src.m_initialState;
@@ -40,14 +41,14 @@ namespace qor{
     }
 
     int Workflow::Run()
-    {   
+    {
         m_complete = false;
         if(m_StateStack.empty())
         {
             serious("No initial state set for workflow.");
             return -1;
         }
-        try{   
+        try{
             while(!IsComplete())
             {
                 CurrentState()->Enter();
@@ -76,9 +77,9 @@ namespace qor{
     {
         m_complete = true;
     }
-    
+
     void Workflow::Suspend(){}
-    
+
     void Workflow::Resume(){}
 
     void Workflow::Leave(){}
@@ -149,7 +150,7 @@ namespace qor{
             {
     	    	currentState->Leave();
             }
-            m_StateStack.pop();		
+            m_StateStack.pop();
             if(!m_StateStack.empty())
             {
                 ref_of<workflow::State>::type newCurrentState = CurrentState();
