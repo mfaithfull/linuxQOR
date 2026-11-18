@@ -48,6 +48,17 @@ Cache, not record: the front matter owns structure, the disk owns truth, this sl
 resume cheap. Read the front matter and this slot, re-derive from disk, rewrite this slot if they
 disagree. Rotate in place - never append below this block.
 
+- `Cursor: CLOSED - the whole tree CLOSED 18 Nov 2026`, root item 7 `Records and commit` landed as
+  one commit: `e4835ef367b3e6fb3f4ade28b1b52843e3a134ab` ("Wiki: BuildLLMWiki tree CLOSED"), 151
+  files. Units by id: queue stayed drained (`pending = 0 of 0`); the six tool entries were already
+  in `memory-bank/tools.md` (registered at item 2, docs at `memory-bank/tools/wiki-*/tool.md`);
+  `activeContext.md` rotated to None-open with TODO item 2 next; `docs/future/TODO.md` item 1
+  marked `[x]` CLOSED; this tree `git mv`-ed to `docs/archive/BuildLLMWiki/`; D56 committed.
+  Stop condition re-read: `git log -1` re-reads that hash and census reads `pending = 0 of 0`
+  (reports `tmp/_tmp_final_{anchors,schema,pages,pending}.txt`: anchors `517 of 517 / dead = 0`
+  after the D56 page anchor was filled with the commit sha, schema `illegal_fields = 0`,
+  `decisions = 56`). Left uncommitted by design (an anchor can only name a sha that exists after
+  the commit): the `docs/wiki/decisions/D56.md` `Anchors:` line and this slot's closure bullet.
 - `Cursor: plan.md -> re-read 18 Nov 2026, tree TERMINAL` - all 7 items terminal (6 `Refined` with
   child plans on disk, 1 `Atomic`); measured by `tmp/_tmp_llmwiki_tree_verify.ps1` -> `.txt`
   (recreate by slug): `plans=42 levels=0,1,2,3,4,5 atomic=176 refined=41 planning=0 VERDICT fail=0`
