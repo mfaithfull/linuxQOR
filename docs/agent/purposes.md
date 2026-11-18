@@ -31,7 +31,7 @@ One line per QOR lib. "—" = no dedicated purpose.md; intent inferred from subs
 - qor_reflection    Reflection to iterate aggregate members type-safely (names/types/sizes); built on PFR; expect switch to C++26 reflection.
 
 ## src/framework (structural app parts)
-- qor_application   Application thing (Features/Roles/Options/Workflows). Aggregation header app.h: include before deriving/using qor::Application.
+- qor_application   Application thing (Features/Roles/Options/Workflows). Aggregation header sdk/app.h: include before deriving/using qor::Application.
 - qor_dynamiclibrary Dynamic library loading support.
 - qor_host          Host-process singleton; once-per-project, low-level; CENTER of the module stitching system tying QOR modules together.
 - qor_optionparser  Command line options parsing.
