@@ -88,8 +88,3 @@ jpeg (`:102`) and pipeline itself (`:69`), but never this target.
 ## See also
 
 [[qor_module]] [[qor_host]] [[qor_text]] [[qor_signals]] [[qor_pipeline]]
-
-Not yet paged: its consumers `test/components/formats/json` and `test/components/protocols/yaml`
-(test targets, not wiki units), the `pipeline::InlineProcessor` base it derives from
-(`src/framework/data/pipeline/inlineprocessor.h`, in scope of `qor_pipeline`), and the sibling
-sinks it feeds - `parsersink` links it only in test trees.
