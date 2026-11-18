@@ -32,8 +32,14 @@ build targets - so that "the wiki is behind" becomes a named set of targets rath
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: item 4 - Components lib pages`, at `group 2, leaf 1 - Write the
-  qor_unicodetextfilter page`. Inside item 4, `ComponentsPagesGroup1` **CLOSED 18 Nov 2026**:
+- `Cursor: item 4 - Components lib pages`, at `group 3, leaf 1 - Write the
+  qor_generatorsource page`. Inside item 4, `ComponentsPagesGroup2` **CLOSED 18 Nov 2026**:
+  all 7 pages landed (`qor_unicodetextfilter`, `qor_datasink`, `qor_deserializersink`,
+  `qor_parsersink`, `qor_stringsink`, `qor_aggregatesource`, `qor_datasource`); close-line stop
+  pair printed `coverage = 57 of 90`, `uncovered_targets = 33`, `illegal_fields = 0`
+  (`pages = 57 of 63`, `strays = 0`), `dead = 0` (`anchors = 268 of 268`), each `VERDICT fail=0`;
+  `wiki-lint provenance` unchanged at `violations = 2` (the same pre-existing pair).
+  `ComponentsPagesGroup1` **CLOSED 18 Nov 2026**:
   all 7 pages landed (`qor_jsondata`, `qor_ttf`, `qor_parser`, `qor_base64decodefilter`,
   `qor_base64encodefilter`, `qor_jpegdecodefilter`, `qor_linereader`); close-line stop pair
   printed `coverage = 50 of 90`, `uncovered_targets = 40`, `illegal_fields = 0`, `dead = 0`

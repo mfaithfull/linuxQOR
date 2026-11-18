@@ -38,10 +38,18 @@ One page per `src/components` QOR lib target - 45 targets, the largest region, o
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: group 2, leaf 1 - Write the qor_unicodetextfilter page`
-  ([`./ComponentsPagesGroup2/plan.md`](./ComponentsPagesGroup2/plan.md)) - not started. Opens at
-  `coverage = 50 of 90` (the number `ComponentsPagesGroup1` closed on) and closes at
-  `coverage = 88 of 90`, `uncovered_targets = 2` with the two named (`qor_mime`, `qor_yaml`).
+- `Cursor: group 3, leaf 1 - Write the qor_generatorsource page`
+  ([`./ComponentsPagesGroup3/plan.md`](./ComponentsPagesGroup3/plan.md)) - not started. Opens at
+  `coverage = 57 of 90` (the number `ComponentsPagesGroup2` closed on) and closes at
+  `coverage = 64 of 90`, `uncovered_targets = 26`.
+- **Group 2 CLOSED 18 Nov 2026** - all 7 pages landed (`qor_unicodetextfilter`, `qor_datasink`,
+  `qor_deserializersink`, `qor_parsersink`, `qor_stringsink`, `qor_aggregatesource`,
+  `qor_datasource`); close-line stop pair printed `coverage = 57 of 90`,
+  `uncovered_targets = 33`, `illegal_fields = 0` (`pages = 57 of 63`, `strays = 0`), `dead = 0`
+  (`anchors = 268 of 268`), each `VERDICT fail=0`; provenance unchanged at `violations = 2`.
+  57 module pages + `purpose.md` now on disk. Lesson for leaves 5-7: grep the exact line numbers
+  of every claim source before drafting - `qor_datasource` anchors drifted 2-3 lines and the fix
+  was an edit pass, not a rewrite.
 - **Group 1 CLOSED 18 Nov 2026** - all 7 pages landed (`qor_jsondata`, `qor_ttf`, `qor_parser`,
   `qor_base64decodefilter`, `qor_base64encodefilter`, `qor_jpegdecodefilter`, `qor_linereader`);
   close-line stop pair printed `coverage = 50 of 90`, `uncovered_targets = 40`,

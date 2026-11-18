@@ -39,11 +39,26 @@ Seven steps of **one page each** over the pipeline's filter, sink and source fam
 
 Cache, not record. Read the front matter and this slot, re-derive from disk, rewrite if they differ.
 
-- `Cursor: leaf 1 - Write the qor_unicodetextfilter page` - not started. Opens at
-  `coverage = 50 of 90` (the line `ComponentsPagesGroup1` closes on) and closes at
-  `coverage = 57 of 90`, `uncovered_targets = 33`.
-- These seven are the cheapest pages in the region (small folders, few symbols). That is the
-  ordering rule working, not an accident - the densest five are `ComponentsPagesGroup7`.
+- This plan is **CLOSED 18 Nov 2026** - all 7 one-page leaves landed (`qor_unicodetextfilter`,
+  `qor_datasink`, `qor_deserializersink`, `qor_parsersink`, `qor_stringsink`,
+  `qor_aggregatesource`, `qor_datasource`). Leaf 7 printed the close pair:
+  `coverage = 57 of 90`, `uncovered_targets = 33`, `illegal_fields = 0`
+  (`pages = 57 of 63`, `strays = 0`), `dead = 0` (`anchors = 268 of 268`), each
+  `VERDICT fail=0`; `wiki-lint provenance` unchanged at `violations = 2`, both pre-existing.
+  Judges green for all seven: the last three built fresh 0-warning dlls (stringsink
+  105,472 B, aggregatesource 73,216 B, datasource 86,016 B); leaves 1-4 stamp-checked
+  (dll newer than newest source) and judge re-ran `exit=0`.
+- **Leaves 1-4 landed without a slot rotation, and the disk outranked the slot.** This slot
+  read "leaf 1 not started" while four intact pages sat in `docs/wiki/modules/` (written by
+  a session that died before running the stop pair). The re-derivation rule caught it:
+  bodies read whole (no truncation), `Claims:` equalled body bullets, then the instruments
+  closed all four in one run (`coverage = 54 of 90`, `dead = 0`). Lesson kept: an unrotated
+  slot is not an unlanded leaf - re-derive from disk, verify, then rotate.
+- **Grep the line numbers before drafting.** `qor_datasource` was drafted from an
+  unnumbered `Get-Content` read and carried ten citations drifted 2-3 lines; caught by the
+  read-back audit and fixed before the stop pair ran. The numbers in a claim are claims.
+- These seven were the cheapest pages in the region (small folders, few symbols) - the
+  ordering rule working; the densest five are `ComponentsPagesGroup7`.
 
 ## Context
 
