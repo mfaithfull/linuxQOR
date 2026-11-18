@@ -4,7 +4,7 @@ Type: Context
 
 ## Do not run scripts or shell commands in parallel. They race. Run them in sequence with ;
 
-## Don't pass JSON array's as shell commands. This might seem obvious but check anyway [...] is never a valid command
+## '\x...' breaks inside JSON array tool calls. Always escape \ to \\ inside single quotes '\\x...' before sending a PowerShell command array tool call.
 
 ## Editing these records (and any long text file) from PowerShell
 - **PowerShell `-replace` is case-INsensitive: `-replace 'T$'` eats a trailing `t`**

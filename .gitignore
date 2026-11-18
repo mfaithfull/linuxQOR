@@ -40,6 +40,12 @@
 .VSCodeCounter
 /tmp
 
+# TRACKED, NOT IGNORED: docs/wiki/ and docs/raw/ - the LLM wiki layers are versioned on purpose, so
+# wiki drift shows in the same git diff as code drift (docs/WikiDesign.md section 13, answer 3).
+# The consequence, which is the reason for this note: the post-commit hook that enqueues targets
+# from a diff MUST exclude both paths, or the ingest's own wiki: commit re-enqueues it forever (F9).
+# Adding an ignore pattern for either folder would not fix that loop - it would only hide the drift.
+
 # CMake
 /cmakebuild
 /cmakebuild_rel
