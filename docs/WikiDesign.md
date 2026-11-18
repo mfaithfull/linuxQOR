@@ -132,12 +132,10 @@ this tree and must not be duplicated - they are cited, never restated:
 
 | Existing thing | Role | Wiki's relation to it |
 |---|---|---|
-| `docs/agent/` (`STATE.MD`, `TODO.md`, `DECISIONS.md`, `verification.md`, `repo_map.md`, `ctags/`, `deps.dot`) | mutable agent state + deterministic indexes | `raw/` references them; wiki pages link the D-entry, they do not restate it (`docs/future/PLAN-FORMAT.md` already mandates "linked to `docs/agent/DECISIONS.md` D-entries rather than restated") |
+| `docs/agent/` (`DECISIONS.md`, `verification.md`, `repo_map.md`, `ctags/`, `deps.dot`) | mutable agent state + deterministic indexes | `raw/` references them; wiki pages link the D-entry, they do not restate it (`docs/future/PLAN-FORMAT.md` already mandates "linked to `docs/agent/DECISIONS.md` D-entries rather than restated") |
 | `memory-bank/` (`activeContext.md`, `gotchas/`, `tools/`) | the session-state substrate and the tool index | `raw/` references `gotchas.md` entries as *evidence of what breaks*; never a page of its own |
-| `.ua/knowledge-graph.json` (the `understand-anything` graph, present in this repo) | machine structure - tree-sitter nodes/edges/layers/tour, deterministically maintained | the wiki is the **prose layer above it**: pages cite node ids; the graph is never re-derived by prose, and prose is never re-derived by the graph |
 
-That last row is the design's biggest free win: structure is already computed for you. The wiki
-adds only the reasoning the graph cannot hold - invariants, decisions, traps, and the tour that
+The wiki holds the understanding, invariants, decisions, traps, and the tour that
 makes a 250k-line tree readable.
 
 ## 4. `docs/raw/` - references only, awaiting ingestion
@@ -667,11 +665,10 @@ three, and the design's rule for each is one line: **reference it, never fork it
 | Artifact | Owner | Wiki's relation | Anti-pattern |
 |---|---|---|---|
 | `docs/agent/repo_map.md`, `deps.dot`, `docs/agent/ctags/*.tags` | generated, deterministic | `docs/wiki/architecture.md` and `docs/wiki/dependencies.md` link them and add the *why* the generator cannot state | restating the dependency list in prose |
-| `docs/agent/STATE.MD`, `TODO.md`, `status.md`, plan-tree `plan.md` cursors | mutable session state - the durable record is the D-entries and the register CLOSE lines | `docs/wiki/` is the record; `docs/raw/` may reference a plan item as an `event` anchor | letting a wiki page become the cursor |
+| `memory-bank/ActiveContext.md`, plan-tree `plan.md` cursors | mutable session state - the durable record is the D-entries and the register CLOSE lines | `docs/wiki/` is the record; `docs/raw/` may reference a plan item as an `event` anchor | letting a wiki page become the cursor |
 | `docs/agent/DECISIONS.md` + `decisions/D<n>.md` | the durable why | `docs/wiki/decisions/D<n>.md` is a pointer page: title, one line, link | duplicating the decision body |
 | `memory-bank/gotchas/*` | what has cost time before | each becomes an `invariants/` or `gotchas/` page whose judge is the failing command | re-deriving the trap from memory |
 | `memory-bank/tools.md` + `tools/<slug>/` | the tool index | the four new wiki tools register there per `TOOL-FORMAT.md` (`Type: Tool`, `Scripts: File/Usage/LastRun/Output`) | a wiki script outside the index |
-| `.ua/knowledge-graph.json` | machine structure | pages cite node ids; `understand-knowledge` reads the wiki *into* the graph | a second structure artifact |
 | `docs/learning/<topic>/` (`MISSION.md`, `RESOURCES.md`) | teaches a **human** what the repo does not contain; `docs/wiki/` tells an **LLM** what the repo does (§13.4) | supplies anchors on request: a learning resource becomes a `docs/raw/` entry only when a wiki claim would otherwise be unanchored | keeping the two catalogs in sync; importing a curriculum into the wiki; giving learning pages claim contracts |
 
 One genuine tension to name rather than resolve silently: `docs/agent/repo_map.md` already says
@@ -829,7 +826,7 @@ the failure this design exists to prevent.
 | 5 | Seed `docs/raw/pending.md` from references that already exist: `docs/agent/*`, `memory-bank/gotchas/*`, the SDK pins | Atomic | item 2's line, all green |
 | 6 | The two skeletons: `docs/raw/` (`purpose.md`, `pending.md`) and `docs/wiki/` (`purpose.md`, `schema.md`, `index.md`, `log.md`, `meta.md`, `gaps.md`, seven category folders) | Atomic | every folder carries a `purpose.md` (repo rule) |
 | 7 | Seed the graph and read it: `/understand`, then `/understand-onboard` | Atomic | `.ua/knowledge-graph.json` `gitCommitHash` == HEAD |
-| 8 | Write one page per QOR lib target for the highest-churn libs (start with `docs/agent/TODO.md` item 13 and the U2 register) | Compound, 5 Atomic children by target | each page's `Judges:` build line green + claim lint `unanchored=0` |
+| 8 | Write one page per QOR lib target for the highest-churn libs (start with `docs/future/TODO.md` item 13 and the U2 register) | Compound, 5 Atomic children by target | each page's `Judges:` build line green + claim lint `unanchored=0` |
 | 9 | Write the invariant pages out of `memory-bank/gotchas/*` - one page per gotcha, judge = the failing command | Compound, 4 Atomic children | each page's judge reproduces the recorded failure |
 | 10 | `docs/wiki/architecture.md` + `docs/wiki/dependencies.md` as pointer pages into `deps.dot` / `repo_map.md` | Atomic | lint `restatements=0` |
 | 11 | `tools/wiki-lint` - the ten checks of §9 plus F12's consume check, deterministic, zero tokens | Atomic | `VERDICT fail=0` on a clean wiki **and** one injected anchor rot and one injected uncarried consumption each fire |

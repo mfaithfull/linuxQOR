@@ -19,7 +19,7 @@ Approach: keep the format the doc proposes, because it already matches a convent
 - The doc sub-step labels (`a,b,c,d,c,e`) are mislabelled; the corrected order lives in the Functions section.
 - The gate `makes a single edit / single file / single tool call` is undecidable at plan time; reframed as `names one concrete action on one named artifact`.
 - Planning only. Implementation is a hand-off, not a step of this skill.
-- The root plan registers in `docs/agent/TODO.md`; its locked choices link to `docs/agent/DECISIONS.md` D-entries; no duplication.
+- The root plan registers in `docs/future/TODO.md`; its locked choices link to `docs/agent/DECISIONS.md` D-entries; no duplication.
 
 ## Types
 
@@ -55,10 +55,10 @@ Refinement gate, first match wins: `Refined`/`Atomic`/`Deferred` -> no / plan `L
 - `C:\Users\mfaithfull\.agents\skills\deep-planning\SKILL.md` - the driver: front matter, corrected procedure, gate, resume protocol.
 - `C:\Users\mfaithfull\.agents\skills\deep-planning\agents\openai.yaml` - `interface` (display_name "Deep Planning", short_description) + `policy: allow_implicit_invocation: true`; mirrors every existing skill in that folder.
 - `C:\Users\mfaithfull\.agents\skills\deep-planning\PLAN-FORMAT.md` - disclosed reference: the front-matter schema, status table, slug rule, gate table, and the worked example tree from the doc. Reached from `SKILL.md` by one pointer (progressive disclosure).
-- `c:\RAID0\Develop\linuxQOR\docs\future\purpose.md` - repo convention: every folder carries a `purpose.md`; explains the tree and points at `docs/agent/TODO.md`.
+- `c:\RAID0\Develop\linuxQOR\docs\future\purpose.md` - repo convention: every folder carries a `purpose.md`; explains the tree and points at `docs/future/TODO.md`.
 
 **Modified**
-- `docs/agent/TODO.md` - one queue entry per tree started, `[~]` marker, linking the root `plan.md`.
+- `docs/future/TODO.md` - one queue entry per tree started, `[~]` marker, linking the root `plan.md`.
 
 **Move (optional, after the skill passes)**
 - `docs/Deep planning.txt` -> `docs/archive/deep-planning-spec.md` with the RETIRED banner used in `docs/archive/qor_mime_plan.md`, once the skill supersedes it.
@@ -67,7 +67,7 @@ Refinement gate, first match wins: `Refined`/`Atomic`/`Deferred` -> no / plan `L
 
 Procedures named in `SKILL.md`, each with its trigger:
 
-1. **Chart a tree** - trigger: a request too big for one session, no matching tree on disk. Create `docs/future/<RequestSlug>/plan.md` at `Level: 0`, empty `Parent:`, 3-7 items `Status: Planning`, body `## Goal`/`## Context`/`## Decisions`; register in `docs/agent/TODO.md`; then Refine the first item.
+1. **Chart a tree** - trigger: a request too big for one session, no matching tree on disk. Create `docs/future/<RequestSlug>/plan.md` at `Level: 0`, empty `Parent:`, 3-7 items `Status: Planning`, body `## Goal`/`## Context`/`## Decisions`; register in `docs/future/TODO.md`; then Refine the first item.
 2. **Refine one node** - trigger: the current plan has an item the gate sends to refinement. Slug the title; create the child folder if absent; write `<child>/plan.md` at `Level: parent + 1`, `Parent: ../plan.md`, seeding `## Goal` from the item title and copying `## Context` down from the parent; set the parent item `Content:` to that path and `Status: Drafted`; call the Skill tool with `deep-planning` for that item; on return re-read the parent, keep it coherent, set the item `Status: Refined`.
 3. **Climb back** - trigger: the current plan has no item needing refinement. Mark remaining items `Atomic` or `Deferred`, return to the caller, set that parent item `Refined`, and let the parent take its next item needing refinement. Climb until some ancestor has work left.
 4. **Resume** - trigger: a tree on disk, no new request. Read the roots under `docs/future/*/plan.md`, walk pre-order (root first, items in document order, descend into `Drafted`), take the first `Planning` or `Drafted` item. Never recreate a folder that exists.

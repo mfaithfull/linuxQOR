@@ -168,7 +168,7 @@ At the close only, never mid-pass. One record per file, each a concrete edit:
 
 Settled into `./WriteRecords/plan.md` (Level 1): **7 Atomic items, one per record file**, in the order `D49.md:32`'s `## Record` paragraph leaves it - `docs/agent/decisions/D50.md`, `docs/agent/DECISIONS.md` index, `status.md`, `registers/README.md`, `registers/u1.md`, `completed_work.md`, `memory-bank/activeContext.md`. Measured this pass against the disk: `DECISIONS.md` is 102 lines and its index ends at **D49** (`File: ./decisions/D49.md` at `:102`), `docs/agent/decisions/` holds **49** files `D1.md`-`D49.md` with **no D50**, so D50 is the next free id; `status.md` is 180 lines whose Open list at `:149` reads exactly `- Open: U1, U2.`; `registers/u1.md` is 10 lines whose `:5` says "0 of 38 TUs"; `registers/README.md:12` owns the closed list (its `Lines`/`Was registers.md` table is retired and not to be trusted); `completed_work.md:71`/`:73` is the closed-ids row; `activeContext.md:3` is the focus entry. `registers/u17.md:3-21` is the working-record shape this pass copies. The child is **terminal on creation** (all 7 items Atomic), so this root item is Refined.
 
-**Precondition measured this pass, stated so a resuming session cannot skip it:** the code pass has **not started** - `git status --porcelain` lists only `docs/agent/TODO.md` and `docs/future/...` (0 sources touched), and the folder census reads **0** `Win32ErrorHandler _;` code sites (41 prose banner hits) and **0** `errorhandler.h` includes over the 54 `.cpp`. So none of these seven record writes is legal until the code pass and the dated folder gate are clean; the records carry figures measured then, never the ones here.
+**Precondition measured this pass, stated so a resuming session cannot skip it:** the code pass has **not started** - `git status --porcelain` lists only `docs/future/TODO.md` and `docs/future/...` (0 sources touched), and the folder census reads **0** `Win32ErrorHandler _;` code sites (41 prose banner hits) and **0** `errorhandler.h` includes over the 54 `.cpp`. So none of these seven record writes is legal until the code pass and the dated folder gate are clean; the records carry figures measured then, never the ones here.
 
 ## Commit the pass
 
@@ -194,5 +194,3 @@ The work itself belongs to another skill. Hand off to **`/implement`** for the p
 | `Commit the pass` | none - Atomic at the root | one commit of the 53 sources + the records, then stop |
 
 Run in that order, re-checking the census invariant after every batch (per-TU `qor_pp_fcontext;` == `qor_pp_useswinapi*` == `Library::*Call<` == `Win32ErrorHandler`; folder totals `597 / 597 / 597 / 597` over 53 TUs carrying the include). A batch that re-sums differently means the inserter missed or double-hit a site - stop and re-measure, do not proceed. Nothing is committed and no record is written before the dated folder gate is clean.
-
-

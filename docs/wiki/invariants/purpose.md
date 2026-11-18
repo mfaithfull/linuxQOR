@@ -14,4 +14,4 @@ code analogue of "name the structural claim and the position it argues against" 
 - Naming is the rule's shape, not its number: `configuration-first-include.md`, not `rule-7.md`, so
   the file name survives the day the list is reordered.
 - Not here: prose about how a subsystem works (`modules/`), a restatement of a D-entry (link the
-  D-entry, `docs/agent/decisions/`), or a wish about how the code should be (`docs/agent/TODO.md`).
+  D-entry, `docs/agent/decisions/`), or a wish about how the code should be (`docs/future/TODO.md`).

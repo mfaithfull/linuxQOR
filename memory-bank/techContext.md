@@ -43,7 +43,7 @@
 
 - `.gitignore` covers generated objects, libraries, executables, build trees, and generated IDE/CMake artifacts.
 - `sdk/` is generated for external applications.
-- `docs/agent/` is the parallel agent-state system: `STATE.MD`, `TODO.md`, `DECISIONS.md`, `verification.md`, ctags, repo map, dependency graph, and skill files. Keep it in sync with the memory bank.
+- `docs/agent/` is the parallel agent-state system: `DECISIONS.md`, `verification.md`, ctags, repo map, dependency graph, and skill files. Keep it in sync with the memory bank.
 - Agent scratch files under `docs/agent/` are transient and not durable documentation.
 - CMake uses `##` comments for disabled targets/dependencies; check before assuming a module is built.
 
@@ -54,4 +54,3 @@
 - **Read the index before writing any new script.** If a capability is indexed, refine and reuse that tool - do not clone it. Cloning instruments is where this workspace's recurring bugs came from: the `[int]($skip/$take)+1` slice-tag bug (wrote `_s8` for slice 3) and the site classifier missing ANSI/Unicode twin headers were both introduced by copy-paste clones, and each recurred across clones.
 - `tmp/` is scratch only (gitignored at `.gitignore:41`) and is deleted when the task is verified. Measured 13 Nov 2026: **3,878 files / 1.07 GB** of per-task debris had accumulated there despite the rule. Consequence recorded in `activeContext.md`: source comments that cite `tmp/` artifacts become dangling pointers once `tmp/` is cleaned, so a scratch path must never be a durable citation.
 - `.gitattributes` pins `*.md text eol=crlf`, which makes the memory-bank record diffs quiet and stable; without it every `git diff` / `git add` prints CRLF warnings that push the numbers out of readable output (`memory-bank/gotchas/git.md`).
-

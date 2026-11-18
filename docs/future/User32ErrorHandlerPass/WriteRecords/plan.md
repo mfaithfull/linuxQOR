@@ -41,7 +41,7 @@ Inherited from `../plan.md` (Level 0, the U1 pass; source narrative `docs/future
 
 **Write only at the close.** Every record here is a close record: it is legal only once all 53 TUs / 597 sites carry the handler **and** the dated folder gate reads 54/54 exit 0 with 0 errors / 0 warnings. Nothing in this plan is written mid-pass, and nothing is written before the code pass runs.
 
-**State measured this pass (11 Nov 2026, pre-record tree, nothing written) - and the code pass has not started.** `git status --porcelain` lists only `docs/agent/TODO.md` and `docs/future/...`; **0 sources touched**. Folder re-census: 54 `.cpp`, **0** `Win32ErrorHandler` code sites (all 41 hits are prose inside TU banners), **0** `errorhandler.h` includes. So every figure a record carries must come from the code pass and the gate item - never from here.
+**State measured this pass (11 Nov 2026, pre-record tree, nothing written) - and the code pass has not started.** `git status --porcelain` lists only `docs/future/TODO.md` and `docs/future/...`; **0 sources touched**. Folder re-census: 54 `.cpp`, **0** `Win32ErrorHandler` code sites (all 41 hits are prose inside TU banners), **0** `errorhandler.h` includes. So every figure a record carries must come from the code pass and the gate item - never from here.
 
 Record-file anchors measured this pass (anchor on the named text, not the number: an earlier write in this item list shifts a later file's line numbers):
 
@@ -94,8 +94,3 @@ Atomic: **one file, one insertion**, `src/platform/os/windows/api_layer/user/com
 ## Update the active context focus
 
 Atomic: **one file, one write**, `memory-bank/activeContext.md`. Replace the head slot at `:3` with the new current focus: 2-3 lines, the measured post-pass figures, and the D50 pointer - the rule adopted 2 Nov 2026 says this file carries the current focus and **pointers, never a per-session narrative**, with the outgoing entry reduced or moved to `memory-bank/archive/`. Do not restate any D-entry text here (`:88` "Decisions in force (pointer only - not restated here)"), and do not touch the boot-order section at `:94-107`.
-
-
-
-
-
