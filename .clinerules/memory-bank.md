@@ -20,15 +20,11 @@ The Memory Bank consists of markdown files:
 
 3. `activeContext.md`
    - Current work focus
-   - Recent changes
    - Next steps
    - Active decisions and considerations
-   - Important patterns and preferences
-   - Learnings and project insights
 
 4. `systemPatterns.md`
    - System architecture
-   - Key technical decisions
    - Design patterns in use
    - Component relationships
    - Critical implementation paths
@@ -38,7 +34,6 @@ The Memory Bank consists of markdown files:
    - Development setup
    - Technical constraints
    - Dependencies
-   - Tool usage patterns
 
 6. `tools.md`
    - Index of reusable tools (`Type: Index`, key `index:`)
