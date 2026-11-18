@@ -49,8 +49,8 @@ signalbase.cpp pendingslot.cpp` at version 0.5.0 (`src/framework/event/signals/C
   framework consumers inherit the base classes: `ResourceManager : public SlotBase` and
   `Resource : public SignalBase` (`src/framework/data/resources/manager.h:23`, `resource.h:26` -
   [[qor_resources]]).
-- The class a consumer's base class marker uses the wrong token: `class
-  qor_pp_module_interface_gcc(QOR_APPLICATION) SignalBase` (`signalbase.h:74`). Only 4 files in all of
+- The class a consumer's base class marker uses the wrong token - `class` in
+  `class qor_pp_module_interface_gcc(QOR_APPLICATION) SignalBase` (`signalbase.h:74`). Only 4 files in all of
   `src` mention `QOR_APPLICATION`: `application.h` and `builder.h` (its own), this line, and
   `src/framework/parallel/thread/thread.h:17` marking `Thread` the same way. `QOR_APPLICATION` is
   defined PRIVATE by `src/framework/app/application/CMakeLists.txt` and never by this target.

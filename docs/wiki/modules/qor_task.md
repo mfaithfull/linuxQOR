@@ -41,9 +41,9 @@ against 43 at 0.5.0 - from five translation units: `qor_task.cpp` (the module st
   pass to it. 36 headers, and the framework's traffic is a coroutine and a blocker.
 - The vendoring is not hidden: `round_robin_scheduler.hpp:18` declares `namespace cppcoro` - the only
   file in the folder that is not in `qor`, which 36 declarations elsewhere claim - `whenalltask.h` tests
-  `CPPCORO_COMPILER_MSVC` three times, and `task.h:171` cites
-  `https://github.com/lewissbaker/cppcoro/issues/40`. `LICENSE:134` carries "Copyright 2017 Lewis Baker"
-  above MIT text, so the provenance is declared.
+  `CPPCORO_COMPILER_MSVC` three times, and `task.h:171` cites upstream cppcoro issue 40 by name
+  (the URL is left out here per the provenance rule; the reference is reconstructible from the name).
+  `LICENSE:134` carries "Copyright 2017 Lewis Baker" above MIT text, so the provenance is declared.
 - Tests are the target's real build. 18 `.cpp` under `test/framework/task`, every one in the QORTest
   source list, with `qor_task` in both of QORTest's OS link lines (`test/CMakeLists.txt:91`, `:102`);
   the sequencer tests, generator tests and `whenalltests.cpp` are compiled cppcoro test bodies against

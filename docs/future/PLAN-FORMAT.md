@@ -55,7 +55,7 @@ Ask of each item, first match wins. The size tests run **before** the artifact t
 | Test | Refine? |
 |---|---|
 | Status is `Refined`, `Atomic`, or `Deferred` | no |
-| This plan `Level` >= 5 | no - but see the depth-cap rule below: an oversize item here is `Deferred` with a written reason, never `Atomic` |
+| This plan `Level` >= 7 | no - but see the depth-cap rule below: an oversize item here is `Deferred` with a written reason, never `Atomic` |
 | The item's unit count over a named collection exceeds the leaf budget. The count is read from an instrument line `ITEM <title> units=N` printing `claimed = N of N` over the artifact, never from prose | **yes** - cut the collection, not the verb |
 | The item's action repeats over a named collection but no measured unit count is stated for it | **yes** - measure first, then apply the row above |
 | The item must discover or validate its own inputs at execution time (an input whose existence/resolution no prior item has checked) | **yes** - add a preceding verification item; a leaf may not pay for its own inputs |
@@ -76,11 +76,11 @@ Input rule: an `Atomic` leaf consumes inputs a prior item has already verified a
 
 Enumerated units rule: the leaf's body lists the exact ids it owns, so a session can check its work against the list. A body that says "same procedure" with no ids is not a step.
 
-Depth-cap rule: at `Level: 5` an item that fails the size or input tests is `Deferred` with a written reason naming the sub-plan that owns it - the depth cap stops recursion, it does not license an oversize step.
+Depth-cap rule: at `Level: 7` an item that fails the size or input tests is `Deferred` with a written reason naming the sub-plan that owns it - the depth cap stops recursion, it does not license an oversize step.
 
 Cut rule: when a collection is cut, the cut is fixed by an instrument that prints `claimed = N of N` and "every unit owned by exactly one item" over the artifact, so no unit is owned twice and none is left unfetched. Prose counts are not the authority.
 
-Breadth cap: at most 7 items per plan, per the repo rule of 7. Depth cap: a plan at `Level: 5` holds terminal items only, so no `plan.md` sits at `Level: 6`.
+Breadth cap: at most 7 items per plan, per the repo rule of 7. Depth cap: a plan at `Level: 7` holds terminal items only, so no `plan.md` sits at `Level: 6`.
 
 Budget note: "one action on one named artifact" is not enough - a step that fills 124 rows of one CSV passes the artifact test and still cannot be finished in one pass. The unit-count test is what makes `Atomic` mean "one session can close it", and it is measured, not asserted. The input rule is the second half of the same lesson: the 124-lookup step also carried URLs nothing had checked, so its budget was spent on 404s rather than on rows.
 
