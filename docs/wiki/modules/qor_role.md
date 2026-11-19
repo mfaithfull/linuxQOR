@@ -6,9 +6,10 @@ Target: qor_role
 Status: current
 LastVerified: 2026-11-19
 Claims: 10
-Summary: "Role and Feature container - the base every application derives from; assignment re-points its features since commit a86452b4, but a copy still leaves them pointing at the original."
+Summary: "Role and Feature container - the base every application derives from; the copy constructor and assignment both re-point features to the Role that took them last, since commits 131e9d6d4b and a86452b4."
 Sources:
   - hook-a86452b417-qor_role
+  - hook-131e9d6d4b-qor_role
 Anchors:
   - { kind: in-tree, path: src/framework/app/role, symbol: qor_role, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/CMakeLists.txt, symbol: qor_role, verified: 2026-11-19 }
@@ -19,6 +20,8 @@ Anchors:
   - { kind: in-tree, path: src/framework/app/role/role.cpp, symbol: m_Role, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/role.cpp, anchor: commit:a86452b417cee50c4d6bd37d3f8a6ac0dad48af7, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/ifeature.h, anchor: commit:a86452b417cee50c4d6bd37d3f8a6ac0dad48af7, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/role.cpp, anchor: commit:131e9d6d4b46cee03285e06a3560874e27913446, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/ifeature.h, anchor: commit:131e9d6d4b46cee03285e06a3560874e27913446, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/purpose.md, symbol: ConsoleAppRole, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_role --parallel 8
@@ -48,21 +51,23 @@ Judges:
   and `Role` stores the result in `fifo_map<const GUID*, ref_of<IFeature>::type>`, keyed on the GUID
   **pointer** (`src/framework/app/role/role.h`).
 - `IFeature` holds a raw `IRole* m_Role{ nullptr }` that only `friend class Role` may write
-  (`src/framework/app/role/ifeature.h`), and exactly two lines in the tree write it:
-  `feature->m_Role = this;` in `Role::AddFeature` and `feature.second->m_Role = this;` in the
-  re-pointing loop `Role::operator=` gained at commit `a86452b4` (`src/framework/app/role/role.cpp`).
+  (`src/framework/app/role/ifeature.h`), and exactly three lines in the tree write it, all in
+  `Role`: `feature->m_Role = this;` in `Role::AddFeature`, and `feature.second->m_Role = this;` in
+  the re-pointing loop of `Role::operator=` (commit `a86452b4`) and of the copy constructor
+  (commit `131e9d6d4b`) (`src/framework/app/role/role.cpp`).
   A feature's route to its siblings depends on those assignments - `src/components/qor/logaggregator/logaggregator.cpp`
   does `m_Role->GetFeature<thread::ThreadPool>()`.
 
 ## Failure modes
 
-- `Role` is copyable and its copy constructor still does not re-point the back-reference.
-  `Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures){ }` copies the map and nothing
-  else, while `operator=` - since commit `a86452b4` added a
-  `for(auto feature: m_mapFeatures) { feature.second->m_Role = this; }` loop - re-points every
-  feature through the copied map (`src/framework/app/role/role.cpp`). Both are public and undeleted
-  (`src/framework/app/role/role.h`), so a copied `Role` still hands out features whose `m_Role`
-  names the original; an assigned one no longer does.
+- `Role` is copyable and its copy re-points the back-reference into shared features.
+  `Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures)` copies the map and then runs
+  `for(auto feature: m_mapFeatures) { feature.second->m_Role = this; }`, as does `operator=` -
+  the constructor loop pinned at commit `131e9d6d4b`, the assignment loop at `a86452b4`
+  (`src/framework/app/role/role.cpp`). Both are public and undeleted
+  (`src/framework/app/role/role.h`), and a copied `Role` shares its feature objects with the
+  source, so after `Role b(a);` the features `a` still hands out carry `m_Role` naming `b` -
+  whichever of the two took them last.
 - `getfeature.h` states a rule the tree breaks. Its comment reads "The QOR itself can never include
   this header as it requires the defintion of any derived application class in use to already be
   present" (`src/framework/app/role/getfeature.h`), and it includes
@@ -79,12 +84,11 @@ Judges:
   `IFeature(IFeature&&) = delete;` (`src/framework/app/role/ifeature.h`), and the non-copyable,
   non-movable type the author wanted - which the deleted copy constructor had already produced by
   suppressing the implicit move - is now declared as well as implied.
-- The include guard is `QOR_PP_H_ROLE_FEATURE_INTERFFACE` - `INTERFFACE`
-  (`src/framework/app/role/ifeature.h`) - where the folder's other three guards follow the
-  `QOR_PP_H_`-plus-name convention of `memory-bank/codingConventions.md` cleanly. The folder got its
-  `purpose.md` at commit `25c080074a` - "A Role is a container of features owned by an Application"
-  (`src/framework/app/role/purpose.md`) - so the repo's per-folder rule has something to say here
-  now; the guard still reads `INTERFFACE`.
+- The include guard reads `QOR_PP_H_ROLE_FEATURE_INTERFACE` (`src/framework/app/role/ifeature.h`,
+   pinned at commit `131e9d6d4b`), so all four guards in the folder follow the
+   `QOR_PP_H_`-plus-name convention of `memory-bank/codingConventions.md` cleanly. The folder got its
+   `purpose.md` at commit `25c080074a` - "A Role is a container of features owned by an Application"
+   (`src/framework/app/role/purpose.md`) - so the repo's per-folder rule has something to say here.
 
 ## See also
 
