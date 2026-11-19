@@ -7,20 +7,20 @@
 #include <string>
 #include "src/framework/data/pipeline/iosource.h"
 
-namespace qor{ namespace pipeline { namespace components{ 
+namespace qor{ namespace pipeline { namespace components{
 
     class qor_pp_module_interface_gcc(QOR_STRINGSOURCE) StringSource : public pipeline::Source
     {
 
     public:
 
-        qor_pp_module_interface(QOR_PIPELINE) StringSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual ~StringSource();
-        qor_pp_module_interface(QOR_PIPELINE) void SetData(const std::string& data);
+        qor_pp_module_interface(QOR_STRINGSOURCE) StringSource();
+        qor_pp_module_interface(QOR_STRINGSOURCE) virtual ~StringSource();
+        qor_pp_module_interface(QOR_STRINGSOURCE) void SetData(const std::string& data);
 
     protected:
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual size_t ReadBytes(byte* space, size_t bytesToRead);
+        qor_pp_module_interface(QOR_STRINGSOURCE) virtual size_t ReadBytes(byte* space, size_t bytesToRead);
 
         std::string m_data;
         std::string::iterator m_it;
