@@ -33,8 +33,8 @@ namespace qor{ namespace io{ namespace network{ namespace components{
 
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
             //Get the required features from the Application Role
-            auto role = AppBuilder().TheApplication()(qor_shared).GetRole();            
-            m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();            
+            auto role = AppBuilder().TheApplication()(qor_shared).GetRole();
+            m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();
             m_ioSession = role(qor_shared).GetFeature<async::Service>()->GetSession();//Get a session for async IO
 
             //Create the socket for server connection
@@ -111,7 +111,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
     //Serve a client on a pool thread. The only state is the client socket and porotocol references transfered from main server thread
     void NetworkServer::ServeClient(qor::Ref<qor::io::network::Socket> ClientSocket, ref_of<pipeline::Protocol>::type protocol)
     {
-#ifndef NDBEUG
+#ifndef NDEBUG
         //Rename the thread for debugging to indicate which client session it's servicing
         CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
 #endif//DEBUG
@@ -122,7 +122,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
         //Configure the client session with it's own error and log handlers
         DefaultErrorHandler defaultErrorHandler;
         DefaultLogHandler defaultLogHandler(log::Level::Debug);
-#ifndef NDBEUG        
+#ifndef NDEBUG
         defaultLogHandler.WriteToStandardOutput();
 #endif//DEBUG
         auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();

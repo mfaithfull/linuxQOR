@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
-#ifdef NDBEUG
+#ifdef NDEBUG
 #include <buildnumber.h>
 #endif
 #include "src/qor/module/module.h"
