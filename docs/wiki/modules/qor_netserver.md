@@ -4,12 +4,15 @@ PageType: module
 Title: "qor_netserver"
 Target: qor_netserver
 Status: current
-LastVerified: 2026-11-18
-Claims: 17
-Summary: "The group's only configured lib with a green judge: a three-state bind/listen/accept Workflow that posts each accepted client to a ThreadPool running its own three-state session pipeline, matching its unusually long purposes row almost claim for claim - behind a link line of 14 libraries the graph shows as 2, and behind two NDEBUG guards misspelled so they never hold."
+LastVerified: 2026-11-19
+Claims: 16
+Summary: "The group's only configured lib with a green judge: a three-state bind/listen/accept Workflow that posts each accepted client to a ThreadPool running its own three-state session pipeline, matching its unusually long purposes row almost claim for claim - behind a link line of 14 libraries the graph shows as 2, and behind two NDEBUG guards that hold since c9efd9c434, making their bookkeeping Debug-only."
+Sources:
+  - hook-c9efd9c434-qor_netserver
 Anchors:
   - { kind: in-tree, path: src/components/io/network/server, symbol: qor_netserver, verified: 2026-11-18 }
-  - { kind: in-tree, path: src/components/io/network/server/CMakeLists.txt, symbol: qor_netserver, verified: 2026-11-18 }
+  - { kind: in-tree, path: src/components/io/network/server/CMakeLists.txt, symbol: qor_netserver, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/components/io/network/server/CMakeLists.txt, anchor: commit:c9efd9c434fafe19034ed0741d1670865adc0791, verified: 2026-11-19 }
   - { kind: in-tree, path: src/components/io/network/server/netserver.h, symbol: NetworkServer, verified: 2026-11-18 }
   - { kind: in-tree, path: src/components/io/network/server/netsession.h, symbol: NetworkSession, verified: 2026-11-18 }
   - { kind: in-tree, path: src/components/io/network/server/sessionpipeline.h, symbol: SessionPipeline, verified: 2026-11-18 }
@@ -58,10 +61,10 @@ protocol-agnostic, per-connection logging; serves Echo Protocol on a port".
   qor_socketconnector qor_workflow qor_role qor_application`) while
   `deps.dot:125` and `repo_map.md:104` list only `qor_module qor_host` -
   12 edges invisible to the graph.
-- Two NDEBUG guards are misspelled `NDBEUG` (`netserver.cpp:114,125`), so
-  they always pass: the per-session thread rename to "Client {fd}" (`:116`)
-  and `defaultLogHandler.WriteToStandardOutput()` (`:126`) run in every
-  build, release included; the same file's comment carries "porotocol
+- The two guards read `#ifndef NDEBUG` (`netserver.cpp:114,125`, `commit:c9efd9c434`), so they
+  hold in Debug - the judged configuration included - and release builds carry neither the
+  per-session thread rename to "Client {fd}" (`:116`) nor
+  `defaultLogHandler.WriteToStandardOutput()` (`:126`); the same file's comment carries "porotocol
   transfered" (`:111`).
 - The per-client session is header-only: `NetworkSession : public Workflow`
   with `connected`/`running`/`disconnect` states (`netsession.h:22,80-82`),
@@ -104,10 +107,6 @@ protocol-agnostic, per-connection logging; serves Echo Protocol on a port".
 
 ## Failure modes
 
-- The misspelled guards are a release-build leak: because `#ifndef NDBEUG`
-  never matches `NDEBUG` (`netserver.cpp:114,125`), a production server
-  renames every pool thread per connection and writes every session's debug
-  log to stdout - the cost of a nine-letter typo.
 - Port and family are narrowed at the one place that matters: the enum-to-
   `sa_family` and unsigned-to-unsigned-short conversions the judge printed
   (`netserver.cpp:48-49`) mean a port above 65535 binds silently wrong, and

@@ -5,13 +5,16 @@ Title: "qor_dynamiclibrary"
 Target: qor_dynamiclibrary
 Status: current
 LastVerified: 2026-11-19
-Claims: 7
+Claims: 8
 Summary: "Dynamic library loading; the gate token is misspelled and every user copies the misspelling."
 Sources:
   - hook-25c080074a-qor_dynamiclibrary
+  - hook-c9efd9c434-qor_dynamiclibrary
 Anchors:
   - { kind: in-tree, path: src/framework/app/dynamiclibrary, symbol: qor_dynamiclibrary, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/dynamiclibrary/CMakeLists.txt, symbol: qor_dynamiclibrary, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary/CMakeLists.txt, anchor: commit:c9efd9c434fafe19034ed0741d1670865adc0791, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary/qor_dynamiclibrary.cpp, symbol: ThisModule, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/dynamiclibrary/dynamiclibrary.h, symbol: DynamicLibrary, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/app/dynamiclibrary/purpose.md, symbol: agnostic, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/dynamiclibrary/purpose.md, anchor: commit:25c080074a4fc59cb06100c76fb8be5255907953, verified: 2026-11-19 }
@@ -44,13 +47,20 @@ reached" (`src/framework/app/dynamiclibrary/purpose.md`). Built SHARED at versio
   three same-named folders.
 - `ThisModule()` is the module object, constructed with the string "Querysoft Open Runtime: Dynamic
   Library Module" (`src/framework/app/dynamiclibrary/qor_dynamiclibrary.cpp`).
+- Its buildnumber guard reads `#ifdef NDEBUG` over `#include <buildnumber.h>`
+  (`src/framework/app/dynamiclibrary/qor_dynamiclibrary.cpp:5`, `commit:c9efd9c434`), matching the
+  NDEBUG branch of `qor_pp_module_ver_string` (`src/macros/moduleversion.hpp:25-29`): Release builds
+  stamp the generated build number (`cmake/buildnumber.cmake`) as a fourth version component, while
+  Debug - the `cmakebuild` cache's `CMAKE_BUILD_TYPE` - compiles the include out and the module
+  registers the three-part string.
 
 ## Failure modes
 
-- `qor_dynamiclibrary.cpp` guards `#include <buildnumber.h>` with `#ifdef NDBEUG` - the token is
-  transposed, so the include is dead and the version string the module registers is never stamped
-  (`src/framework/app/dynamiclibrary/qor_dynamiclibrary.cpp`; `NDBEUG` appears 4 times in the tree
-  against 155 correct `NDEBUG` uses).
+- The transposed token `NDBEUG` survives one include guard in `src/`: the same `#ifdef NDBEUG`
+  guarded `#include <buildnumber.h>` in the property module's bootstrap
+  (`src/qor/property/qor_property.cpp:5`) never admits the header, so that module's version string
+  stays three-part even in Release - 1 `NDBEUG` use left against 186 correct `NDEBUG` uses
+  (`commit:c9efd9c434`).
 - `ImplementsDynamicLibrary()` is declared as the module's capability probe and is never defined or
   called: 1 occurrence in the whole tree, the declaration in
   `src/framework/app/dynamiclibrary/dynamiclibrary.h`. A `qor_pp_module_requires(DynamicLibrary)`
