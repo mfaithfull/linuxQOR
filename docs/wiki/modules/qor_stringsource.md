@@ -4,16 +4,20 @@ PageType: module
 Title: "qor_stringsource"
 Target: qor_stringsource
 Status: current
-LastVerified: 2026-11-18
+LastVerified: 2026-11-19
 Claims: 15
-Summary: "The pipeline's string-backed source, the only one of the five with a Working status and by far the most exercised - 49 StringSource mentions across the MIME and pipeline suites - yet the only header in the family that marks its members with a foreign module token and one of two targets that hardcode their own name in add_library."
+Summary: "The pipeline's string-backed source, the only one of the five with a Working status and by far the most exercised - 43 StringSource mentions across the MIME and pipeline suites - its export marks all carry its own token since fd3b46ba9f, and one of two targets that hardcode their own name in add_library."
+Sources:
+  - hook-fd3b46ba9f-qor_stringsource
 Anchors:
   - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource, symbol: qor_stringsource, verified: 2026-11-18 }
-  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/CMakeLists.txt, symbol: qor_stringsource, verified: 2026-11-18 }
-  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/stringsource.h, symbol: StringSource, verified: 2026-11-18 }
+  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/CMakeLists.txt, symbol: qor_stringsource, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/CMakeLists.txt, anchor: commit:fd3b46ba9f00f35aa83c49fb72df0e2aebb8e0ba, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/stringsource.h, symbol: StringSource, verified: 2026-11-19 }
   - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/stringsource.cpp, symbol: StringSource::ReadBytes, verified: 2026-11-18 }
   - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/qor_stringsource.cpp, symbol: ThisModule, verified: 2026-11-18 }
-  - { kind: in-tree, path: test/framework/test_pipeline.cpp, symbol: validateStringSource, verified: 2026-11-18 }
+  - { kind: in-tree, path: src/configuration/configuration.h, symbol: qor_pp_module_interface, verified: 2026-11-19 }
+  - { kind: in-tree, path: test/framework/test_pipeline.cpp, symbol: validateStringSource, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_stringsource --parallel 8
 ---
@@ -39,18 +43,19 @@ odd status row among the five sources, which otherwise split Stable/Experimental
   (`CMakeLists.txt:13`), matching `docs/agent/repo_map.md:98` and `docs/agent/deps.dot:119`
   exactly - the other four sources all link a fourth library (`qor_error`), and this TU
   includes and fires none.
-- The export marking is inverted across the family pattern: the class carries the
+- The export marking follows the family pattern: the class carries the
   gcc-only variant `qor_pp_module_interface_gcc(QOR_STRINGSOURCE)` (`stringsource.h:12`),
   which expands to nothing under MSVC (`src/configuration/configuration.h:43`) and to an
-  export under gcc/clang (`:40`), while all four member marks use the foreign token
-  `QOR_PIPELINE` (`stringsource.h:17-19,23`) - the only header under the five source
-  folders that does, every sibling marking members with its own token (e.g.
-  `datasource.h:23-40`, `randomsource.h:13`).
-- The wrong token cannot fail to compile: `qor_pp_module_interface(_X)` expands by
-  testing only that the argument is non-empty (`configuration.h:33`), never that the
-  named module matches the compile definition, so under MSVC - where the class carries
-  no mark at all - the QOR_PIPELINE members export identically to what QOR_STRINGSOURCE
-  would, making the mismatch latent.
+  export under gcc/clang (`:40`), and all four member marks carry the target's own token
+  (`stringsource.h:17-19,23`) - the same class-plus-members pairing `datasource.h:18,23-40`
+  shows, where `generatorsource.h:16`, `randomsource.h:13` and `aggregatesource.h:55` mark
+  only their class. Since `commit:fd3b46ba9f` no header under the five source folders names
+  another target's token, and this class and its members take their export direction from one.
+- The gate test is emptiness, not identity: `qor_pp_module_interface(_X)` expands by
+  `qor_pp_if(qor_pp_is_empty(_X), qor_pp_import, qor_pp_export)` (`configuration.h:33`), never
+  matching the named token against the `target_compile_definitions` entry (`CMakeLists.txt:8`),
+  so the foreign `QOR_PIPELINE` marks this header carried until `commit:fd3b46ba9f` never
+  failed to compile - a token mismatch in this family is latent, not loud.
 - The copy is byte-at-a-time: `ReadBytes` loops while `m_it != m_data.end()` and the
   request is unfilled, writing `*m_it++` per pass (`stringsource.cpp:25-33`) and
   returning the actual count - a short count then a zero, with end-of-data signalled by
@@ -66,13 +71,15 @@ odd status row among the five sources, which otherwise split Stable/Experimental
   BSL-1.0 "2008 - Present" header (`:1-2` in each) - no 23-line MIT block on the TUs as
   generatorsource and randomsource have - and the bootstrap is the 15-line SPDX shape
   naming "Querysoft Open Runtime: String Source Module" (`qor_stringsource.cpp:12`).
-- It is the family's test workhorse: `StringSource` appears 32 times in
+- It is the family's test workhorse: `StringSource` appears 31 times in
   `test/framework/data/mime/test_mime.cpp` (QORTestMIME links the lib,
-  `test/framework/data/mime/CMakeLists.txt:15`) and 17 times in
+  `test/framework/data/mime/CMakeLists.txt:15`) and 12 times in
   `test/framework/test_pipeline.cpp`, where `validateStringSource` (`:217`) builds a
-  push-mode pipeline `StringSource -> sink`, pumps `testData.length()` (`:242`) and
-  three further cases reuse it (`:261,293,320`); QORTest links the lib on both OS
-  branches (`test/CMakeLists.txt:95,106`).
+  push-mode pipeline `StringSource -> sink` and pumps `testData.length()` (`:242`);
+  `validateStringSink` (`:280`) wires its own `StringSource` (`:293`), while the two base64
+  cases that also construct one (`:261`, `:320`) sit inside commented-out blocks
+  (`:244-278`, `:306-352`); QORTest links the lib on both OS branches
+  (`test/CMakeLists.txt:95,106`).
 
 ## Failure modes
 

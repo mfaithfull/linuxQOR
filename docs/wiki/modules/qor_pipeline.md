@@ -4,7 +4,7 @@ PageType: module
 Title: "qor_pipeline"
 Target: qor_pipeline
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 9
 Summary: "Sink/Source data pipeline whose Pipeline is itself a Filter; widest gate-token surface in the tree and an Element copy path that reads an uninitialised pointer."
 Anchors:
@@ -14,6 +14,8 @@ Anchors:
   - { kind: in-tree, path: src/framework/data/pipeline/element.h, symbol: Element, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/data/pipeline/element.cpp, symbol: GetFlowMode, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/data/pipeline/purpose.md, symbol: Sink, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/stringsource.h, symbol: StringSource, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/components/data/pipeline/sources/stringsource/CMakeLists.txt, anchor: commit:fd3b46ba9f00f35aa83c49fb72df0e2aebb8e0ba, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_pipeline --parallel 8
 ---
@@ -29,10 +31,10 @@ sink.cpp filter.cpp pipeline.cpp plug.cpp iosink.cpp copyfilter.cpp` - at versio
   [[qor_module]] (222) and [[qor_host]] (172). Its link line is
   `qor_module qor_thread qor_signals qor_sync qor_interception qor_error qor_log`, which
   `docs/agent/repo_map.md` copies token for token and places at layer 8 of the build order.
-- `QOR_PIPELINE` has 168 hits in 11 files in `src` - the widest gate-token surface measured in this
-  slice, against 43 for [[qor_workflow]], 1 for [[qor_role]] and 1 for [[qor_optionparser]]. The
-  concentration is in the members: `pipeline.h` 34, `source.h` 31, `sink.h` 29, `filter.h` 24,
-  `plug.h` 24.
+- `QOR_PIPELINE` has 165 hits in 11 files in `src` - the widest gate-token surface measured in
+  this slice, against 43 for [[qor_workflow]], 1 for [[qor_role]] and 1 for [[qor_optionparser]].
+  The concentration is in the members: `pipeline.h` 34, `source.h` 31, `sink.h` 29, `filter.h`
+  24, `plug.h` 24.
 - A `Pipeline` is a `Filter`: `class qor_pp_module_interface_gcc(QOR_PIPELINE) Pipeline : public Filter`
   (`src/framework/data/pipeline/pipeline.h`), which is what lets `InsertFilter(Filter*, FilterPos)`
   splice a filter in at `BeforeSink` or `AfterSource` and let a pipeline be inserted into a pipeline.
@@ -73,13 +75,12 @@ sink.cpp filter.cpp pipeline.cpp plug.cpp iosink.cpp copyfilter.cpp` - at versio
   gate token, and eight files across `src/components` include it
   (`src/components/io/network/server/netserver.h`, `src/components/protocols/http/protocol.h`, six
   more), so the class is compiled only inside its consumers.
-- The only four uses of `QOR_PIPELINE` outside the folder mark another target's members.
-  `src/components/data/pipeline/sources/stringsource/stringsource.h` declares
-  `class qor_pp_module_interface_gcc(QOR_STRINGSOURCE) StringSource : public pipeline::Source` and then
-  marks its four members `qor_pp_module_interface(QOR_PIPELINE)` - lines 17, 18, 19 and 23. That
-  target's only gate definition is `QOR_STRINGSOURCE`
-  (`src/components/data/pipeline/sources/stringsource/CMakeLists.txt`), so one class takes its export
-  direction from two tokens and this folder's is the one nothing stamps there.
+- No use of `QOR_PIPELINE` survives outside the folder: all 11 files carrying the token in
+  `src` sit under `src/framework/data/pipeline`. The class and the four members of
+  `src/components/data/pipeline/sources/stringsource/stringsource.h` (`:12`, `:17-19,23`) all
+  name `QOR_STRINGSOURCE`, the only token that target's `CMakeLists.txt` stamps, so no class in
+  the tree takes its export direction from two targets' tokens - the state of the tree since
+  `commit:fd3b46ba9f00f35aa83c49fb72df0e2aebb8e0ba`.
 
 ## See also
 
