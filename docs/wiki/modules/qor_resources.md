@@ -7,9 +7,13 @@ Status: current
 LastVerified: 2026-11-19
 Claims: 11
 Summary: "Async resource manager behind the ResourceHub Feature; widest link line in the framework, and its Font path parses a font and throws the object away."
+Sources:
+  - hook-3d36b712e2-qor_resources
 Anchors:
   - { kind: in-tree, path: src/framework/data/resources, symbol: qor_resources, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/data/resources/CMakeLists.txt, symbol: qor_resources, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/data/resources/CMakeLists.txt, symbol: qor_resources, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/data/resources/manager.cpp, anchor: commit:3d36b712e2dfd5ade9d025c25e721591589c3d37, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/data/resources/types/pathresource.cpp, anchor: commit:3d36b712e2dfd5ade9d025c25e721591589c3d37, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/data/resources/resourcehub.h, symbol: ResourceHub, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/data/resources/qor_resources.cpp, symbol: ThisModule, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/data/resources/types/font/reader.h, symbol: TTFReader, verified: 2026-11-16 }
@@ -73,13 +77,20 @@ objects; offloaded to background task. Use ResourceHub Feature + Paths/FileIndex
   includes `src/components/data/formats/ttf/reader.h` and exercises `qor::res::ttf::Reader` - a
   different class in `src/components` - and its fixture path is an absolute path on the `F:` drive
   naming `cmakebuild/test/data`, so it cannot run from a checkout that is not on that drive.
-- QOR code includes the header that says QOR may not. `src/framework/app/role/getfeature.h` opens
-  "The QOR itself can never include this header as it requires the defintion of any derived application
-  class in use to already be present", and two files here include it (`manager.cpp`,
-  `types/pathresource.cpp`); the latter calls `GetFeature<thread::ThreadPool>()`, which walks
-  `AppBuilder().TheApplication()->GetRole()`. That also breaks the index's own build order:
-  `docs/agent/repo_map.md` puts `qor_resources` at layer 9 and `qor_application` at layer 10 while this
-  link line names `qor_application`.
+- The header that forbids QOR includes is no longer included here. `src/framework/app/role/getfeature.h`
+  opens "The QOR itself can never include this header as it requires the defintion of any derived
+  application class in use to already be present"; the two files that did include it here now include
+  `src/framework/app/application/builder.h` and inline the body of that header's `GetFeature` template -
+  `AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<thread::ThreadPool>()` -
+  once in `ResourceManager`'s constructor and once in `Path::Claim()` (`manager.cpp`,
+  `types/pathresource.cpp`, commit `3d36b712e2`). The constructor assignment is the load-bearing part:
+  `Start()` gates on `m_threadPool.IsNotNull()` and logs
+  `serious("ResourceManager requires the ThreadPool Feature.")` otherwise, and until that commit
+  nothing in the folder assigned `m_threadPool` - the manager could never leave that error branch.
+  `Path::Claim()` carries no such gate: it posts the scan task through whatever the chain returns.
+  The build-order crossing the header used to sit on is still in the tree: `docs/agent/repo_map.md`
+  puts `qor_resources` at layer 9 and `qor_application` at layer 10 while this link line names
+  `qor_application`, and `builder.h` is that target's header.
 - `src/framework/data/resources/types/font/reader.cpp` is named by 0 of the 282 `CMakeLists.txt` in the
   tree, so it is compiled by no target - harmless today, since the file is 234 bytes whose entire body
   is an empty `namespace qor{ namespace framework{ namespace res {` pair, but it means the header it
