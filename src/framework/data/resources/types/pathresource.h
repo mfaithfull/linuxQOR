@@ -5,6 +5,7 @@
 #define QOR_PP_H_FRAMEWORK_RESOURCES_PATHRESOURCE
 
 #include <string>
+#include <map>
 
 #include "../resource.h"
 #include "fileresource.h"
@@ -19,10 +20,10 @@ namespace qor{ namespace framework{ namespace res {
         static const char* StaticType();
 
         Path(ResourceManager* manager, const qor::io::filesystem::Path& path, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_path(path), m_monitor(false), m_recurse(false)
-        {            
+        {
             Name();
         }
-        
+
         virtual ~Path() = default;
 
         virtual const char* Type(); //type, maybe mime-type of the resource, matching this class
@@ -30,7 +31,7 @@ namespace qor{ namespace framework{ namespace res {
         virtual void Locate();
         virtual void Claim();
 
-        void AddContainedTypesHints(std::vector<const char*>& hints);        
+        void AddContainedTypesHints(std::vector<const char*>& hints);
         void MarkForMonitoring();
         void IncludeSubFolders();
 
@@ -42,9 +43,9 @@ namespace qor{ namespace framework{ namespace res {
         std::map<std::string, res::File> m_files;
         std::map<std::string, res::Path> m_paths;
         bool m_recurse;
-        
+
     private:
-        static const char* s_pathResourceType;// = "Path";        
+        static const char* s_pathResourceType;// = "Path";
 
         bool IsARequestedPath(const io::filesystem::Index& index);
         bool IsARequestedResource(const io::filesystem::Index& index);

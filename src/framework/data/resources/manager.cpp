@@ -8,12 +8,13 @@
 #include "src/framework/event/signals/signal.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/qor/essentials/current/currentthread.h"
-#include "src/framework/app/role/getfeature.h"
+#include "src/framework/app/application/builder.h"
 
 namespace qor{ namespace framework{
 
     ResourceManager::ResourceManager() : m_running(false)
     {
+        m_threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<thread::ThreadPool>();
     }
 
     void ResourceManager::queueSlot(PendingSlot data, ConnectionKind type)
@@ -44,21 +45,21 @@ namespace qor{ namespace framework{
     }
 
     int ResourceManager::Run()
-    {                
+    {
         try{
-            while (m_running) 
+            while (m_running)
             {
                 std::unique_lock<std::mutex> lock(m_mutex);
 
-                if (!m_array.empty()) 
+                if (!m_array.empty())
                 {
                     auto data = std::move(m_array.front());
                     m_array.pop_front();
-                    lock.unlock();                
+                    lock.unlock();
                     data(); // call the slot
                     continue;
                 }
-                else if (!m_running) 
+                else if (!m_running)
                 {
                     break;
                 }

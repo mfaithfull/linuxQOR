@@ -4,9 +4,9 @@
 #include "src/configuration/configuration.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/folder.h"
-#include "src/framework/app/role/getfeature.h"
 #include "pathresource.h"
 #include "../manager.h"
+#include "src/framework/app/application/builder.h"
 
 namespace qor{ namespace framework{ namespace res {
 
@@ -18,7 +18,7 @@ namespace qor{ namespace framework{ namespace res {
     {
         return s_pathResourceType;
     }
-    
+
     void Path::Name()
     {
         std::string pathData = m_path.ToString();
@@ -28,7 +28,7 @@ namespace qor{ namespace framework{ namespace res {
         //Firstly it's a path so prepend path://
         //Secondly it's a path local to this host so we need to add either the hostname or IP path://192.168.0.0/...
         m_URI = uri;
-        Resource::Name();        
+        Resource::Name();
     }
 
     void Path::Locate()
@@ -36,7 +36,7 @@ namespace qor{ namespace framework{ namespace res {
         io::filesystem::Index index(m_path.ToString(), "");
         if(index.Exists())
         {
-            Resource::Locate();            
+            Resource::Locate();
         }
         else
         {
@@ -67,16 +67,17 @@ namespace qor{ namespace framework{ namespace res {
     }
 
     void Path::Claim()
-    {        
+    {
         //If the path has been marked as a container for certain types, set off a task to scan the path for subsidiary resources
-        auto threadPool = GetFeature<thread::ThreadPool>();
+        auto threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<thread::ThreadPool>();
+
         qor::io::filesystem::Folder folder(m_path);
         ResourceManager* manager = m_manager;
         bool includeSubFolders = this->m_recurse;
         Resource* batch = this;
 
         threadPool->PostTask(
-            [folder, manager, includeSubFolders, batch]()        
+            [folder, manager, includeSubFolders, batch]()
             {
                 manager->BeginBatch(batch);
                 folder.Enumerate(
@@ -105,7 +106,7 @@ namespace qor{ namespace framework{ namespace res {
     }
 
     bool Path::IsARequestedPath(const io::filesystem::Index& index)
-    {        
+    {
         if(m_recurse && index.IsDirectory())
         {
             return true;
@@ -114,7 +115,7 @@ namespace qor{ namespace framework{ namespace res {
     }
 
     bool Path::IsARequestedResource(const io::filesystem::Index& index)
-    {        
+    {
         return true;
     }
 
