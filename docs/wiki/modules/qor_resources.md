@@ -4,7 +4,7 @@ PageType: module
 Title: "qor_resources"
 Target: qor_resources
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 11
 Summary: "Async resource manager behind the ResourceHub Feature; widest link line in the framework, and its Font path parses a font and throws the object away."
 Anchors:
@@ -50,7 +50,8 @@ objects; offloaded to background task. Use ResourceHub Feature + Paths/FileIndex
 - Every URI it mints carries a placeholder: `"font://<ip-address>/" + name`, `"json://<ip-address>/..."`,
   `"file://<ip-address>/..."` (`types/font/fontresource.cpp`, `types/json/jsonresource.cpp`,
   `types/fileresource.cpp`) - 3 hits for the literal `<ip-address>` in all of `src`, and all 3 are here.
-- `purpose.md` is 182 words, 4th longest of the 28 under `src/framework`, and it still reads as a
+- `purpose.md` is 182 words, 4th longest of the 31 under `src/framework` (three more arrived at
+  commit `25c080074a`, all shorter than this one), and it still reads as a
   design note rather than a contract: "Writing custom per resource code is tiresome and error prone"
   (`src/framework/data/resources/purpose.md`).
 ## Failure modes

@@ -4,7 +4,7 @@ PageType: module
 Title: "qor_optionparser"
 Target: qor_optionparser
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 10
 Summary: "Command-line option parsing; declared but never configured, nothing links it, and no class in the tree implements its interface."
 Anchors:
@@ -67,8 +67,9 @@ Judges:
   your application" (`src/framework/app/optionparser/ioptionable.h`); nothing does.
 - The folder has no `purpose.md`, and `src/framework/app/CMakeLists.txt` does not descend into it, so
   neither the repo's per-folder rule nor the build would notice it drifting further. Counted honestly,
-  this is the tree's normal state rather than one folder's fault: 49 of the 76 directories under
-  `src/framework` carry no `purpose.md`.
+  this is the tree's normal state rather than one folder's fault: 46 of the 76 directories under
+  `src/framework` carry no `purpose.md` - it was 49 before commit `25c080074a` added three in
+  `src/framework/app`.
 
 ## See also
 

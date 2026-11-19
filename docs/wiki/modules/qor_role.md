@@ -4,16 +4,22 @@ PageType: module
 Title: "qor_role"
 Target: qor_role
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 10
-Summary: "Role and Feature container - the base every application derives from; copyable, and a copy leaves its features pointing at the original."
+Summary: "Role and Feature container - the base every application derives from; assignment re-points its features since commit a86452b4, but a copy still leaves them pointing at the original."
+Sources:
+  - hook-a86452b417-qor_role
 Anchors:
-  - { kind: in-tree, path: src/framework/app/role, symbol: qor_role, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/role/CMakeLists.txt, symbol: qor_role, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/role/role.h, symbol: Role, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/role, symbol: qor_role, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/CMakeLists.txt, symbol: qor_role, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/role.h, symbol: Role, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/irole.h, symbol: IRole, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/role/ifeature.h, symbol: IFeature, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/role/ifeature.h, symbol: IFeature, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/role/getfeature.h, symbol: GetFeature, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/role/role.cpp, symbol: m_Role, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/role.cpp, anchor: commit:a86452b417cee50c4d6bd37d3f8a6ac0dad48af7, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/ifeature.h, anchor: commit:a86452b417cee50c4d6bd37d3f8a6ac0dad48af7, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/role/purpose.md, symbol: ConsoleAppRole, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_role --parallel 8
 ---
@@ -42,18 +48,21 @@ Judges:
   and `Role` stores the result in `fifo_map<const GUID*, ref_of<IFeature>::type>`, keyed on the GUID
   **pointer** (`src/framework/app/role/role.h`).
 - `IFeature` holds a raw `IRole* m_Role{ nullptr }` that only `friend class Role` may write
-  (`src/framework/app/role/ifeature.h`), and exactly one line in the tree writes it:
-  `feature->m_Role = this;` in `Role::AddFeature` (`src/framework/app/role/role.cpp`). A feature's
-  route to its siblings depends on that one assignment - `src/components/qor/logaggregator/logaggregator.cpp`
+  (`src/framework/app/role/ifeature.h`), and exactly two lines in the tree write it:
+  `feature->m_Role = this;` in `Role::AddFeature` and `feature.second->m_Role = this;` in the
+  re-pointing loop `Role::operator=` gained at commit `a86452b4` (`src/framework/app/role/role.cpp`).
+  A feature's route to its siblings depends on those assignments - `src/components/qor/logaggregator/logaggregator.cpp`
   does `m_Role->GetFeature<thread::ThreadPool>()`.
 
 ## Failure modes
 
-- `Role` is copyable and the copy does not re-point the back-reference. The copy constructor copies the
-  map and nothing else - `Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures){ }` - and
-  `operator=` does the same assignment (`src/framework/app/role/role.cpp`), while `m_Role` is only ever
-  written by `AddFeature`. Both are public and undeleted (`src/framework/app/role/role.h`), so a copied
-  or assigned `Role` hands out features whose `m_Role` still names the original.
+- `Role` is copyable and its copy constructor still does not re-point the back-reference.
+  `Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures){ }` copies the map and nothing
+  else, while `operator=` - since commit `a86452b4` added a
+  `for(auto feature: m_mapFeatures) { feature.second->m_Role = this; }` loop - re-points every
+  feature through the copied map (`src/framework/app/role/role.cpp`). Both are public and undeleted
+  (`src/framework/app/role/role.h`), so a copied `Role` still hands out features whose `m_Role`
+  names the original; an assigned one no longer does.
 - `getfeature.h` states a rule the tree breaks. Its comment reads "The QOR itself can never include
   this header as it requires the defintion of any derived application class in use to already be
   present" (`src/framework/app/role/getfeature.h`), and it includes
@@ -64,14 +73,18 @@ Judges:
   (`src/framework/data/resources/CMakeLists.txt`) - and `docs/agent/repo_map.md` places
   `qor_resources` at layer 9 and `qor_application` at layer 10 of its build order, so the fence is
   prose in a header comment and nothing else.
-- `IFeature(const IFeature&&) = delete;` is not a move constructor (`src/framework/app/role/ifeature.h`):
-  a move constructor takes `IFeature&&`, so this line deletes an overload nothing can select. The
-  non-copyable, non-movable type the author wanted is already what the previous line produces - the
-  deleted copy constructor suppresses the implicit move - so the line reads as intent and does nothing.
+- The deleted move of `IFeature` was a typo until commit `a86452b4`: the line read
+  `IFeature(const IFeature&&) = delete;`, which is not a move constructor - a move constructor takes
+  `IFeature&&` - so it deleted an overload nothing could select. It now reads
+  `IFeature(IFeature&&) = delete;` (`src/framework/app/role/ifeature.h`), and the non-copyable,
+  non-movable type the author wanted - which the deleted copy constructor had already produced by
+  suppressing the implicit move - is now declared as well as implied.
 - The include guard is `QOR_PP_H_ROLE_FEATURE_INTERFFACE` - `INTERFFACE`
   (`src/framework/app/role/ifeature.h`) - where the folder's other three guards follow the
-  `QOR_PP_H_`-plus-name convention of `memory-bank/codingConventions.md` cleanly. The folder also
-  carries no `purpose.md`, so the repo's per-folder rule has nothing to say here either.
+  `QOR_PP_H_`-plus-name convention of `memory-bank/codingConventions.md` cleanly. The folder got its
+  `purpose.md` at commit `25c080074a` - "A Role is a container of features owned by an Application"
+  (`src/framework/app/role/purpose.md`) - so the repo's per-folder rule has something to say here
+  now; the guard still reads `INTERFFACE`.
 
 ## See also
 

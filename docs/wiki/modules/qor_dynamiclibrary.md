@@ -4,20 +4,28 @@ PageType: module
 Title: "qor_dynamiclibrary"
 Target: qor_dynamiclibrary
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 7
 Summary: "Dynamic library loading; the gate token is misspelled and every user copies the misspelling."
+Sources:
+  - hook-25c080074a-qor_dynamiclibrary
 Anchors:
-  - { kind: in-tree, path: src/framework/app/dynamiclibrary, symbol: qor_dynamiclibrary, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/dynamiclibrary/CMakeLists.txt, symbol: qor_dynamiclibrary, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary, symbol: qor_dynamiclibrary, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary/CMakeLists.txt, symbol: qor_dynamiclibrary, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/dynamiclibrary/dynamiclibrary.h, symbol: DynamicLibrary, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary/purpose.md, symbol: agnostic, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/dynamiclibrary/purpose.md, anchor: commit:25c080074a4fc59cb06100c76fb8be5255907953, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_dynamiclibrary --parallel 8
 ---
 
 # qor_dynamiclibrary
 
-Dynamic library loading support (`docs/agent/purposes.md`). Built SHARED at version 0.0.5 from
+Dynamic library loading support (`docs/agent/purposes.md`); the folder said it itself from commit
+`25c080074a` on: "Provides platform agnostic dynamic library access at runtime. DLLs on Windows, SOs
+on Linux" - for "libraries loaded conditionally when the application is already running, not QOR
+modules which are implicitly linked and automatically loaded at process startup before main is
+reached" (`src/framework/app/dynamiclibrary/purpose.md`). Built SHARED at version 0.0.5 from
 `qor_dynamiclibrary.cpp` and `dynamiclibrary.cpp` (`src/framework/app/dynamiclibrary/CMakeLists.txt`).
 
 - Its Windows link line is `qor_module qor_host qor_thread winqor_sharedbootstrap winqor_thread` and

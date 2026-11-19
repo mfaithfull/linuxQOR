@@ -45,8 +45,9 @@ A reusable state-machine outline "which can be modified by extension only"
   both engines carries its own `qor_pp_module_interface(QOR_WORKFLOW)` and each class declaration
   carries `qor_pp_module_interface_gcc` (`workflow.h`, `fastflow.h`), against the single hit for
   [[qor_role]] and the single hit for [[qor_optionparser]].
-- The purpose file is the only one of the four `src/framework/app` library folders here that exists,
-  and it is not the source of the index line: it reads "intends to proivde a reusable state machine
+- The purpose file was one of only two `src/framework/app` library folders with one until commit
+  `25c080074a` added the application, dynamiclibrary and role files, and it is not the source of the
+  index line: it reads "intends to proivde a reusable state machine
   outline which can be modified by extension only to perfrom any linear or stack based state chart"
   (`src/framework/app/workflow/purpose.md`), two misspellings that
   `docs/agent/purposes.md` has already silently corrected to "Reusable state-machine outline;

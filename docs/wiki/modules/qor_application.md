@@ -4,17 +4,22 @@ PageType: module
 Title: "qor_application"
 Target: qor_application
 Status: current
-LastVerified: 2026-11-18
+LastVerified: 2026-11-19
 Claims: 10
 Summary: "Application object built from Roles, Features, Options and Workflows; the widest dependant in the app layer."
+Sources:
+  - hook-25c080074a-qor_application
 Anchors:
-  - { kind: in-tree, path: src/framework/app/application, symbol: qor_application, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/application/CMakeLists.txt, symbol: qor_application, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/application, symbol: qor_application, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/application/CMakeLists.txt, symbol: qor_application, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/application/application.cpp, symbol: Application, verified: 2026-11-16 }
   - { kind: in-tree, path: sdk/app.h, symbol: builder.h, verified: 2026-11-18 }
   - { kind: in-tree, path: src/framework/app/application/application.h, symbol: qor_pp_redirect_app_class, verified: 2026-11-18 }
   - { kind: in-tree, path: src/framework/app/application/builder.cpp, symbol: AppBuilder::TheApplication, verified: 2026-11-18 }
   - { kind: in-tree, path: src/framework/app/role/getfeature.h, symbol: GetFeature, verified: 2026-11-18 }
+  - { kind: in-tree, path: src/framework/app/application/irunable.h, symbol: make_runable, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/application/irunable.h, anchor: commit:25c080074a4fc59cb06100c76fb8be5255907953, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/application/purpose.md, symbol: AppBuilder, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_application --parallel 8
 ---
@@ -22,7 +27,12 @@ Judges:
 # qor_application
 
 The application object: "Application thing (Features/Roles/Options/Workflows)"
-(`docs/agent/purposes.md`). The aggregation header for using it is `sdk/app.h` (`sdk/purpose.md`); it
+(`docs/agent/purposes.md`). The folder has stated it itself since commit `25c080074a`:
+"Application is a natural singleton, one per process" and "always constructed via an AppBuilder"
+(`src/framework/app/application/purpose.md`) - the same commit wrote the `irunable.h` contract as
+comments ("Abstract interface intended to be included and implemented by main loop implementors",
+the `make_runable` wrapper and its factory, `src/framework/app/application/irunable.h`). The
+aggregation header for using it is `sdk/app.h` (`sdk/purpose.md`); it
 pulls `builder.h`, which pulls `application.h` (`src/framework/app/application/builder.h`). Built
 SHARED from three translation units - `qor_application.cpp`, `application.cpp`, `builder.cpp`
 (`src/framework/app/application/CMakeLists.txt`).

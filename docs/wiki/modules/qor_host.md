@@ -4,24 +4,30 @@ PageType: module
 Title: "qor_host"
 Target: qor_host
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 10
 Summary: "Host-process module registry singleton; the widest shared-library dependency in the tree, and its cycle with qor_module is suppressed rather than broken."
+Sources:
+  - hook-25c080074a-qor_host
 Anchors:
-  - { kind: in-tree, path: src/framework/app/host, symbol: qor_host, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/host/CMakeLists.txt, symbol: qor_host, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/host, symbol: qor_host, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/host/CMakeLists.txt, symbol: qor_host, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/host/host.h, symbol: Host, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/app/host/host.cpp, symbol: TheHost, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/app/host/host_module.cpp, symbol: ThisModule, verified: 2026-11-16 }
   - { kind: in-tree, path: src/qor/module/module.cpp, symbol: TheHost, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/host/purpose.md, symbol: Registry, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/host/purpose.md, anchor: commit:25c080074a4fc59cb06100c76fb8be5255907953, verified: 2026-11-19 }
 Judges:
   - cmake --build cmakebuild --target qor_host --parallel 8
 ---
 
 # qor_host
 
-"the center of the module stitching system which ties the QOR modules together"
-(`src/framework/app/host/purpose.md`): one process-wide `qor::Host` holding one `ModuleRegistry`.
+"the center of the module stitching system which ties the QOR modules together. It provides the one
+and only Module Registry" (`src/framework/app/host/purpose.md` - the registry sentence and the fix
+of the file's "representing a the host process singleton" typo both arrived at commit `25c080074a`):
+one process-wide `qor::Host` holding one `ModuleRegistry`.
 Built SHARED from `host.cpp` and `host_module.cpp`; the folder carries one public header
 (`src/framework/app/host/CMakeLists.txt`).
 
