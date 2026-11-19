@@ -18,6 +18,10 @@ namespace qor{ namespace app {
         if(&src != this)
         {
             m_mapFeatures = src.m_mapFeatures;
+            for(auto feature: m_mapFeatures)
+            {
+                feature.second->m_Role = this;
+            }
         }
         return *this;
     }
@@ -76,7 +80,7 @@ namespace qor{ namespace app {
 
     void Role::Shutdown()
     {
-        for (auto feature = m_mapFeatures.rbegin(); feature != m_mapFeatures.rend(); ++feature) 
+        for (auto feature = m_mapFeatures.rbegin(); feature != m_mapFeatures.rend(); ++feature)
         {
             TryShutdown(feature->second);
         }

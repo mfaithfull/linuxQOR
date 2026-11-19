@@ -28,7 +28,7 @@ namespace qor{ namespace app {
 
     private:
         IFeature(const IFeature&) = delete;
-        IFeature(const IFeature&&) = delete;
+        IFeature(IFeature&&) = delete;
         IFeature& operator = (const IFeature&) = delete;
     };
 
