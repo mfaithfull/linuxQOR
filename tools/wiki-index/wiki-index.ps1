@@ -3,9 +3,12 @@
 .SYNOPSIS
   wiki-index - the index is generated, never maintained.
 .DESCRIPTION
-  Subcommands: build | lookup | diff (docs/WikiDesign.md 6).
+  Subcommands: build | check | lookup | diff (docs/WikiDesign.md 6).
   index.md is written from page front matter alone: topic, id, one line. Nothing here reads the old
   body - the file is rebuilt from the pages, because a hand edit is a contract violation (op 12).
+  check re-assembles the catalog and compares it to index.md without writing: it prints drift, the
+  count of rows on disk the current front matter would no longer generate, so a drain that forgot to
+  rebuild goes red instead of quietly lying.
   The parse and the page listing come from the shared shape
   (tools/wiki-census/wiki-shape.ps1), dot-sourced below - one shape, five instruments.
   Required args: -WikiRoot and -Report on every subcommand; -Query for lookup; -Ref for diff.
@@ -23,7 +26,7 @@ param(
 
 $_shape = Join-Path (Split-Path -Path $PSScriptRoot -Parent) 'wiki-census/wiki-shape.ps1'
 if (-not (Test-Path -LiteralPath $_shape -PathType Leaf)) {
-    Write-Output 'USAGE wiki-index.ps1 -Command <build|lookup|diff> -WikiRoot <dir> [-Query <text>] [-Ref <git-ref>] -Report <file>   (-Help prints this)'
+    Write-Output 'USAGE wiki-index.ps1 -Command <build|check|lookup|diff> -WikiRoot <dir> [-Query <text>] [-Ref <git-ref>] -Report <file>   (-Help prints this)'
     Write-Output ('MISSING args=shared-shape (no wiki-shape.ps1 at ' + ($_shape -replace '\\', '/') + ')')
     Write-Output 'VERDICT fail=1'
     exit 1
@@ -48,13 +51,15 @@ function Get-WikiIndexRow {
     if ($id -eq '') { $id = $Page.Stem }
     $text = '- [[' + $Page.Stem + ']] - ' + $title + ' | id: ' + $id
     if ($summary -ne '') { $text += ' - ' + $summary }
-    return [pscustomobject]@{ PageType = $pageType; Rel = $Page.Rel; Text = $text; HasSummary = ($summary -ne '') }
+    return [pscustomobject]@{ PageType = $pageType; Rel = $Page.Rel; Stem = $Page.Stem; Text = $text; HasSummary = ($summary -ne '') }
 }
 
-# ---------------------------------------------------------------- build
-function Invoke-IndexBuild {
+# ---------------------------------------------------------------- catalog
+function Get-WikiIndexCatalog {
+    # The whole index.md a build would write, assembled from front matter alone and never written:
+    # build pipes it to the file, check compares it to the file on disk (docs/WikiDesign.md 6).
+    # One assembly, two consumers, so check cannot drift from build while claiming to guard it.
     param($WikiFull)
-    $lines = @()
     $set = Get-WikiPageSet -WikiRoot $WikiFull
     $pages = @($set.Pages)
     $rows = @()
@@ -73,11 +78,23 @@ function Invoke-IndexBuild {
         $body += ''
         $body += @($group | ForEach-Object { $_.Text } | Sort-Object)
         $body += '' }
+    $noSummary = @($rows | Where-Object { -not $_.HasSummary })
+    return @{ Lines = @($header + $body); Rows = $rows; Pages = $pages; Set = $set; NoSummary = $noSummary }
+}
+
+# ---------------------------------------------------------------- build
+function Invoke-IndexBuild {
+    param($WikiFull)
+    $lines = @()
+    $cat = Get-WikiIndexCatalog -WikiFull $WikiFull
+    $rows = $cat.Rows
+    $pages = $cat.Pages
+    $set = $cat.Set
     $indexPath = Join-Path $WikiFull 'index.md'
-    ($header + $body) | Out-File -LiteralPath $indexPath -Encoding utf8
+    $cat.Lines | Out-File -LiteralPath $indexPath -Encoding utf8
     $written = @(Read-WikiLines -Path $indexPath)
     $bodyRows = @($written | Where-Object { $_ -cmatch '^- \[\[' }).Count
-    $noSummary = @($rows | Where-Object { -not $_.HasSummary })
+    $noSummary = $cat.NoSummary
     $lines += ('index = ' + (Get-WikiRelPath -Path $indexPath) + '  (' + $written.Count + ' lines written and re-read)')
     $lines += ('files = ' + $set.All.Count + '  (of which ' + $set.Strays.Count + ' stray .md are not indexed: a stray is wiki-lint to judge, not a row)')
     $lines += ('pages = ' + $pages.Count)
@@ -92,6 +109,58 @@ function Invoke-IndexBuild {
         $lines += 'vacuity: pages=0 - index_rows = 0 of 0 is an empty index, not a working one (9)' }
     # Abs so a too-large index cannot print a negative fail, which 'exit 1 if fail -gt 0' would swallow.
     return @{ Lines = $lines; Fail = [Math]::Abs($pages.Count - $bodyRows) }
+}
+
+# ---------------------------------------------------------------- check
+function Invoke-IndexCheck {
+    param($WikiFull)
+    # Drift: a row on disk that the current front matter would no longer generate. It writes nothing -
+    # the point is to catch a forgetful drain red, so it must never repair the file it is judging.
+    $lines = @()
+    $cat = Get-WikiIndexCatalog -WikiFull $WikiFull
+    $rows = $cat.Rows
+    $pages = $cat.Pages
+    $expected = @{}
+    foreach ($row in $rows) { $expected[$row.Stem] = $row.Text }
+    $generatedRows = @($cat.Lines | Where-Object { $_ -cmatch '^- \[\[' })
+    $indexPath = Join-Path $WikiFull 'index.md'
+    $onDisk = @(Read-WikiLines -Path $indexPath)
+    $onDiskRows = @($onDisk | Where-Object { $_ -cmatch '^- \[\[' })
+    $onDiskByStem = @{}
+    $orphans = 0
+    foreach ($line in $onDiskRows) {
+        if ($line -cmatch '^- \[\[([^\]]+)\]\]') {
+            $stem = $Matches[1]
+            if ($expected.ContainsKey($stem)) {
+                if (-not $onDiskByStem.ContainsKey($stem)) { $onDiskByStem[$stem] = $line } }
+            else { $orphans = $orphans + 1 } } }
+    $drift = 0
+    $driftItems = @()
+    foreach ($row in $rows) {
+        $found = ''
+        if ($onDiskByStem.ContainsKey($row.Stem)) { $found = $onDiskByStem[$row.Stem] }
+        if ($found -ceq $row.Text) { continue }
+        $drift = $drift + 1
+        if ($found -eq '') {
+            $driftItems += ('  DRIFT ' + $row.Rel + ' : index.md carries no row this page generates') }
+        else {
+            $driftItems += ('  DRIFT ' + $row.Rel + ' : index.md row is stale, front matter now generates a different row') } }
+    $fail = 0
+    $lines += ('index = ' + (Get-WikiRelPath -Path $indexPath) + '  (' + $onDisk.Count + ' lines read from disk)')
+    $lines += ('pages = ' + $pages.Count + '  (rows the catalog would generate from front matter)')
+    $lines += ('catalog_rows = ' + $generatedRows.Count + '  (row lines the current front matter would write)')
+    $lines += ('index_rows = ' + $onDiskRows.Count + '  (row lines read from index.md on disk)')
+    $lines += ('drift = ' + $drift + ' of ' + $pages.Count +
+               '  (pages whose row on disk is not the row their front matter now generates)')
+    $lines += ('orphans = ' + $orphans + '  (index.md rows naming no page on disk: a hand edit or a deleted page)')
+    foreach ($d in $driftItems) { $lines += $d }
+    if ($drift -gt 0) { $fail = $fail + 1 }
+    if ($orphans -gt 0) { $fail = $fail + 1 }
+    if ($pages.Count -eq 0) {
+        $lines += 'vacuity: pages=0 - drift = 0 of 0 is an empty wiki, not a verified index (9)' }
+    # check judges, unlike lookup and diff: a stale row means index.md lies about a page it names,
+    # which is exactly the drift op 12 makes possible, so it is a hard fail (docs/WikiDesign.md 6).
+    return @{ Lines = $lines; Fail = $fail }
 }
 
 # ---------------------------------------------------------------- lookup
@@ -188,11 +257,13 @@ function Invoke-IndexDiff {
 # ---------------------------------------------------------------- dispatcher
 # The dispatcher. Requiredness lives here, not in a Mandatory attribute, so a bare run
 # prints the contract instead of prompting (docs/agent/TOOL-FORMAT.md).
-$subcommands = @('build', 'lookup', 'diff')
-$usage = 'wiki-index.ps1 -Command <build|lookup|diff> -WikiRoot <dir> [-Query <text>] [-Ref <git-ref>] -Report <file>   (-Help prints this)'
+$subcommands = @('build', 'check', 'lookup', 'diff')
+$usage = 'wiki-index.ps1 -Command <build|check|lookup|diff> -WikiRoot <dir> [-Query <text>] [-Ref <git-ref>] -Report <file>   (-Help prints this)'
 $argLines = @('  required: -WikiRoot and -Report on every subcommand; -Query for lookup; -Ref for diff.',
               '  build writes <WikiRoot>/index.md - the index is generated, never edited (docs/WikiDesign.md 6) -',
               '  and prints the path it resolved; a hand edit is lost on the next build on purpose.',
+              '  check writes nothing: it re-assembles the catalog from front matter and prints drift = D of N,',
+              '  the pages whose row on disk is not the row their front matter now generates; drift>0 fails.',
               '  fail=1 means the index does not match the pages. lookup and diff report, they do not judge:',
               '  deciding that a moved page must be re-read is wiki-reconcile (docs/WikiDesign.md 5).')
 if ($Help) {
@@ -206,6 +277,7 @@ if ([string]::IsNullOrWhiteSpace($WikiRoot)) { Exit-WikiUsage -Usage $usage -Mis
 $wikiFull = Resolve-WikiRequiredRoot -Name 'WikiRoot' -Value $WikiRoot -Usage $usage
 switch -CaseSensitive ($Command) {
     'build' { $run = Invoke-IndexBuild -WikiFull $wikiFull }
+    'check' { $run = Invoke-IndexCheck -WikiFull $wikiFull }
     'lookup' {
         if ([string]::IsNullOrWhiteSpace($Query)) { Exit-WikiUsage -Usage $usage -Missing 'Query' }
         $run = Invoke-IndexLookup -WikiFull $wikiFull -Text $Query }

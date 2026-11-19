@@ -2,8 +2,8 @@
 Type: Tool
 Scripts:
   - File: tools/wiki-index/wiki-index.ps1
-    Usage: "-Command <build|lookup|diff> (required) -WikiRoot <dir> (required) -Report <file> (required) -Query <text> (required for lookup) -Ref <git-ref> (required for diff, and it must resolve to a commit). -Help prints the subcommands and touches no file."
-    Output: "build writes <WikiRoot>/index.md - the only file this tool owns - and every command writes its report to -Report (tmp/); the report path is printed as 'report = <path>'."
+    Usage: "-Command <build|check|lookup|diff> (required) -WikiRoot <dir> (required) -Report <file> (required) -Query <text> (required for lookup) -Ref <git-ref> (required for diff, and it must resolve to a commit). -Help prints the subcommands and touches no file."
+    Output: "build writes <WikiRoot>/index.md - the only file this tool owns - check writes nothing, and every command writes its report to -Report (tmp/); the report path is printed as 'report = <path>'."
   - File: tools/wiki-census/wiki-shape.ps1
     Usage: "dot-sourced, never invoked: the parse and the page listing this script reuses."
     Output: "nothing - defining functions is its whole effect."
@@ -13,12 +13,18 @@ Scripts:
 
 ## What it does
 
-Generates the wiki's index and answers the two questions an index is for. Three subcommands:
+Generates the wiki's index and answers the two questions an index is for. Four subcommands:
 
 - `build` - regenerates `<WikiRoot>/index.md` **from page front matter alone** (topic, id, one
   line), grouped by `PageType`. Prints `index_rows = N of N` counted in the file that was just
   written, plus `files`, `pages`, `groups`, `indexed`/`unindexed` and a `NO_SUMMARY` line per page
   whose row would be id-only.
+- `check` - the drift gate: re-assembles the catalog from front matter and compares it to
+  `<WikiRoot>/index.md` **without writing anything**. Prints `drift = D of N`, the pages whose row on
+  disk is not the row their current front matter would generate, plus `catalog_rows` (what a build
+  would write), `index_rows` (what is on disk) and `orphans` (disk rows naming no page). A `DRIFT
+  <page>` line names each one. Unlike `lookup`/`diff`, it judges: `drift > 0` (or `orphans > 0`) is a
+  hard `fail=1`, because a stale row means the index lies about a page it names.
 - `lookup` - the page for a target id or a topic phrase: `-Query` is matched against `Target:`, the
   stem, `Title:` and `Summary:`, and prints `hits = N of M` with one `HIT <page> (matched <field>)`
   line each.
@@ -28,7 +34,10 @@ Generates the wiki's index and answers the two questions an index is for. Three 
 
 The index is generated, never maintained (`docs/WikiDesign.md` 6): a hand edit of `index.md` is a
 contract violation, so there is no hand-written index to keep in step, and the next `build` erases
-it. That is asserted in the self-test rather than trusted.
+it. That is asserted in the self-test rather than trusted. `check` closes the other half of the gap:
+a page whose front matter changed but whose index was left un-rebuilt is a row that quietly lies, and
+`check` turns that silent lie into `drift = D of N` red so a forgetful drain fails a gate instead of
+shipping a stale index.
 
 ## Contract
 
@@ -49,10 +58,11 @@ vacuity: pages=0 - index_rows = 0 of 0 is an empty index, not a working one (9)
 VERDICT fail=0
 ```
 
-`fail=1` means the index does not match the pages (`index_rows` below `pages`). `lookup` and `diff`
-report and do not judge - deciding that a moved page must be re-read is `wiki-reconcile` (5).
-`build` re-reads the file it wrote and counts the rows there, so the number is the file's, not the
-list it meant to write.
+`fail=1` means the index does not match the pages: for `build`, `index_rows` below `pages`; for
+`check`, any `drift` or any orphan. `lookup` and `diff` report and do not judge - deciding that a
+moved page must be re-read is `wiki-reconcile` (5). `check` does judge: a row on disk the front
+matter no longer generates is exactly the drift op 12 permits, so it goes red. `build` re-reads the
+file it wrote and counts the rows there, so the number is the file's, not the list it meant to write.
 
 ## Provenance
 
