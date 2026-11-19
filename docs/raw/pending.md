@@ -73,12 +73,3 @@ way, which is what makes `Select-String -Pattern '^- id: '` the entry count.
 
 <!-- Entries are appended below this line. An empty section is the steady state, not a missing
      file. The count belongs to `tools/wiki-census pending`, never to prose in this file. -->
-- id: hook-cbffd54d10-qor_workflow
-  added_by: hook
-  kind: in-tree
-  path: src/framework/app/workflow/CMakeLists.txt
-  anchor: #qor_workflow
-  pin: commit:cbffd54d10152cc94089b76550cb691b5414c725
-  verified: 2026-11-18
-  target: qor_workflow
-  why: post-commit hook on cbffd54d10 touched 2 file(s): src/framework/app/workflow/iworkflow.h, src/framework/app/workflow/workflow.cpp

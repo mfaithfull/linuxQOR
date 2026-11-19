@@ -4,16 +4,20 @@ PageType: module
 Title: "qor_workflow"
 Target: qor_workflow
 Status: current
-LastVerified: 2026-11-16
+LastVerified: 2026-11-19
 Claims: 10
 Summary: "Two state-machine engines in one target; the widest link line in the app layer, and it trades headers with qor_application over no link edge."
+Sources:
+  - hook-cbffd54d10-qor_workflow
 Anchors:
   - { kind: in-tree, path: src/framework/app/workflow, symbol: qor_workflow, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/workflow/CMakeLists.txt, symbol: qor_workflow, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/workflow/CMakeLists.txt, symbol: qor_workflow, verified: 2026-11-18 }
   - { kind: in-tree, path: src/framework/app/workflow/workflow.h, symbol: Workflow, verified: 2026-11-16 }
   - { kind: in-tree, path: src/framework/app/workflow/fastflow.h, symbol: Fastflow, verified: 2026-11-16 }
-  - { kind: in-tree, path: src/framework/app/workflow/iworkflow.h, symbol: IWorkflow, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/workflow/iworkflow.h, symbol: IWorkflow, verified: 2026-11-19 }
   - { kind: in-tree, path: src/framework/app/workflow/purpose.md, symbol: proivde, verified: 2026-11-16 }
+  - { kind: in-tree, path: src/framework/app/workflow/workflow.cpp, symbol: m_result, verified: 2026-11-19 }
+  - { kind: in-tree, path: src/framework/app/workflow/iworkflow.h, anchor: commit:cbffd54d10152cc94089b76550cb691b5414c725, verified: 2026-11-18 }
 Judges:
   - cmake --build cmakebuild --target qor_workflow --parallel 8
 ---
@@ -62,19 +66,20 @@ A reusable state-machine outline "which can be modified by extension only"
   `qor_module qor_thread qor_sync qor_platform qor_role`
   (`src/framework/app/application/CMakeLists.txt`). `docs/agent/repo_map.md` puts them in the same
   numbered row 10, so the index shows a pair, not a cycle, and no build order can order them.
-- `Workflow::operator=` copies `m_complete`, `m_StateStack` and `m_initialState` and not `m_result`
-  (`src/framework/app/workflow/workflow.cpp`), so a copy or an assignment loses the exit code while
-  keeping the "complete" flag. `Run()` ends with `return m_result;`, and the copy constructor is
+- `Workflow::operator=` copies all four members - `m_result` first, then `m_complete`,
+  `m_StateStack` and `m_initialState` (`src/framework/app/workflow/workflow.cpp`) - so a copy
+  carries the exit code. It did not until commit `cbffd54d` added `m_result = src.m_result;`;
+  `Run()` ends with `return m_result;` and the copy constructor is
   `Workflow(const Workflow& src) : Workflow() { *this = src; }` (`workflow.cpp`), so the omission
-  reaches copies too - the same shape as the `Role` copy on the [[qor_role]] page.
+  once reached copies too - the shape the `Role` copy on the [[qor_role]] page still has.
 - An unextended `Workflow` is legal and does almost nothing. `Workflow` overrides both pure virtuals of
   `IWorkflow` (`workflow.h`), so it is instantiable despite the "extension only" purpose, and
   `Workflow::Enter() { m_complete = true; }` (`workflow.cpp`) combined with
   `while(!IsComplete()) { CurrentState()->Enter(); }` (`workflow.cpp`) means a bare workflow runs
   `Enter` once, drains the stack and returns `m_result` - 0.
-- The include guard is `QOR_PP_H_WORKFLOW_INTERFFACE` (`src/framework/app/workflow/iworkflow.h`), the
-  third of the six `INTERFFACE` hits in the tree - all six are this misspelling, and the other three
-  are `QOR_PP_H_ROLE_FEATURE_INTERFFACE` in `src/framework/app/role/ifeature.h`.
+- The include guard is `QOR_PP_H_WORKFLOW_INTERFACE` (`src/framework/app/workflow/iworkflow.h`),
+  corrected from the `INTERFFACE` misspelling by commit `cbffd54d`. Three `INTERFFACE` hits remain
+  in the tree, all `QOR_PP_H_ROLE_FEATURE_INTERFFACE` in `src/framework/app/role/ifeature.h`.
 
 ## See also
 
