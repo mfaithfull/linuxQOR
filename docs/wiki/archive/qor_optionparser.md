@@ -3,7 +3,7 @@ Type: WikiPage
 PageType: module
 Title: "qor_optionparser"
 Target: qor_optionparser
-Status: current
+Status: "retired"
 LastVerified: 2026-11-19
 Claims: 10
 Summary: "Command-line option parsing; declared but never configured, nothing links it, and no class in the tree implements its interface."
@@ -74,3 +74,12 @@ Judges:
 ## See also
 
 [[qor_application]] [[qor_host]] [[qor_textshaping]]
+
+<!-- Retirement stamp, written by tools/wiki-retire/wiki-retire.ps1. Do not delete this -->
+<!-- block: reason / evidence / commit is what makes a move auditable (F11). -->
+## Retirement
+
+- reason: obselete module has been deleted
+- evidence: qor_optionparser deleted.
+- commit: dadb425d0c62bb2d53e1d5f2452afa523b3c10bd
+- from: modules/qor_optionparser.md
