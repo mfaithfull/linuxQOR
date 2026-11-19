@@ -7,7 +7,7 @@ Decisions:
     File: ./decisions/D2.md
   - D3: Verification = compiler as judge
     File: ./decisions/D3.md
-  - D4: ActiveContext.md re-read every turn
+  - D4: now.md re-read every turn
     File: ./decisions/D4.md
   - D5: Duplicate qor_http (http_old) — RESOLVED (user)
     File: ./decisions/D5.md

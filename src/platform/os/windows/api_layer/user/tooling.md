@@ -226,7 +226,7 @@ the `Compare-Object` against the snapshot, which shows exactly 2 rows removed an
 - **`_tmp_s29_cite_audit.ps1` -> `_tmp_s29_cite_audit.txt`** - the **record-integrity** instrument: regex-harvests every
   `tmp/_tmp_*.ps1|bat|cpp|txt|log|csv|md|obj` citation out of the live record files (`status.md`, `tooling.md`,
   `gotchas.md`, `archive/session-log.md`, the current TU narrative, the register files touched this session,
-  `memory-bank/activeContext.md`) and reports MISSING against the filesystem. Run it **at session close**, after the
+  `memory-bank/now.md`) and reports MISSING against the filesystem. Run it **at session close**, after the
   records are written: it is how a mis-cited instrument gets caught while it is still cheap to fix. Session 29's run:
   194 cited artefacts, **1 missing** - `census.md:132` named the census instrument `_tmp_p1census_s20.ps1` under a `tmp/`
   path, a file that never existed; the real instrument is `tmp/_tmp_kb_p1census_s20.ps1` (`tooling.md`'s "binding census

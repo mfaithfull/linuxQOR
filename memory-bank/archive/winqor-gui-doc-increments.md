@@ -1,6 +1,6 @@
 # Archived: `winqor_gui` documentation - dated per-session increments (26-27 Oct 2026)
 
-Verbatim slice of the old `memory-bank/activeContext.md` lines 433-446, moved out 2 Nov 2026. The authoritative
+Verbatim slice of the old `memory-bank/now.md` lines 433-446, moved out 2 Nov 2026. The authoritative
 index of that documentation work is `docs/ui/windows/README.md` plus the part pages it points at.
 
 - 26 Oct 2026 increment — part 40 walked in full (all 15 `gui/windows/` pairs). Confirmed: 12 pairs are plain `Window` subclasses whose constructors only overwrite the base `Window` layout with min/max size defaults marked `//TEMP:`; `Dialog`, `MessageBox` and `Desktop` are not `Window` subclasses, and `Dialog` is the only pair with real logic (its own `DlgProc`, `DialogBoxIndirectParamT`, and the `"QOR"` window-property identification that mirrors `windowfactory.cpp:51`/`60`). No `windowclass_of` specialisation and no pre-registration exists for any built-in class; `CreateButton`/`CreateEdit`/`CreateListBox`/`CreateComboBox` pass class-name strings straight to `CreateWindowExT`. `windows/a_h/header.cpp` is the only `windows/` TU absent from `add_library`. `mdiclient.cpp` is compiled while `mdiclientcontroller.cpp` is not, and the controller's include of the window header uses a wrong relative path. Nothing in this part is exercised by `mainwindow`.

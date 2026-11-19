@@ -1,6 +1,6 @@
 # Archived: `winqor_api_user` review - completed-session records
 
-Verbatim slice of the old `memory-bank/activeContext.md` lines 34-414, moved out 2 Nov 2026 so future sessions do
+Verbatim slice of the old `memory-bank/now.md` lines 34-414, moved out 2 Nov 2026 so future sessions do
 not re-read finished session narratives. **Nothing here is authoritative any more** - the authoritative record of
 this review is `src/platform/os/windows/api_layer/user/` (`status.md` boot file, `registers/`, `archive/`). The
 decisions these lines describe (D13, D14/U15, the U1/U2 return-check policy) are in force and live in

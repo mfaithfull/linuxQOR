@@ -18,10 +18,10 @@ The Memory Bank consists of markdown files in the memory-bank folder
    - How it should work
    - User experience goals
 
-3. `activeContext.md`
-   - Current work focus
-   - Next steps
-   - Active decisions and considerations
+3. `now.md`
+   - The single task we are doing now
+   - Active resources and considerations
+   - Anything local in time to this session
 
 4. `systemPatterns.md`
    - System architecture

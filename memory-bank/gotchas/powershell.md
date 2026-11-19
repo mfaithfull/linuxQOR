@@ -72,7 +72,7 @@ Type: Context
   subscript at the start of a command line is not a valid statement head. Lead the statement with an assignment
   (`$all = Get-Content ...; $all[23..31]`) or with a cmdlet (`Get-Content ... | Select-Object -Skip 23 -First 9`). Same class
   as the earlier `For-Each` typo: the parse dies before the scan runs, so the "empty result" you see next is not a finding
-  (9 Nov 2026, reading `memory-bank/activeContext.md` at the 9g close).
+  (9 Nov 2026, reading `memory-bank/now.md` at the 9g close).
 - **A nested `Where-Object` shadows the outer `$_`, and a never-assigned `$l` makes the set difference read "everything differs"**
   The standing all-libraries gate diff (`_tmp_t9_9g_apialldiff.ps1`, cloned into `_tmp_t9_9h_apialldiff.ps1`) computes
   "diagnostics only in post" as `@($post | Where-Object { ($_ -match 'warning C|error C') -and (@($pre | Where-Object { $_ -eq $l }).Count -eq 0) })`:

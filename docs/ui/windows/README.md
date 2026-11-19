@@ -90,7 +90,7 @@ The current tree already contains a built `mainwindow.exe` and
 3. Replace the summary sections with cited detail; keep the shape of the page.
 4. Update the **Status** line and the "Next" line at the foot of the page.
 5. Tick the part in the index table above and record the increment in
-   `memory-bank/activeContext.md`, `memory-bank/progress.md` and
+   `memory-bank/now.md`, `memory-bank/progress.md` and
    `docs/agent/STATE.MD`.
 
 Parts and rough file counts, for sizing a session (`.h`/`.cpp` only):
@@ -108,4 +108,3 @@ Parts and rough file counts, for sizing a session (`.h`/`.cpp` only):
 `view/handlers` alone is 74 files (`handlers` root 20, `interactive` 22,
 `parts` 18, `rendered` 14) and is the part most likely to need splitting
 across sessions.
-

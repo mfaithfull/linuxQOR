@@ -5,7 +5,7 @@
 > full `QORTest` regression run green at `[OK](678/678)`). This detailed step-by-step
 > plan has been **retired out of `memory-bank/`** (it is no longer read at the start
 > of each session) and preserved here as a historical record only. Its key facts are
-> already summarised in `memory-bank/activeContext.md`, `memory-bank/progress.md` and
+> already summarised in `memory-bank/now.md`, `memory-bank/progress.md` and
 > `src/components/data/formats/json/generator/status.md`.
 
 **Status:** **JSON generator increment COMPLETE as of 20 Oct 2026 — the full
@@ -34,7 +34,7 @@ brace for `m_count == 0` in `generator/states/_object.cpp`), and
 its two gotchas (unregistered `FileSystem` platform subsystem, stale generated
 `.vcxproj` → `LNK2019`).
 **Assigned by:** the user; the original assignment was recorded in
-`memory-bank/activeContext.md` and `memory-bank/progress.md` (both now headed
+`memory-bank/now.md` and `memory-bank/progress.md` (both now headed
 "▶ JSON generator (ROUNDTRIP VERIFIED in `QORTestJSON` — next: full `QORTest`
 regression run)", updated 20 Oct 2026).
 
@@ -599,4 +599,3 @@ Korean UTF-16 through generate, whitespace normalisation, empty `[]`, nested obj
 remain untested cases in the roundtrip helper; the green `QORTest` run does not close
 them — it only proves the base suite did not regress. If those become relevant, add
 them to the `QORTestJSON` roundtrip block (before the Korean UTF-16 fixtures).
-

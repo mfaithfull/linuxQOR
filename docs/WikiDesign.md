@@ -133,7 +133,7 @@ this tree and must not be duplicated - they are cited, never restated:
 | Existing thing | Role | Wiki's relation to it |
 |---|---|---|
 | `docs/agent/` (`DECISIONS.md`, `verification.md`, `repo_map.md`, `ctags/`, `deps.dot`) | mutable agent state + deterministic indexes | `raw/` references them; wiki pages link the D-entry, they do not restate it (`docs/future/PLAN-FORMAT.md` already mandates "linked to `docs/agent/DECISIONS.md` D-entries rather than restated") |
-| `memory-bank/` (`activeContext.md`, `gotchas/`, `tools/`) | the session-state substrate and the tool index | `raw/` references `gotchas.md` entries as *evidence of what breaks*; never a page of its own |
+| `memory-bank/` (`now.md`, `gotchas/`, `tools/`) | the session-state substrate and the tool index | `raw/` references `gotchas.md` entries as *evidence of what breaks*; never a page of its own |
 
 The wiki holds the understanding, invariants, decisions, traps, and the tour that
 makes a 250k-line tree readable.
@@ -209,7 +209,7 @@ These four rules are the answer to "how do references survive a decade of churn"
 3. **No scratch paths.** `tmp/` is gitignored and deleted per task. An anchor into `tmp/` is a
    contract violation, and this repo has already been bitten: the stale-`tmp/` citation was the
    proximate cause of the `SourceCommentShadowTree` debt recorded in `docs/future/SourceCommentShadowTree/plan.md`
-   citing per-session files such as `memory-bank/activeContext.md` carries the same risk
+   citing per-session files such as `memory-bank/now.md` carries the same risk
 4. **Version-pin what the reference implies.** A citation to an SDK header is only reproducible
    with the SDK triple; that is why decision D21 pins `_WIN32_WINNT`/`WINVER`/`NTDDI_VERSION` in
    `kernel32.h`. Any `out-of-tree` reference whose answer depends on a toolchain version carries
@@ -665,7 +665,7 @@ three, and the design's rule for each is one line: **reference it, never fork it
 | Artifact | Owner | Wiki's relation | Anti-pattern |
 |---|---|---|---|
 | `docs/agent/repo_map.md`, `deps.dot`, `docs/agent/ctags/*.tags` | generated, deterministic | `docs/wiki/architecture.md` and `docs/wiki/dependencies.md` link them and add the *why* the generator cannot state | restating the dependency list in prose |
-| `memory-bank/ActiveContext.md`, plan-tree `plan.md` cursors | mutable session state - the durable record is the D-entries and the register CLOSE lines | `docs/wiki/` is the record; `docs/raw/` may reference a plan item as an `event` anchor | letting a wiki page become the cursor |
+| `memory-bank/now.md`, plan-tree `plan.md` cursors | mutable session state - the durable record is the D-entries and the register CLOSE lines | `docs/wiki/` is the record; `docs/raw/` may reference a plan item as an `event` anchor | letting a wiki page become the cursor |
 | `docs/agent/DECISIONS.md` + `decisions/D<n>.md` | the durable why | `docs/wiki/decisions/D<n>.md` is a pointer page: title, one line, link | duplicating the decision body |
 | `memory-bank/gotchas/*` | what has cost time before | each becomes an `invariants/` or `gotchas/` page whose judge is the failing command | re-deriving the trap from memory |
 | `memory-bank/tools.md` + `tools/<slug>/` | the tool index | the four new wiki tools register there per `TOOL-FORMAT.md` (`Type: Tool`, `Scripts: File/Usage/LastRun/Output`) | a wiki script outside the index |
@@ -882,7 +882,7 @@ be re-read, not re-written. Two actions, in order:
   before item 5. The tree is already Atomic-shaped and every close is a printed verdict line.
 - **Update the memory bank**, because this design changes the repo's shape: `docs/raw/` and
   `docs/wiki/` are new folders, six tools register in `memory-bank/tools.md` per `TOOL-FORMAT.md`,
-  and §13's answers plus §13.1's consequences belong in `memory-bank/activeContext.md` as the current
+  and §13's answers plus §13.1's consequences belong in `memory-bank/now.md` as the current
   focus.
 
 Two things that must not be fudged during the build: no item may report done except by its own

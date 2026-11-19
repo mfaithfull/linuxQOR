@@ -52,7 +52,7 @@ disagree. Rotate in place - never append below this block.
   one commit: `e4835ef367b3e6fb3f4ade28b1b52843e3a134ab` ("Wiki: BuildLLMWiki tree CLOSED"), 151
   files. Units by id: queue stayed drained (`pending = 0 of 0`); the six tool entries were already
   in `memory-bank/tools.md` (registered at item 2, docs at `memory-bank/tools/wiki-*/tool.md`);
-  `activeContext.md` rotated to None-open with TODO item 2 next; `docs/future/TODO.md` item 1
+  `now.md` rotated to None-open with TODO item 2 next; `docs/future/TODO.md` item 1
   marked `[x]` CLOSED; this tree `git mv`-ed to `docs/archive/BuildLLMWiki/`; D56 committed.
   Stop condition re-read: `git log -1` re-reads that hash and census reads `pending = 0 of 0`
   (reports `tmp/_tmp_final_{anchors,schema,pages,pending}.txt`: anchors `517 of 517 / dead = 0`
@@ -250,7 +250,7 @@ logical milestone, never per increment. This is the milestone.
 
 One `Atomic` item: the records and the one commit. Its units are enumerated by id: `docs/raw/pending.md`
 empty after the drain, the six tool-doc entries in `memory-bank/tools.md`, the memory-bank
-`activeContext.md` rotation, the `docs/future/BuildLLMWiki` retirement to `docs/archive/`, then
+`now.md` rotation, the `docs/future/BuildLLMWiki` retirement to `docs/archive/`, then
 `git commit` carrying the drain's verdict line. Stop condition: `git log -1` re-reads the recorded
 hash and `wiki-census` re-reads `pending = 0 of 0`.
 
@@ -283,4 +283,3 @@ Start at `./LayerScaffoldingAndFolders/plan.md` and walk the item order; `/imple
 numbered table if the design is to stay the spec, `/to-tickets` to spread the page passes across
 sessions. **The wiki is not "up to date" until `pending = 0 of 0` and `reconcile fail=0` both print**
 - neither implies the other, and an instrument that prints `0 of 0` proves only that it parsed.
-

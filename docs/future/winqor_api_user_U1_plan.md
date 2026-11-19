@@ -199,7 +199,7 @@ proof). `user32.h:11` already pulls `../library.h`, so the include graph gains o
 7. **Records, at the close only** (decision 3): `D50` in `docs/agent/DECISIONS.md` + `D50.md`, a
    **working record** in `registers/u1.md` in `u17.md`'s shape (checklist + tick state + measured
    post-pass figures), `status.md`'s boot line and its `Open:` list (`U1` -> closed with D50; `U2`
-   stays open), `registers/README.md`'s closed list, `completed_work.md`, `memory-bank/activeContext.md`.
+   stays open), `registers/README.md`'s closed list, `completed_work.md`, `memory-bank/now.md`.
    **Never edit the ~35 TU banners** - protocol 7 freezes review banners; the stale "0
    `Win32ErrorHandler`" wording is corrected in `u1.md`/`D50`, per the U17/D40 precedent.
 8. **Commit** the 53 sources + the records in one commit, then stop - no read-back pass; `git show` is the audit.
@@ -226,4 +226,3 @@ proof). `user32.h:11` already pulls `../library.h`, so the include graph gains o
 - No TU banner edits, no append to frozen/closed records (`tooling.md` is frozen at session 34).
 - No project-wide `UNICODE`/`WINVER`/`_WIN32_WINNT` pin, no `NO_STRICT` change (D21/D46 residuals stay).
 - No change to the 4 existing `CheckReturn` sites' semantics, and none to `errorhandler.h`/`errorhandler.cpp`.
-

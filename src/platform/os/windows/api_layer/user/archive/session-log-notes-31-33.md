@@ -1,11 +1,11 @@
 # session log - close-out notes for sessions 31 (`systemshutdown.cpp`) and 33 (`window.cpp`)
 
 Moved verbatim out of `archive/session-log.md` on 4 Nov 2026 when that file passed the 40 KB ceiling (40,916 bytes).
-Source range: lines 
+Source range: lines
 226
 -
 347
- inclusive. Moved block `SHA256 
+ inclusive. Moved block `SHA256
 1F2CF8F8522031B1D70A99B73DB58AB544DF0E1792A086176701F81A487D7540
 ` (computed before
 the move; the block below is that block verbatim). Rejoin verified by hash at slice time. The table rows for these
@@ -121,7 +121,7 @@ heads, do not trust**), `_tmp_s33_prebind.ps1`, `_tmp_s33_pre.ps1` (per-member b
 **Record actions:** registers updated `prescan.md` (P1 CLOSED, P5 re-measured), `census.md` (session-33 block),
 `u14.md`, `u16.md`, `u18.md`, `u19.md`, `u25.md`; `archive/tu/window.md` corrected (it was written mid-session and its
 `NOMDI` list, U25 count, call-paren count and comment-line count were wrong - see the gotcha entry); `status.md` live
-state rewritten and its locator regenerated; `memory-bank/activeContext.md` + `progress.md` booked.
+state rewritten and its locator regenerated; `memory-bank/now.md` + `progress.md` booked.
 
 **Next session: `windowclass.cpp`** (114 lines, 14 wrappers - 12 `qor_pp_useswinapiAW` + 2 bare `qor_pp_useswinapi`
 (`:47 GetClassWord`, `:82 SetClassWord`), 14 `qor_pp_fcontext`, 14 `Library::Call<`, **0** `voidCall`, **0** `WINAPI`
@@ -137,4 +137,3 @@ tokens, 3 comment lines, longest 124, **no contract block**). Header section `us
 - Run `_tmp_s33_verify.ps1`-style counts with **`-CaseSensitive`** for `CONST`/`const`, and date the gate by `.obj`
   freshness. Remaining queue after it: `windowprocedure.cpp` (30), `windowproperties.cpp` (51), `winqor_api_user.cpp`
   (14, glue) - 209 lines total.
-

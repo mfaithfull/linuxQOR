@@ -18,7 +18,7 @@ The Memory Bank consists of markdown files:
    - How it should work
    - User experience goals
 
-3. `activeContext.md`
+3. `now.md`
    - Current work focus
    - Next steps
    - Active decisions and considerations

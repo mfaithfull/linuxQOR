@@ -99,7 +99,7 @@ and the session is not closed until the tree is clean.** The v2 close is retired
    is over, write the folder verdict there instead and say so.
 6. Gate: edited TU standalone at `/W4` exit 0, then the whole library 38/38 exit 0, dated by `tmp/obj/<tu>.obj` being
    newer than the source. Re-run it **after** the banner is added. This is the only audit.
-7. Commit the TU, any new register, `status.md`, `preflags.md` and `memory-bank/activeContext.md` in one commit - then
+7. Commit the TU, any new register, `status.md`, `preflags.md` and `memory-bank/now.md` in one commit - then
    **stop**. Do not re-open any of them to check that the write took: `git show` of the commit is the audit, and the
    read-back pass is what turned sessions 34-36 into a compaction loop.
 8. Never run, and never write back into the procedure: the register-locator generator, the README line-count refreshers,
@@ -127,4 +127,3 @@ and the session is not closed until the tree is clean.** The v2 close is retired
   the item's measured numbers the moment that item is verified, before moving to the next. Deferring the ticks to the
   close is what let a compaction land mid-pass and force the whole pass to be re-derived (U17, 10 Nov 2026). The
   checklist is the resumption record for a pass; the tree is not.
-

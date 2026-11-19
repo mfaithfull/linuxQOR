@@ -109,13 +109,9 @@ help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
 processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
 windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build (see U3).
 
-This file carries the session log and the open items. `memory-bank/activeContext.md` carries a pointer here.
+This file carries the session log and the open items. `memory-bank/now.md` carries a pointer here.
 ```
 
 Superseded by session 16 (`help.cpp` reviewed): the queue is now 21 TUs and the table's last row is "17..38".
 The last line of the block above is `status.md`'s old one-sentence header pointer, replaced on consolidation by the
 three-line header that also names this archive file.
-
-
-
-

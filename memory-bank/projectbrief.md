@@ -22,6 +22,6 @@ Positions:
 - Opinionated C++ style; contributions are welcome once intent/style is understood.
 
 Status sources:
-- Trust `git log`, `docs/agent/DECISIONS.md`, `docs/agent/verification.md`, and `memory-bank/activeContext.md` for newest state.
+- Trust `git log`, `docs/agent/DECISIONS.md`, `docs/agent/verification.md`, and `memory-bank/now.md` for newest state.
 - `STATUS.md` trails the repository; `CHANGES.md` tracks shipped milestones; `FEATURES.md` tracks maturity.
 - Project docs: `README.md`, `KEY_CONCEPTS.md`, `LAYOUT.md`, `BUILDING.md`, `FEATURES.md`, `STATUS.md`, `CHANGES.md`, `FAQ.md`, `CONTRIBUTING.md`, `CREDITS.md`, `docs/skills/QORconventions.md`.

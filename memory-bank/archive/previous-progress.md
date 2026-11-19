@@ -122,7 +122,7 @@ Current:
 - 27 Oct 2026 — coherence check of `50-view-handlers.md` (root) complete: fixed 3 build-facts slips (root `.cpp` = `8 of 9`; `parts/` cpp block `:64`–`:71`; `11 headers + 9 .cpp`); chain/decoder/citation claims verified against source.
 
 
-- `winqor_api_shell` is complete for the locked 60-endpoint modern Shell API scope. Open review decisions are recorded in `memory-bank/activeContext.md` and `docs/agent/DECISIONS.md` D12.
+- `winqor_api_shell` is complete for the locked 60-endpoint modern Shell API scope. Open review decisions are recorded in `memory-bank/now.md` and `docs/agent/DECISIONS.md` D12.
 - `winqor_api_kernel` threadpool callback-environ six header-inline wrappers are implemented. The two remaining partition-dependent names are open review decisions.
 
 Completed milestones:
