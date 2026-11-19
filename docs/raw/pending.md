@@ -4,7 +4,10 @@ One entry per reference awaiting ingestion. `docs/WikiDesign.md` §4 and §4.4 o
 layer is a **queue**, not a stock: `wiki-ingest` carries an entry's anchor into a page and then
 **deletes** the entry. Nothing here is archived, because an entry is a pointer into something git
 already versions - the page that consumed it is its archive. An empty queue is the legal steady
-state, and the only state in which the wiki may claim to be current.
+state, and the only state in which the wiki may claim to be current. Entries arrive **uncommitted**:
+a producer appends to the working tree, so the drain's delete usually returns this file to its HEAD
+state and the `wiki:` commit carries only the touched pages - `git status` before the commit confirms
+which case ran.
 
 ## Hard rules
 

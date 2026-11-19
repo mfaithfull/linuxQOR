@@ -10,14 +10,18 @@ written it**.
    -WikiRoot docs/wiki -RawRoot docs/raw -Report tmp/_tmp_ingest_pending.txt`; the entries it lists.
 3. `carry` - copy each entry's `path:`/`anchor:`/`pin:`/`verified:` into the consuming page's
    `Anchors:`, record the entry `id:` in its `Sources:`, and carry each `[[id]]` into a `See also`
-   line.
+   line. A `pin: commit:<sha>` carries as `anchor: commit:<sha>` on the entry's `path:` in
+   `Anchors:` - the pin dates the claim to the tree, it is not a second path.
 4. `print` - write the page: claims with anchors, a non-empty `Judges:` (the D56 sentinel only
    where the claim is not falsifiable against a build), within the schema budget. Claim prose is
    present tense against the current tree - a `commit:` anchor bounds a claim, it does not narrate
    a fix - because git plus `Sources:` is the archive and page prose is the copy that gets trimmed.
 5. `delete` - remove **only** the consumed entries from `docs/raw/pending.md`; nothing else.
-6. `gates` - `wiki-ref-check anchors` and `refs`, `wiki-lint schema` / `provenance` / `freshness`,
-   `wiki-reconcile verify`; a gate that prints red stops the commit, not the queue.
+6. `gates` - run each named gate with its full argument set:
+   `pwsh -NoProfile -File tools/wiki-ref-check/wiki-ref-check.ps1 -Command <anchors|refs> -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Report tmp/_tmp_ingest_<command>.txt`;
+   `pwsh -NoProfile -File tools/wiki-lint/wiki-lint.ps1 -Command <schema|provenance|freshness> -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Schema docs/wiki/schema.md -Report tmp/_tmp_ingest_<command>.txt`;
+   `pwsh -NoProfile -File tools/wiki-reconcile/wiki-reconcile.ps1 -Command verify -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Report tmp/_tmp_ingest_verify.txt`;
+   a gate that prints red stops the commit, not the queue.
 7. `stamp` - set `LastVerified:` on each touched page to the run date; `VerifiedAgainst:` is not a
    schema field - do not add it.
 8. `commit` - one `wiki:`-prefixed commit carrying the drain's verdict line

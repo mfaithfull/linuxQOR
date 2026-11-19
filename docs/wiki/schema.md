@@ -36,6 +36,9 @@ Vocabulary, and the instruments read it from `wiki-shape.ps1` rather than from p
 - Status: current, stale, superseded, draft, retired.
 - Anchor kind (inside `Anchors`): in-tree, out-of-tree, event, artifact.
 - A date is YYYY-MM-DD. A stamp that will not parse is undated, not fresh.
+- `Claims:` counts the body's bulleted claims - the intro paragraph and section prose are not
+  bullets, so they are not counted. The number is informational, which is why `wiki-lint provenance`
+  reads the body and judges the provenance rules rather than the count.
 
 Required means present and non-empty: `Type`, `PageType`, `Title`, `Status`, `LastVerified`,
 `Judges`. Stop condition for this section: `wiki-lint schema` prints `fields` as a full pair with

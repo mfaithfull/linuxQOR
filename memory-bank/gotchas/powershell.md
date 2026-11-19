@@ -88,4 +88,12 @@ Type: Context
   `Get-Content <that file> | Select-String -CaseSensitive 'Dde'` returns the 38 rows. The pipe decodes the BOM; the
   `-Path` form does not. A 0 from `-Path` on a file you know you just wrote is this bug; read dumps through
   `Get-Content`, or write them with `cmd /c ... >` or `| Out-File -Encoding utf8`. Cost one re-measure of the DDE export
-  dump at the 9h close (9 Nov 2026).
+   dump at the 9h close (9 Nov 2026).
+- **`rg` is NOT installed on this machine - token counts for wiki claims run through `git grep -o`, and a pathspec keeps the count honest**
+   `rg -c "NDBEUG"` dies with `The term 'rg' is not recognized as the name of a cmdlet` - ripgrep does not exist on this
+   Windows host, and the failure is per-pipeline-stage so later stages of a chained command still run. The working shape for
+   the counted claims the wiki carries: `(git grep -o "NDBEUG" -- src | Measure-Object).Count` - `-o` prints one line per
+   occurrence (a true occurrence count, not per-file matches), `-w` gives word matches, and the `-- src` pathspec matters:
+   unscoped, `git grep` counts the wiki's own pages citing the token, which silently inflates the census it is meant to
+   police. Hit during the 19 Nov 2026 wiki-ingest drain, re-measuring the `NDBEUG`/`NDEBUG` census after `c9efd9c4`
+   (in-tree `NDBEUG` = 1, `NDEBUG` = 186 over `src/`; whole-repo counts were higher because `docs/wiki/` quotes the token).
