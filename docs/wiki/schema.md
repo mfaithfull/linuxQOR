@@ -139,7 +139,7 @@ instrument prints, not a paraphrase of one.
 
 | Op | Drain order | Verdict line | Guards |
 |---|---|---|---|
-| `ingest` | carry -> print -> delete | `pending=0 consumed=N carried=N uncarried=0 VERDICT fail=0` | F12, F9 |
+| `ingest` | carry -> print -> delete -> catalog | `pending=0 consumed=N carried=N uncarried=0 VERDICT fail=0` | F12, F9 |
 | `refresh` | sweep -> dedupe -> append | `findings=N added=N skipped_duplicate=N VERDICT fail=0` | F8, F6 |
 | `wiki-reconcile` | resolve -> flag -> stop | `anchors=R of T dead=0 tmp_refs=0 unpinned=0 stale=0 VERDICT fail=0` | F1, F6, F11 |
 | `wiki-file` | index -> page -> target -> answer -> queue | `pages=N anchors=R of T stale=N queue_added=N VERDICT fail=0` | F3, F5 |
@@ -148,6 +148,11 @@ instrument prints, not a paraphrase of one.
 - The order in the `ingest` row is the whole guard for F12: the anchor is copied into the page before
   the page is written, and the page is written before its queue entry is deleted. A drain that deletes
   first cannot be repaired by any later step, which is why the order is a row value and not prose.
+- `catalog` is the last `ingest` step and the only one that writes a generated file: it runs
+  `tools/wiki-index` `build` to regenerate `index.md` from the front matter the drain just wrote, then
+  `check`, which prints `drift = D of N` and fails on any row the current front matter no longer
+  generates. It never repairs the file it judges - a drain that edits a page but skips `catalog` goes
+  red instead of shipping an index that quietly lies (docs/WikiDesign.md 6, op 12).
 - `ingest` never schedules `wiki-lint` and never re-enters itself: the queue's own `added_by:` names
   the producer, and the hook ignores a diff that touches only `docs/wiki/` or `docs/raw/` (F9).
 - `refresh` appends and never rewrites a page: a finding becomes a queue row, and only the reconcile

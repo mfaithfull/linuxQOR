@@ -17,16 +17,24 @@ written it**.
    present tense against the current tree - a `commit:` anchor bounds a claim, it does not narrate
    a fix - because git plus `Sources:` is the archive and page prose is the copy that gets trimmed.
 5. `delete` - remove **only** the consumed entries from `docs/raw/pending.md`; nothing else.
-6. `gates` - run each named gate with its full argument set:
+6. `catalog` - regenerate the generated index so a drained page cannot leave a lying row:
+   `pwsh -NoProfile -File tools/wiki-index/wiki-index.ps1 -Command build -WikiRoot docs/wiki -Report tmp/_tmp_ingest_catalog.txt`,
+   then `pwsh -NoProfile -File tools/wiki-index/wiki-index.ps1 -Command check -WikiRoot docs/wiki -Report tmp/_tmp_ingest_check.txt`.
+   `check` must print `drift = 0 of N`; any non-zero drift means `index.md` still carries a row the
+   pages' front matter no longer generates, and it stops the drain exactly as a red gate would.
+7. `gates` - run each named gate with its full argument set:
    `pwsh -NoProfile -File tools/wiki-ref-check/wiki-ref-check.ps1 -Command <anchors|refs> -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Report tmp/_tmp_ingest_<command>.txt`;
    `pwsh -NoProfile -File tools/wiki-lint/wiki-lint.ps1 -Command <schema|provenance|freshness> -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Schema docs/wiki/schema.md -Report tmp/_tmp_ingest_<command>.txt`;
    `pwsh -NoProfile -File tools/wiki-reconcile/wiki-reconcile.ps1 -Command verify -WikiRoot docs/wiki -RawRoot docs/raw -TreeRoot . -Report tmp/_tmp_ingest_verify.txt`;
    a gate that prints red stops the commit, not the queue.
-7. `stamp` - set `LastVerified:` on each touched page to the run date; `VerifiedAgainst:` is not a
+8. `stamp` - set `LastVerified:` on each touched page to the run date; `VerifiedAgainst:` is not a
    schema field - do not add it.
-8. `commit` - one `wiki:`-prefixed commit carrying the drain's verdict line
+9. `commit` - one `wiki:`-prefixed commit carrying the drain's verdict line
    (`pending=0 consumed=N carried=N uncarried=0 VERDICT fail=0`); `uncarried>0` is data loss and
-   forbids the commit. `docs/wiki/` and `docs/raw/` are hook-excluded, so this commit never
-   re-enqueues.
+   forbids the commit. The regenerated `docs/wiki/index.md` is committable generated output and rides
+   in this commit (it is what `catalog` just wrote). `docs/wiki/` and `docs/raw/` are hook-excluded,
+   so this commit never re-enqueues.
 
 The drain order - **carry, print, delete** - is the contract: it is what makes a deletion safe.
+`catalog` runs after the delete and regenerates `docs/wiki/index.md` from the front matter the drain
+just wrote, so the index never trails the pages it claims to list.
