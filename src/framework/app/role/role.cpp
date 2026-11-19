@@ -11,7 +11,13 @@ namespace qor{ namespace app {
 
     Role::Role() = default;
 
-    Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures){ }
+    Role::Role(const Role& src) : m_mapFeatures(src.m_mapFeatures)
+    {
+        for(auto feature: m_mapFeatures)
+        {
+            feature.second->m_Role = this;
+        }
+    }
 
     Role& Role::operator = (const Role& src)
     {

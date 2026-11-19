@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_ROLE_FEATURE_INTERFFACE
-#define QOR_PP_H_ROLE_FEATURE_INTERFFACE
+#ifndef QOR_PP_H_ROLE_FEATURE_INTERFACE
+#define QOR_PP_H_ROLE_FEATURE_INTERFACE
 
 #include "src/qor/memory/injection/typeidentity.h"
 
@@ -34,4 +34,4 @@ namespace qor{ namespace app {
 
 }}//qor::app
 
-#endif//QOR_PP_H_ROLE_FEATURE_INTERFFACE
+#endif//QOR_PP_H_ROLE_FEATURE_INTERFACE
