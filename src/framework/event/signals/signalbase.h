@@ -71,7 +71,7 @@ namespace qor
     bool connect(const Sender& sender, std::unique_ptr<detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > signalMethod_Bento, const Receiver& receiver, std::unique_ptr< detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > slotMethod_Bento, ConnectionKind type = ConnectionKind::AutoConnection, bool uniqueConnection = false);
 
 
-    class qor_pp_module_interface_gcc(QOR_APPLICATION) SignalBase
+    class qor_pp_module_interface_gcc(QOR_SIGNALS) SignalBase
     {
 
     public:

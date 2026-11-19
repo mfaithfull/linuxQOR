@@ -3,7 +3,7 @@
 
 #ifndef QOR_PP_H_COMPONENTS_LOGRECEIVER
 #define QOR_PP_H_COMPONENTS_LOGRECEIVER
- 
+
 #include <atomic>
 #include <coroutine>
 #include "src/qor/flyers/error/error.h"
@@ -21,7 +21,7 @@
 #include "src/framework/io/filesystem/path.h"
 
 namespace qor { namespace components{
-  
+
     class qor_pp_module_interface(QOR_LOGAGGREGATOR) LogReceiver : public SlotBase
     {
     public:
@@ -37,12 +37,14 @@ namespace qor { namespace components{
         void WriteToFileSystem(io::filesystem::Path path, const std::string& fileNamePrefix);
         void WriteToPipeline(bool write = true);
 
-    private:        
+    private:
 
         virtual void queueSlot(PendingSlot data, ConnectionKind type) override;
+        virtual bool compareThreads() const override;
+
         std::deque<PendingSlot> m_array;
         std::mutex m_mutex;
-        std::condition_variable m_alarm;      
+        std::condition_variable m_alarm;
         bool m_running;
         bool m_writeToStandardOutput;
         bool m_writeToFileSystem;

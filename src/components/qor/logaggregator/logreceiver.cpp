@@ -14,7 +14,7 @@ using namespace qor::io;
 
 namespace qor { namespace components{
 
-    LogReceiver::LogReceiver() : 
+    LogReceiver::LogReceiver() :
         m_writeToStandardOutput(true),
         m_writeToFileSystem(false),
         m_writeToPipeline(false),
@@ -23,9 +23,9 @@ namespace qor { namespace components{
         m_totalSizeLimit(100 * 1024 * 1024),
         m_fileSizeLimit(10 * 1024 * 1024)
     { }
-    
+
     LogReceiver::~LogReceiver() noexcept = default;
-    
+
     void LogReceiver::WriteToStandardOutput(bool write)
     {
         std::scoped_lock<std::mutex> lock(m_mutex);
@@ -50,10 +50,10 @@ namespace qor { namespace components{
             strFileName = std::format("{0}{1}.log",fileNamePrefix, m_logRollNumber);
             index.Set(path, strFileName);
         }while(index.Exists() && (++m_logRollNumber < m_logRollLimit) && ((fileSize += index.Size()) < m_totalSizeLimit));
-     
+
         filesystem::Index logFileIndex(path, strFileName);
 
-        m_refLogFile = filesystem->Open(logFileIndex, 
+        m_refLogFile = filesystem->Open(logFileIndex,
             OpenFor::ReadWrite, logFileIndex.Exists() ? WithFlags::Append :
             WithFlags::CreateNew | WithFlags::Exclusive
         );
@@ -81,30 +81,34 @@ namespace qor { namespace components{
 
     void LogReceiver::queueSlot(PendingSlot data, ConnectionKind /*type*/)
     {
-        //SlotBase* receiver = data.receiver();
         std::scoped_lock<std::mutex> lock(m_mutex);
         m_array.push_back(std::move(data));
         m_alarm.notify_one();
+    }
+
+    bool LogReceiver::compareThreads() const
+    {
+        return false; // always queue the slot to the receiver thread
     }
 
     void LogReceiver::Listen()
     {
         constexpr std::chrono::milliseconds long_sleep_time(250);
         m_running = true;
-        while (m_running) 
-        {            
+        while (m_running)
+        {
             std::unique_lock<std::mutex> lock(m_mutex);
 
-            if (!m_array.empty()) 
+            if (!m_array.empty())
             {
                 auto data = std::move(m_array.front());
                 m_array.pop_front();
-                lock.unlock();                
+                lock.unlock();
                 data(); // call the slot
                 continue;
 
             }
-            else if (!m_running) 
+            else if (!m_running)
             {
                 break;
             }
@@ -133,4 +137,3 @@ namespace qor { namespace components{
     }
 
 }}//qor::components
-	
