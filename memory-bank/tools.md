@@ -23,4 +23,7 @@ index:
   - UseWhen: "retire a wiki page into the archive with a stamped reason/evidence/commit, restore one back out, or prove that a docs/raw/ reference cannot be archived at all"
     Scope: "moves files only inside the wiki root it is given (docs/wiki/); the queue is structurally out of reach, not forbidden by convention"
     File: "tools/wiki-retire/tool.md"
+  - UseWhen: "queue the QOR lib targets a commit touched into docs/raw/pending.md - the post-commit hook's queue half - and prove the exclusion guard: docs/wiki/, docs/raw/, docs/future/, docs/archive/ and wiki:-prefixed subjects enqueue nothing"
+    Scope: "one commit's diff mapped through the set(target qor_*) declarations in src/; appends added_by: hook entries to <RawRoot>/pending.md, deduped against the queue"
+    File: "tools/wiki-enqueue/tool.md"
 ---
