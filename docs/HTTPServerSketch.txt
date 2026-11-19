@@ -1,0 +1,29 @@
+1. Semantic data model (no I/O)
+
+http::request / http::response value objects — method, target, version, headers, body handle. You have request/request.h; finish the response twin.
+header container with case-insensitive lookup (you have caseignore.h), typed accessors (Content-Length, Connection, Transfer-Encoding).
+small pure modules: query-string → multimap, cookie parse/serialize, RFC-1123 date format/parse, status-code ↔ reason phrase (already static on HTTPProtocol).
+2. Wire framing codec (bytes ⇄ messages)
+
+Header-block scanner: finds request line + fields + CRLFCRLF, enforces max-header-size, feeds your requestparser. This is what HTTPFilter::Parse is becoming; keep it incremental (resumable across buffer boundaries).
+Transfer-coding state machine: Content-Length / chunked / trailers / identity. Bytes in → body bytes out + events. The single most bug-prone HTTP/1.1 module; implement it standalone and fuzz it.
+Message sequencer: keep-alive vs close, pipelining, persistent-connection bookkeeping.
+3. Connection session state machine (httpservicefilter.h presumably lands here)
+
+One per accepted socket: read → frame → decode → dispatch → encode → write → next message or close. Owns idle timeout, 100-Continue, half-close, error responses (400/408/413/501/505).
+Critical design choice: it drives a Connection interface (read/write/close), not a raw socket — then you test it against your pipeline framework's in-memory pipes.
+4. Dispatch (pure logic)
+
+Router: (method, target, route table) → handler id + path params. Zero dependencies, trivially table-testable.
+Middleware/filter chain: ordered request → (response | next) transformers — logging, auth, compression, etag/conditional handling each independently implementable.
+Handler interface: handle(request&, response_sink&) -> completion. Everything user-facing plugs in here.
+5. Body plumbing
+
+body reader (bounded, streaming) and body writer that pairs with the chunked encoder from (2).
+6. Assembly
+
+listener task: accept → spawn session task, concurrency limits, graceful drain, vhost selection. Thin glue over your existing async task management.
+7. Transport variant (optional, parallel)
+
+TLS/ALPN as a pipeline stage wrapping the socket, not woven into the session; HTTP/2 later as an alternative framing codec feeding the same data model and router.
+The two seams that make everything independently testable: (a) everything below the session deals in byte buffers and value objects only, (b) the session talks to a Connection abstraction. Order of implementation: 1 → 2 → 3 (over in-memory pipe) → 4 → 5 → 6, and you have a working cat-testable server before ever touching TLS.
