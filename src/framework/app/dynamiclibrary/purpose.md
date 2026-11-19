@@ -1,0 +1,2 @@
+Provides platform agnostic dynamic library access at runtime. DLLs on Windows, SOs on Linux.
+This is for libraries loaded conditionally when the application is already running, not QOR modules which are implicitly linked and automatically loaded at process startup before main is reached.

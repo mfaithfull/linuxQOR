@@ -10,6 +10,7 @@
 
 namespace qor{ namespace app {
 
+    //Abstract interface intended to be included and implemented by main loop implementors.
     class IRunable
     {
     public:
@@ -20,6 +21,7 @@ namespace qor{ namespace app {
         virtual int Run(void) = 0;
     };
 
+    //Wrapper to turn a lambda or std::function into a runable object
     class RunableFunc : public IRunable
     {
     public:
@@ -50,6 +52,7 @@ namespace qor{ namespace app {
         std::function< int(void) > m_func;
     };
 
+    //Get a runable object from a lambda or std::function
     template<typename Tlambda>
     ref_of<IRunable>::type make_runable(Tlambda&& func)
     {

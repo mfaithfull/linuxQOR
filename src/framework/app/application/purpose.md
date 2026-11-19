@@ -1,0 +1,3 @@
+Provides the QOR's customisable Application construct. Application is a natural singleton, one per process.
+Application is always constructed via an AppBuilder to provide both extensibility and to allow the Application class to be replaced with a custom derivative.
+Because Application is a built in singleton deriving a subclass safely has a couple of extra requirements. The goos news however is that you probably don't need to do it. The Application class is purposefully small and simple. Almost any customization you need can be done by changing out the Role or the Features it contains.
