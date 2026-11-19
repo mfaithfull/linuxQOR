@@ -26,7 +26,6 @@
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_APP
 
 #include "src/framework/app/application/application.h"
-#include "src/framework/app/optionparser/ioptionable.h"
 
 class EchoServerApp : public qor::Application
 {
@@ -34,20 +33,6 @@ public:
 
         EchoServerApp() = default;
         virtual ~EchoServerApp() = default;
-
-        //IOptionable interface
-        virtual const char* ProvideShortOptionString();
-        virtual qor::app::Option* ProvideLongOptions();
-        virtual void ReceiveOptionSwitch(char /*c*/){}
-        virtual void ReceiveOptionParameter(char c, const char* value);
-        virtual void ReceiveLongOption(const char* option, const char* value);
-        virtual void ReceiveNonOption(const char* parameter){}
-
-        std::string GetPortName();
-
-    private:
-
-        std::string m_portStr;
 
 };
 

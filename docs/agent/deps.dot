@@ -17,7 +17,7 @@ digraph qor_deps {
 
   subgraph cluster_framework {
     label="src/framework - structural app parts";
-    qor_application; qor_dynamiclibrary; qor_host; qor_optionparser; qor_role; qor_workflow;
+    qor_application; qor_dynamiclibrary; qor_host; qor_role; qor_workflow;
     qor_pipeline; qor_resources; qor_image;
     qor_events; qor_signals;
     qor_asyncioservice; qor_filesystem; qor_sockets;
@@ -72,7 +72,6 @@ digraph qor_deps {
   qor_application   -> { qor_module; qor_thread; qor_sync; qor_platform; qor_role; }
   qor_dynamiclibrary -> { qor_module; qor_host; qor_thread; }
   qor_host          -> { qor_module; qor_sharedbootstrap; }
-  qor_optionparser  -> { qor_module; qor_thread; }
   qor_role          -> { qor_module; qor_host; qor_current; qor_sync; qor_platform; qor_error; }
   qor_workflow      -> { qor_module; qor_host; qor_current; qor_issue; qor_error; qor_log; qor_thread; qor_tef; qor_threadmemory; }
   qor_pipeline      -> { qor_module; qor_thread; qor_signals; qor_sync; qor_interception; qor_error; qor_log; }

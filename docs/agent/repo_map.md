@@ -48,7 +48,6 @@ count both derive from these numbers, and `tools/wiki-census targets` reprints t
 - qor_application       src/framework/app/application     -> qor_module qor_thread qor_sync qor_platform qor_role
 - qor_dynamiclibrary    src/framework/app/dynamiclibrary  -> qor_module qor_host qor_thread (win|lin)qor_*
 - qor_host              src/framework/app/host            -> qor_module (win: winqor_sharedbootstrap)
-- qor_optionparser      src/framework/app/optionparser    -> qor_module qor_thread
 - qor_role              src/framework/app/role            -> qor_module qor_host qor_current qor_sync qor_platform qor_error
 - qor_workflow          src/framework/app/workflow        -> qor_module qor_host qor_current qor_issue qor_error qor_log qor_thread qor_tef qor_threadmemory
 - qor_pipeline          src/framework/data/pipeline       -> qor_module qor_thread qor_signals qor_sync qor_interception qor_error qor_log
@@ -137,7 +136,7 @@ count both derive from these numbers, and `tools/wiki-census targets` reprints t
 7. qor_platform qor_arch qor_compiler qor_filesystem qor_sockets
 8. qor_asyncioservice qor_uicommon qor_gl qor_sercon qor_events qor_pipeline
 9. qor_resources qor_image qor_uilayout qor_uiselector qor_uiwidgets qor_desktopui qor_terminal
-10. qor_host (in framework, part of every top-level exe) + qor_application qor_role qor_workflow qor_optionparser qor_dynamiclibrary
+10. qor_host (in framework, part of every top-level exe) + qor_application qor_role qor_workflow qor_dynamiclibrary
 11. leaf components (ui/protocols/io/data/qor)
 
 ## Non-QOR shared libs referenced

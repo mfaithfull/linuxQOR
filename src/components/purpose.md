@@ -18,7 +18,7 @@ qor::data::components
 etc.
 or into the main qor if it's a fundamental module
 
-/app - Put Roles here along with any derivatives of App, OptionGetter, or the basic Workflow
+/app - Put Roles here along with any derivatives of App or the basic Workflow
 /data - Resource and Data Pipeline components. Currently holds experimental TTF reader for example
 /io - IO components. Write me a qor_pipeconnector that does Windows Named Pipes and Unix Sockets. Put it here. Thanks!
 /protocols - Echo, HTTP, SMTP, SNMP, ObEx for bluetooth... Feel free to add these and others.

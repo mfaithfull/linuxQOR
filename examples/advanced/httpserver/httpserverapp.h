@@ -8,7 +8,6 @@
 #include "src/qor/flyers/error/defaulterrorhandler.h"
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/application/builder.h"
-#include "src/framework/app/optionparser/getter.h"
 
 class HTTPServerApp : public qor::Application
 {
@@ -21,14 +20,6 @@ public:
 
     HTTPServerApp();
     virtual ~HTTPServerApp();
-
-    //IOptionable interface for command line options
-    virtual const char* ProvideShortOptionString();             //Implement to tell the parser what short options we support
-    virtual qor::app::Option* ProvideLongOptions();             //Implement to tell the parser what long options we support
-    virtual void ReceiveOptionSwitch(char /*c*/){}                  //Implement to receive switch options
-    virtual void ReceiveOptionParameter(char c, const char* value);//Implement to receive options parameters
-    virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options
-    virtual void ReceiveNonOption(const char* /*parameter*/){}      //Implement to receive non option command line strings
 
     //HTTPServerApp specific interface
     HTTPServerApp& UseAggregatedLogging();                      //Call to turn on Aggregated Logging. Requires Log aggregator component

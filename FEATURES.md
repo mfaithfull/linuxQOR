@@ -65,8 +65,7 @@ The entire UI subset of libraries is currently considered experimental because t
  - qor_module (static library)                 Stable          Module system base library
  - qor_netclient (shared library)              Stable          Network Client Module, Plug in a protocol to use it.
  - qor_netserver (shared library)              Stable          Network Server Module, Plug in a protocol to use it.
- - qor_optionparser (shared library)           Stable          Command Line Options by callback injection
- - qor_pipeline (shared library)               Stable          Pipeline construction library. Anything to Anything, Push or Pull, with Filters
+  - qor_pipeline (shared library)               Stable          Pipeline construction library. Anything to Anything, Push or Pull, with Filters
  - qor_platform (shared library)               Stable          Platform abstraction module
  - qor_randomsource (shared library)           Stable          Noise Source for Pipeline
  - qor_role (shared library)                   Stable          Roles and Features for Application, Customization, Startup/Shutdown control

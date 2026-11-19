@@ -34,7 +34,6 @@ One line per QOR lib. "—" = no dedicated purpose.md; intent inferred from subs
 - qor_application   Application thing (Features/Roles/Options/Workflows). Aggregation header sdk/app.h: include before deriving/using qor::Application.
 - qor_dynamiclibrary Dynamic library loading support.
 - qor_host          Host-process singleton; once-per-project, low-level; CENTER of the module stitching system tying QOR modules together.
-- qor_optionparser  Command line options parsing.
 - qor_role          Roles (real apps built from Roles + Features).
 - qor_workflow      Reusable state-machine outline; extend-only to perform any linear or stack-based state chart.
 - qor_pipeline      Data pipeline framework (Sink/Source). Chain source->sink. Pull: sink calls source; Push: source calls sink. Inline filters = buffers. Buffers in units w/ reader+writer, request/ack read+write heads, semicircular.

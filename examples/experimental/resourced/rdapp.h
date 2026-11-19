@@ -9,7 +9,6 @@
 #include "src/qor/memory/instance/singleton.h"
 #include "src/framework/app/application/application.h"
 #include "src/framework/parallel/sync/recursive_mutex.h"
-#include "src/framework/app/optionparser/ioptionable.h"
 
 class ResourcedApp : public qor::Application
 {

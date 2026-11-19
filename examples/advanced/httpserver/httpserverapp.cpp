@@ -100,59 +100,6 @@ HTTPServerApp::~HTTPServerApp()
     }
 }
 
-const char* HTTPServerApp::ProvideShortOptionString()
-{
-    return "p";
-}
-
-app::Option* HTTPServerApp::ProvideLongOptions()
-{
-    static app::Option longOptions[] =
-    {
-    //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"port",    app::Option::required_argument,       nullptr, 'p'},
-        {"threads", app::Option::required_argument,       nullptr, 't'},
-        {"io",      app::Option::required_argument,       nullptr, 'o'},
-        {"logpath", app::Option::required_argument,       nullptr, 'l'},
-        {"url",     app::Option::required_argument,       nullptr, 'u'},
-        {nullptr,   0,						              nullptr, 0}
-    };
-    return longOptions;
-}
-
-void HTTPServerApp::ReceiveOptionParameter(char c, const char* /*value*/)
-{
-    switch (c)
-    {
-    case 'p':
-        break;
-    }
-}
-
-void HTTPServerApp::ReceiveLongOption(const char* option, const char* /*value*/)
-{
-    if (strncmp(option, "port", 4) == 0)
-    {
-    }
-    else if (strncmp(option, "threads", 7) == 0)
-    {
-
-    }
-    else if (strncmp(option, "io", 2) == 0)
-    {
-
-    }
-    else if (strncmp(option, "logpath", 7) == 0)
-    {
-
-    }
-    else if (strncmp(option, "url", 3) == 0)
-    {
-
-    }
-}
-
-
 HTTPServerApp& HTTPServerApp::UseAggregatedLogging()
 {
     if(!m_useAggregatedLogging)

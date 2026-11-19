@@ -16,7 +16,6 @@
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/app/application/builder.h"
-#include "src/framework/app/optionparser/getter.h"
 #include "src/framework/app/role/getfeature.h"
 #include "src/framework/event/events/eventsource.h"
 #include "src/framework/event/events/eventsink.h"
