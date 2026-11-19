@@ -12,7 +12,9 @@ written it**.
    `Anchors:`, record the entry `id:` in its `Sources:`, and carry each `[[id]]` into a `See also`
    line.
 4. `print` - write the page: claims with anchors, a non-empty `Judges:` (the D56 sentinel only
-   where the claim is not falsifiable against a build), within the schema budget.
+   where the claim is not falsifiable against a build), within the schema budget. Claim prose is
+   present tense against the current tree - a `commit:` anchor bounds a claim, it does not narrate
+   a fix - because git plus `Sources:` is the archive and page prose is the copy that gets trimmed.
 5. `delete` - remove **only** the consumed entries from `docs/raw/pending.md`; nothing else.
 6. `gates` - `wiki-ref-check anchors` and `refs`, `wiki-lint schema` / `provenance` / `freshness`,
    `wiki-reconcile verify`; a gate that prints red stops the commit, not the queue.
